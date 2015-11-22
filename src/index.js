@@ -3,12 +3,6 @@ const Promise = require('bluebird');
 const Mservice = require('mservice');
 const ld = require('lodash');
 
-// actions
-const download = require('./actions/download.js');
-const info = require('./actions/info.js');
-const processFile = require('./actions/process.js');
-const upload = require('./actions/upload.js');
-
 /**
  * @class Files
  */
@@ -52,7 +46,10 @@ module.exports = class Files extends Mservice {
     },
     // amqp options
     amqp: {
+      // round-robin on this queue name
       queue: 'ms-files',
+      // we need QoS for certain operations
+      neck: 100,
     },
     // storage options
     redis: {
@@ -77,12 +74,8 @@ module.exports = class Files extends Mservice {
     super(ld.merge({}, Files.defaultOpts, opts));
     const config = this._config;
 
-    // setup listen routes
-    const postfixes = Object.keys(config.postfix);
-    const prefix = config.prefix;
-    config.amqp.listen = postfixes.map(postfix => {
-      return [ prefix, config.postfix[postfix] ].join('\n');
-    });
+    // init routes
+    this.initRoutes(config);
 
     // init file transfer provider
     const Provider = require(`ms-files-${config.transport.name}`);
@@ -101,24 +94,50 @@ module.exports = class Files extends Mservice {
   }
 
   /**
+   * Initializes routes
+   * @param  {Object} config
+   */
+  initRoutes(config) {
+    // setup listen routes
+    const postfixes = Object.keys(config.postfix);
+    const prefix = config.prefix;
+    this._actions = {};
+    this._routes = {};
+
+    config.amqp.listen = postfixes.map(postfix => {
+      const route = config.postfix[postfix];
+      const action = this._actions[postfix] = require(`./actions/${postfix}.js`);
+      action.name = postfix;
+      this._routes[route] = action;
+      return [ prefix, route ].join('.');
+    });
+  }
+
+  /**
    * AMQP message router
    * @param  {Object} message
    * @param  {Object} headers
    * @param  {Object} actions
    * @return {Promise}
    */
-  router = (message, headers/* , actions*/) => {
-    const defaultRoutes = Files.defaultOpts.postfix;
+  router = (message, headers, actions) => {
+    const time = process.hrtime();
     const route = headers.routingKey.split('.').pop();
+    const action = this._routes[route];
 
-    switch (route) {
-    case defaultRoutes.download:
-    case defaultRoutes.upload:
-    case defaultRoutes.info:
-    case defaultRoutes.process:
-    default:
+    if (!action) {
       return Promise.reject(new Errors.NotImplementedError(route));
     }
+
+    return Promise
+      .bind(this)
+      .then(() => {
+        return this.validate(action.name, message);
+      })
+      .then(action)
+      .finally(result => {
+        // post process data
+      });
   }
 
 };
