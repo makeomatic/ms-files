@@ -12,7 +12,7 @@ const uuid = require('node-uuid');
 module.exports = function initFileUpload(opts) {
   const { contentType, md5Hash, contentLength, id } = opts;
   const { provider, redis } = this;
-  const filename = uuid.v4();
+  const filename = id ? id + '/' + uuid.v4() : uuid.v4();
   const metadata = {
     contentType,
     contentLength,
@@ -26,18 +26,16 @@ module.exports = function initFileUpload(opts) {
     metadata,
   })
   .then(uploadId => {
-    const pipeline = redis.pipeline();
     const startedAt = Date.now();
-    const fileData = { uploadId, filename, owner: id, startedAt, status: 'pending' };
+    const fileData = Object.assign({ uploadId, filename, startedAt, status: 'pending' }, metadata);
 
-    pipeline.sadd('files-index', filename);
-    pipeline.hmset(`files-data:${filename}`, Object.assign({ uploadId, startedAt, status: 'pending' }, metadata));
-    pipeline.hmset(`upload-data:${uploadId}`, fileData);
-
-    if (id) {
-      pipeline.sadd(`files-index:${id}`, filename);
-    }
-
-    return pipeline.exec().return(fileData);
+    // until file is uploaded, it won't appear in the lists and will be cleaned up
+    // in case the upload is never finished
+    return redis
+      .pipeline()
+      .hmset(`upload-data:${uploadId}`, fileData)
+      .expire(`upload-data:${uploadId}`, 86400)
+      .exec()
+      .return(fileData);
   });
 };

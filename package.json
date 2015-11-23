@@ -30,6 +30,7 @@
     "ms-amqp-conf": "^0.2.0",
     "ms-amqp-transport": "^0.2.7",
     "ms-amqp-validation": "^0.4.1",
+    "ms-files-gce": "^0.1.0",
     "mservice": "^0.10.0"
   },
   "devDependencies": {
