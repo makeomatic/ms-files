@@ -6,7 +6,7 @@ const Errors = require('common-errors');
  * @param  {Object} opts.username
  * @return {Promise}
  */
-module.exports = function completeFileUpload(opts) {
+module.exports = function getDownloadURL(opts) {
   const { redis, provider } = this;
   const { filename, username } = opts;
   const key = `files-data:${filename}`;
