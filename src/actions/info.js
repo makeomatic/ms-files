@@ -1,8 +1,8 @@
 const Errors = require('common-errors');
 
 /**
- * Finish upload
- * @param  {Object} opts.id
+ * File information
+ * @param  {Object} opts.filename
  * @param  {Object} opts.username
  * @return {Promise}
  */
