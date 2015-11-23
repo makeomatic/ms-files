@@ -1,4 +1,5 @@
 const uuid = require('node-uuid');
+const url = require('url');
 
 /**
  * Initiates upload
@@ -25,9 +26,12 @@ module.exports = function initFileUpload(opts) {
     generation: 1,
     metadata,
   })
-  .then(uploadId => {
+  .then(location => {
+    // https://www.googleapis.com/upload/storage/v1/b/myBucket/o?uploadType=resumable&upload_id=xa298sd_sdlkj2
+    const uri = url.parse(location, true);
+    const uploadId = uri.query.upload_ud;
     const startedAt = Date.now();
-    const fileData = Object.assign({ uploadId, filename, startedAt, status: 'pending' }, metadata);
+    const fileData = Object.assign({ uploadId, location, filename, startedAt, status: 'pending' }, metadata);
 
     // until file is uploaded, it won't appear in the lists and will be cleaned up
     // in case the upload is never finished
