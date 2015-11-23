@@ -7,7 +7,7 @@ const Errors = require('common-errors');
  * @return {Promise}
  */
 module.exports = function completeFileUpload(opts) {
-  const { redis, provider } = this;
+  const { redis, provider, config, amqp } = this;
   const { id, username } = opts;
   const key = `upload-data:${id}`;
 
@@ -38,16 +38,21 @@ module.exports = function completeFileUpload(opts) {
           }
 
           const pipeline = redis.pipeline();
+          const fileData = Object.assign({}, data, { status: 'uploaded' });
 
           pipeline.sadd('files-index', filename);
-          pipeline.hmset(`files-data:${filename}`, Object.assign({}, data, { status: 'uploaded' }));
+          pipeline.hmset(`files-data:${filename}`, fileData);
           pipeline.del(key);
 
           if (username) {
             pipeline.sadd(`files-index:${username}`, filename);
           }
 
-          return pipeline.exec();
+          return pipeline.exec().return(fileData);
         });
+    })
+    .tap(fileData => {
+      const amqpConfig = config.amqp;
+      return amqp.publish(`${amqpConfig.prefix}.${amqpConfig.postfix.process}`, { filename: fileData.filename, username });
     });
 };
