@@ -25,6 +25,10 @@ module.exports = function getDownloadURL(opts) {
         throw new Errors.HttpStatusError(403, 'upload does not belong to the provided user');
       }
 
+      if (data.status !== 'processed') {
+        throw new Errors.HttpStatusError(412, 'your upload has not been processed yet');
+      }
+
       return provider.createSignedURL({
         action: 'read',
         // 3 hours
