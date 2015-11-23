@@ -1,0 +1,12 @@
+{
+  "type": "object",
+  "required": [ "filename" ],
+  "properties": {
+    "filename": {
+      "type": "string"
+    },
+    "username": {
+      "type": "string"
+    }
+  }
+}
