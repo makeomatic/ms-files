@@ -6,7 +6,8 @@ const Promise = require('bluebird');
  */
 module.exports = function postProcessFile(opts) {
   const { redis } = this;
-  const { criteria, owner, filter } = opts;
+  const { owner, filter } = opts;
+  const criteria = opts.criteria || 'startedAt';
   const strFilter = typeof filter === 'string' ? filter : JSON.stringify(filter || {});
   const order = opts.order || 'ASC';
   const offset = opts.offset || 0;
@@ -19,7 +20,7 @@ module.exports = function postProcessFile(opts) {
   }
 
   return redis
-    .sortedFilteredList(filesIndex, 'files-data:*', criteria, order, strFilter, offset, limit)
+    .sortedFilteredFilesList(filesIndex, 'files-data:*', criteria, order, strFilter, offset, limit)
     .then((filenames) => {
       const length = +filenames.pop();
       if (length === 0 || filenames.length === 0) {

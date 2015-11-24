@@ -6,7 +6,7 @@
 --    local vals = lrange xxx!audience!sorted:fieldName:asc/desc 0 -1
 --    filters - json.decode = [{key: value}, { key: value }] <---- must come pre-sorted in nodejs
 
--- redis.sortedFilteredList('{ms-users}username-set', '{ms-users}*!metadata!*.localhost', 'firstName', 'ASC', '{"lastName":"ami"}', 0, 10)
+-- redis.sortedFilteredList('{ms-files}files-index', '{ms-files}files-data:*', 'startedAt', 'ASC', '{"status":"pending"}', 0, 10)
 
 local usernameSet = KEYS[1];
 local metadataKey = KEYS[2];
@@ -18,6 +18,10 @@ local limit = tonumber(ARGV[5]);
 
 local function isempty(s)
   return s == nil or s == ''
+end
+
+local function isnumber(a)
+  return tonumber(a) ~= nil;
 end
 
 local function subrange(t, first, last)
@@ -105,6 +109,8 @@ if redis.call("EXISTS", PSSKey) == 0 then
           return false;
         elseif isempty(sortB) then
           return true;
+        elseif isnumber(sortA) and isnumber(sortB) then
+          return tonumber(sortA) < tonumber(sortB);
         else
           return string.lower(sortA) < string.lower(sortB);
         end
@@ -116,12 +122,14 @@ if redis.call("EXISTS", PSSKey) == 0 then
         local sortA = arr[a];
         local sortB = arr[b];
 
-        if isempty(sortA) and isempty(sortB) then
+        elseif isempty(sortA) and isempty(sortB) then
           return false;
         elseif isempty(sortA) then
           return true;
         elseif isempty(sortB) then
           return false;
+        elseif isnumber(sortA) and isnumber(sortB) then
+          return tonumber(sortA) > tonumber(sortB);
         else
           return string.lower(sortA) > string.lower(sortB);
         end

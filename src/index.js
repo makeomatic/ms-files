@@ -85,7 +85,7 @@ module.exports = class Files extends Mservice {
 
     // init scripts
     this.on('plugin:connect:redisCluster', (redis) => {
-      redis.defineCommand('sortedFilteredList', {
+      redis.defineCommand('sortedFilteredFilesList', {
         numberOfKeys: 2,
         lua: sortedFilteredListLua,
       });
