@@ -1,8 +1,8 @@
-const Errors = require('common-errors');
 const Promise = require('bluebird');
 const Mservice = require('mservice');
 const ld = require('lodash');
 const fs = require('fs');
+const path = require('path');
 const sortedFilteredListLua = fs.readFileSync(path.resolve(__dirname, '../lua/sorted-filtered-list.lua'), 'utf-8');
 
 /**
@@ -33,27 +33,21 @@ module.exports = class Files extends Mservice {
       // prefixes
       prefix: 'files',
       // postfixes for routes
-      postfix: {
-        // constructs signed download URL for the file. if an <id> is provided - checks access rights
-        // if not - just gives a URL.
-        download: 'download',
-        // constructs resumable upload
-        // binds it to provided <id>. If upload is not finished in X hours
-        // URL is revoked, any information regarding this id is erased as well
-        upload: 'upload',
-        // notify about finished file upload
-        // use this to store data associated with upload <id> permanently
-        // and launch post process sequence
-        finish: 'finish',
-        // sends file for post processing
-        // can be used from `finish` route, as well as on demand
-        process: 'process',
-        // provides information for the requested file
-        // if <id> is specified, access rights are checked before returning the info
-        info: 'info',
-        // list - provides list of files that belong to some <id>, allows sorting, filtering and paginating
-        // if no id is specified - iterates over all files that were uploaded
-        list: 'list',
+      postfix: path.join(__dirname, 'actions'),
+      // onComplete - ack/reject
+      onComplete: function resolveMessage(err, data, actionName, actions) {
+        if (!err) {
+          actions.ack();
+          return data;
+        }
+
+        if (!(actionName === 'process' && err.name === 'HttpStatusError')) {
+          actions.reject();
+          throw err;
+        }
+
+        actions.retry();
+        throw err;
       },
     },
     // storage options
