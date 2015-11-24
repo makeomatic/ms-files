@@ -1,4 +1,5 @@
 {
+  "id": "process",
   "type": "object",
   "required": [ "filename" ],
   "properties": {

@@ -1,6 +1,34 @@
 {
+  "id": "list",
   "type": "object",
   "properties": {
-
+    "offset": {
+      "type": "integer",
+      "min": 0
+    },
+    "limit": {
+      "type": "integer",
+      "min": 1,
+      "max": 100
+    },
+    "order": {
+      "type": "string",
+      "enum": [ "ASC", "DESC" ]
+    },
+    "criteria": {
+      "type": "string"
+    },
+    "owner": {
+      "type": "string"
+    },
+    "filter": {
+      "type": "object",
+      "patternProperties": {
+        "^.+$": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    }
   }
 }

@@ -35,6 +35,8 @@ module.exports = function getDownloadURL(opts) {
         expires: Date.now() + 1000 * 60 * 60 * 3,
         // resource
         resource: filename,
+        // filename
+        promptSaveAs: data.name || 'cappasity-model',
       });
     });
 };

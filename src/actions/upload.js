@@ -11,7 +11,7 @@ const url = require('url');
  * @return {Promise}
  */
 module.exports = function initFileUpload(opts) {
-  const { contentType, md5Hash, contentLength, id } = opts;
+  const { contentType, md5Hash, contentLength, id, name } = opts;
   const { provider, redis } = this;
   const filename = id ? id + '/' + uuid.v4() : uuid.v4();
   const metadata = {
@@ -20,6 +20,10 @@ module.exports = function initFileUpload(opts) {
     md5Hash,
     owner: id,
   };
+
+  if (name) {
+    metadata.name = name;
+  }
 
   return provider.initResumableUpload({
     filename,

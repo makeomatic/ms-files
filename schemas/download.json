@@ -1,4 +1,5 @@
 {
+  "id": "download",
   "type": "object",
   "required": [ "filename" ],
   "properties": {

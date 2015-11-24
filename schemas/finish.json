@@ -1,4 +1,5 @@
 {
+  "id": "finish",
   "type": "object",
   "required": [ "id" ],
   "properties": {
