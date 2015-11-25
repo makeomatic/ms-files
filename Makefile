@@ -36,10 +36,12 @@ $(TEST_TASKS): build-docker
 
 $(BUILD_TASKS):
 	npm run prepublish
+	docker build --build-arg VERSION=v$(basename $@) --build-arg NODE_ENV=development -t makeomatic/$(PKG_NAME):$(basename $@)-development .
 	docker build --build-arg VERSION=v$(basename $@) -t makeomatic/$(PKG_NAME):$(basename $@)-$(PKG_VERSION) .
 	docker tag -f makeomatic/$(PKG_NAME):$(basename $@)-$(PKG_VERSION) makeomatic/$(PKG_NAME):$(basename $@)
 
 $(PUSH_TASKS):
+	docker push makeomatic/$(PKG_NAME):$(basename $@)-development
 	docker push makeomatic/$(PKG_NAME):$(basename $@)-$(PKG_VERSION)
 	docker push makeomatic/$(PKG_NAME):$(basename $@)
 

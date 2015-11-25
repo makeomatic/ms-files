@@ -23,7 +23,7 @@ RUN curl -sSL https://nodejs.org/dist/${VERSION}/node-${VERSION}.tar.gz | tar -x
 WORKDIR /src
 ADD package.json package.json
 
-ENV NODE_ENV=production
+ARG NODE_ENV=production
 ENV NCONF_NAMESPACE=MS_FILES
 
 RUN npm install

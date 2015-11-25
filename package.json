@@ -28,11 +28,10 @@
     "ioredis": "^1.11.0",
     "lodash": "^3.10.1",
     "ms-amqp-conf": "^0.2.0",
-    "ms-amqp-transport": "^0.3.0",
-    "ms-amqp-validation": "^0.4.1",
-    "ms-files-gce": "^0.1.1",
+    "ms-amqp-transport": "^0.4.0",
+    "ms-files-gce": "^0.1.3",
     "ms-validation": "^0.5.1",
-    "mservice": "^0.11.2"
+    "mservice": "^0.11.4"
   },
   "devDependencies": {
     "babel": "^5.8.34",
