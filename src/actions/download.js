@@ -16,7 +16,10 @@ module.exports = function getDownloadURL(opts) {
     .exists(key)
     .hgetall(key)
     .exec()
-    .spread((fileExists, data) => {
+    .spread((fileExistsResponse, dataResponse) => {
+      const fileExists = fileExistsResponse[1];
+      const data = dataResponse[1];
+
       if (!fileExists) {
         throw new Errors.HttpStatusError(404, 'could not find associated upload data');
       }
@@ -36,7 +39,7 @@ module.exports = function getDownloadURL(opts) {
         // resource
         resource: filename,
         // filename
-        promptSaveAs: data.name || 'cappasity-model',
+        promptSaveAs: data.humanName || 'cappasity-model',
       });
     });
 };

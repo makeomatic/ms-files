@@ -8,15 +8,18 @@ const Errors = require('common-errors');
  */
 module.exports = function getFileInfo(opts) {
   const { redis } = this;
-  const { filename, username } = opts;
-  const key = `files-data:${filename}`;
+  const { filename, username, uploadId } = opts;
+  const key = filename ? `files-data:${filename}` : `upload-data:${uploadId}`;
 
   return redis
     .pipeline()
     .exists(key)
     .hgetall(key)
     .exec()
-    .spread((fileExists, data) => {
+    .spread((fileExistsResponse, dataResponse) => {
+      const fileExists = fileExistsResponse[1];
+      const data = dataResponse[1];
+
       if (!fileExists) {
         throw new Errors.HttpStatusError(404, 'could not find associated upload data');
       }

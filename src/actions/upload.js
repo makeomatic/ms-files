@@ -28,7 +28,6 @@ module.exports = function initFileUpload(opts) {
 
   return provider.initResumableUpload({
     filename,
-    generation: 1,
     metadata,
   })
   .then(location => {

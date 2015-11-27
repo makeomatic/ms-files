@@ -29,7 +29,7 @@
     "lodash": "^3.10.1",
     "ms-amqp-conf": "^0.2.0",
     "ms-amqp-transport": "^0.4.0",
-    "ms-files-gce": "^0.1.8",
+    "ms-files-gce": "^0.1.11",
     "ms-validation": "^0.5.6",
     "mservice": "^0.13.1",
     "urlsafe-base64": "^1.0.0"

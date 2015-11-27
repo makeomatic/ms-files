@@ -7,7 +7,7 @@ const Errors = require('common-errors');
  * @return {Promise}
  */
 module.exports = function postProcessFile(opts) {
-  const { redis, provider, config } = this;
+  const { redis, provider, _config: config } = this;
   const { filename, username } = opts;
   const key = `files-data:${filename}`;
 
@@ -16,7 +16,10 @@ module.exports = function postProcessFile(opts) {
     .exists(key)
     .hgetall(key)
     .exec()
-    .spread((fileExists, data) => {
+    .spread((fileExistsResponse, dataResponse) => {
+      const fileExists = fileExistsResponse[1];
+      const data = dataResponse[1];
+
       if (!fileExists) {
         throw new Errors.HttpStatusError(404, 'could not find associated upload data');
       }

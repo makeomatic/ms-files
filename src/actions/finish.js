@@ -7,7 +7,7 @@ const Errors = require('common-errors');
  * @return {Promise}
  */
 module.exports = function completeFileUpload(opts) {
-  const { redis, provider, config, amqp } = this;
+  const { redis, provider, _config: config, amqp } = this;
   const { id, username } = opts;
   const key = `upload-data:${id}`;
 
@@ -16,7 +16,10 @@ module.exports = function completeFileUpload(opts) {
     .exists(key)
     .hgetall(key)
     .exec()
-    .spread((exists, data) => {
+    .spread((existsResponse, dataResponse) => {
+      const exists = existsResponse[1];
+      const data = dataResponse[1];
+
       if (!exists) {
         throw new Errors.HttpStatusError(404, 'could not find associated upload data');
       }
@@ -53,6 +56,6 @@ module.exports = function completeFileUpload(opts) {
     })
     .tap(fileData => {
       const amqpConfig = config.amqp;
-      return amqp.publish(`${amqpConfig.prefix}.${amqpConfig.postfix.process}`, { filename: fileData.filename, username });
+      return amqp.publish(`${amqpConfig.prefix}.process`, { filename: fileData.filename, username });
     });
 };
