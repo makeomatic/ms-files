@@ -1,19 +1,19 @@
 {
   "id": "upload",
   "type": "object",
-  "required": [ "md5Hash", "contentLength" ],
+  "required": [ "md5Hash", "contentLength", "name" ],
   "properties": {
     "contentType": {
       "type": "string"
     },
     "md5Hash": {
       "type": "string",
-      "length": 32
+      "format": "^[0-9A-Fa-f]{32}$"
     },
     "contentLength": {
       "type": "integer",
-      "min": 1,
-      "max": 2000000000
+      "minimum": 1,
+      "maximum": 2000000000
     },
     "id": {
       "type": "string"

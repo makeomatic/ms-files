@@ -6,9 +6,27 @@ const path = require('path');
 const sortedFilteredListLua = fs.readFileSync(path.resolve(__dirname, '../lua/sorted-filtered-list.lua'), 'utf-8');
 
 /**
+ * Message resolver
+ */
+function resolveMessage(err, data, actionName, actions) {
+  if (!err) {
+    actions.ack();
+    return data;
+  }
+
+  if (!(actionName === 'process' && err.name === 'HttpStatusError')) {
+    actions.reject();
+    throw err;
+  }
+
+  actions.retry();
+  throw err;
+}
+
+/**
  * @class Files
  */
-module.exports = class Files extends Mservice {
+class Files extends Mservice {
 
   /**
    * Default options for the service
@@ -34,21 +52,6 @@ module.exports = class Files extends Mservice {
       prefix: 'files',
       // postfixes for routes
       postfix: path.join(__dirname, 'actions'),
-      // onComplete - ack/reject
-      onComplete: function resolveMessage(err, data, actionName, actions) {
-        if (!err) {
-          actions.ack();
-          return data;
-        }
-
-        if (!(actionName === 'process' && err.name === 'HttpStatusError')) {
-          actions.reject();
-          throw err;
-        }
-
-        actions.retry();
-        throw err;
-      },
     },
     // storage options
     redis: {
@@ -70,11 +73,15 @@ module.exports = class Files extends Mservice {
   };
 
   constructor(opts = {}) {
+    // define onComplete
+    opts.amqp.onComplete = resolveMessage;
+
     super(ld.merge({}, Files.defaultOpts, opts));
     const config = this._config;
 
     // init file transfer provider
     const Provider = require(`ms-files-${config.transport.name}`);
+    config.transport.options.logger = this.log;
     this.provider = new Provider(config.transport.options);
 
     // init scripts
@@ -91,7 +98,10 @@ module.exports = class Files extends Mservice {
    * @return {Promise}
    */
   connect() {
+    this.log.debug('started connecting');
     return Promise.join(super.connect(), this.provider.connect());
   }
 
-};
+}
+
+module.exports = Files;

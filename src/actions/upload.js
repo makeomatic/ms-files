@@ -1,5 +1,6 @@
 const uuid = require('node-uuid');
 const url = require('url');
+const base64 = require('urlsafe-base64');
 
 /**
  * Initiates upload
@@ -17,12 +18,12 @@ module.exports = function initFileUpload(opts) {
   const metadata = {
     contentType,
     contentLength,
-    md5Hash,
+    md5Hash: base64.encode(new Buffer(md5Hash, 'hex')),
     owner: id,
   };
 
   if (name) {
-    metadata.name = name;
+    metadata.humanName = name;
   }
 
   return provider.initResumableUpload({
@@ -33,9 +34,9 @@ module.exports = function initFileUpload(opts) {
   .then(location => {
     // https://www.googleapis.com/upload/storage/v1/b/myBucket/o?uploadType=resumable&upload_id=xa298sd_sdlkj2
     const uri = url.parse(location, true);
-    const uploadId = uri.query.upload_ud;
+    const uploadId = uri.query.upload_id;
     const startedAt = Date.now();
-    const fileData = Object.assign({ uploadId, location, filename, startedAt, status: 'pending' }, metadata);
+    const fileData = Object.assign({ uploadId, location, filename, startedAt, status: 'pending' }, metadata, { md5Hash });
 
     // until file is uploaded, it won't appear in the lists and will be cleaned up
     // in case the upload is never finished
