@@ -37,7 +37,7 @@ module.exports = function completeFileUpload(opts) {
       return provider.exists(filename)
         .then(fileExists => {
           if (!fileExists) {
-            throw new Errors.HttpStatusError(404, 'could not find associated upload data');
+            throw new Errors.HttpStatusError(405, 'provider reports that upload was not finished yet');
           }
 
           const pipeline = redis.pipeline();
