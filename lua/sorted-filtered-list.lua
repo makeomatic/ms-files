@@ -122,7 +122,7 @@ if redis.call("EXISTS", PSSKey) == 0 then
         local sortA = arr[a];
         local sortB = arr[b];
 
-        elseif isempty(sortA) and isempty(sortB) then
+        if isempty(sortA) and isempty(sortB) then
           return false;
         elseif isempty(sortA) then
           return true;
@@ -179,6 +179,16 @@ local function filterString(value, filter)
   return string.find(string.lower(value), string.lower(filter));
 end
 
+-- filter: gte
+local function gte(value, filter)
+  return tonumber(value) >= tonumber(filter);
+end
+
+-- filter: lte
+local function lte(value, filter)
+  return tonumber(value) <= tonumber(filter);
+end
+
 -- if no metadata key, but we are still here
 if isempty(metadataKey) then
   -- only sort by value, which is id
@@ -206,9 +216,31 @@ else
         fieldValue = redis.call("hget", metaKey, fieldName);
       end
 
-      if filterString(fieldValue, filterValue) == nil then
-        matched = false;
-        break;
+      if type(filterValue) == 'table' then
+        for op, opFilter in pairs(filterValue) do
+          if op == 'gte' then
+            if gte(fieldValue, opFilter) ~= true then
+              matched = false;
+              break;
+            end
+          elseif op == 'lte' then
+            if lte(fieldValue, opFilter) ~= true then
+              matched = false;
+              break;
+            end
+          else
+            return redis.error_reply("not supported op: " .. op);
+          end
+        end
+
+        if matched == false then
+          break;
+        end
+      else
+        if filterString(fieldValue, filterValue) == nil then
+          matched = false;
+          break;
+        end
       end
     end
 

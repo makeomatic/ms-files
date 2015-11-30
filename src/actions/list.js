@@ -7,7 +7,7 @@ const Promise = require('bluebird');
 module.exports = function postProcessFile(opts) {
   const { redis } = this;
   const { owner, filter } = opts;
-  const criteria = opts.criteria || 'startedAt';
+  const criteria = opts.criteria;
   const strFilter = typeof filter === 'string' ? filter : JSON.stringify(filter || {});
   const order = opts.order || 'ASC';
   const offset = opts.offset || 0;
