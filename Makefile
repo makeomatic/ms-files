@@ -1,5 +1,5 @@
 SHELL := /bin/bash
-NODE_VERSIONS := 5.1.0
+NODE_VERSIONS := 5.1.1
 PKG_NAME := $(shell cat package.json | ./node_modules/.bin/json name)
 PKG_VERSION := $(shell cat package.json | ./node_modules/.bin/json version)
 THIS_FILE := $(lastword $(MAKEFILE_LIST))
