@@ -1,3 +1,4 @@
+const Promise = require('bluebird');
 const Errors = require('common-errors');
 
 /**
@@ -32,14 +33,17 @@ module.exports = function getDownloadURL(opts) {
         throw new Errors.HttpStatusError(412, 'your upload has not been processed yet');
       }
 
-      return provider.createSignedURL({
-        action: 'read',
-        // 3 hours
-        expires: Date.now() + 1000 * 60 * 60 * 3,
-        // resource
-        resource: filename,
-        // filename
-        promptSaveAs: data.humanName || 'cappasity-model',
+      return Promise.props({
+        url: provider.createSignedURL({
+          action: 'read',
+          // 3 hours
+          expires: Date.now() + 1000 * 60 * 60 * 3,
+          // resource
+          resource: filename,
+          // filename
+          promptSaveAs: data.humanName || 'cappasity-model',
+        }),
+        data,
       });
     });
 };

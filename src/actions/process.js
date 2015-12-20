@@ -32,7 +32,7 @@ module.exports = function postProcessFile(opts) {
         throw new Errors.HttpStatusError(412, 'file has already been processed');
       }
 
-      return config.process(provider, data)
+      return config.process(provider, { key, data, redis })
         .tap(() => {
           return redis.hset(key, 'status', 'processed');
         });
