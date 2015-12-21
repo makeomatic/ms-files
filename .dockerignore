@@ -34,3 +34,4 @@ Makefile
 .env
 src
 .git
+Dockerfile*

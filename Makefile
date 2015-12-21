@@ -1,48 +1,43 @@
 SHELL := /bin/bash
-NODE_VERSIONS := 5.1.1
+THIS_FILE := $(lastword $(MAKEFILE_LIST))
 PKG_NAME := $(shell cat package.json | ./node_modules/.bin/json name)
 PKG_VERSION := $(shell cat package.json | ./node_modules/.bin/json version)
-THIS_FILE := $(lastword $(MAKEFILE_LIST))
+NPM_PROXY := http://$(shell docker-machine ip dev):4873
+DIST := makeomatic/$(PKG_NAME)
+NODE_VERSIONS := 5.3.0 5.2.0 5.1.1
+ENVS := .development .production
+TASK_LIST := $(foreach env,$(ENVS),$(addsuffix $(env), $(NODE_VERSIONS)))
 
-# define task lists
-TEST_TASKS := $(addsuffix .test, $(NODE_VERSIONS))
-BUILD_TASKS := $(addsuffix .build, $(NODE_VERSIONS))
-PUSH_TASKS := $(addsuffix .push, $(NODE_VERSIONS))
+%.test:
+	@echo "no test present"
+	exit 1;
 
-test: $(TEST_TASKS)
+%.build: ARGS = --build-arg NODE_ENV=$(NODE_ENV) --build-arg NPM_PROXY=$(NPM_PROXY)
+%.build:
+	NODE_VERSION=$(NODE_VERSION) envsubst < "./Dockerfile" > $(DOCKERFILE)
+	docker build $(ARGS) -t $(PKG_PREFIX_ENV) -f $(DOCKERFILE) .
+	rm $(DOCKERFILE)
 
-build: $(BUILD_TASKS)
+%.production.build:
+	docker tag -f $(PKG_PREFIX_ENV) $(PKG_PREFIX)
+	docker tag -f $(PKG_PREFIX_ENV) $(PKG_PREFIX)-$(PKG_VERSION)
 
-push: $(PUSH_TASKS)
+%.push:
+	docker push $(PKG_PREFIX_ENV)
 
-build-docker:
-	docker build -t makeomatic/node-test:5.1.0 ./test
+%.production.push:
+	docker push $(PKG_PREFIX)
+	docker push $(PKG_PREFIX)-$(PKG_VERSION)
 
-run-test:
-	docker run --link=rabbitmq --link=redis_1 --link=redis_2 --link=redis_3 -v ${PWD}:/usr/src/app -w /usr/src/app --rm -e TEST_ENV=docker makeomatic/node-test:5.1.0 npm test;
+all: test build push
 
-$(TEST_TASKS): build-docker
-	docker run -d --name=rabbitmq rabbitmq; \
-	docker run -d --name=redis_1 makeomatic/alpine-redis; \
-	docker run -d --name=redis_2 makeomatic/alpine-redis; \
-	docker run -d --name=redis_3 makeomatic/alpine-redis; \
-	$(MAKE) -f $(THIS_FILE) run-test; \
-	EXIT_CODE=$$?; \
-	docker rm -f rabbitmq; \
-	docker rm -f redis_1; \
-	docker rm -f redis_2; \
-	docker rm -f redis_3; \
-	exit ${EXIT_CODE};
+%: NODE_VERSION = $(basename $(basename $@))
+%: NODE_ENV = $(subst .,,$(suffix $(basename $@)))
+%: DOCKERFILE = "./Dockerfile.$(NODE_VERSION)"
+%: PKG_PREFIX = $(DIST):$(NODE_VERSION)
+%: PKG_PREFIX_ENV = $(PKG_PREFIX)-$(NODE_ENV)
+%::
+	@echo $@  # print target name
+	$(MAKE) -f $(THIS_FILE) $(addsuffix .$@, $(TASK_LIST))
 
-$(BUILD_TASKS):
-	npm run prepublish
-	docker build --build-arg VERSION=v$(basename $@) --build-arg NODE_ENV=development -t makeomatic/$(PKG_NAME):$(basename $@)-development .
-	docker build --build-arg VERSION=v$(basename $@) -t makeomatic/$(PKG_NAME):$(basename $@)-$(PKG_VERSION) .
-	docker tag -f makeomatic/$(PKG_NAME):$(basename $@)-$(PKG_VERSION) makeomatic/$(PKG_NAME):$(basename $@)
-
-$(PUSH_TASKS):
-	docker push makeomatic/$(PKG_NAME):$(basename $@)-development
-	docker push makeomatic/$(PKG_NAME):$(basename $@)-$(PKG_VERSION)
-	docker push makeomatic/$(PKG_NAME):$(basename $@)
-
-.PHONY: test build push run-test build-docker
+.PHONY: all %.test %.build %.push
