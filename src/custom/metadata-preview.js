@@ -13,11 +13,12 @@ module.exports = function extractMetadata(provider, { key, data, redis }) {
     const imageLength = image.contents.readInt32BE(0);
     const md5Hash = md5.contents.toString('hex');
     const contentLength = parseInt(image.response.headers['content-length'], 10) - 20 - imageLength;
-
-    return redis.hmset(key, {
+    const output = {
       previewSize: imageLength,
       modelSize: contentLength,
       checksum: md5Hash,
-    });
+    };
+
+    return redis.hmset(key, output).return(output);
   });
 };
