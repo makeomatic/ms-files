@@ -8,7 +8,7 @@ const Errors = require('common-errors');
  */
 module.exports = function completeFileUpload(opts) {
   const { redis, provider, _config: config, amqp } = this;
-  const { id, username } = opts;
+  const { id, username, skipProcessing } = opts;
   const key = `upload-data:${id}`;
 
   return redis
@@ -55,6 +55,10 @@ module.exports = function completeFileUpload(opts) {
         });
     })
     .tap(fileData => {
+      if (skipProcessing) {
+        return null;
+      }
+
       const amqpConfig = config.amqp;
       return amqp.publish(`${amqpConfig.prefix}.process`, { filename: fileData.filename, username });
     });

@@ -9,6 +9,9 @@
     },
     "username": {
       "type": "string"
+    },
+    "skipProcessing": {
+      "type": "boolean"
     }
   }
 }
