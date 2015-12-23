@@ -31,6 +31,7 @@ build: docker tag
 %.docker: ARGS = --build-arg NODE_ENV=$(NODE_ENV) --build-arg NPM_PROXY=$(NPM_PROXY)
 %.docker:
 	@echo "building $@"
+	npm run compile
 	NODE_VERSION=$(NODE_VERSION) envsubst < "./Dockerfile" > $(DOCKERFILE)
 	docker build $(ARGS) -t $(PKG_PREFIX_ENV) -f $(DOCKERFILE) .
 	rm $(DOCKERFILE)
