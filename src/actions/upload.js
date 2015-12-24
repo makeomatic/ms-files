@@ -1,6 +1,5 @@
 const uuid = require('node-uuid');
 const url = require('url');
-const base64 = require('urlsafe-base64');
 
 /**
  * Initiates upload
@@ -18,7 +17,7 @@ module.exports = function initFileUpload(opts) {
   const metadata = {
     contentType,
     contentLength,
-    md5Hash: base64.encode(new Buffer(md5Hash, 'hex')),
+    md5Hash: new Buffer(md5Hash, 'hex').toString('base64'),
     owner: id,
   };
 

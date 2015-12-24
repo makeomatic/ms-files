@@ -1,6 +1,6 @@
 {
   "name": "ms-files",
-  "version": "0.5.1",
+  "version": "0.5.2",
   "description": "Core of microservice",
   "main": "./lib/index.js",
   "scripts": {
@@ -30,8 +30,7 @@
     "ms-amqp-transport": "^0.4.0",
     "ms-files-gce": "^0.2.2",
     "ms-validation": "^0.5.7",
-    "mservice": "^1.0.0",
-    "urlsafe-base64": "^1.0.0"
+    "mservice": "^1.0.0"
   },
   "devDependencies": {
     "babel-cli": "^6.3.17",
