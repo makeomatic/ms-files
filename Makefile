@@ -52,7 +52,7 @@ build: docker tag
 	docker pull $(PKG_PREFIX)
 	docker pull $(PKG_PREFIX)-$(PKG_VERSION)
 
-%.production.push: %.push
+%.production.push:
 	@echo "pushing production $@"
 	docker push $(PKG_PREFIX)
 	docker push $(PKG_PREFIX)-$(PKG_VERSION)
