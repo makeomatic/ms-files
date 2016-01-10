@@ -1,4 +1,4 @@
-const Errors = require('common-errors');
+const { HttpStatusError } = require('common-errors');
 
 /**
  * Post process file
@@ -21,15 +21,15 @@ module.exports = function postProcessFile(opts) {
       const data = dataResponse[1];
 
       if (!fileExists) {
-        throw new Errors.HttpStatusError(404, 'could not find associated upload data');
+        throw new HttpStatusError(404, 'could not find associated upload data');
       }
 
       if (username && data.owner !== username) {
-        throw new Errors.HttpStatusError(403, 'file does not belong to the provided user');
+        throw new HttpStatusError(403, 'file does not belong to the provided user');
       }
 
       if (data.status === 'processed') {
-        throw new Errors.HttpStatusError(412, 'file has already been processed');
+        throw new HttpStatusError(412, 'file has already been processed');
       }
 
       return config.process(provider, { key, data, redis })

@@ -12,6 +12,9 @@
     },
     "skipProcessing": {
       "type": "boolean"
+    },
+    "await": {
+      "type": "boolean"
     }
   }
 }

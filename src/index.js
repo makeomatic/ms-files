@@ -1,9 +1,8 @@
 const Promise = require('bluebird');
 const Mservice = require('mservice');
 const ld = require('lodash');
-const fs = require('fs');
 const path = require('path');
-const sortedFilteredListLua = fs.readFileSync(path.resolve(__dirname, '../lua/sorted-filtered-list.lua'), 'utf-8');
+const fsort = require('redis-filtered-sort');
 
 /**
  * Message resolver
@@ -34,11 +33,11 @@ class Files extends Mservice {
    */
   static defaultOpts = {
     // enable plugins
-    plugins: [ 'validator', 'logger', 'amqp', 'redisCluster' ],
+    plugins: ['validator', 'logger', 'amqp', 'redisCluster'],
     // default logger
     logger: true,
     // schemas
-    validator: [ '../schemas' ],
+    validator: ['../schemas'],
     // amqp options
     amqp: {
       // round-robin on this queue name
@@ -52,6 +51,8 @@ class Files extends Mservice {
       prefix: 'files',
       // postfixes for routes
       postfix: path.join(__dirname, 'actions'),
+      // add default onComplete handelr
+      onComplete: resolveMessage,
     },
     // storage options
     redis: {
@@ -73,9 +74,6 @@ class Files extends Mservice {
   };
 
   constructor(opts = {}) {
-    // define onComplete
-    opts.amqp.onComplete = resolveMessage;
-
     super(ld.merge({}, Files.defaultOpts, opts));
     const config = this._config;
 
@@ -86,10 +84,7 @@ class Files extends Mservice {
 
     // init scripts
     this.on('plugin:connect:redisCluster', (redis) => {
-      redis.defineCommand('sortedFilteredFilesList', {
-        numberOfKeys: 2,
-        lua: sortedFilteredListLua,
-      });
+      fsort.attach(redis, 'fsort');
     });
   }
 

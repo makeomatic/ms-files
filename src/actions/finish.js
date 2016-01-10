@@ -1,4 +1,4 @@
-const Errors = require('common-errors');
+const { HttpStatusError } = require('common-errors');
 
 /**
  * Finish upload
@@ -21,15 +21,15 @@ module.exports = function completeFileUpload(opts) {
       const data = dataResponse[1];
 
       if (!exists) {
-        throw new Errors.HttpStatusError(404, 'could not find associated upload data');
+        throw new HttpStatusError(404, 'could not find associated upload data');
       }
 
       if (username && data.owner !== username) {
-        throw new Errors.HttpStatusError(403, 'upload does not belong to the provided user');
+        throw new HttpStatusError(403, 'upload does not belong to the provided user');
       }
 
       if (data.status !== 'pending') {
-        throw new Errors.HttpStatusError(412, 'upload has already been marked as finished');
+        throw new HttpStatusError(412, 'upload has already been marked as finished');
       }
 
       const { filename } = data;
@@ -37,11 +37,11 @@ module.exports = function completeFileUpload(opts) {
       return provider.exists(filename)
         .then(fileExists => {
           if (!fileExists) {
-            throw new Errors.HttpStatusError(405, 'provider reports that upload was not finished yet');
+            throw new HttpStatusError(405, 'provider reports that upload was not finished yet');
           }
 
           const pipeline = redis.pipeline();
-          const fileData = Object.assign({}, data, { status: 'uploaded' });
+          const fileData = { ...data, status: 'uploaded' };
 
           pipeline.sadd('files-index', filename);
           pipeline.hmset(`files-data:${filename}`, fileData);
@@ -60,6 +60,8 @@ module.exports = function completeFileUpload(opts) {
       }
 
       const amqpConfig = config.amqp;
-      return amqp.publish(`${amqpConfig.prefix}.process`, { filename: fileData.filename, username });
+      const action = opts.await ? 'publishAndWait' : 'publish';
+      const route = `${amqpConfig.prefix}.process`;
+      return amqp[action](route, { filename: fileData.filename, username });
     });
 };

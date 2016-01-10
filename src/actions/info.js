@@ -1,4 +1,4 @@
-const Errors = require('common-errors');
+const { HttpStatusError } = require('common-errors');
 
 /**
  * File information
@@ -21,11 +21,11 @@ module.exports = function getFileInfo(opts) {
       const data = dataResponse[1];
 
       if (!fileExists) {
-        throw new Errors.HttpStatusError(404, 'could not find associated upload data');
+        throw new HttpStatusError(404, 'could not find associated upload data');
       }
 
       if (username && data.owner !== username) {
-        throw new Errors.HttpStatusError(403, 'upload does not belong to the provided user');
+        throw new HttpStatusError(403, 'upload does not belong to the provided user');
       }
 
       return data;

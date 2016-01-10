@@ -1,5 +1,6 @@
 const uuid = require('node-uuid');
 const url = require('url');
+const { STATUS_PENDING } = require('../constant.js');
 
 /**
  * Initiates upload
@@ -34,7 +35,15 @@ module.exports = function initFileUpload(opts) {
     const uri = url.parse(location, true);
     const uploadId = uri.query.upload_id;
     const startedAt = Date.now();
-    const fileData = Object.assign({ uploadId, location, filename, startedAt, status: 'pending' }, metadata, { md5Hash });
+    const fileData = {
+      uploadId,
+      location,
+      filename,
+      startedAt,
+      status: STATUS_PENDING,
+      ...metadata,
+      md5Hash,
+    };
 
     // until file is uploaded, it won't appear in the lists and will be cleaned up
     // in case the upload is never finished

@@ -1,0 +1,58 @@
+redis_1:
+  image: makeomatic/alpine-redis
+  container_name: redis_1
+  hostname: redis_1
+  expose:
+    - "6379"
+    - "16379"
+
+redis_2:
+  expose:
+    - "6379"
+    - "16379"
+  container_name: redis_2
+  hostname: redis_2
+  image: makeomatic/alpine-redis
+
+redis_3:
+  expose:
+    - "6379"
+    - "16379"
+  container_name: redis_3
+  image: makeomatic/alpine-redis
+  hostname: redis_3
+
+rabbitmq:
+  expose:
+    - "4369"
+    - "5672"
+    - "15672"
+    - "25672"
+  image: rabbitmq
+  container_name: rabbitmq
+  hostname: rabbitmq
+
+redis_client:
+  links:
+    - redis_1
+    - redis_2
+    - redis_3
+  container_name: redis_client
+  hostname: redis_client
+  image: makeomatic/redis-trib
+
+tester:
+  image: ${IMAGE}
+  links:
+    - redis_1
+    - redis_2
+    - redis_3
+    - rabbitmq
+    - redis_client
+  working_dir: /src
+  volumes:
+    - ${PWD}:/src
+  environment:
+    NODE_ENV: "docker"
+    SKIP_REBUILD: ${SKIP_REBUILD}
+  command: 'true'
