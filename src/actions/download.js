@@ -1,5 +1,6 @@
 const Promise = require('bluebird');
 const { HttpStatusError } = require('common-errors');
+const { STATUS_PROCESSED } = require('../constant.js');
 
 /**
  * Get download url
@@ -29,7 +30,7 @@ module.exports = function getDownloadURL(opts) {
         throw new HttpStatusError(403, 'upload does not belong to the provided user');
       }
 
-      if (username && data.status !== 'processed') {
+      if (username && data.status !== STATUS_PROCESSED) {
         throw new HttpStatusError(412, 'your upload has not been processed yet');
       }
 

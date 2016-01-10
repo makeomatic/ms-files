@@ -1,4 +1,5 @@
 const { HttpStatusError } = require('common-errors');
+const { STATUS_PROCESSED } = require('../constant.js');
 
 /**
  * Post process file
@@ -34,7 +35,7 @@ module.exports = function postProcessFile(opts) {
 
       return config.process(provider, { key, data, redis })
         .tap(() => {
-          return redis.hset(key, 'status', 'processed');
+          return redis.hset(key, 'status', STATUS_PROCESSED);
         });
     });
 };

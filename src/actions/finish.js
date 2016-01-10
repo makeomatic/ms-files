@@ -1,4 +1,5 @@
 const { HttpStatusError } = require('common-errors');
+const { STATUS_UPLOADED, STATUS_PENDING } = require('../constant.js');
 
 /**
  * Finish upload
@@ -28,7 +29,7 @@ module.exports = function completeFileUpload(opts) {
         throw new HttpStatusError(403, 'upload does not belong to the provided user');
       }
 
-      if (data.status !== 'pending') {
+      if (data.status !== STATUS_PENDING) {
         throw new HttpStatusError(412, 'upload has already been marked as finished');
       }
 
@@ -41,7 +42,7 @@ module.exports = function completeFileUpload(opts) {
           }
 
           const pipeline = redis.pipeline();
-          const fileData = { ...data, status: 'uploaded' };
+          const fileData = { ...data, status: STATUS_UPLOADED };
 
           pipeline.sadd('files-index', filename);
           pipeline.hmset(`files-data:${filename}`, fileData);
