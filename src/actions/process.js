@@ -29,7 +29,8 @@ module.exports = function postProcessFile(opts) {
         throw new HttpStatusError(403, 'file does not belong to the provided user');
       }
 
-      if (data.status === 'processed') {
+      // TODO: ADD LOCKING OF FILES FOR PROCESSING
+      if (data.status === STATUS_PROCESSED) {
         throw new HttpStatusError(412, 'file has already been processed');
       }
 

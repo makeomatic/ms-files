@@ -5,6 +5,7 @@ const { expect } = require('chai');
 const Promise = require('bluebird');
 const Files = require('../src');
 const md5 = require('md5');
+const request = require('request-promise');
 
 process.env.DOTENV_FILE_PATH = __dirname + '/.env';
 require('ms-amqp-conf');
@@ -40,6 +41,24 @@ global.SAMPLE_FILE = {
   contentLength: fileData.length,
   contentType: 'image/png',
   name: 'zomg.png',
+};
+
+global.UPLOAD_MESSAGE = {
+  id: 'test@owner.com',
+  contentType: global.SAMPLE_FILE.contentType,
+  contentLength: global.SAMPLE_FILE.contentLength,
+  name: global.SAMPLE_FILE.name,
+  md5Hash: global.SAMPLE_FILE.md5,
+};
+
+global.uploadToGoogle = function completeUpload(data) {
+  return request.put({
+    url: data.location,
+    body: global.SAMPLE_FILE.contents,
+    headers: {
+      'content-length': global.SAMPLE_FILE.contentLength,
+    },
+  });
 };
 
 const config = {

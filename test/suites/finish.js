@@ -1,6 +1,5 @@
-/* global inspectPromise, SAMPLE_FILE */
+/* global inspectPromise, SAMPLE_FILE, UPLOAD_MESSAGE, uploadToGoogle */
 
-const request = require('request-promise');
 const assert = require('assert');
 const { STATUS_UPLOADED } = require('../../src/constant.js');
 
@@ -8,32 +7,14 @@ describe('finish upload suite', function suite() {
   before(global.startService);
   after(global.clearService);
 
-  const uploadMessage = {
-    id: 'test@owner.com',
-    contentType: SAMPLE_FILE.contentType,
-    contentLength: SAMPLE_FILE.contentLength,
-    name: SAMPLE_FILE.name,
-    md5Hash: SAMPLE_FILE.md5,
-  };
-
   const baseMessage = {
     skipProcessing: true,
-    username: uploadMessage.id,
+    username: UPLOAD_MESSAGE.id,
     id: 'bad-upload-id',
   };
 
   function prepareUpload() {
-    return this.amqp.publishAndWait('files.upload', uploadMessage);
-  }
-
-  function completeUpload(data) {
-    return request.put({
-      url: data.location,
-      body: SAMPLE_FILE.contents,
-      headers: {
-        'content-length': SAMPLE_FILE.contentLength,
-      },
-    });
+    return this.amqp.publishAndWait('files.upload', UPLOAD_MESSAGE);
   }
 
   before('prepare upload', function prepare() {
@@ -81,7 +62,7 @@ describe('finish upload suite', function suite() {
 
   describe('after upload has finished', function next() {
     before('complete upload', function prepare() {
-      return completeUpload(this.data);
+      return uploadToGoogle(this.data);
     });
 
     it('marks upload as finished', function test() {

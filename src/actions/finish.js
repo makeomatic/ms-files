@@ -48,8 +48,8 @@ module.exports = function completeFileUpload(opts) {
           pipeline.hmset(`files-data:${filename}`, fileData);
           pipeline.del(key);
 
-          if (username) {
-            pipeline.sadd(`files-index:${username}`, filename);
+          if (username || data.owner) {
+            pipeline.sadd(`files-index:${username || data.owner}`, filename);
           }
 
           return pipeline.exec().return(fileData);

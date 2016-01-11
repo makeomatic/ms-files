@@ -38,8 +38,8 @@ module.exports = function removeFile(opts) {
           // removes from indices
           if (filename) {
             pipeline.srem('files-index', data.filename);
-            if (username) {
-              pipeline.srem(`files-index:${username}`, data.filename);
+            if (data.owner) {
+              pipeline.srem(`files-index:${data.owner}`, data.filename);
             }
           }
 
