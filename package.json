@@ -27,11 +27,11 @@
     "ioredis": "^1.14.0",
     "lodash": "^3.10.1",
     "ms-amqp-conf": "^0.2.0",
-    "ms-amqp-transport": "^0.9.1",
+    "ms-amqp-transport": "^0.10.0",
     "ms-files-gce": "^0.1.12",
     "ms-validation": "^1.0.1",
     "mservice": "^1.2.2",
-    "redis-filtered-sort": "^1.0.1"
+    "redis-filtered-sort": "^1.1.0"
   },
   "devDependencies": {
     "babel-cli": "^6.4.0",
@@ -44,8 +44,9 @@
     "eslint": "^1.10.3",
     "eslint-config-airbnb": "^3.1.0",
     "eslint-plugin-mocha": "^1.1.0",
+    "faker": "^3.0.1",
     "isparta": "^4.0.0",
-    "istanbul": "^0.4.1",
+    "istanbul": "^0.4.2",
     "json": "^9.0.3",
     "md5": "^2.0.0",
     "mocha": "^2.3.3",

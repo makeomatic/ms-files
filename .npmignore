@@ -31,3 +31,4 @@ src
 test
 Makefile
 .env
+.babel

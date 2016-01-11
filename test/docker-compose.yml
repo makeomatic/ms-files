@@ -53,6 +53,8 @@ tester:
   volumes:
     - ${PWD}:/src
   environment:
-    NODE_ENV: "docker"
+    BABEL_CACHE_PATH: "/src/.babel"
+    NODE_ENV: "development"
     SKIP_REBUILD: ${SKIP_REBUILD}
+    DEBUG: ${DEBUG}
   command: 'true'

@@ -42,7 +42,7 @@ module.exports = function completeFileUpload(opts) {
           }
 
           const pipeline = redis.pipeline();
-          const fileData = { ...data, status: STATUS_UPLOADED };
+          const fileData = { ...data, uploadedAt: Date.now(), status: STATUS_UPLOADED };
 
           pipeline.sadd('files-index', filename);
           pipeline.hmset(`files-data:${filename}`, fileData);

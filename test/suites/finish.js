@@ -74,6 +74,7 @@ describe('finish upload suite', function suite() {
       .then(inspectPromise())
       .then(result => {
         assert.equal(result.status, STATUS_UPLOADED);
+        assert.ok(result.uploadedAt);
       });
     });
 
