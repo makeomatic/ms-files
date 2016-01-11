@@ -1,32 +1,20 @@
 SHELL := /bin/bash
 THIS_FILE := $(lastword $(MAKEFILE_LIST))
-PKG_NAME := $(shell cat package.json | ./node_modules/.bin/json name)
-PKG_VERSION := $(shell cat package.json | ./node_modules/.bin/json version)
-NPM_PROXY := http://$(shell docker-machine ip dev):4873
+PKG_NAME = $(shell cat package.json | ./node_modules/.bin/json name)
+PKG_VERSION = $(shell cat package.json | ./node_modules/.bin/json version)
+NPM_PROXY = http://$(shell docker-machine ip dev):4873
 DOCKER_USER := makeomatic
 DIST := $(DOCKER_USER)/$(PKG_NAME)
-NODE_VERSIONS := 5.3.0
+NODE_VERSIONS := 5.4.0
 ENVS := development production
 TASK_LIST := $(foreach env,$(ENVS),$(addsuffix .$(env), $(NODE_VERSIONS)))
 WORKDIR := /src
 COMPOSE_FILE := test/docker-compose.yml
 
-test: mocha cleanup
+test:
+	npm test
 
 build: docker tag
-
-%.production.mocha:
-	@echo "testing $@"
-	$(COMPOSE) run -e SKIP_REBUILD=${SKIP_REBUILD} --rm tester npm test
-
-%.mocha: ;
-
-%.production.cleanup:
-	@echo "cleaning up $@"
-	$(COMPOSE) stop
-	$(COMPOSE) rm -f
-
-%.cleanup: ;
 
 %.docker: ARGS = --build-arg NODE_ENV=$(NODE_ENV) --build-arg NPM_PROXY=$(NPM_PROXY)
 %.docker:
@@ -74,4 +62,4 @@ all: test build push
 	@echo $@  # print target name
 	@$(MAKE) -f $(THIS_FILE) $(addsuffix .$@, $(TASK_LIST))
 
-.PHONY: all test build %.mocha %.docker %.push %.pull
+.PHONY: all test build %.docker %.push %.pull
