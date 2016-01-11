@@ -31,16 +31,23 @@ module.exports = function removeFile(opts) {
 
       return provider
         .remove(data.filename)
+        .catch({ code: 404 }, err => {
+          throw new HttpStatusError(err.code, err.message);
+        })
         .then(() => {
           const pipeline = redis.pipeline();
           pipeline.del(key);
 
           // removes from indices
-          if (filename) {
+          if (data.filename) {
             pipeline.srem('files-index', data.filename);
             if (data.owner) {
               pipeline.srem(`files-index:${data.owner}`, data.filename);
             }
+          }
+
+          if (data.uploadId) {
+            pipeline.del(`upload-data:${data.uploadId}`);
           }
 
           return pipeline.exec();
