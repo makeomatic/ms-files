@@ -7,8 +7,12 @@ const Files = require('../src');
 const md5 = require('md5');
 const request = require('request-promise');
 
-process.env.DOTENV_FILE_PATH = __dirname + '/.env';
-require('ms-amqp-conf');
+try {
+  process.env.DOTENV_FILE_PATH = __dirname + '/.env';
+  require('ms-amqp-conf');
+} catch (e) {
+  // fails on CI
+}
 
 global.AMQP = {
   connection: {
