@@ -45,7 +45,7 @@ for fn in $TESTS; do
 done
 
 echo "started generating combined coverage"
-docker exec -it tester node ./test/aggregate-report.js
+$COMPOSE -f $DC run --rm tester node ./test/aggregate-report.js
 
 if [[ "$CI" == "true" ]]; then
   echo "uploading coverage report from ./coverage/lcov.info"
