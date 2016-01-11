@@ -55,6 +55,9 @@
     "semantic-release": "^4.3.5",
     "sinon": "^1.17.2"
   },
+  "release": {
+    "verifyConditions": []
+  },
   "config": {
     "commitizen": {
       "path": "./node_modules/cz-conventional-changelog"
