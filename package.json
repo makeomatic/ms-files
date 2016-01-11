@@ -27,11 +27,11 @@
     "ioredis": "^1.14.0",
     "lodash": "^3.10.1",
     "ms-amqp-conf": "^0.2.0",
-    "ms-amqp-transport": "^0.10.0",
+    "ms-amqp-transport": "^0.11.2",
     "ms-files-gce": "^0.1.12",
     "ms-validation": "^1.0.1",
     "mservice": "^1.2.2",
-    "redis-filtered-sort": "^1.1.0"
+    "redis-filtered-sort": "^1.1.1"
   },
   "devDependencies": {
     "babel-cli": "^6.4.0",

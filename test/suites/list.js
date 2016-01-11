@@ -87,6 +87,162 @@ describe('list suite', function suite() {
   });
 
   describe('owner-based list', function testSuite() {
+    const owner = ld.sample(owners, 1)[0];
+
+    it('returns files sorted by their filename, ASC', function test() {
+      return this.amqp.publishAndWait('files.list', {
+        filter: {},
+        owner,
+        order: 'ASC',
+        offset: 30,
+        limit: 10,
+      })
+      .reflect()
+      .then(inspectPromise())
+      .then(data => {
+        assert.ok(data.files);
+        ascSortFilename(data.files);
+        assert.equal(data.cursor, 40);
+        assert.equal(data.page, 4);
+        assert.ok(data.pages);
+
+        data.files.forEach(file => {
+          assert.equal(file.owner, owner);
+        });
+      });
+    });
+
+    it('returns files sorted by their filename, DESC', function test() {
+      return this.amqp.publishAndWait('files.list', {
+        filter: {},
+        owner,
+        order: 'DESC',
+        offset: 30,
+        limit: 10,
+      })
+      .reflect()
+      .then(inspectPromise())
+      .then(data => {
+        assert.ok(data.files);
+        descSortFilename(data.files);
+        assert.equal(data.cursor, 40);
+        assert.equal(data.page, 4);
+        assert.ok(data.pages);
+
+        data.files.forEach(file => {
+          assert.equal(file.owner, owner);
+        });
+      });
+    });
+
+    it('returns files sorted by their startedAt, ASC', function test() {
+      return this.amqp.publishAndWait('files.list', {
+        filter: {},
+        owner,
+        order: 'ASC',
+        offset: 30,
+        limit: 10,
+        criteria: 'startedAt',
+      })
+      .reflect()
+      .then(inspectPromise())
+      .then(data => {
+        assert.ok(data.files);
+        ascSortStartAt(data.files);
+        assert.equal(data.cursor, 40);
+        assert.equal(data.page, 4);
+        assert.ok(data.pages);
+
+        data.files.forEach(file => {
+          assert.equal(file.owner, owner);
+        });
+      });
+    });
+
+    it('returns files sorted by their startedAt, DESC', function test() {
+      return this.amqp.publishAndWait('files.list', {
+        filter: {},
+        owner,
+        order: 'DESC',
+        offset: 30,
+        limit: 10,
+        criteria: 'startedAt',
+      })
+      .reflect()
+      .then(inspectPromise())
+      .then(data => {
+        assert.ok(data.files);
+        descSortStartAt(data.files);
+        assert.equal(data.cursor, 40);
+        assert.equal(data.page, 4);
+        assert.ok(data.pages);
+
+        data.files.forEach(file => {
+          assert.equal(file.owner, owner);
+        });
+      });
+    });
+
+    it('returns files sorted by their filename, filtered by size, ASC', function test() {
+      return this.amqp.publishAndWait('files.list', {
+        filter: {
+          contentLength: {
+            gte: 5,
+          },
+        },
+        owner,
+        order: 'ASC',
+        offset: 30,
+        limit: 10,
+      })
+      .reflect()
+      .then(inspectPromise())
+      .then(data => {
+        assert.ok(data.files);
+        ascSortFilename(data.files);
+        assert.equal(data.cursor, 40);
+        assert.equal(data.page, 4);
+        assert.ok(data.pages);
+
+        data.files.forEach(file => {
+          assert.equal(file.owner, owner);
+          assert.ok(file.contentLength >= 5, 'gte filter failed');
+        });
+      });
+    });
+
+    it('returns files sorted by their filename, filtered by size, DESC', function test() {
+      return this.amqp.publishAndWait('files.list', {
+        filter: {
+          contentLength: {
+            gte: 5,
+          },
+        },
+        owner,
+        order: 'DESC',
+        offset: 30,
+        limit: 10,
+      })
+      .reflect()
+      .then(inspectPromise())
+      .then(data => {
+        assert.ok(data.files);
+        descSortFilename(data.files);
+        assert.equal(data.cursor, 40);
+        assert.equal(data.page, 4);
+        assert.ok(data.pages);
+
+        data.files.forEach(file => {
+          assert.equal(file.owner, owner);
+          assert.ok(file.contentLength >= 5, 'gte filter failed');
+        });
+      });
+    });
+  });
+
+  describe('generic file list', function testSuite() {
+    const owner = ld.sample(owners, 1)[0];
+
     it('returns files sorted by their filename, ASC', function test() {
       return this.amqp.publishAndWait('files.list', {
         filter: {},
@@ -101,6 +257,7 @@ describe('list suite', function suite() {
         ascSortFilename(data.files);
         assert.equal(data.cursor, 40);
         assert.equal(data.page, 4);
+        assert.ok(data.pages);
       });
     });
 
@@ -118,21 +275,98 @@ describe('list suite', function suite() {
         descSortFilename(data.files);
         assert.equal(data.cursor, 40);
         assert.equal(data.page, 4);
+        assert.ok(data.pages);
       });
     });
 
-    it('returns files sorted by their startedAt, ASC');
-    it('returns files sorted by their startedAt, DESC');
-    it('returns files sorted by their filename, filtered by size, ASC');
-    it('returns files sorted by their filename, filtered by size, DESC');
-  });
+    it('returns files sorted by their startedAt, ASC', function test() {
+      return this.amqp.publishAndWait('files.list', {
+        filter: {},
+        order: 'ASC',
+        offset: 30,
+        limit: 10,
+        criteria: 'startedAt',
+      })
+      .reflect()
+      .then(inspectPromise())
+      .then(data => {
+        assert.ok(data.files);
+        ascSortStartAt(data.files);
+        assert.equal(data.cursor, 40);
+        assert.equal(data.page, 4);
+        assert.ok(data.pages);
+      });
+    });
 
-  describe('generic file list', function testSuite() {
-    it('returns files sorted by their filename, ASC');
-    it('returns files sorted by their filename, DESC');
-    it('returns files sorted by their startedAt, ASC');
-    it('returns files sorted by their startedAt, DESC');
-    it('returns files sorted by their filename, filtered by owner, ASC');
-    it('returns files sorted by their filename, filtered by owner, DESC');
+    it('returns files sorted by their startedAt, DESC', function test() {
+      return this.amqp.publishAndWait('files.list', {
+        filter: {},
+        order: 'DESC',
+        offset: 30,
+        limit: 10,
+        criteria: 'startedAt',
+      })
+      .reflect()
+      .then(inspectPromise())
+      .then(data => {
+        assert.ok(data.files);
+        descSortStartAt(data.files);
+        assert.equal(data.cursor, 40);
+        assert.equal(data.page, 4);
+        assert.ok(data.pages);
+      });
+    });
+
+    it('returns files sorted by their filename, filtered by owner, ASC', function test() {
+      return this.amqp.publishAndWait('files.list', {
+        filter: {
+          owner: {
+            eq: owner,
+          },
+        },
+        order: 'ASC',
+        offset: 30,
+        limit: 10,
+      })
+      .reflect()
+      .then(inspectPromise())
+      .then(data => {
+        assert.ok(data.files);
+        ascSortFilename(data.files);
+        assert.equal(data.cursor, 40);
+        assert.equal(data.page, 4);
+        assert.ok(data.pages);
+
+        data.files.forEach(file => {
+          assert.equal(file.owner, owner);
+        });
+      });
+    });
+
+    it('returns files sorted by their filename, filtered by owner, DESC', function test() {
+      return this.amqp.publishAndWait('files.list', {
+        filter: {
+          owner: {
+            eq: owner,
+          },
+        },
+        order: 'DESC',
+        offset: 30,
+        limit: 10,
+      })
+      .reflect()
+      .then(inspectPromise())
+      .then(data => {
+        assert.ok(data.files);
+        descSortFilename(data.files);
+        assert.equal(data.cursor, 40);
+        assert.equal(data.page, 4);
+        assert.ok(data.pages);
+
+        data.files.forEach(file => {
+          assert.equal(file.owner, owner);
+        });
+      });
+    });
   });
 });

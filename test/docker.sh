@@ -33,7 +33,7 @@ $COMPOSE -f $DC up -d
 
 if [[ "$SKIP_REBUILD" != "1" ]]; then
   echo "rebuilding native dependencies..."
-  $COMPOSE -f $DC run --rm tester npm rebuild
+  docker exec -it tester npm rebuild
 fi
 
 echo "cleaning old coverage"
@@ -41,11 +41,11 @@ rm -rf ./coverage
 
 echo "running tests"
 for fn in $TESTS; do
-  $COMPOSE -f $DC run --rm tester /bin/sh -c "$NODE $COVER --dir ./coverage/${fn##*/} $MOCHA -- $fn" || exit 1
+  docker exec -it tester /bin/sh -c "$NODE $COVER --dir ./coverage/${fn##*/} $MOCHA -- $fn" || exit 1
 done
 
 echo "started generating combined coverage"
-$COMPOSE -f $DC run --rm tester node ./test/aggregate-report.js
+docker exec -it tester node ./test/aggregate-report.js
 
 if [[ "$CI" == "true" ]]; then
   echo "uploading coverage report from ./coverage/lcov.info"
