@@ -54,8 +54,7 @@ tester:
     - ${PWD}:/src
   container_name: tester
   environment:
-    BABEL_CACHE_PATH: "/src/.babel"
     NODE_ENV: "development"
     SKIP_REBUILD: ${SKIP_REBUILD}
     DEBUG: ${DEBUG}
-  command: 'tail -f /dev/null'
+  command: true

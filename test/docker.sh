@@ -1,7 +1,7 @@
 #!/bin/bash
 
 export NODE_ENV=development
-BIN=./node_modules/.bin
+BIN=node_modules/.bin
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 DC="$DIR/docker-compose.yml"
 PATH=$PATH:$DIR/.bin/
@@ -33,7 +33,7 @@ $COMPOSE -f $DC up -d
 
 if [[ "$SKIP_REBUILD" != "1" ]]; then
   echo "rebuilding native dependencies..."
-  docker exec -it tester npm rebuild
+  $COMPOSE -f $DC run --rm tester npm rebuild
 fi
 
 echo "cleaning old coverage"
@@ -41,7 +41,7 @@ rm -rf ./coverage
 
 echo "running tests"
 for fn in $TESTS; do
-  docker exec -it tester /bin/sh -c "$NODE $COVER --dir ./coverage/${fn##*/} $MOCHA -- $fn" || exit 1
+  $COMPOSE -f $DC run --rm tester /bin/sh -c "$NODE $COVER --dir ./coverage/${fn##*/} $MOCHA -- $fn" || exit 1
 done
 
 echo "started generating combined coverage"
