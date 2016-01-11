@@ -1,6 +1,5 @@
 {
   "name": "ms-files",
-  "version": "0.5.2",
   "description": "Core of microservice",
   "main": "./lib/index.js",
   "scripts": {
@@ -8,11 +7,12 @@
     "prepublish": "npm run compile",
     "test": "./test/docker.sh",
     "start": "node ./bin/mservice.js | ./node_modules/.bin/bunyan -o short",
-    "lint": "./node_modules/.bin/eslint ./src"
+    "lint": "./node_modules/.bin/eslint ./src",
+    "semantic-release": "semantic-release pre && npm publish && semantic-release post"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/makeomatic/ms-files.git"
+    "url": "https://github.com/makeomatic/ms-files.git"
   },
   "author": "Vitaly Aminev <v@makeomatic.ru>",
   "license": "MIT",
@@ -51,6 +51,7 @@
     "md5": "^2.0.0",
     "mocha": "^2.3.3",
     "request-promise": "^1.0.2",
-    "sinon": "^1.17.2"
+    "sinon": "^1.17.2",
+    "semantic-release": "^4.3.5"
   }
 }
