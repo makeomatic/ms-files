@@ -14,7 +14,7 @@ function resolveMessage(err, data, actionName, actions) {
   }
 
   const { name } = err;
-  if (name === 'ValidationError' || actionName === 'process' && name !== 'HttpStatusError') {
+  if (actionName !== 'process' || name === 'ValidationError' || name === 'HttpStatusError') {
     actions.reject();
     return Promise.reject(err);
   }
