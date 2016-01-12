@@ -30,7 +30,7 @@
     "ms-amqp-transport": "^0.11.2",
     "ms-files-gce": "^0.1.12",
     "ms-validation": "^1.0.1",
-    "mservice": "^1.2.2",
+    "mservice": "^1.2.3",
     "redis-filtered-sort": "^1.1.1"
   },
   "devDependencies": {
@@ -51,7 +51,7 @@
     "json": "^9.0.3",
     "md5": "^2.0.0",
     "mocha": "^2.3.3",
-    "request-promise": "^1.0.2",
+    "request-promise": "^2.0.0",
     "semantic-release": "^4.3.5",
     "sinon": "^1.17.2"
   },

@@ -13,13 +13,14 @@ function resolveMessage(err, data, actionName, actions) {
     return data;
   }
 
-  if (!(actionName === 'process' && err.name === 'HttpStatusError')) {
+  const { name } = err;
+  if (name === 'ValidationError' || actionName === 'process' && name !== 'HttpStatusError') {
     actions.reject();
-    throw err;
+    return Promise.reject(err);
   }
 
   actions.retry();
-  throw err;
+  return Promise.reject(err);
 }
 
 /**
