@@ -36,3 +36,15 @@ src
 .git
 Dockerfile*
 .babel
+
+# this is all that's still pretty useless
+.npmrc
+.semaphore-cache
+Dockerfile*
+.istanbul.yml
+docker-release.sh
+.editorconfig
+.eslintignore
+.eslintrc
+.gitignore
+.npmignore
