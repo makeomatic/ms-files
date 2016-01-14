@@ -49,6 +49,7 @@
     "isparta": "^4.0.0",
     "istanbul": "^0.4.2",
     "json": "^9.0.3",
+    "latest-version-cli": "^1.0.0",
     "md5": "^2.0.0",
     "mocha": "^2.3.3",
     "request-promise": "^2.0.0",

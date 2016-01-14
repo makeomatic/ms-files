@@ -1,7 +1,7 @@
 SHELL := /bin/bash
 THIS_FILE := $(lastword $(MAKEFILE_LIST))
 PKG_NAME = $(shell cat package.json | ./node_modules/.bin/json name)
-PKG_VERSION = $(shell cat package.json | ./node_modules/.bin/json version)
+PKG_VERSION = $(shell ./node_modules/.bin/latest-version $(PKG_NAME))
 NPM_PROXY = http://$(shell docker-machine ip dev):4873
 DOCKER_USER := makeomatic
 DIST := $(DOCKER_USER)/$(PKG_NAME)
