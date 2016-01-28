@@ -1,5 +1,5 @@
 redis_1:
-  image: makeomatic/alpine-redis
+  image: redis:3.0.6-alpine
   container_name: redis_1
   hostname: redis_1
   expose:
@@ -12,14 +12,14 @@ redis_2:
     - "16379"
   container_name: redis_2
   hostname: redis_2
-  image: makeomatic/alpine-redis
+  image: redis:3.0.6-alpine
 
 redis_3:
   expose:
     - "6379"
     - "16379"
   container_name: redis_3
-  image: makeomatic/alpine-redis
+  image: redis:3.0.6-alpine
   hostname: redis_3
 
 rabbitmq:
@@ -28,7 +28,7 @@ rabbitmq:
     - "5672"
     - "15672"
     - "25672"
-  image: rabbitmq
+  image: makeomatic/alpine-rabbitmq:3.5.7
   container_name: rabbitmq
   hostname: rabbitmq
 
