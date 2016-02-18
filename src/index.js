@@ -8,6 +8,7 @@ const moment = require('moment');
 const { STATUS_UPLOADED } = require('./constant.js');
 const LockManager = require('dlock');
 const postProcess = require('./utils/process.js');
+const RedisCluster = require('ioredis').Cluster;
 
 /**
  * Message resolver
@@ -103,10 +104,12 @@ class Files extends Mservice {
 
       this.log.debug('enabling lock manager');
       this.dlock = new LockManager({
-        client: redis,
-        pubsub: redis,
-        log: this.log,
         ...config.lockManager,
+        // main connection
+        client: redis,
+        // second connection
+        pubsub: new RedisCluster(config.redis.hosts, config.redis.options),
+        log: this.log,
       });
     });
   }
@@ -145,6 +148,17 @@ class Files extends Mservice {
       .then(() => {
         this.log.info('completed files post-processing');
       });
+  }
+
+  /**
+   * Overload close and make sure pubsub is stopped
+   * @return {Promise}
+   */
+  close() {
+    return Promise.join(
+      super.close(),
+      this.dlock.pubsub.disconnect()
+    );
   }
 
   /**

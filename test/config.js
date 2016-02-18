@@ -118,7 +118,7 @@ function startService() {
 function clearService() {
   const nodes = this.files._redis.masterNodes;
   return Promise.map(Object.keys(nodes), nodeKey => {
-    return nodes[nodeKey].flushdb();
+    return nodes[nodeKey].flushdb().reflect();
   })
   .finally(() => {
     return Promise.fromNode(next => this.files.provider._bucket.deleteFiles({ force: true }, next));
