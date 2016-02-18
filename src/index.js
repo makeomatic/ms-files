@@ -100,6 +100,14 @@ class Files extends Mservice {
     // init scripts
     this.on('plugin:connect:redisCluster', (redis) => {
       fsort.attach(redis, 'fsort');
+
+      this.log.debug('enabling lock manager');
+      this.dlock = new LockManager({
+        client: redis,
+        pubsub: redis,
+        log: this.log,
+        ...this.config.lockManager,
+      });
     });
   }
 
@@ -140,33 +148,12 @@ class Files extends Mservice {
   }
 
   /**
-   * Overrides disconnector
-   * @return {[type]} [description]
-   */
-  close() {
-    this.log.debug('closing connections');
-    return Promise.join(
-      super.close(),
-      // if it was not initialized we will return noop
-      ld.get(this, 'dlock.pubsub.quit', ld.noop)()
-    );
-  }
-
-  /**
    * Overload connect and make sure we have access to bucket
    * @return {Promise}
    */
   connect() {
     this.log.debug('started connecting');
-    return Promise
-      .join(super.connect(), this.provider.connect())
-      .then(() => {
-        this.log.debug('enabling lock manager');
-        this.dlock = new LockManager({
-          client: this.redis,
-          ...this.config.lockManager,
-        });
-      });
+    return Promise.join(super.connect(), this.provider.connect());
   }
 
 }
