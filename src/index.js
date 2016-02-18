@@ -106,7 +106,7 @@ class Files extends Mservice {
         client: redis,
         pubsub: redis,
         log: this.log,
-        ...this.config.lockManager,
+        ...config.lockManager,
       });
     });
   }
