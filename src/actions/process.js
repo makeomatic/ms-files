@@ -1,5 +1,6 @@
 const { HttpStatusError } = require('common-errors');
 const { STATUS_PROCESSED } = require('../constant.js');
+const postProcess = require('../utils/process.js');
 
 /**
  * Post process file
@@ -8,7 +9,7 @@ const { STATUS_PROCESSED } = require('../constant.js');
  * @return {Promise}
  */
 module.exports = function postProcessFile(opts) {
-  const { redis, provider, _config: config } = this;
+  const { redis } = this;
   const { filename, username } = opts;
   const key = `files-data:${filename}`;
 
@@ -29,14 +30,10 @@ module.exports = function postProcessFile(opts) {
         throw new HttpStatusError(403, 'file does not belong to the provided user');
       }
 
-      // TODO: ADD LOCKING OF FILES FOR PROCESSING
       if (data.status === STATUS_PROCESSED) {
         throw new HttpStatusError(412, 'file has already been processed');
       }
 
-      return config.process(provider, { key, data, redis })
-        .tap(() => {
-          return redis.hset(key, 'status', STATUS_PROCESSED);
-        });
+      return postProcess.call(this, key, data);
     });
 };

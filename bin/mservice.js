@@ -18,6 +18,7 @@ var service = new Service(configuration);
 service.connect()
   .then(function serviceUp() {
     service.log.info('Started service');
+    return service.postProcess();
   })
   .catch(function serviceCrashed(err) {
     service.log.fatal('Failed to start service', err);

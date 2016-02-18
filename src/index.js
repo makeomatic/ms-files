@@ -3,6 +3,11 @@ const Mservice = require('mservice');
 const ld = require('lodash');
 const path = require('path');
 const fsort = require('redis-filtered-sort');
+const listFiles = require('./actions/list.js');
+const moment = require('moment');
+const { STATUS_UPLOADED } = require('./constant.js');
+const LockManager = require('dlock');
+const postProcess = require('./utils/process.js');
 
 /**
  * Message resolver
@@ -55,6 +60,15 @@ class Files extends Mservice {
       // add default onComplete handelr
       onComplete: resolveMessage,
     },
+    lockManager: {
+      lockPrefix: 'dlock!',
+      pubsubChannel: '{ms-files}:dlock',
+      lock: {
+        timeout: 60000,
+        retries: 0,
+        delay: 100,
+      },
+    },
     // storage options
     redis: {
       options: {
@@ -90,12 +104,69 @@ class Files extends Mservice {
   }
 
   /**
+   * Invoke this method to start post-processing all pending files
+   * @return {Promise}
+   */
+  postProcess(offset = 0, uploadedAt) {
+    const filter = {
+      status: {
+        eq: STATUS_UPLOADED,
+      },
+      uploadedAt: {
+        lte: uploadedAt || moment().subtract(1, 'hour').valueOf(),
+      },
+    };
+
+    return listFiles
+      .call(this, { filter, limit: 20, offset })
+      .then(({ files, cursor, page, pages }) => {
+        return Promise.mapSeries(files, file => {
+          // make sure to call reflect so that we do not interrupt the procedure
+          return postProcess
+            .call(this, file.filename, file)
+            .reflect();
+        })
+        .then(() => {
+          if (page < pages) {
+            return this.postProcess(cursor, filter.uploadedAt.lte);
+          }
+
+          return null;
+        });
+      })
+      .then(() => {
+        this.log.info('completed files post-processing');
+      });
+  }
+
+  /**
+   * Overrides disconnector
+   * @return {[type]} [description]
+   */
+  close() {
+    this.log.debug('closing connections');
+    return Promise.join(
+      super.close(),
+      // if it was not initialized we will return noop
+      ld.get(this, 'dlock.pubsub.quit', ld.noop)()
+    );
+  }
+
+  /**
    * Overload connect and make sure we have access to bucket
    * @return {Promise}
    */
   connect() {
     this.log.debug('started connecting');
-    return Promise.join(super.connect(), this.provider.connect());
+    return Promise
+      .join(super.connect(), this.provider.connect())
+      .then(() => {
+        this.log.debug('enabling lock manager');
+        this.dlock = new LockManager({
+          client: this.redis,
+          ...this.config.lockManager,
+        });
+      });
   }
 
 }
