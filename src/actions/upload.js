@@ -1,6 +1,6 @@
 const uuid = require('node-uuid');
 const url = require('url');
-const { STATUS_PENDING } = require('../constant.js');
+const { STATUS_PENDING, UPLOAD_DATA } = require('../constant.js');
 
 /**
  * Initiates upload
@@ -49,8 +49,8 @@ module.exports = function initFileUpload(opts) {
     // in case the upload is never finished
     return redis
       .pipeline()
-      .hmset(`upload-data:${uploadId}`, fileData)
-      .expire(`upload-data:${uploadId}`, 86400)
+      .hmset(`${UPLOAD_DATA}:${uploadId}`, fileData)
+      .expire(`${UPLOAD_DATA}:${uploadId}`, 86400)
       .exec()
       .return(fileData);
   });

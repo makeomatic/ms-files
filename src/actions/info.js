@@ -1,4 +1,5 @@
 const { HttpStatusError } = require('common-errors');
+const { FILES_DATA, UPLOAD_DATA } = require('../constant.js');
 
 /**
  * File information
@@ -9,7 +10,7 @@ const { HttpStatusError } = require('common-errors');
 module.exports = function getFileInfo(opts) {
   const { redis } = this;
   const { filename, username, uploadId } = opts;
-  const key = filename ? `files-data:${filename}` : `upload-data:${uploadId}`;
+  const key = filename ? `${FILES_DATA}:${filename}` : `${UPLOAD_DATA}:${uploadId}`;
 
   return redis
     .pipeline()

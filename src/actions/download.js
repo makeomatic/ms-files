@@ -1,6 +1,6 @@
 const Promise = require('bluebird');
 const { HttpStatusError } = require('common-errors');
-const { STATUS_PROCESSED } = require('../constant.js');
+const { STATUS_PROCESSED, FILES_DATA } = require('../constant.js');
 
 /**
  * Get download url
@@ -11,7 +11,7 @@ const { STATUS_PROCESSED } = require('../constant.js');
 module.exports = function getDownloadURL(opts) {
   const { redis, provider } = this;
   const { filename, username } = opts;
-  const key = `files-data:${filename}`;
+  const key = `${FILES_DATA}:${filename}`;
 
   return redis
     .pipeline()

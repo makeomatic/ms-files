@@ -1,5 +1,5 @@
 const { HttpStatusError } = require('common-errors');
-const { STATUS_PROCESSED } = require('../constant.js');
+const { STATUS_PROCESSED, FILES_DATA } = require('../constant.js');
 const postProcess = require('../utils/process.js');
 
 /**
@@ -11,7 +11,7 @@ const postProcess = require('../utils/process.js');
 module.exports = function postProcessFile(opts) {
   const { redis } = this;
   const { filename, username } = opts;
-  const key = `files-data:${filename}`;
+  const key = `${FILES_DATA}:${filename}`;
 
   return redis
     .pipeline()

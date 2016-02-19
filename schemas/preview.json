@@ -1,0 +1,30 @@
+{
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "size": {
+      "type": "object",
+      "additionalProperties": false,
+      "minProperties": 2,
+      "properties": {
+        "width": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1000
+        },
+        "height": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1000
+        }
+      }
+    },
+    "format": {
+      "type": "string",
+      "enum": ["jpeg","png","webp"]
+    }
+  }
+}

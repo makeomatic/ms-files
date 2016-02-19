@@ -1,4 +1,5 @@
 const { HttpStatusError } = require('common-errors');
+const { FILES_INDEX, FILES_DATA, UPLOAD_DATA } = require('../constant.js');
 
 /**
  * Initiates upload
@@ -10,7 +11,7 @@ const { HttpStatusError } = require('common-errors');
 module.exports = function removeFile(opts) {
   const { filename, username, uploadId } = opts;
   const { redis, provider } = this;
-  const key = filename ? `files-data:${filename}` : `upload-data:${uploadId}`;
+  const key = filename ? `${FILES_DATA}:${filename}` : `${UPLOAD_DATA}:${uploadId}`;
 
   return redis
     .pipeline()
@@ -40,14 +41,14 @@ module.exports = function removeFile(opts) {
 
           // removes from indices
           if (data.filename) {
-            pipeline.srem('files-index', data.filename);
+            pipeline.srem(FILES_INDEX, data.filename);
             if (data.owner) {
-              pipeline.srem(`files-index:${data.owner}`, data.filename);
+              pipeline.srem(`${FILES_INDEX}:${data.owner}`, data.filename);
             }
           }
 
           if (data.uploadId) {
-            pipeline.del(`upload-data:${data.uploadId}`);
+            pipeline.del(`${UPLOAD_DATA}:${data.uploadId}`);
           }
 
           return pipeline.exec();

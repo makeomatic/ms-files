@@ -1,5 +1,11 @@
 const { HttpStatusError } = require('common-errors');
-const { STATUS_UPLOADED, STATUS_PENDING } = require('../constant.js');
+const {
+  STATUS_UPLOADED,
+  STATUS_PENDING,
+  UPLOAD_DATA,
+  FILES_INDEX,
+  FILES_DATA,
+} = require('../constant.js');
 
 /**
  * Finish upload
@@ -10,7 +16,7 @@ const { STATUS_UPLOADED, STATUS_PENDING } = require('../constant.js');
 module.exports = function completeFileUpload(opts) {
   const { redis, provider, _config: config, amqp } = this;
   const { id, username, skipProcessing } = opts;
-  const key = `upload-data:${id}`;
+  const key = `${UPLOAD_DATA}:${id}`;
 
   return redis
     .pipeline()
@@ -44,12 +50,12 @@ module.exports = function completeFileUpload(opts) {
           const pipeline = redis.pipeline();
           const fileData = { ...data, uploadedAt: Date.now(), status: STATUS_UPLOADED };
 
-          pipeline.sadd('files-index', filename);
-          pipeline.hmset(`files-data:${filename}`, fileData);
+          pipeline.sadd(FILES_INDEX, filename);
+          pipeline.hmset(`${FILES_DATA}:${filename}`, fileData);
           pipeline.del(key);
 
           if (username || data.owner) {
-            pipeline.sadd(`files-index:${username || data.owner}`, filename);
+            pipeline.sadd(`${FILES_INDEX}:${username || data.owner}`, filename);
           }
 
           return pipeline.exec().return(fileData);
