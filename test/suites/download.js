@@ -8,7 +8,7 @@ describe('download suite', function suite() {
   after(global.clearService);
 
   before('upload file', function test() {
-    return this.amqp.publishAndWait('files.upload', UPLOAD_MESSAGE)
+    return this.amqp.publishAndWait('files.upload', UPLOAD_MESSAGE())
       .tap(uploadToGoogle)
       .then(data => {
         return this.amqp.publishAndWait('files.finish', {

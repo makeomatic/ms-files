@@ -1,6 +1,8 @@
+const Promise = require('bluebird');
 const { HttpStatusError } = require('common-errors');
 const { STATUS_PROCESSED, FILES_DATA } = require('../constant.js');
 const postProcess = require('../utils/process.js');
+const fetchData = require('../utils/fetchData.js');
 
 /**
  * Post process file
@@ -9,23 +11,13 @@ const postProcess = require('../utils/process.js');
  * @return {Promise}
  */
 module.exports = function postProcessFile(opts) {
-  const { redis } = this;
   const { filename, username } = opts;
   const key = `${FILES_DATA}:${filename}`;
 
-  return redis
-    .pipeline()
-    .exists(key)
-    .hgetall(key)
-    .exec()
-    .spread((fileExistsResponse, dataResponse) => {
-      const fileExists = fileExistsResponse[1];
-      const data = dataResponse[1];
-
-      if (!fileExists) {
-        throw new HttpStatusError(404, 'could not find associated upload data');
-      }
-
+  return Promise
+    .bind(this, key)
+    .then(fetchData)
+    .then(data => {
       if (username && data.owner !== username) {
         throw new HttpStatusError(403, 'file does not belong to the provided user');
       }

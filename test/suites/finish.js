@@ -9,12 +9,12 @@ describe('finish upload suite', function suite() {
 
   const baseMessage = {
     skipProcessing: true,
-    username: UPLOAD_MESSAGE.id,
+    username: UPLOAD_MESSAGE().id,
     id: 'bad-upload-id',
   };
 
   function prepareUpload() {
-    return this.amqp.publishAndWait('files.upload', UPLOAD_MESSAGE);
+    return this.amqp.publishAndWait('files.upload', UPLOAD_MESSAGE());
   }
 
   before('prepare upload', function prepare() {

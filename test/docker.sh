@@ -17,7 +17,7 @@ fi
 
 if ! [ -x "$COMPOSE" ]; then
   mkdir $DIR/.bin
-  curl -L https://github.com/docker/compose/releases/download/1.5.2/docker-compose-`uname -s`-`uname -m` > $DIR/.bin/docker-compose
+  curl -L https://github.com/docker/compose/releases/download/1.6.0/docker-compose-`uname -s`-`uname -m` > $DIR/.bin/docker-compose
   chmod +x $DIR/.bin/docker-compose
   COMPOSE=$(which docker-compose)
 fi
@@ -28,7 +28,7 @@ function finish {
 }
 trap finish EXIT
 
-export IMAGE=makeomatic/alpine-node:$NODE_VER
+export IMAGE=makeomatic/alpine-node:$NODE_VER-vips
 $COMPOSE -f $DC up -d
 
 if [[ "$SKIP_REBUILD" != "1" ]]; then

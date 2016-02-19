@@ -5,4 +5,5 @@ module.exports = {
   FILES_INDEX: 'files-data',
   FILES_DATA: 'files-data',
   UPLOAD_DATA: 'upload-data',
+  PREVIEW_PREFIX: 'preview:',
 };

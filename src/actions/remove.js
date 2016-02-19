@@ -1,5 +1,7 @@
+const Promise = require('bluebird');
 const { HttpStatusError } = require('common-errors');
 const { FILES_INDEX, FILES_DATA, UPLOAD_DATA } = require('../constant.js');
+const fetchData = require('../utils/fetchData.js');
 
 /**
  * Initiates upload
@@ -13,19 +15,10 @@ module.exports = function removeFile(opts) {
   const { redis, provider } = this;
   const key = filename ? `${FILES_DATA}:${filename}` : `${UPLOAD_DATA}:${uploadId}`;
 
-  return redis
-    .pipeline()
-    .exists(key)
-    .hgetall(key)
-    .exec()
-    .spread((fileExistsResponse, dataResponse) => {
-      const fileExists = fileExistsResponse[1];
-      const data = dataResponse[1];
-
-      if (!fileExists) {
-        throw new HttpStatusError(404, 'could not find associated upload data ' + key);
-      }
-
+  return Promise
+    .bind(this, key)
+    .then(fetchData)
+    .then(data => {
       if (username && data.owner !== username) {
         throw new HttpStatusError(403, 'upload does not belong to the provided user');
       }

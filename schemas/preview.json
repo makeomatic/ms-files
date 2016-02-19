@@ -1,5 +1,6 @@
 {
   "type": "object",
+  "required": ["id", "size", "format"],
   "properties": {
     "id": {
       "type": "string",
@@ -8,7 +9,7 @@
     "size": {
       "type": "object",
       "additionalProperties": false,
-      "minProperties": 2,
+      "required": ["width", "height"],
       "properties": {
         "width": {
           "type": "integer",

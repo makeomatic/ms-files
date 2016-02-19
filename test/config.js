@@ -39,6 +39,8 @@ global.REDIS = {
 };
 
 const fileData = fs.readFileSync(path.resolve(__dirname, './fixtures/zomg.png'));
+const modelData = fs.readFileSync(path.resolve(__dirname, './fixtures/sample-model.3d'));
+
 global.SAMPLE_FILE = {
   contents: fileData,
   md5: md5(fileData),
@@ -47,20 +49,28 @@ global.SAMPLE_FILE = {
   name: 'zomg.png',
 };
 
-global.UPLOAD_MESSAGE = {
-  id: 'test@owner.com',
-  contentType: global.SAMPLE_FILE.contentType,
-  contentLength: global.SAMPLE_FILE.contentLength,
-  name: global.SAMPLE_FILE.name,
-  md5Hash: global.SAMPLE_FILE.md5,
+global.SAMPLE_MODEL = {
+  contents: modelData,
+  md5: md5(fileData),
+  contentLength: modelData.length,
+  contentType: 'application/cappasity-model',
+  name: 'sample-model.3d',
 };
 
-global.uploadToGoogle = function completeUpload(data) {
+global.UPLOAD_MESSAGE = (file = global.SAMPLE_FILE) => ({
+  id: 'test@owner.com',
+  contentType: file.contentType,
+  contentLength: file.contentLength,
+  name: file.name,
+  md5Hash: file.md5,
+});
+
+global.uploadToGoogle = function completeUpload(data, file = global.SAMPLE_FILE) {
   return request.put({
     url: data.location,
-    body: global.SAMPLE_FILE.contents,
+    body: file.contents,
     headers: {
-      'content-length': global.SAMPLE_FILE.contentLength,
+      'content-length': file.contentLength,
     },
   });
 };

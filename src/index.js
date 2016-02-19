@@ -82,6 +82,8 @@ class Files extends Mservice {
       name: 'gce',
       // provide config options
       options: {},
+      // set to true when using as a public name
+      cname: false,
     },
     // function that is used in post-processing of uploaded files
     process: function noop() {
@@ -97,6 +99,12 @@ class Files extends Mservice {
     const Provider = require(`ms-files-${config.transport.name}`);
     config.transport.options.logger = this.log;
     this.provider = new Provider(config.transport.options);
+
+    if (config.transport.cname) {
+      config.transport.cname = config.transport.options.bucket.name;
+    } else if (config.transport.name === 'gce') {
+      config.transport.cname = `storage.googleapis.com/${config.transport.options.bucket.name}`;
+    }
 
     // init scripts
     this.on('plugin:connect:redisCluster', (redis) => {

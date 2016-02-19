@@ -8,7 +8,7 @@ describe('info suite', function suite() {
   after(global.clearService);
 
   before('upload file', function test() {
-    return this.amqp.publishAndWait('files.upload', UPLOAD_MESSAGE)
+    return this.amqp.publishAndWait('files.upload', UPLOAD_MESSAGE())
       .then(result => {
         this.data = result;
       });
