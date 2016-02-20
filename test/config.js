@@ -51,7 +51,7 @@ global.SAMPLE_FILE = {
 
 global.SAMPLE_MODEL = {
   contents: modelData,
-  md5: md5(fileData),
+  md5: md5(modelData),
   contentLength: modelData.length,
   contentType: 'application/cappasity-model',
   name: 'sample-model.3d',
