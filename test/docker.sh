@@ -28,7 +28,7 @@ function finish {
 }
 trap finish EXIT
 
-export IMAGE=makeomatic/alpine-node:$NODE_VER-vips
+export IMAGE=makeomatic/alpine-node:$NODE_VER
 $COMPOSE -f $DC up -d
 
 if [[ "$SKIP_REBUILD" != "1" ]]; then
