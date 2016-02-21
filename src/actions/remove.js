@@ -1,6 +1,6 @@
 const Promise = require('bluebird');
 const { HttpStatusError } = require('common-errors');
-const { FILES_INDEX, FILES_DATA, UPLOAD_DATA } = require('../constant.js');
+const { FILES_INDEX, FILES_DATA, UPLOAD_DATA, FILES_PUBLIC_FIELD } = require('../constant.js');
 const fetchData = require('../utils/fetchData.js');
 
 /**
@@ -37,6 +37,9 @@ module.exports = function removeFile(opts) {
             pipeline.srem(FILES_INDEX, data.filename);
             if (data.owner) {
               pipeline.srem(`${FILES_INDEX}:${data.owner}`, data.filename);
+              if (data[FILES_PUBLIC_FIELD]) {
+                pipeline.srem(`${FILES_INDEX}:${data.owner}:pub`, data.filename);
+              }
             }
           }
 

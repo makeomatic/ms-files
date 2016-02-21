@@ -21,6 +21,9 @@
     "owner": {
       "type": "string"
     },
+    "public": {
+      "type": "boolean"
+    },
     "filter": {
       "type": "object",
       "properties": {
@@ -62,6 +65,9 @@
                   },
                   "^(gte|lte)$": {
                     "type": "number"
+                  },
+                  "^(exists|isempty)$": {
+                    "type": "boolean"
                   }
                 }
               }

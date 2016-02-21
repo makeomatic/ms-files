@@ -1,6 +1,6 @@
 const Promise = require('bluebird');
 const fsort = require('redis-filtered-sort');
-const { FILES_DATA, FILES_INDEX } = require('../constant.js');
+const { FILES_DATA, FILES_INDEX, FILES_INDEX_PUBLIC } = require('../constant.js');
 
 /**
  * List files
@@ -8,7 +8,7 @@ const { FILES_DATA, FILES_INDEX } = require('../constant.js');
  */
 module.exports = function postProcessFile(opts) {
   const { redis } = this;
-  const { owner, filter } = opts;
+  const { owner, filter, public: isPublic } = opts;
   const criteria = opts.criteria;
   const strFilter = typeof filter === 'string' ? filter : fsort.filter(filter || {});
   const order = opts.order || 'ASC';
@@ -16,9 +16,15 @@ module.exports = function postProcessFile(opts) {
   const limit = opts.limit || 10;
 
   // choose which set to use
-  let filesIndex = FILES_INDEX;
-  if (owner) {
-    filesIndex = `${filesIndex}:${owner}`;
+  let filesIndex;
+  if (isPublic && owner) {
+    filesIndex = `${FILES_INDEX}:${owner}:pub`;
+  } else if (owner) {
+    filesIndex = `${FILES_INDEX}:${owner}`;
+  } else if (isPublic) {
+    filesIndex = FILES_INDEX_PUBLIC;
+  } else {
+    filesIndex = FILES_INDEX;
   }
 
   return redis

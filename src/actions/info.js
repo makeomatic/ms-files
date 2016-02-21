@@ -1,7 +1,7 @@
 const Promise = require('bluebird');
-const { HttpStatusError } = require('common-errors');
 const { FILES_DATA, UPLOAD_DATA } = require('../constant.js');
 const fetchData = require('../utils/fetchData.js');
+const hasAccess = require('../utils/hasAccess.js');
 
 /**
  * File information
@@ -16,11 +16,5 @@ module.exports = function getFileInfo(opts) {
   return Promise
     .bind(this, key)
     .then(fetchData)
-    .then(data => {
-      if (username && data.owner !== username) {
-        throw new HttpStatusError(403, 'upload does not belong to the provided user');
-      }
-
-      return data;
-    });
+    .then(hasAccess(username));
 };

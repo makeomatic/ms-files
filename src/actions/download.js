@@ -2,6 +2,7 @@ const Promise = require('bluebird');
 const { HttpStatusError } = require('common-errors');
 const { STATUS_PROCESSED, FILES_DATA } = require('../constant.js');
 const fetchData = require('../utils/fetchData.js');
+const hasAccess = require('../utils/hasAccess.js');
 
 /**
  * Get download url
@@ -17,11 +18,8 @@ module.exports = function getDownloadURL(opts) {
   return Promise
     .bind(this, key)
     .then(fetchData)
+    .then(hasAccess(username))
     .then(data => {
-      if (username && data.owner !== username) {
-        throw new HttpStatusError(403, 'upload does not belong to the provided user');
-      }
-
       if (username && data.status !== STATUS_PROCESSED) {
         throw new HttpStatusError(412, 'your upload has not been processed yet');
       }

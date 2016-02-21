@@ -1,5 +1,6 @@
 const Promise = require('bluebird');
 const fetchData = require('../utils/fetchData.js');
+const hasAccess = require('../utils/hasAccess.js');
 const { HttpStatusError } = require('common-errors');
 const {
   STATUS_UPLOADED,
@@ -24,18 +25,16 @@ module.exports = function completeFileUpload(opts) {
   return Promise
     .bind(this, key)
     .then(fetchData)
+    .then(hasAccess(username))
     .then(data => {
-      if (username && data.owner !== username) {
-        throw new HttpStatusError(403, 'upload does not belong to the provided user');
-      }
-
       if (data.status !== STATUS_PENDING) {
         throw new HttpStatusError(412, 'upload has already been marked as finished');
       }
 
       const { filename } = data;
 
-      return provider.exists(filename)
+      return provider
+        .exists(filename)
         .then(fileExists => {
           if (!fileExists) {
             throw new HttpStatusError(405, 'provider reports that upload was not finished yet');
