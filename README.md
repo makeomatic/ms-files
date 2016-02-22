@@ -16,3 +16,4 @@ Handles metadata processing, as well as various post-processing of files
 3. Complete file upload for a given user
 4. Send completed file upload to a post-processing queue
 5. Cleanup after abrupt file uploads
+6. Provides file access control
