@@ -18,17 +18,17 @@ describe('list suite', function suite() {
 
   function createFakeFile() {
     const contents = faker.commerce.productName();
-    const owner = ld.sample(owners, 1)[0];
+    const owner = ld.sample(owners);
 
     return {
       filename: [owner, uuid.v4()].join('/'),
       uploadId: uuid.v4(),
-      status: ld.sample(statusValues, 1)[0],
+      status: ld.sample(statusValues),
       location: faker.internet.url(),
       startedAt: faker.date.past().getTime(),
       humanName: contents,
       md5Hash: md5(contents),
-      contentType: ld.sample(contentTypes, 1)[0],
+      contentType: ld.sample(contentTypes),
       contentLength: Buffer.byteLength(contents),
       owner,
     };
@@ -39,11 +39,19 @@ describe('list suite', function suite() {
   }
 
   function insertFile(file) {
-    return this.files.redis.pipeline()
+    const pipeline = this.files.redis.pipeline()
       .sadd('files-index', file.filename)
-      .sadd(`files-index:${file.owner}`, file.filename)
-      .hmset(`files-data:${file.filename}`, file)
-      .exec();
+      .sadd(`files-index:${file.owner}`, file.filename);
+
+    if (ld.sample([0, 1]) === 1) {
+      file.public = 1;
+      pipeline.sadd('files-index-pub', file.filename);
+      pipeline.sadd(`files-index:${file.owner}:pub`, file.filename);
+    }
+
+    pipeline.hmset(`files-data:${file.filename}`, file);
+
+    return pipeline.exec();
   }
 
   function alphanumSort(direction, field) {
@@ -87,7 +95,7 @@ describe('list suite', function suite() {
   });
 
   describe('owner-based list', function testSuite() {
-    const owner = ld.sample(owners, 1)[0];
+    const owner = ld.sample(owners);
 
     it('returns files sorted by their filename, ASC', function test() {
       return this.amqp.publishAndWait('files.list', {
@@ -241,7 +249,7 @@ describe('list suite', function suite() {
   });
 
   describe('generic file list', function testSuite() {
-    const owner = ld.sample(owners, 1)[0];
+    const owner = ld.sample(owners);
 
     it('returns files sorted by their filename, ASC', function test() {
       return this.amqp.publishAndWait('files.list', {
@@ -361,6 +369,49 @@ describe('list suite', function suite() {
         descSortFilename(data.files);
         assert.equal(data.cursor, 40);
         assert.equal(data.page, 4);
+        assert.ok(data.pages);
+
+        data.files.forEach(file => {
+          assert.equal(file.owner, owner);
+        });
+      });
+    });
+
+    it('lists public files', function test() {
+      return this.amqp.publishAndWait('files.list', {
+        public: true,
+        order: 'DESC',
+        limit: 10,
+      })
+      .reflect()
+      .then(inspectPromise())
+      .then(data => {
+        assert.ok(data.files);
+        descSortFilename(data.files);
+        assert.equal(data.cursor, 10);
+        assert.equal(data.page, 1);
+        assert.ok(data.pages);
+
+        data.files.forEach(file => {
+          assert.equal(file.public, 1);
+        });
+      });
+    });
+
+    it('lists public files with a specific owner', function test() {
+      return this.amqp.publishAndWait('files.list', {
+        owner,
+        public: true,
+        order: 'DESC',
+        limit: 10,
+      })
+      .reflect()
+      .then(inspectPromise())
+      .then(data => {
+        assert.ok(data.files);
+        descSortFilename(data.files);
+        assert.equal(data.cursor, 10);
+        assert.equal(data.page, 1);
         assert.ok(data.pages);
 
         data.files.forEach(file => {
