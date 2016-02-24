@@ -61,6 +61,7 @@ class Files extends Mservice {
       // add default onComplete handelr
       onComplete: resolveMessage,
     },
+    // dlock configuration
     lockManager: {
       lockPrefix: 'dlock!',
       pubsubChannel: '{ms-files}:dlock',
@@ -69,6 +70,11 @@ class Files extends Mservice {
         retries: 0,
         delay: 100,
       },
+    },
+    //
+    hooks: {
+      // specify to work with actions.get
+      'files:get:pre': [],
     },
     // storage options
     redis: {
@@ -84,6 +90,9 @@ class Files extends Mservice {
       options: {},
       // set to true when using as a public name
       cname: false,
+    },
+    users: {
+      getInternalData: 'users.getInternalData',
     },
     // function that is used in post-processing of uploaded files
     process: function noop() {

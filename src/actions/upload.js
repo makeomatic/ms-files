@@ -1,5 +1,6 @@
 const uuid = require('node-uuid');
 const url = require('url');
+const md5 = require('md5');
 const { STATUS_PENDING, UPLOAD_DATA } = require('../constant.js');
 
 /**
@@ -14,7 +15,8 @@ const { STATUS_PENDING, UPLOAD_DATA } = require('../constant.js');
 module.exports = function initFileUpload(opts) {
   const { contentType, md5Hash, contentLength, id, name } = opts;
   const { provider, redis } = this;
-  const filename = id ? id + '/' + uuid.v4() : uuid.v4();
+  const fileId = uuid.v4();
+  const filename = id ? `${md5(id)}/${fileId}` : fileId;
   const metadata = {
     contentType,
     contentLength,

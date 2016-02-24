@@ -1,6 +1,7 @@
 /* global inspectPromise, SAMPLE_FILE */
 const request = require('request-promise');
 const assert = require('assert');
+const md5 = require('md5');
 const { STATUS_PENDING } = require('../../src/constant.js');
 
 describe('upload suite', function suite() {
@@ -44,8 +45,8 @@ describe('upload suite', function suite() {
         locPattern.test(data.location),
         `returned invalid gcloud location: ${data.location}`
       );
-      assert.ok(data.filename.indexOf(`${msg.id}/`) === 0, 'prepended owner of the file to id');
-      assert.ok(data.startedAt);
+      assert(data.filename.indexOf(`${md5(msg.id)}/`) === 0, 'prepended owner of the file to id');
+      assert(data.startedAt);
       assert.equal(data.status, STATUS_PENDING);
       assert.equal(data.humanName, msg.name);
       assert.equal(data.contentType, msg.contentType);

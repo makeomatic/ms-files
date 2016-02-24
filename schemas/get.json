@@ -1,0 +1,17 @@
+{
+  "id": "get",
+  "type": "object",
+  "required": ["alias", "filename"],
+  "properties": {
+    "alias": {
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 15
+    },
+    "filename": {
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 50
+    }
+  }
+}

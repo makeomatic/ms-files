@@ -8,7 +8,7 @@ const md5 = require('md5');
 const request = require('request-promise');
 
 try {
-  process.env.DOTENV_FILE_PATH = __dirname + '/.env';
+  process.env.DOTENV_FILE_PATH = `${__dirname}/.env`;
   require('ms-amqp-conf');
 } catch (e) {
   // fails on CI
@@ -127,15 +127,13 @@ function startService() {
 
 function clearService() {
   const nodes = this.files._redis.masterNodes;
-  return Promise.map(Object.keys(nodes), nodeKey => {
-    return nodes[nodeKey].flushdb().reflect();
-  })
-  .finally(() => {
-    return Promise.fromNode(next => this.files.provider._bucket.deleteFiles({ force: true }, next));
-  })
-  .finally(() => {
-    return this.files.close();
-  })
+  return Promise.map(Object.keys(nodes), nodeKey =>
+    nodes[nodeKey].flushdb().reflect()
+  )
+  .finally(() =>
+    Promise.fromNode(next => this.files.provider._bucket.deleteFiles({ force: true }, next))
+  )
+  .finally(() => this.files.close())
   .finally(() => {
     this.amqp = null;
     this.files = null;
