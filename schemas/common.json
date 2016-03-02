@@ -1,0 +1,69 @@
+{
+  "id": "common",
+  "definitions": {
+    "cappasity-binary": {
+      "type": "object",
+      "required": ["type", "contentType", "contentLength", "contentEncoding", "md5Hash"],
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "type": "string",
+          "constant": "c-bin"
+        },
+        "contentType": {
+          "type": "string",
+          "constant": "application/octet-stream"
+        },
+        "contentLength": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 2000000000
+        },
+        "contentEncoding": {
+          "type": "string",
+          "constant": "gzip"
+        },
+        "md5Hash": {
+          "type": "string",
+          "format": "^[0-9A-Fa-f]{32}$"
+        }
+      }
+    },
+    "cappasity-image": {
+      "type": "object",
+      "required": ["type", "contentType", "contentLength", "md5Hash"],
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "type": "string",
+          "constant": "c-image"
+        },
+        "contentType": {
+          "type": "string",
+          "constant": "image/jpeg"
+        },
+        "contentLength": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 20000000
+        },
+        "md5Hash": {
+          "type": "string",
+          "format": "^[0-9A-Fa-f]{32}$"
+        }
+      }
+    },
+    "meta": {
+      "type": "object",
+      "required": ["name"],
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 150
+        }
+      }
+    }
+  }
+}

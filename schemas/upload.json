@@ -1,27 +1,24 @@
 {
   "id": "upload",
   "type": "object",
-  "required": [ "md5Hash", "contentLength", "name" ],
+  "required": [ "files", "meta" ],
   "properties": {
-    "contentType": {
-      "type": "string"
+    "files": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "anyOf": [
+          {
+            "$ref": "common#/definitions/cappasity-binary"
+          },
+          {
+            "$ref": "common#/definitions/cappasity-image"
+          }
+        ]
+      }
     },
-    "md5Hash": {
-      "type": "string",
-      "format": "^[0-9A-Fa-f]{32}$"
-    },
-    "contentLength": {
-      "type": "integer",
-      "minimum": 1,
-      "maximum": 2000000000
-    },
-    "id": {
-      "type": "string"
-    },
-    "name": {
-      "type": "string",
-      "minLength": 1,
-      "maxLength": 150
+    "meta": {
+      "$ref": "common#/definitions/meta"
     }
   }
 }

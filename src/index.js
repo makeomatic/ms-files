@@ -5,7 +5,7 @@ const path = require('path');
 const fsort = require('redis-filtered-sort');
 const listFiles = require('./actions/list.js');
 const moment = require('moment');
-const { STATUS_UPLOADED } = require('./constant.js');
+const { STATUS_UPLOADED, WEBHOOK_RESOURCE_ID } = require('./constant.js');
 const LockManager = require('dlock');
 const postProcess = require('./utils/process.js');
 const RedisCluster = require('ioredis').Cluster;
@@ -132,6 +132,32 @@ class Files extends Mservice {
   }
 
   /**
+   * Init's webhook
+   */
+  initWebhook() {
+    this.log.debug('initializing webhook');
+
+    const { provider, redis } = this;
+    return Promise
+      .bind(provider)
+      .then(() => process.env.WEBHOOK_RESOURCE_ID || redis.get(WEBHOOK_RESOURCE_ID))
+      .then(provider.setupChannel)
+      .then(resourceId => resourceId && redis.set(WEBHOOK_RESOURCE_ID, resourceId));
+  }
+
+  /**
+   * Terminate notifications
+   */
+  stopWebhook() {
+    return this
+      .provider
+      .stopChannel()
+      .tap(data => this.log.info('stopped channel', data))
+      .then(() => this.redis.del(WEBHOOK_RESOURCE_ID))
+      .catch(e => this.log.error('failed to stop channel', e));
+  }
+
+  /**
    * Invoke this method to start post-processing all pending files
    * @return {Promise}
    */
@@ -148,12 +174,18 @@ class Files extends Mservice {
     return listFiles
       .call(this, { filter, limit: 20, offset })
       .then(({ files, cursor, page, pages }) => {
-        return Promise.mapSeries(files, file => {
+        this.log.info('found %d files to process', files.length);
+
+        return Promise.mapSeries(files, file =>
           // make sure to call reflect so that we do not interrupt the procedure
-          return postProcess
+          postProcess
             .call(this, file.filename, file)
-            .reflect();
-        })
+            .catch(e => {
+              this.log.warn('error processing file', e);
+              throw e;
+            })
+            .reflect()
+        )
         .then(() => {
           if (page < pages) {
             return this.postProcess(cursor, filter.uploadedAt.lte);
@@ -174,7 +206,8 @@ class Files extends Mservice {
   close() {
     return Promise.join(
       super.close(),
-      this.dlock.pubsub.disconnect()
+      this.dlock.pubsub.disconnect(),
+      process.env.WEBHOOK_TERMINATE ? this.stopWebhook() : ld.noop
     );
   }
 
@@ -184,7 +217,9 @@ class Files extends Mservice {
    */
   connect() {
     this.log.debug('started connecting');
-    return Promise.join(super.connect(), this.provider.connect());
+    return Promise
+      .join(super.connect(), this.provider.connect())
+      .then(() => this.initWebhook()); // will be a noop when configuration for it is missing
   }
 
 }
