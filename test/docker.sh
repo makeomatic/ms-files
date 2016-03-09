@@ -12,7 +12,7 @@ NODE=$BIN/babel-node
 TESTS=${TESTS:-test/suites/*.js}
 
 if [ -z "$NODE_VER" ]; then
-  NODE_VER="5.7.0"
+  NODE_VER="5.8.0"
 fi
 
 if ! [ -x "$COMPOSE" ]; then
