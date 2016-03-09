@@ -66,6 +66,7 @@ module.exports = function completeFileUpload(opts) {
 
       return redis
         .pipeline()
+          .persist(uploadKey)
           .hmset(uploadKey, {
             status: STATUS_UPLOADED,
             uploadedAt: Date.now(),
