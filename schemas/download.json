@@ -1,7 +1,7 @@
 {
   "id": "download",
   "type": "object",
-  "required": ["uploadId", "username"],
+  "required": ["uploadId"],
   "properties": {
     "uploadId": {
       "$ref": "common#/definitions/uuid-v4"

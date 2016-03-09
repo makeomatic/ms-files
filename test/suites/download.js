@@ -18,7 +18,6 @@ const {
 
 const route = 'files.download';
 const bucketName = config.transport.options.bucket.name;
-const { STATUS_PROCESSED } = require('../../src/constant.js');
 
 describe('download suite', function suite() {
   // setup functions
@@ -68,20 +67,13 @@ describe('download suite', function suite() {
     });
 
     it('returns download URLs: private', function test() {
-      const message = modelData.message;
-
       return this
         .send({ uploadId: this.response.uploadId, username: owner })
         .reflect()
         .then(inspectPromise())
         .then(rsp => {
-          assert.equal(rsp.name, message.meta.name);
-          assert.equal(rsp.owner, message.username);
           assert.ok(rsp.uploadId);
-          assert.ok(rsp.startedAt);
           assert.ok(rsp.files);
-          assert.equal(rsp.status, STATUS_PROCESSED);
-          assert.equal(rsp.parts, message.files.length);
           assert.ok(rsp.urls);
 
           rsp.urls.forEach((link, idx) => {
@@ -105,20 +97,13 @@ describe('download suite', function suite() {
       });
 
       it('returns download URLs: public', function test() {
-        const message = modelData.message;
-
         return this
-          .send({ uploadId: this.response.uploadId, username: owner })
+          .send({ uploadId: this.response.uploadId })
           .reflect()
           .then(inspectPromise())
           .then(rsp => {
-            assert.equal(rsp.name, message.meta.name);
-            assert.equal(rsp.owner, message.username);
             assert.ok(rsp.uploadId);
-            assert.ok(rsp.startedAt);
             assert.ok(rsp.files);
-            assert.equal(rsp.status, STATUS_PROCESSED);
-            assert.equal(rsp.parts, message.files.length);
             assert.ok(rsp.urls);
 
             rsp.urls.forEach((link, idx) => {

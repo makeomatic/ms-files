@@ -1,5 +1,6 @@
 const Promise = require('bluebird');
 const { FILES_DATA, FILES_PUBLIC_FIELD } = require('../constant.js');
+const { HttpStatusError } = require('common-errors');
 const fetchData = require('../utils/fetchData.js');
 const hasAccess = require('../utils/hasAccess.js');
 const isProcessed = require('../utils/isProcessed.js');
@@ -22,7 +23,6 @@ module.exports = function getDownloadURL(opts) {
   return Promise
     .bind(this, key)
     .then(fetchData)
-    .then(hasAccess(username))
     .then(isProcessed)
     .then(data => {
       // parse file data
@@ -32,7 +32,12 @@ module.exports = function getDownloadURL(opts) {
       let urls;
       if (data[FILES_PUBLIC_FIELD]) {
         urls = files.map(file => `${cname}/${encodeURIComponent(file.filename)}`);
+      } else if (!username) {
+        throw new HttpStatusError(403, 'file does not belong to the provided user');
       } else {
+        // will throw if no access
+        hasAccess(username)(data);
+
         // signed URL settings
         const settings = {
           action: 'read',
@@ -44,6 +49,6 @@ module.exports = function getDownloadURL(opts) {
         urls = Promise.map(files, file => provider.createSignedURL({ ...settings, resource: file.filename }));
       }
 
-      return Promise.props({ ...data, files, urls });
+      return Promise.props({ uploadId, files, urls });
     });
 };
