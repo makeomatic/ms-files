@@ -7,10 +7,10 @@ const moment = require('moment');
 const LockManager = require('dlock');
 const postProcess = require('./actions/process.js');
 const RedisCluster = require('ioredis').Cluster;
-const calcSlot = require('ioredis/lib/utils').calcSlot;
+const listFiles = require('./actions/list.js');
 
 // constants
-const { STATUS_UPLOADED, WEBHOOK_RESOURCE_ID, UPLOAD_DATA } = require('./constant.js');
+const { STATUS_UPLOADED, WEBHOOK_RESOURCE_ID, FILES_DATA } = require('./constant.js');
 
 /**
  * Message resolver
@@ -167,52 +167,42 @@ class Files extends Mservice {
    * Invoke this method to start post-processing of all pending files
    * @return {Promise}
    */
-  postProcess(_cursor = '0', _cutoff) {
-    let cursor = _cursor;
-    const redis = this.redis;
-    const prefix = this.config.redis.options.keyPrefix;
-    const pLength = prefix.length;
-    const match = `${prefix}${UPLOAD_DATA}:*`;
-    const fullPrefixLength = match.length - 1;
-    const cutoff = _cutoff || moment().subtract(1, 'hour').valueOf();
-    const slot = calcSlot(match);
-    const masterNode = ld.get(redis, `slots[${slot}].masterNode`);
+  postProcess(offset = 0, uploadedAt) {
+    const filter = {
+      status: {
+        eq: STATUS_UPLOADED,
+      },
+      uploadedAt: {
+        lte: uploadedAt || moment().subtract(1, 'hour').valueOf(),
+      },
+    };
 
-    // delay processing
-    if (!masterNode) {
-      return Promise.delay(50).then(() => {
-        this.postProcess.call(this, cursor, cutoff);
-      });
-    }
+    return listFiles
+      .call(this, { filter, limit: 20, offset })
+      .then(data => {
+        const { files, cursor, page, pages } = data;
 
-    return masterNode
-      .scan(cursor, 'MATCH', match, 'COUNT', 50)
-      .spread((nextCursor, keys) => {
-        cursor = nextCursor;
-        return keys;
-      })
-      .filter(key => {
-        const upload = key.slice(pLength);
-
-        return redis
-          .hmget(upload, 'status', 'uploadedAt')
-          .spread((status, uploadedAt) => status === STATUS_UPLOADED && uploadedAt <= cutoff);
-      })
-      .map(key =>
-        postProcess
-          .call(this, { uploadId: key.slice(fullPrefixLength) })
-          .reflect()
-          .tap(result => {
-            this.log.info('%s | %s', result.isFulfilled() ? 'processed' : 'failed', key);
+        return Promise
+          .resolve(files)
+          .mapSeries(file => {
+            // make sure to call reflect so that we do not interrupt the procedure
+            return postProcess
+              .call(this, `${FILES_DATA}:${file.id}`, file)
+              .reflect()
+              .tap(result => {
+                this.log.info({ owner: file.owner }, '%s | %s', result.isFulfilled() ? 'processed' : 'failed', file.id);
+              });
           })
-      , { concurrency: 5 })
-      .then(() => {
-        if (cursor !== '0') {
-          return this.postProcess.call(this, cursor, _cutoff);
-        }
+          .then(() => {
+            if (page < pages) {
+              return this.postProcess(cursor, filter.uploadedAt.lte);
+            }
 
+            return null;
+          });
+      })
+      .then(() => {
         this.log.info('completed files post-processing');
-        return null;
       });
   }
 
