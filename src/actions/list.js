@@ -52,7 +52,13 @@ module.exports = function postProcessFile(opts) {
     })
     .spread((filenames, props, length) => {
       const files = filenames.map(function remapData(filename, idx) {
-        return props[idx][1];
+        const meta = props[idx][1];
+
+        return {
+          ...meta,
+          id: filename,
+          files: JSON.parse(meta.files),
+        };
       });
 
       return {

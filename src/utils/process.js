@@ -1,17 +1,51 @@
-const { STATUS_PROCESSED } = require('../constant.js');
+const Promise = require('bluebird');
+const omit = require('lodash/omit');
+const { STATUS_PROCESSED, UPLOAD_DATA, FILES_DATA, FILES_PROCESS_ERROR_FIELD } = require('../constant.js');
+
+// blacklist of metadata that must be returned
+const METADATA_BLACKLIST = [
+  'location',
+];
 
 module.exports = function processFile(key, data) {
-  const { _config: config, redis, provider, dlock } = this;
+  const { redis, dlock } = this;
 
   return dlock
     .once(`postprocess:${key}`)
     .then(lock => {
-      return config.process(provider, { key, data, redis })
-        .tap(() => {
-          return redis.hset(key, 'status', STATUS_PROCESSED);
+      const { uploadId } = data;
+
+      return Promise
+        .bind(this, ['files:process:post', data])
+        .spread(this.postHook)
+        .spread((processedData = {}) => {
+          // omit location, since it's used once during upload
+          const fileKeys = [];
+          const files = JSON.parse(data.files)
+            .map(file => {
+              fileKeys.push(`${UPLOAD_DATA}:${file.filename}`);
+              return omit(file, METADATA_BLACKLIST);
+            });
+
+          // create new fileData
+          const fileData = {
+            ...data,
+            ...processedData,
+            files: JSON.stringify(files),
+            status: STATUS_PROCESSED,
+          };
+
+          return redis
+            .pipeline()
+            .hmset(`${FILES_DATA}:${uploadId}`, fileData)
+            .hdel(`${FILES_DATA}:${uploadId}`, FILES_PROCESS_ERROR_FIELD)
+            .del(fileKeys)
+            .exec()
+            .return({
+              ...fileData,
+              files,
+            });
         })
-        .finally(() => {
-          return lock.release();
-        });
+        .finally(() => lock.release());
     });
 };

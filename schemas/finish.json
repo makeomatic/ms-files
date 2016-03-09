@@ -1,14 +1,10 @@
 {
   "id": "finish",
   "type": "object",
-  "required": [ "id" ],
+  "required": ["filename"],
   "properties": {
-    "id": {
-      "type": "string",
-      "minLength": 1
-    },
-    "username": {
-      "type": "string"
+    "filename": {
+      "$ref": "common#/definitions/filename"
     },
     "skipProcessing": {
       "type": "boolean"

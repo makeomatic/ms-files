@@ -1,19 +1,13 @@
 {
   "id": "info",
   "type": "object",
-  "oneOf": [
-    { "required": [ "filename" ] },
-    { "required": [ "uploadId" ] }
-  ],
+  "required": ["filename", "username"],
   "properties": {
     "filename": {
-      "type": "string"
+      "$ref": "common#/definitions/uuid-v4"
     },
     "username": {
-      "type": "string"
-    },
-    "uploadId": {
-      "type": "string"
+      "$ref": "common#/definitions/owner"
     }
   }
 }

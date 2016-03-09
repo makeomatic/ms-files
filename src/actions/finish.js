@@ -1,67 +1,89 @@
 const Promise = require('bluebird');
 const fetchData = require('../utils/fetchData.js');
-const hasAccess = require('../utils/hasAccess.js');
 const { HttpStatusError } = require('common-errors');
-const {
-  STATUS_UPLOADED,
-  STATUS_PENDING,
-  UPLOAD_DATA,
-  FILES_INDEX,
-  FILES_DATA,
-} = require('../constant.js');
-
+const { STATUS_UPLOADED, STATUS_PENDING, UPLOAD_DATA, FILES_INDEX, FILES_DATA, FILES_OWNER_FIELD } = require('../constant.js');
 
 /**
  * Finish upload
- * @param  {Object} opts.id
- * @param  {Object} opts.username
+ * @param  {Object}  opts
+ * @param  {String}  opts.filename
+ * @param  {Boolean} opts.skipProcessing
+ * @param  {Boolean} opts.await
  * @return {Promise}
  */
 module.exports = function completeFileUpload(opts) {
-  const { redis, provider, _config: config, amqp } = this;
-  const { id, username, skipProcessing } = opts;
-  const key = `${UPLOAD_DATA}:${id}`;
+  const { filename } = opts;
+  const { redis, config, amqp } = this;
+  const key = `${UPLOAD_DATA}:${filename}`;
 
   return Promise
     .bind(this, key)
     .then(fetchData)
-    .then(hasAccess(username))
     .then(data => {
       if (data.status !== STATUS_PENDING) {
         throw new HttpStatusError(412, 'upload has already been marked as finished');
       }
 
-      const { filename } = data;
+      const { uploadId } = data;
+      const uploadKey = `${FILES_DATA}:${uploadId}`;
 
-      return provider
-        .exists(filename)
-        .then(fileExists => {
-          if (!fileExists) {
-            throw new HttpStatusError(405, 'provider reports that upload was not finished yet');
-          }
-
-          const pipeline = redis.pipeline();
-          const fileData = { ...data, uploadedAt: Date.now(), status: STATUS_UPLOADED };
-
-          pipeline.sadd(FILES_INDEX, filename);
-          pipeline.hmset(`${FILES_DATA}:${filename}`, fileData);
-          pipeline.del(key);
-
-          if (username || data.owner) {
-            pipeline.sadd(`${FILES_INDEX}:${username || data.owner}`, filename);
-          }
-
-          return pipeline.exec().return(fileData);
-        });
+      // set to uploaded
+      return Promise.props({
+        uploadId,
+        update: redis
+          .pipeline()
+          .hmget(uploadKey, 'status', 'parts', FILES_OWNER_FIELD)
+          .hincrby(uploadKey, 'uploaded', 1)
+          .hmset(key, {
+            status: STATUS_UPLOADED,
+            uploadedAt: Date.now(),
+          })
+          .exec(),
+      });
     })
-    .tap(fileData => {
-      if (skipProcessing) {
-        return null;
+    .then(data => {
+      const { uploadId, update } = data;
+      const [parts, incr, status] = update;
+
+      // errors
+      const err = parts[0] || incr[0] || status[0];
+      if (err) {
+        throw err;
+      }
+
+      const [currentStatus, totalParts, username] = parts[1];
+      const currentParts = incr[1];
+
+      if (currentParts < totalParts) {
+        throw new HttpStatusError(202, `${currentParts}/${totalParts} uploaded`);
+      }
+
+      if (currentStatus !== STATUS_PENDING) {
+        throw new HttpStatusError(412, 'upload was already processed');
+      }
+
+      const uploadKey = `${FILES_DATA}:${uploadId}`;
+
+      return redis
+        .pipeline()
+          .hmset(uploadKey, {
+            status: STATUS_UPLOADED,
+            uploadedAt: Date.now(),
+          })
+          // now that it is uploaded - add them to index
+          .sadd(FILES_INDEX, uploadId)
+          .sadd(`${FILES_INDEX}:${username}`, uploadId)
+        .exec()
+        .return(uploadId);
+    })
+    .then(uploadId => {
+      if (opts.skipProcessing) {
+        return 'upload completed, proessing skipped';
       }
 
       const amqpConfig = config.amqp;
       const action = opts.await ? 'publishAndWait' : 'publish';
       const route = `${amqpConfig.prefix}.process`;
-      return amqp[action](route, { filename: fileData.filename, username });
+      return amqp[action](route, { uploadId });
     });
 };

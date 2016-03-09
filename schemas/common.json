@@ -1,6 +1,19 @@
 {
   "id": "common",
   "definitions": {
+    "owner": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 50
+    },
+    "uuid-v4": {
+      "type": "string",
+      "pattern": "^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-4[0-9A-Fa-f]{3}-[89ABab][0-9A-Fa-f]{3}-[0-9A-Fa-f]{12}$"
+    },
+    "filename": {
+      "type": "string",
+      "pattern": "^[0-9A-Fa-f]{32}\/[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-4[0-9A-Fa-f]{3}-[89ABab][0-9A-Fa-f]{3}-[0-9A-Fa-f]{12}\/[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-4[0-9A-Fa-f]{3}-[89ABab][0-9A-Fa-f]{3}-[0-9A-Fa-f]{12}"
+    },
     "cappasity-binary": {
       "type": "object",
       "required": ["type", "contentType", "contentLength", "contentEncoding", "md5Hash"],
@@ -25,7 +38,7 @@
         },
         "md5Hash": {
           "type": "string",
-          "format": "^[0-9A-Fa-f]{32}$"
+          "pattern": "^[0-9A-Fa-f]{32}$"
         }
       }
     },
@@ -36,7 +49,7 @@
       "properties": {
         "type": {
           "type": "string",
-          "constant": "c-image"
+          "enum": ["c-texture", "c-preview"]
         },
         "contentType": {
           "type": "string",
@@ -49,7 +62,7 @@
         },
         "md5Hash": {
           "type": "string",
-          "format": "^[0-9A-Fa-f]{32}$"
+          "pattern": "^[0-9A-Fa-f]{32}$"
         }
       }
     },
@@ -62,6 +75,15 @@
           "type": "string",
           "minLength": 1,
           "maxLength": 150
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000
+        },
+        "website": {
+          "type": "string",
+          "format": "uri"
         }
       }
     }

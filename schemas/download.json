@@ -1,13 +1,13 @@
 {
   "id": "download",
   "type": "object",
-  "required": [ "filename" ],
+  "required": ["uploadId", "username"],
   "properties": {
-    "filename": {
-      "type": "string"
+    "uploadId": {
+      "$ref": "common#/definitions/uuid-v4"
     },
     "username": {
-      "type": "string"
+      "$ref": "common#/definitions/owner"
     }
   }
 }

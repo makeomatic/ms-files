@@ -1,77 +1,85 @@
-/* global inspectPromise, SAMPLE_FILE */
-const request = require('request-promise');
 const assert = require('assert');
 const md5 = require('md5');
+const url = require('url');
+
+// helpers
+const {
+  startService,
+  stopService,
+  inspectPromise,
+  config,
+  bindSend,
+  uploadFiles,
+  modelData,
+  owner,
+} = require('../helpers/utils.js');
+
+// data
+const route = 'files.upload';
+const bucketName = config.transport.options.bucket.name;
 const { STATUS_PENDING } = require('../../src/constant.js');
 
 describe('upload suite', function suite() {
-  before(global.startService);
-  after(global.clearService);
-
-  const bucketName = process.env.GCLOUD_PROJECT_BUCKET;
-  // https://www.googleapis.com/upload/storage/v1/b/bucketName/o?name=test%40owner.com%2F5b8cafc2-6f40-4931-8fee-430f68577489&uploadType=resumable&upload_id=AEnB2UoBS-BRUICRQrY-Bd4MC8Twczkrye0cK3hadYQzALNPR1EvGR9tLaj43fcjVmkHcxSErInzdLK0qahK92hU9PwiqA07oA
-  const locPattern = new RegExp(`^https:\\/\\/www\\.googleapis\\.com\/upload\\/storage\\/v1\\/b\\/${bucketName}\\/o\\?name=.+\\&uploadType=resumable\\&upload_id=.+`); // eslint-disable-line
+  // setup functions
+  before('start service', startService);
+  after('stop service', stopService);
+  before('helpers', bindSend(route));
 
   it('verifies input data and rejects on invalid format', function test() {
-    return this.amqp.publishAndWait('files.upload', {
-      contentType: 123,
-      md5Hash: 'veryrandom',
-      contentLength: -100,
-      id: 'super-owner@qq.com',
-      name: 'my-good-file',
-    })
-    .reflect()
-    .then(inspectPromise(false))
-    .then(error => {
-      assert(error.name, 'ValidationError');
-    });
+    return this
+      .send({ ...modelData.message, username: false })
+      .reflect()
+      .then(inspectPromise(false));
   });
 
-  it('initiates upload', function test() {
-    const msg = {
-      id: 'test@owner.com',
-      contentType: SAMPLE_FILE.contentType,
-      contentLength: SAMPLE_FILE.contentLength,
-      name: SAMPLE_FILE.name,
-      md5Hash: SAMPLE_FILE.md5,
-    };
+  it('initiates upload and returns correct response format', function test() {
+    const message = modelData.message;
 
-    return this.amqp.publishAndWait('files.upload', msg)
-    .reflect()
-    .then(inspectPromise())
-    .tap(data => {
-      assert.ok(data.uploadId);
-      assert.ok(
-        locPattern.test(data.location),
-        `returned invalid gcloud location: ${data.location}`
-      );
-      assert(data.filename.indexOf(`${md5(msg.id)}/`) === 0, 'prepended owner of the file to id');
-      assert(data.startedAt);
-      assert.equal(data.status, STATUS_PENDING);
-      assert.equal(data.humanName, msg.name);
-      assert.equal(data.contentType, msg.contentType);
-      assert.equal(data.contentLength, msg.contentLength);
-      assert.equal(data.owner, msg.id);
-      assert.equal(data.md5Hash, msg.md5Hash);
-    })
-    .then(data => {
-      this.location = data.location;
-      this.uploadId = data.uploadId;
-    });
+    return this
+      .send(message, 45000)
+      .reflect()
+      .then(inspectPromise())
+      .then(rsp => {
+        assert.equal(rsp.name, message.meta.name);
+        assert.equal(rsp.owner, message.username);
+        assert.ok(rsp.uploadId);
+        assert.ok(rsp.startedAt);
+        assert.ok(rsp.files);
+        assert.equal(rsp.status, STATUS_PENDING);
+        assert.equal(rsp.parts, message.files.length);
+
+        // verify that location is present
+        rsp.files.forEach(part => {
+          assert.ok(part.location);
+
+          // verify upoad link
+          const location = url.parse(part.location, true);
+          assert.equal(location.protocol, 'https:');
+          assert.equal(location.hostname, 'www.googleapis.com');
+          assert.equal(location.pathname, `/upload/storage/v1/b/${bucketName}/o`);
+          assert.equal(location.query.name, part.filename);
+          assert.equal(location.query.uploadType, 'resumable');
+          assert.ok(location.query.upload_id);
+
+          // verify that filename contains multiple parts
+          const [ownerHash, uploadId, filename] = part.filename.split('/');
+          assert.equal(md5(owner), ownerHash);
+          assert.equal(rsp.uploadId, uploadId);
+          assert.ok(filename);
+        });
+
+        // save for the next
+        this.response = rsp;
+      });
   });
 
-  it('able to upload with the provided response', function test() {
-    return request.put({
-      url: this.location,
-      body: SAMPLE_FILE.contents,
-      headers: {
-        'content-length': SAMPLE_FILE.contentLength,
-      },
-      simple: false,
-      resolveWithFullResponse: true,
-    })
-    .then(response => {
-      assert.equal(response.statusCode, 200);
-    });
+  it('upload is possible based on the returned data', function test() {
+    return uploadFiles(modelData, this.response)
+      .reflect()
+      .then(inspectPromise())
+      .map(resp => {
+        assert.equal(resp.statusCode, 200);
+        return null;
+      });
   });
 });

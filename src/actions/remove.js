@@ -1,6 +1,6 @@
 const Promise = require('bluebird');
-const { HttpStatusError } = require('common-errors');
-const { FILES_INDEX, FILES_DATA, UPLOAD_DATA, FILES_PUBLIC_FIELD } = require('../constant.js');
+const { FILES_INDEX, FILES_DATA, FILES_PUBLIC_FIELD, FILES_OWNER_FIELD } = require('../constant.js');
+const hasAccess = require('../utils/hasAccess.js');
 const fetchData = require('../utils/fetchData.js');
 
 /**
@@ -11,40 +11,36 @@ const fetchData = require('../utils/fetchData.js');
  * @return {Promise}
  */
 module.exports = function removeFile(opts) {
-  const { filename, username, uploadId } = opts;
+  const { filename, username } = opts;
   const { redis, provider } = this;
-  const key = filename ? `${FILES_DATA}:${filename}` : `${UPLOAD_DATA}:${uploadId}`;
+  const key = `${FILES_DATA}:${filename}`;
 
   return Promise
     .bind(this, key)
     .then(fetchData)
+    .then(hasAccess(username))
     .then(data => {
-      if (username && data.owner !== username) {
-        throw new HttpStatusError(403, 'upload does not belong to the provided user');
-      }
+      const files = JSON.parse(data.files);
 
-      return provider
-        .remove(data.filename)
-        .catch({ code: 404 }, err => {
-          throw new HttpStatusError(err.code, err.message);
+      return Promise
+        .mapSeries(files, file => {
+          return provider
+            .remove(file.filename)
+            .catch({ code: 404 }, err => {
+              this.log.warn('file %s was already deleted', file.filename, err.code, err.message);
+            });
         })
         .then(() => {
           const pipeline = redis.pipeline();
           pipeline.del(key);
+          pipeline.srem(FILES_INDEX, filename);
 
           // removes from indices
-          if (data.filename) {
-            pipeline.srem(FILES_INDEX, data.filename);
-            if (data.owner) {
-              pipeline.srem(`${FILES_INDEX}:${data.owner}`, data.filename);
-              if (data[FILES_PUBLIC_FIELD]) {
-                pipeline.srem(`${FILES_INDEX}:${data.owner}:pub`, data.filename);
-              }
+          if (data[FILES_OWNER_FIELD]) {
+            pipeline.srem(`${FILES_INDEX}:${data[FILES_OWNER_FIELD]}`, filename);
+            if (data[FILES_PUBLIC_FIELD]) {
+              pipeline.srem(`${FILES_INDEX}:${data[FILES_OWNER_FIELD]}:pub`, filename);
             }
-          }
-
-          if (data.uploadId) {
-            pipeline.del(`${UPLOAD_DATA}:${data.uploadId}`);
           }
 
           return pipeline.exec();

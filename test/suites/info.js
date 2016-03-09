@@ -1,132 +1,134 @@
-/* global inspectPromise, SAMPLE_FILE, UPLOAD_MESSAGE, uploadToGoogle */
-
 const assert = require('assert');
+const uuid = require('uuid');
+
+// helpers
+const {
+  startService,
+  stopService,
+  inspectPromise,
+  owner,
+  modelData,
+  bindSend,
+  finishUpload,
+  processUpload,
+  initUpload,
+  updateAccess,
+} = require('../helpers/utils.js');
+
+const route = 'files.info';
 const { STATUS_PENDING, STATUS_UPLOADED, STATUS_PROCESSED } = require('../../src/constant.js');
 
 describe('info suite', function suite() {
-  before(global.startService);
-  after(global.clearService);
+  // setup functions
+  before('start service', startService);
 
-  before('upload file', function test() {
-    return this.amqp.publishAndWait('files.upload', UPLOAD_MESSAGE())
-      .then(result => {
-        this.data = result;
+  // sets `this.response` to `files.finish` response
+  before('init upload', initUpload(modelData));
+  before('helpers', bindSend(route));
+
+  // tear-down
+  after('stop service', stopService);
+
+  it('404 on missing filename/upload-id', function test() {
+    return this
+      .send({ filename: uuid.v4(), username: owner })
+      .reflect()
+      .then(inspectPromise(false))
+      .then(err => {
+        assert.equal(err.statusCode, 404);
       });
   });
 
-  it('404 on missing filename', function test() {
-    return this.amqp.publishAndWait('files.info', {
-      filename: 'i-do-not-exist',
-    })
-    .reflect()
-    .then(inspectPromise(false))
-    .then(error => {
-      assert.equal(error.name, 'HttpStatusError');
-      assert.equal(error.statusCode, 404);
-    });
-  });
-
-  it('404 on missing upload id', function test() {
-    return this.amqp.publishAndWait('files.info', {
-      uploadId: 'i-do-not-exist',
-    })
-    .reflect()
-    .then(inspectPromise(false))
-    .then(error => {
-      assert.equal(error.name, 'HttpStatusError');
-      assert.equal(error.statusCode, 404);
-    });
-  });
-
-  it('403 on valid upload id, invalid user', function test() {
-    return this.amqp.publishAndWait('files.info', {
-      uploadId: this.data.uploadId,
-      username: 'not-an-owner@ok.com',
-    })
-    .reflect()
-    .then(inspectPromise(false))
-    .then(error => {
-      assert.equal(error.name, 'HttpStatusError');
-      assert.equal(error.statusCode, 403);
-    });
+  it('404 on valid upload id, invalid user', function test() {
+    return this
+      .send({ filename: this.response.uploadId, username: 'martial@arts.com' })
+      .reflect()
+      .then(inspectPromise(false))
+      .then(err => {
+        assert.equal(err.statusCode, 404);
+      });
   });
 
   it('STATUS_PENDING on valid upload id', function test() {
-    return this.amqp.publishAndWait('files.info', {
-      uploadId: this.data.uploadId,
-      username: this.data.owner,
-    })
-    .reflect()
-    .then(inspectPromise())
-    .then(data => {
-      assert.equal(data.filename, this.data.filename);
-      assert.equal(data.status, STATUS_PENDING);
-    });
+    return this
+      .send({ filename: this.response.uploadId, username: owner })
+      .reflect()
+      .then(inspectPromise())
+      .then(rsp => {
+        assert.equal(rsp.username, owner);
+        assert.deepEqual(rsp.file, this.response);
+        assert.equal(rsp.file.status, STATUS_PENDING);
+      });
   });
 
   describe('after upload', function afterUploadSuite() {
-    before('complete upload', function test() {
-      return uploadToGoogle(this.data)
-        .then(() => {
-          return this.amqp.publishAndWait('files.finish', {
-            id: this.data.uploadId,
-            skipProcessing: true,
-          });
+    before('complete upload', function pretest() {
+      return finishUpload.call(this, this.response);
+    });
+
+    it('404 on invalid user id', function test() {
+      return this
+        .send({ filename: this.response.uploadId, username: 'martial@arts.com' })
+        .reflect()
+        .then(inspectPromise(false))
+        .then(err => {
+          assert.equal(err.statusCode, 404);
         });
     });
 
-    it('403 on invalid user id', function test() {
-      return this.amqp.publishAndWait('files.info', {
-        filename: this.data.filename,
-        username: 'not-an-owner@ok.com',
-      })
-      .reflect()
-      .then(inspectPromise(false))
-      .then(error => {
-        assert.equal(error.name, 'HttpStatusError');
-        assert.equal(error.statusCode, 403);
-      });
-    });
-
     it('STATUS_UPLOADED on valid user id', function test() {
-      return this.amqp.publishAndWait('files.info', {
-        filename: this.data.filename,
-        username: this.data.owner,
-      })
-      .reflect()
-      .then(inspectPromise())
-      .then(data => {
-        assert.equal(data.filename, this.data.filename);
-        assert.equal(data.status, STATUS_UPLOADED);
-      });
-    });
-
-    it('STATUS_UPLOADED without user id', function test() {
-      return this.amqp.publishAndWait('files.info', {
-        filename: this.data.filename,
-      })
-      .reflect()
-      .then(inspectPromise())
-      .then(data => {
-        assert.equal(data.filename, this.data.filename);
-        assert.equal(data.status, STATUS_UPLOADED);
-      });
+      return this
+        .send({ filename: this.response.uploadId, username: owner })
+        .reflect()
+        .then(inspectPromise())
+        .then(rsp => {
+          assert.equal(rsp.username, owner);
+          assert.equal(rsp.file.status, STATUS_UPLOADED);
+        });
     });
 
     describe('after processed', function afterProcessedSuite() {
-      before('process file', function test() {
-        return this.amqp.publishAndWait('files.process', { filename: this.data.filename });
+      before('process file', function pretest() {
+        return processUpload.call(this, this.response);
       });
 
-      it('STATUS_PROCESSED', function test() {
-        return this.amqp.publishAndWait('files.info', {
-          filename: this.data.filename,
-        })
-        .reflect()
-        .then(inspectPromise())
-        .then(data => {
-          assert.equal(data.filename, this.data.filename);
-          assert.equal(data.status, STATUS_PROCESSED);
+      it('returns 404 on invalid user id', function test() {
+        return this
+          .send({ filename: this.response.uploadId, username: 'martial@arts.com' })
+          .reflect()
+          .then(inspectPromise(false))
+          .then(err => {
+            assert.equal(err.statusCode, 404);
+          });
+      });
+
+      it('returns correct STATUS_PROCESSED', function test() {
+        return this
+          .send({ filename: this.response.uploadId, username: owner })
+          .reflect()
+          .then(inspectPromise())
+          .then(rsp => {
+            assert.equal(rsp.username, owner);
+            assert.equal(rsp.file.status, STATUS_PROCESSED);
+          });
+      });
+
+      describe('public file', function publicSuite() {
+        before('make public', function pretest() {
+          return updateAccess.call(this, this.response.uploadId, owner, true);
+        });
+
+        it('returns info when file is public for any user id', function test() {
+          return this
+            .send({ filename: this.response.uploadId, username: 'martial@arts.com' })
+            .reflect()
+            .then(inspectPromise())
+            .then(rsp => {
+              assert.equal(rsp.username, 'martial@arts.com');
+              assert.equal(rsp.file.owner, owner);
+              assert.ok(rsp.file.public);
+              assert.equal(rsp.file.status, STATUS_PROCESSED);
+            });
         });
       });
     });

@@ -1,13 +1,10 @@
 {
   "id": "process",
   "type": "object",
-  "required": [ "filename" ],
+  "required": ["uploadId"],
   "properties": {
-    "filename": {
-      "type": "string"
-    },
-    "username": {
-      "type": "string"
+    "uploadId": {
+      "$ref": "common#/definitions/uuid-v4"
     }
   }
 }

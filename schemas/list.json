@@ -19,7 +19,7 @@
       "type": "string"
     },
     "owner": {
-      "type": "string"
+      "$ref": "common#/definitions/owner"
     },
     "public": {
       "type": "boolean"

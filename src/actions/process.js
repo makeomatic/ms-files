@@ -1,6 +1,6 @@
 const Promise = require('bluebird');
 const { HttpStatusError } = require('common-errors');
-const { STATUS_PROCESSED, FILES_DATA } = require('../constant.js');
+const { STATUS_UPLOADED, FILES_DATA } = require('../constant.js');
 const postProcess = require('../utils/process.js');
 const fetchData = require('../utils/fetchData.js');
 
@@ -11,21 +11,18 @@ const fetchData = require('../utils/fetchData.js');
  * @return {Promise}
  */
 module.exports = function postProcessFile(opts) {
-  const { filename, username } = opts;
-  const key = `${FILES_DATA}:${filename}`;
+  const { uploadId } = opts;
+  const key = `${FILES_DATA}:${uploadId}`;
 
   return Promise
     .bind(this, key)
     .then(fetchData)
     .then(data => {
-      if (username && data.owner !== username) {
-        throw new HttpStatusError(403, 'file does not belong to the provided user');
+      if (data.status !== STATUS_UPLOADED) {
+        throw new HttpStatusError(412, 'file has already been processed or upload has not been finished yet');
       }
 
-      if (data.status === STATUS_PROCESSED) {
-        throw new HttpStatusError(412, 'file has already been processed');
-      }
-
-      return postProcess.call(this, key, data);
-    });
+      return [key, data];
+    })
+    .spread(postProcess);
 };

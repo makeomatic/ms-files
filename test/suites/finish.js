@@ -1,98 +1,91 @@
-/* global inspectPromise, SAMPLE_FILE, UPLOAD_MESSAGE, uploadToGoogle */
-
+const Promise = require('bluebird');
 const assert = require('assert');
-const { STATUS_UPLOADED } = require('../../src/constant.js');
+const md5 = require('md5');
+const uuid = require('uuid');
+
+// helpers
+const {
+  startService,
+  stopService,
+  inspectPromise,
+  modelData,
+  owner,
+  bindSend,
+  initUpload,
+} = require('../helpers/utils.js');
+
+// data
+const route = 'files.finish';
 
 describe('finish upload suite', function suite() {
-  before(global.startService);
-  after(global.clearService);
+  // setup functions
+  before('start service', startService);
+  before('prepare upload', initUpload(modelData));
+  before('helpers', bindSend(route));
 
-  const baseMessage = {
-    skipProcessing: true,
-    username: UPLOAD_MESSAGE().id,
-    id: 'bad-upload-id',
-  };
+  // tear-down
+  after('stop service', stopService);
 
-  function prepareUpload() {
-    return this.amqp.publishAndWait('files.upload', UPLOAD_MESSAGE());
-  }
-
-  before('prepare upload', function prepare() {
-    return prepareUpload.call(this).then(data => {
-      this.data = data;
-    });
-  });
-
-  it('returns 404 on missing upload id', function test() {
-    return this.amqp.publishAndWait('files.finish', baseMessage)
+  // tests
+  it('return 400 on invalid filename', function test() {
+    return this
+      .send({ filename: 'random name' })
       .reflect()
       .then(inspectPromise(false))
-      .then(error => {
-        assert.equal(error.name, 'HttpStatusError');
-        assert.equal(error.statusCode, 404);
+      .then(err => {
+        assert.equal(err.name, 'ValidationError');
       });
   });
 
-  it('returns 403 on missmatch of owner and id', function test() {
-    return this.amqp.publishAndWait('files.finish', {
-      ...baseMessage,
-      id: this.data.uploadId,
-      username: 'thatsnotme@test.com',
-    })
-    .reflect()
-    .then(inspectPromise(false))
-    .then(error => {
-      assert.equal(error.name, 'HttpStatusError');
-      assert.equal(error.statusCode, 403);
-    });
+  it('returns 404 on missing filename', function test() {
+    return this
+      .send({ filename: [md5(owner), uuid.v4(), uuid.v4()].join('/') })
+      .reflect()
+      .then(inspectPromise(false))
+      .then(err => {
+        assert.equal(err.statusCode, 404);
+      });
   });
 
-  it('returns 405 when upload has not been processed yet', function test() {
-    return this.amqp.publishAndWait('files.finish', {
-      ...baseMessage,
-      id: this.data.uploadId,
-    })
-    .reflect()
-    .then(inspectPromise(false))
-    .then(error => {
-      assert.equal(error.name, 'HttpStatusError');
-      assert.equal(error.statusCode, 405);
-    });
+  it('returns progress until all files have uploaded', function test() {
+    const files = this.response.files.slice(0, 3);
+    return Promise
+      .resolve(files)
+      .mapSeries((file, idx) => {
+        return this
+          .send({ filename: file.filename })
+          .reflect()
+          .then(inspectPromise(false))
+          .then(err => {
+            assert.equal(err.statusCode, 202);
+            assert.equal(err.message, `${idx + 1}/${this.response.files.length} uploaded`);
+          });
+      });
   });
 
-  describe('after upload has finished', function next() {
-    before('complete upload', function prepare() {
-      return uploadToGoogle(this.data);
-    });
+  it('returns "upload was already processed" for subsequent messages', function test() {
+    const files = this.response.files.slice(0, 3);
+    return Promise
+      .resolve(files)
+      .mapSeries(file => {
+        return this
+          .send({ filename: file.filename })
+          .reflect()
+          .then(inspectPromise(false))
+          .then(err => {
+            assert.equal(err.statusCode, 412);
+          });
+      });
+  });
 
-    it('marks upload as finished', function test() {
-      return this.amqp.publishAndWait('files.finish', {
-        ...baseMessage,
-        id: this.data.uploadId,
-      })
+  it('returns "upload completed, proessing skipped" on final part', function test() {
+    const file = this.response.files[3];
+    return this
+      .send({ filename: file.filename, skipProcessing: true })
       .reflect()
       .then(inspectPromise())
-      .then(result => {
-        assert.equal(result.status, STATUS_UPLOADED);
-        assert.ok(result.uploadedAt);
+      .then(response => {
+        assert.equal(response, 'upload completed, proessing skipped');
       });
-    });
-
-    // This clause is normally never entered, because upload-id data is deleted
-    // right after it's marked as processed. At this point data can only be accessed via filename
-    // Test exists, but skipped, because it's never the case unless the redis.del clause is
-    // removed
-    it.skip('returns 412 error when upload was already finished or processed', function test() {
-      return this.amqp.publishAndWait('files.finish', {
-        ...baseMessage,
-        id: this.data.uploadId,
-      })
-      .reflect()
-      .then(inspectPromise(false))
-      .then(error => {
-        assert.equal(error.name, 'HttpStatusError');
-        assert.equal(error.statusCode, 412);
-      });
-    });
   });
 });

@@ -1,44 +1,43 @@
-const Errors = require('common-errors');
 const Promise = require('bluebird');
 const fetchData = require('../utils/fetchData.js');
 const hasAccess = require('../utils/hasAccess.js');
+const isProcessed = require('../utils/isProcessed.js');
 const {
-  FILES_INDEX,
-  FILES_INDEX_PUBLIC,
-  FILES_DATA,
-  FILES_OWNER_FIELD,
-  FILES_PUBLIC_FIELD,
+  FILES_INDEX, FILES_INDEX_PUBLIC,
+  FILES_DATA, FILES_OWNER_FIELD, FILES_PUBLIC_FIELD,
 } = require('../constant.js');
 
-function addToPublic(data) {
+function addToPublic(filename, data) {
   const { provider, redis } = this;
-  const { filename } = data;
+  const { files } = data;
   const owner = data[FILES_OWNER_FIELD];
   const index = `${FILES_INDEX}:${owner}:pub`;
   const id = `${FILES_DATA}:${filename}`;
 
-  return provider
-    .makePublic(filename)
-    .then(() =>
-      redis.pipeline()
+  return Promise
+    .map(files, file => provider.makePublic(file.filename))
+    .then(() => {
+      return redis
+        .pipeline()
         .sadd(index, filename)
         .sadd(FILES_INDEX_PUBLIC, filename)
         .hset(id, FILES_PUBLIC_FIELD, 1)
-        .exec()
-    );
+        .exec();
+    });
 }
 
-function removeFromPublic(data) {
+function removeFromPublic(filename, data) {
   const { provider, redis } = this;
-  const { filename } = data;
+  const { files } = data;
   const owner = data[FILES_OWNER_FIELD];
   const index = `${FILES_INDEX}:${owner}:pub`;
   const id = `${FILES_DATA}:${filename}`;
 
-  return provider
-    .makePrivate(filename)
+  return Promise
+    .map(files, file => provider.makePrivate(file.filename))
     .then(() =>
-      redis.pipeline()
+      redis
+        .pipeline()
         .srem(index, filename)
         .srem(FILES_INDEX_PUBLIC, filename)
         .hdel(id, FILES_PUBLIC_FIELD)
@@ -47,19 +46,17 @@ function removeFromPublic(data) {
 }
 
 module.exports = function adjustAccess(opts) {
-  const { filename, setPublic, owner } = opts;
-  const id = `${FILES_DATA}:${filename}`;
+  const { uploadId, setPublic, username } = opts;
+  const id = `${FILES_DATA}:${uploadId}`;
 
   return Promise
     .bind(this, id)
     .then(fetchData)
-    .then(hasAccess(owner))
-    .tap(data => {
-      if (data.owner) {
-        return null;
-      }
-
-      throw new Errors.HttpStatusError(412, 'file must have an owner to adjust rights');
+    .then(hasAccess(username))
+    .then(isProcessed)
+    .then(data => {
+      data.files = JSON.parse(data.files);
+      return [uploadId, data];
     })
-    .then(setPublic ? addToPublic : removeFromPublic);
+    .spread(setPublic ? addToPublic : removeFromPublic);
 };

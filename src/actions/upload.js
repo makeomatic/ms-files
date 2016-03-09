@@ -1,59 +1,79 @@
+const Promise = require('bluebird');
 const uuid = require('node-uuid');
-const url = require('url');
 const md5 = require('md5');
-const { STATUS_PENDING, UPLOAD_DATA } = require('../constant.js');
+const sumBy = require('lodash/sumBy');
+const { STATUS_PENDING, UPLOAD_DATA, FILES_DATA } = require('../constant.js');
+
+const TYPE_MAP = {
+  'c-bin': '.bin.gz',
+  'c-texture': '.jpeg',
+  'c-preview': '.jpeg',
+};
+
+function typeToExtension(type) {
+  return TYPE_MAP[type] || '.bin';
+}
 
 /**
  * Initiates upload
  * @param  {Object} opts
- * @param  {String} opts.contentType
- * @param  {String} opts.md5Hash
- * @param  {Number} opts.contentLength
- * @param  {String} opts.id
+ * @param  {Array}  opts.files
+ * @param  {Object} opts.meta
  * @return {Promise}
  */
 module.exports = function initFileUpload(opts) {
-  const { contentType, md5Hash, contentLength, id, name } = opts;
+  const { files, meta, username } = opts;
   const { provider, redis } = this;
-  const fileId = uuid.v4();
-  const filename = id ? `${md5(id)}/${fileId}` : fileId;
-  const metadata = {
-    contentType,
-    contentLength,
-    md5Hash: new Buffer(md5Hash, 'hex').toString('base64'),
-    owner: id,
-  };
+  const prefix = md5(username);
+  const uploadId = uuid.v4();
 
-  if (name) {
-    metadata.humanName = name;
-  }
+  return Promise
+    .bind(this, ['files:upload:pre', files, username])
+    // extra input validation
+    .spread(this.postHook).get(0)
+    // init uploads
+    .map(function initResumableUpload({ md5Hash, type, ...rest }) {
+      const filename = `${prefix}/${uploadId}/${uuid.v4()}${typeToExtension(type)}`;
+      const metadata = {
+        ...rest,
+        md5Hash: new Buffer(md5Hash, 'hex').toString('base64'),
+      };
 
-  return provider.initResumableUpload({
-    filename,
-    metadata,
-  })
-  .then(location => {
-    // https://www.googleapis.com/upload/storage/v1/b/myBucket/o?uploadType=resumable&upload_id=xa298sd_sdlkj2
-    const uri = url.parse(location, true);
-    const uploadId = uri.query.upload_id;
-    const startedAt = Date.now();
-    const fileData = {
-      uploadId,
-      location,
-      filename,
-      startedAt,
-      status: STATUS_PENDING,
-      ...metadata,
-      md5Hash,
-    };
+      return Promise.props({
+        ...metadata,
+        type,
+        filename,
+        location: provider.initResumableUpload({ filename, metadata }),
+      });
+    })
+    .then(parts => {
+      const fileData = {
+        ...meta,
+        uploadId,
+        owner: username,
+        startedAt: Date.now(),
+        files: JSON.stringify(parts),
+        contentLength: sumBy(parts, 'contentLength'),
+        status: STATUS_PENDING,
+        parts: files.length,
+      };
 
-    // until file is uploaded, it won't appear in the lists and will be cleaned up
-    // in case the upload is never finished
-    return redis
-      .pipeline()
-      .hmset(`${UPLOAD_DATA}:${uploadId}`, fileData)
-      .expire(`${UPLOAD_DATA}:${uploadId}`, 86400)
-      .exec()
-      .return(fileData);
-  });
+      const pipeline = redis.pipeline();
+      const uploadKey = `${FILES_DATA}:${uploadId}`;
+
+      pipeline
+        .hmset(uploadKey, fileData)
+        .expire(uploadKey, 86400);
+
+      parts.forEach(part => {
+        const partKey = `${UPLOAD_DATA}:${part.filename}`;
+        pipeline
+          .hmset(partKey, { status: STATUS_PENDING, uploadId })
+          .expire(partKey, 86400);
+      });
+
+      return pipeline
+        .exec()
+        .return({ ...fileData, files: parts });
+    });
 };

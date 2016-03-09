@@ -1,71 +1,59 @@
-/* global inspectPromise, SAMPLE_FILE, UPLOAD_MESSAGE, uploadToGoogle */
-
 const assert = require('assert');
+const uuid = require('uuid');
+
+// helpers
+const {
+  startService,
+  stopService,
+  inspectPromise,
+  modelData,
+  bindSend,
+  initAndUpload,
+  processUpload,
+} = require('../helpers/utils.js');
+
+// data
+const route = 'files.process';
+const { STATUS_PROCESSED } = require('../../src/constant.js');
 
 describe('process suite', function suite() {
-  before(global.startService);
-  after(global.clearService);
+  // setup functions
+  before('start service', startService);
+  // sets `this.response` to `files.finish` response
+  before('pre-upload file', initAndUpload(modelData));
+  before('helpers', bindSend(route));
 
-  before('upload file', function test() {
-    return this.amqp.publishAndWait('files.upload', UPLOAD_MESSAGE())
-      .tap(uploadToGoogle)
-      .then(data => {
-        return this.amqp.publishAndWait('files.finish', {
-          id: data.uploadId,
-          skipProcessing: true,
-        });
-      })
-      .then(result => {
-        this.data = result;
-      });
-  });
+  // tear-down
+  after('stop service', stopService);
 
-  it('returns 404 on a missing file', function test() {
-    return this.amqp
-      .publishAndWait('files.process', { filename: 'i-do-not-exist' })
+  it('returns 404 on a missing upload id', function test() {
+    return processUpload
+      .call(this, { uploadId: uuid.v4() })
       .reflect()
       .then(inspectPromise(false))
-      .then(error => {
-        assert.equal(error.name, 'HttpStatusError');
-        assert.equal(error.statusCode, 404);
-      });
-  });
-
-  it('returns 403 on non-matching owner', function test() {
-    return this.amqp
-      .publishAndWait('files.process', {
-        filename: this.data.filename,
-        username: 'i-m-not-the@owner.com',
-      })
-      .reflect()
-      .then(inspectPromise(false))
-      .then(error => {
-        assert.equal(error.name, 'HttpStatusError');
-        assert.equal(error.statusCode, 403);
+      .then(err => {
+        assert.equal(err.statusCode, 404);
       });
   });
 
   it('processes file', function test() {
-    return this.amqp
-      .publishAndWait('files.process', {
-        filename: this.data.filename,
-        username: this.data.owner,
-      })
+    return processUpload
+      .call(this, this.response)
       .reflect()
-      .then(inspectPromise());
+      .then(inspectPromise())
+      .then(rsp => {
+        assert.equal(rsp.status, STATUS_PROCESSED);
+        assert.ok(rsp.files);
+      });
   });
 
-  it('returns 412 when we try to work on a processed file', function test() {
-    return this.amqp
-      .publishAndWait('files.process', {
-        filename: this.data.filename,
-        username: this.data.owner,
-      })
+  it('returns 412 when we try to work on an already processed file', function test() {
+    return processUpload
+      .call(this, this.response)
       .reflect()
       .then(inspectPromise(false))
-      .then(error => {
-        assert.equal(error.name, 'HttpStatusError');
-        assert.equal(error.statusCode, 412);
+      .then(err => {
+        assert.equal(err.statusCode, 412);
       });
   });
 });

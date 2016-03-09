@@ -1,15 +1,14 @@
 {
   "id": "access",
   "type": "object",
-  "required": ["filename", "setPublic"],
+  "required": ["uploadId", "setPublic"],
   "properties": {
-    "filename": {
+    "uploadId": {
       "type": "string",
       "minLength": 1
     },
-    "owner": {
-      "type": "string",
-      "minLength": 1
+    "username": {
+      "$ref": "common#/definitions/owner"
     },
     "setPublic": {
       "type": "boolean"

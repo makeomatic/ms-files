@@ -12,12 +12,12 @@ NODE=$BIN/babel-node
 TESTS=${TESTS:-test/suites/*.js}
 
 if [ -z "$NODE_VER" ]; then
-  NODE_VER="5.6.0"
+  NODE_VER="5.7.0"
 fi
 
 if ! [ -x "$COMPOSE" ]; then
   mkdir $DIR/.bin
-  curl -L https://github.com/docker/compose/releases/download/1.6.0/docker-compose-`uname -s`-`uname -m` > $DIR/.bin/docker-compose
+  curl -L https://github.com/docker/compose/releases/download/1.6.2/docker-compose-`uname -s`-`uname -m` > $DIR/.bin/docker-compose
   chmod +x $DIR/.bin/docker-compose
   COMPOSE=$(which docker-compose)
 fi

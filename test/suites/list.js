@@ -1,55 +1,69 @@
-/* global inspectPromise, SAMPLE_FILE, UPLOAD_MESSAGE, uploadToGoogle */
-
 const Promise = require('bluebird');
 const assert = require('assert');
 const faker = require('faker');
 const ld = require('lodash');
 const uuid = require('node-uuid');
-const md5 = require('md5');
+
+// helpers
+const {
+  startService,
+  stopService,
+  inspectPromise,
+  bindSend,
+} = require('../helpers/utils.js');
+
+const route = 'files.list';
+const {
+  STATUS_UPLOADED, STATUS_PROCESSED,
+  FILES_DATA, FILES_INDEX, FILES_INDEX_PUBLIC,
+  FILES_OWNER_FIELD, FILES_PUBLIC_FIELD,
+} = require('../../src/constant.js');
 
 describe('list suite', function suite() {
-  before(global.startService);
-  after(global.clearService);
+  // setup functions
+  before('start service', startService);
+  before('helpers', bindSend(route));
 
-  const { STATUS_PENDING, STATUS_UPLOADED, STATUS_PROCESSED } = require('../../src/constant.js');
-  const statusValues = [STATUS_PENDING, STATUS_UPLOADED, STATUS_PROCESSED];
+  // tear-down
+  after('stop service', stopService);
+
+  // helper to create fake file
+  const statusValues = [STATUS_UPLOADED, STATUS_PROCESSED];
   const owners = ld.times(5, faker.internet.email);
-  const contentTypes = ['text/plain', 'image/png', 'application/json'];
 
   function createFakeFile() {
-    const contents = faker.commerce.productName();
     const owner = ld.sample(owners);
+    const startedAt = faker.date.past().getTime();
 
     return {
-      filename: [owner, uuid.v4()].join('/'),
       uploadId: uuid.v4(),
       status: ld.sample(statusValues),
-      location: faker.internet.url(),
-      startedAt: faker.date.past().getTime(),
-      humanName: contents,
-      md5Hash: md5(contents),
-      contentType: ld.sample(contentTypes),
-      contentLength: Buffer.byteLength(contents),
-      owner,
+      startedAt,
+      uploadedAt: startedAt + 1000,
+      name: faker.commerce.productName(),
+      files: JSON.stringify([]), // can insert real files, but dont care
+      contentLength: ld.random(1, 2132311),
+      parts: ld.random(1, 4),
+      [FILES_OWNER_FIELD]: owner,
     };
   }
 
-  function insertUpload(file) {
-    return this.files.redis.hmset(`upload-data:${file.uploadId}`, file);
-  }
-
   function insertFile(file) {
-    const pipeline = this.files.redis.pipeline()
-      .sadd('files-index', file.filename)
-      .sadd(`files-index:${file.owner}`, file.filename);
+    const id = file.uploadId;
+    const pipeline = this
+      .files
+      .redis
+      .pipeline()
+      .sadd(FILES_INDEX, id)
+      .sadd(`${FILES_INDEX}:${file.owner}`, id);
 
-    if (ld.sample([0, 1]) === 1) {
-      file.public = 1;
-      pipeline.sadd('files-index-pub', file.filename);
-      pipeline.sadd(`files-index:${file.owner}:pub`, file.filename);
+    if (ld.sample([0, 1]) === 1 && file.status === STATUS_PROCESSED) {
+      file[FILES_PUBLIC_FIELD] = 1;
+      pipeline.sadd(FILES_INDEX_PUBLIC, id);
+      pipeline.sadd(`${FILES_INDEX}:${file.owner}:pub`, id);
     }
 
-    pipeline.hmset(`files-data:${file.filename}`, file);
+    pipeline.hmset(`${FILES_DATA}:${id}`, file);
 
     return pipeline.exec();
   }
@@ -81,17 +95,13 @@ describe('list suite', function suite() {
     };
   }
 
-  const ascSortFilename = sort(1, 'alphanum', 'filename');
-  const descSortFilename = sort(-1, 'alphanum', 'filename');
+  const ascSortFilename = sort(1, 'alphanum', 'id');
+  const descSortFilename = sort(-1, 'alphanum', 'id');
   const ascSortStartAt = sort(1, 'numeric', 'startedAt');
   const descSortStartAt = sort(-1, 'numeric', 'startedAt');
 
   before('insert data', function test() {
-    return Promise.all(ld.times(500, () => {
-      const file = createFakeFile();
-      const thunk = file.status === STATUS_PENDING ? insertUpload : insertFile;
-      return thunk.call(this, file);
-    }));
+    return Promise.all(ld.times(500, () => insertFile.call(this, createFakeFile())));
   });
 
   describe('owner-based list', function testSuite() {

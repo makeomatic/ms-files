@@ -1,8 +1,11 @@
 const Promise = require('bluebird');
-const { HttpStatusError } = require('common-errors');
-const { STATUS_PROCESSED, FILES_DATA } = require('../constant.js');
+const { FILES_DATA, FILES_PUBLIC_FIELD } = require('../constant.js');
 const fetchData = require('../utils/fetchData.js');
 const hasAccess = require('../utils/hasAccess.js');
+const isProcessed = require('../utils/isProcessed.js');
+
+// default signed URL expiration time
+const THREE_HOURS = 1000 * 60 * 60 * 3;
 
 /**
  * Get download url
@@ -11,30 +14,36 @@ const hasAccess = require('../utils/hasAccess.js');
  * @return {Promise}
  */
 module.exports = function getDownloadURL(opts) {
-  const { provider } = this;
-  const { filename, username } = opts;
-  const key = `${FILES_DATA}:${filename}`;
+  const { provider, config } = this;
+  const { uploadId, username } = opts;
+  const { transport: { cname, expire } } = config;
+  const key = `${FILES_DATA}:${uploadId}`;
 
   return Promise
     .bind(this, key)
     .then(fetchData)
     .then(hasAccess(username))
+    .then(isProcessed)
     .then(data => {
-      if (username && data.status !== STATUS_PROCESSED) {
-        throw new HttpStatusError(412, 'your upload has not been processed yet');
-      }
+      // parse file data
+      const files = JSON.parse(data.files);
 
-      return Promise.props({
-        url: provider.createSignedURL({
+      // check status and if we have public link available - use it
+      let urls;
+      if (data[FILES_PUBLIC_FIELD]) {
+        urls = files.map(file => `${cname}/${encodeURIComponent(file.filename)}`);
+      } else {
+        // signed URL settings
+        const settings = {
           action: 'read',
           // 3 hours
-          expires: Date.now() + 1000 * 60 * 60 * 3,
-          // resource
-          resource: filename,
-          // filename
-          promptSaveAs: data.humanName || 'cappasity-model',
-        }),
-        data,
-      });
+          expires: Date.now() + (expire || THREE_HOURS),
+          // resource: filename <- specified per file
+        };
+
+        urls = Promise.map(files, file => provider.createSignedURL({ ...settings, resource: file.filename }));
+      }
+
+      return Promise.props({ ...data, files, urls });
     });
 };

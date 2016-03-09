@@ -1,81 +1,69 @@
-/* global inspectPromise, SAMPLE_FILE, UPLOAD_MESSAGE, uploadToGoogle */
-
 const assert = require('assert');
+const uuid = require('uuid');
+
+// helpers
+const {
+  startService,
+  stopService,
+  inspectPromise,
+  owner,
+  modelData,
+  bindSend,
+  initAndUpload,
+} = require('../helpers/utils.js');
+
+const route = 'files.remove';
 
 describe('remove suite', function suite() {
-  before(global.startService);
-  after(global.clearService);
+  // setup functions
+  before('start service', startService);
+  // sets `this.response` to `files.finish` response
+  before('pre-upload file', initAndUpload(modelData));
+  before('helpers', bindSend(route));
 
-  before('upload file', function test() {
-    return this.amqp.publishAndWait('files.upload', UPLOAD_MESSAGE())
-      .then(result => {
-        this.data = result;
-      });
-  });
+  // tear-down
+  after('stop service', stopService);
 
-  it('404 on missing filename', function test() {
-    return this.amqp
-      .publishAndWait('files.remove', { filename: 'missing' })
+  //
+  it('404 on missing filename/upload-id', function test() {
+    return this
+      .send({ filename: uuid.v4(), username: owner })
       .reflect()
       .then(inspectPromise(false))
-      .then(error => {
-        assert.equal(error.name, 'HttpStatusError');
-        assert.equal(error.statusCode, 404);
+      .then(err => {
+        assert.equal(err.name, 'HttpStatusError');
+        assert.equal(err.statusCode, 404);
       });
   });
 
-  it('404 on missing upload id', function test() {
-    return this.amqp
-      .publishAndWait('files.remove', { uploadId: 'missing' })
+  it('403 on invalid user id', function test() {
+    return this
+      .send({
+        filename: this.response.uploadId,
+        username: 'martial@arts.com',
+      })
       .reflect()
       .then(inspectPromise(false))
-      .then(error => {
-        assert.equal(error.name, 'HttpStatusError');
-        assert.equal(error.statusCode, 404);
+      .then(err => {
+        assert.equal(err.name, 'HttpStatusError');
+        assert.equal(err.statusCode, 403);
       });
   });
 
-  it('error 404 when file was not uploaded completely', function test() {
-    return this.amqp
-      .publishAndWait('files.remove', { uploadId: this.data.uploadId })
+  it('removes file data', function test() {
+    return this
+      .send({ filename: this.response.uploadId, username: owner })
+      .reflect()
+      .then(inspectPromise());
+  });
+
+  it('404 on subsequent remove', function test() {
+    return this
+      .send({ filename: this.response.uploadId, username: owner })
       .reflect()
       .then(inspectPromise(false))
-      .then(error => {
-        assert.equal(error.name, 'HttpStatusError');
-        assert.equal(error.statusCode, 404);
+      .then(err => {
+        assert.equal(err.statusCode, 404);
       });
-  });
-
-  describe('after upload', function afterUploadSuite() {
-    before('complete upload', function test() {
-      return uploadToGoogle(this.data)
-        .then(() => {
-          return this.amqp.publishAndWait('files.finish', {
-            id: this.data.uploadId,
-            skipProcessing: true,
-          });
-        });
-    });
-
-    it('403 on invalid user id', function test() {
-      return this.amqp
-        .publishAndWait('files.remove', {
-          filename: this.data.filename,
-          username: 'not-an-owner@ex.com',
-        })
-        .reflect()
-        .then(inspectPromise(false))
-        .then(error => {
-          assert.equal(error.name, 'HttpStatusError');
-          assert.equal(error.statusCode, 403);
-        });
-    });
-
-    it('removes file data', function test() {
-      return this.amqp
-        .publishAndWait('files.remove', { filename: this.data.filename, username: this.data.owner })
-        .reflect()
-        .then(inspectPromise());
-    });
   });
 });

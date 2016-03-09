@@ -1,7 +1,7 @@
 {
   "id": "upload",
   "type": "object",
-  "required": [ "files", "meta" ],
+  "required": ["files", "meta", "username"],
   "properties": {
     "files": {
       "type": "array",
@@ -19,6 +19,9 @@
     },
     "meta": {
       "$ref": "common#/definitions/meta"
+    },
+    "username": {
+      "$ref": "common#/definitions/owner"
     }
   }
 }
