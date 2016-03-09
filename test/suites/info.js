@@ -110,6 +110,7 @@ describe('info suite', function suite() {
           .then(rsp => {
             assert.equal(rsp.username, owner);
             assert.equal(rsp.file.status, STATUS_PROCESSED);
+            assert.ifError(rsp.file.public);
           });
       });
 
@@ -118,15 +119,15 @@ describe('info suite', function suite() {
           return updateAccess.call(this, this.response.uploadId, owner, true);
         });
 
-        it('returns info when file is public for any user id', function test() {
+        it('returns info when file is public', function test() {
           return this
-            .send({ filename: this.response.uploadId, username: 'martial@arts.com' })
+            .send({ filename: this.response.uploadId, username: owner })
             .reflect()
             .then(inspectPromise())
             .then(rsp => {
-              assert.equal(rsp.username, 'martial@arts.com');
+              assert.equal(rsp.username, owner);
               assert.equal(rsp.file.owner, owner);
-              assert.ok(rsp.file.public);
+              assert.equal(rsp.file.public, '1');
               assert.equal(rsp.file.status, STATUS_PROCESSED);
             });
         });
