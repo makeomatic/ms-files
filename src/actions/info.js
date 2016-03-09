@@ -40,6 +40,9 @@ module.exports = function getFileInfo(opts) {
       // parse files
       info.files = JSON.parse(info.files);
 
+      // rewire owner to requested username
+      info.owner = opts.username;
+
       return data;
     });
 };
