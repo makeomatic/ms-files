@@ -2,7 +2,7 @@ const Promise = require('bluebird');
 const fetchData = require('../utils/fetchData.js');
 
 const { NotImplementedError, HttpStatusError } = require('common-errors');
-const { FILES_DATA, FILES_OWNER_FIELD, FILES_PUBLIC_FIELD } = require('../constant.js');
+const { FILES_DATA, FILES_OWNER_FIELD } = require('../constant.js');
 
 /**
  * File information
@@ -32,8 +32,9 @@ module.exports = function getFileInfo(opts) {
       // ref file
       const info = data.file;
 
-      // check access permissions
-      if (info[FILES_OWNER_FIELD] !== data.username && !info[FILES_PUBLIC_FIELD]) {
+      // check that owner is a match
+      // even in-case with public we want the user to specify username
+      if (info[FILES_OWNER_FIELD] !== data.username) {
         throw new HttpStatusError(404, 'file not found');
       }
 
