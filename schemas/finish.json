@@ -10,7 +10,8 @@
       "type": "boolean"
     },
     "await": {
-      "type": "boolean"
+      "type": "boolean",
+      "default": false
     }
   }
 }
