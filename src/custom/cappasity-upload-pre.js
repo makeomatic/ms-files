@@ -15,7 +15,7 @@ module.exports = function extractMetadata(files, username) {
 
       assert.equal(fileTypes['c-bin'], 1, 'must contain exactly one binary upload');
       assert.equal(fileTypes['c-preview'], 1, 'must contain preview');
-      assert.fail(fileTypes['c-texture'], 1, 'must contain at least one texture', '>=');
+      assert.ok(fileTypes['c-texture'] >= 1, 'must contain at least one texture');
     })
     .then(() => amqp.publishAndWait(getMetadata, { username, audience }))
     .get(audience)
