@@ -73,10 +73,12 @@ class Files extends Mservice {
         delay: 100,
       },
     },
-    //
+    // specify these hooks to make appropriate actions work
+    // easiest option is to copy config from test folder
     hooks: {
-      // specify to work with actions.get
-      'files:get:pre': [],
+      'files:info:pre': [],
+      'files:upload:pre': [],
+      'files:process:post': [],
     },
     // storage options
     redis: {
@@ -98,10 +100,6 @@ class Files extends Mservice {
       getInternalData: 'users.getInternalData',
       getMetadata: 'users.getMetadata',
       updateMetadata: 'users.updateMetadata',
-    },
-    // function that is used in post-processing of uploaded files
-    process: function noop() {
-      return Promise.resolve();
     },
   };
 

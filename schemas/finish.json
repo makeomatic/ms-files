@@ -6,6 +6,12 @@
     "filename": {
       "$ref": "common#/definitions/filename"
     },
+    "resourceId": {
+      "type": "string"
+    },
+    "action": {
+      "type": "string"
+    },
     "skipProcessing": {
       "type": "boolean"
     },
