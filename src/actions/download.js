@@ -26,6 +26,7 @@ module.exports = function getDownloadURL(opts) {
     .then(isProcessed)
     .then(data => {
       // parse file data
+      const { name } = data;
       const files = JSON.parse(data.files);
 
       // check status and if we have public link available - use it
@@ -49,6 +50,6 @@ module.exports = function getDownloadURL(opts) {
         urls = Promise.map(files, file => provider.createSignedURL({ ...settings, resource: file.filename }));
       }
 
-      return Promise.props({ uploadId, files, urls });
+      return Promise.props({ uploadId, name, files, urls });
     });
 };
