@@ -17,7 +17,7 @@ module.exports = function extractMetadata(data) {
     .publishAndWait(getMetadata, { username, audience })
     .get(audience)
     .then(metadata => {
-      if (metadata.roles.indexOf('admin') >= 0) {
+      if (metadata.roles && metadata.roles.indexOf('admin') >= 0) {
         return null;
       }
 
