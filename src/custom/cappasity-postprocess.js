@@ -6,6 +6,7 @@ const TYPE_MAP = {
   'c-preview': 'preview',
   'c-bin': 'model',
   'c-texture': 'texture',
+  'c-archive': 'archive',
 };
 
 module.exports = function extractMetadata(data) {
