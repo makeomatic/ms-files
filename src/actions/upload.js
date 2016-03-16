@@ -8,6 +8,7 @@ const TYPE_MAP = {
   'c-bin': '.bin.gz',
   'c-texture': '.jpeg',
   'c-preview': '.jpeg',
+  'c-archive': '.zip',
 };
 
 function typeToExtension(type) {
