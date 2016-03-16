@@ -188,7 +188,7 @@ class Files extends Mservice {
               .call(this, `${FILES_DATA}:${file.id}`, file)
               .reflect()
               .tap(result => {
-                this.log.info({ owner: file.owner }, '%s | %s', result.isFulfilled() ? 'processed' : 'failed', file.id);
+                this.log.info({ owner: file.owner }, '%s |', file.id, result.isFulfilled() ? 'processed' : result.reason());
               });
           })
           .then(() => {
