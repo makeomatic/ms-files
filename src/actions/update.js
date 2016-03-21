@@ -25,7 +25,8 @@ module.exports = function initFileUpdate(opts) {
     .then(hasAccess(username))
     .then(data => {
 
-      meta.tags = JSON.stringify(meta.tags);
+      if (meta.tags)
+        meta.tags = JSON.stringify(meta.tags);
 
       return redis
         .pipeline()
@@ -36,5 +37,11 @@ module.exports = function initFileUpdate(opts) {
           return getResult[1];
         });
 
+    })
+    .then(data => {
+      if (data.tags)
+        data.tags = JSON.parse(data.tags);
+
+      return data;
     });
 };

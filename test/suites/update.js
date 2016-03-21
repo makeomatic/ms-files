@@ -88,13 +88,10 @@ describe('update suite', function suite() {
         .reflect()
         .then(inspectPromise())
         .then(rsp => {
-
-          const tags = JSON.parse(rsp.tags);
-
           assert.equal(rsp.uploadId, message.uploadId);
           assert.deepEqual(rsp.name, message.meta.name);
           assert.deepEqual(rsp.description, message.meta.description);
-          assert.deepEqual(tags, message.meta.tags);
+          assert.deepEqual(rsp.tags, message.meta.tags);
           assert.deepEqual(rsp.website, message.meta.website);
         });
     });
