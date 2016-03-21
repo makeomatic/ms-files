@@ -1,6 +1,6 @@
 const Promise = require('bluebird');
 const { FILES_DATA } = require('../constant.js');
-const getFileData = require('../utils/getFileData.js');
+const getUploadStatus = require('../utils/getUploadStatus.js');
 const hasAccess = require('../utils/hasAccess.js');
 const isProcessed = require('../utils/isProcessed.js');
 
@@ -13,27 +13,28 @@ const isProcessed = require('../utils/isProcessed.js');
  * @return {Promise}
  */
 module.exports = function initFileUpdate(opts) {
-  const { meta, uploadId, username } = opts;
+  const { uploadId, username } = opts;
   const { provider, redis } = this;
   const key = `${FILES_DATA}:${uploadId}`;
+  let meta = opts.meta;
 
   return Promise
     .bind(this, key)
-    .then(getFileData)
+    .then(getUploadStatus)
     .then(isProcessed)
+    .then(hasAccess(username))
     .then(data => {
-      if (!username) {
-        throw new HttpStatusError(403, 'file does not belong to the provided user');
-      } else {
-        hasAccess(username)(data);
-        return redis
-          .pipeline()
-          .hmset(key, meta)
-          .hgetall(key)
-          .exec()
-          .spread((setResult, getResult) => {
-            return getResult[1];
-          });
-      }
+
+      meta.tags = JSON.stringify(meta.tags);
+
+      return redis
+        .pipeline()
+        .hmset(key, meta)
+        .hgetall(key)
+        .exec()
+        .spread((setResult, getResult) => {
+          return getResult[1];
+        });
+
     });
 };

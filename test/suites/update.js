@@ -18,7 +18,11 @@ const route = 'files.update';
 const meta = {
   name: 'name',
   description: 'description',
-  tags: 'tag1, tag2, tag3',
+  tags: [
+    'tag1',
+    'tag2',
+    'tag3'
+  ],
   website: 'http://website.com'
 };
 
@@ -44,7 +48,7 @@ describe('update suite', function suite() {
     const message = {
       uploadId: this.response.uploadId,
       username: owner,
-      meta
+      meta: meta
     };
 
     return this
@@ -84,10 +88,13 @@ describe('update suite', function suite() {
         .reflect()
         .then(inspectPromise())
         .then(rsp => {
+
+          const tags = JSON.parse(rsp.tags);
+
           assert.equal(rsp.uploadId, message.uploadId);
           assert.deepEqual(rsp.name, message.meta.name);
           assert.deepEqual(rsp.description, message.meta.description);
-          assert.deepEqual(rsp.tags, message.meta.tags);
+          assert.deepEqual(tags, message.meta.tags);
           assert.deepEqual(rsp.website, message.meta.website);
         });
     });

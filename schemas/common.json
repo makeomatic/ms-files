@@ -110,9 +110,7 @@
           "format": "uri"
         },
         "tags": {
-          "type": "string",
-          "minLength": 1,
-          "maxLength": 500
+          "type": "array"
         }
       }
     },

@@ -1,6 +1,6 @@
 const { HttpStatusError } = require('common-errors');
 
-module.exports = function getFileData(key) {
+module.exports = function getUploadStatus(key) {
   const { redis } = this;
   return redis
     .pipeline()
