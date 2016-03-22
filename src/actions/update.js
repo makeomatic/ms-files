@@ -6,14 +6,15 @@ const isProcessed = require('../utils/isProcessed.js');
 
 /**
  * Initiates update
- * @param  {Object} opts
- * @param  {Object} opts.meta
- * @param  {String} opts.uploadId
- * @param  {String} opts.username
+ * @param  {Object}  opts
+ * @param  {Object}  opts.meta
+ * @param  {String}  opts.uploadId
+ * @param  {String}  opts.username
+ * @param  {Boolean} opts.isAdmin
  * @return {Promise}
  */
 module.exports = function initFileUpdate(opts) {
-  const { uploadId, username } = opts;
+  const { uploadId, username, isAdmin } = opts;
   const { provider, redis } = this;
   const key = `${FILES_DATA}:${uploadId}`;
   let meta = opts.meta;
@@ -22,7 +23,17 @@ module.exports = function initFileUpdate(opts) {
     .bind(this, key)
     .then(getUploadStatus)
     .then(isProcessed)
-    .then(hasAccess(username))
+    .then(data => {
+
+      if (isAdmin) {
+        return data;
+      } else if (!username) {
+        throw new HttpStatusError(403, 'file does not belong to the provided user');
+      } else {
+        return hasAccess(username)(data);
+      }
+
+    })
     .then(data => {
 
       if (meta.tags)
@@ -36,7 +47,6 @@ module.exports = function initFileUpdate(opts) {
         .spread((setResult, getResult) => {
           return getResult[1];
         });
-
     })
     .then(data => {
       if (data.tags)
