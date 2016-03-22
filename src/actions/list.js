@@ -12,28 +12,38 @@ module.exports = function postProcessFile(opts) {
   const { owner, filter, public: isPublic, offset, limit, order, criteria } = opts;
   const strFilter = is.string(filter) ? filter : fsort.filter(filter || {});
 
-  // choose which set to use
-  let filesIndex;
-  if (isPublic && owner) {
-    filesIndex = `${FILES_INDEX}:${owner}:pub`;
-  } else if (owner) {
-    filesIndex = `${FILES_INDEX}:${owner}`;
-  } else if (isPublic) {
-    filesIndex = FILES_INDEX_PUBLIC;
-  } else {
-    filesIndex = FILES_INDEX;
-  }
+  return Promise
+    .bind(this)
+    .then(() => {
+      if (!owner) {
+        return [];
+      }
 
-  return redis
-    .fsort(filesIndex, `${FILES_DATA}:*`, criteria, order, strFilter, offset, limit)
+      return this.postHook.call(this, 'files:info:pre', owner);
+    })
+    .spread(username => {
+      // choose which set to use
+      let filesIndex;
+      if (isPublic && username) {
+        filesIndex = `${FILES_INDEX}:${username}:pub`;
+      } else if (username) {
+        filesIndex = `${FILES_INDEX}:${username}`;
+      } else if (isPublic) {
+        filesIndex = FILES_INDEX_PUBLIC;
+      } else {
+        filesIndex = FILES_INDEX;
+      }
+
+      return redis.fsort(filesIndex, `${FILES_DATA}:*`, criteria, order, strFilter, offset, limit);
+    })
     .then(filenames => {
       const length = +filenames.pop();
       if (length === 0 || filenames.length === 0) {
-        return [
-          filenames || [],
-          [],
+        return {
+          filenames,
+          props: [],
           length,
-        ];
+        };
       }
 
       const pipeline = redis.pipeline();
@@ -41,13 +51,10 @@ module.exports = function postProcessFile(opts) {
         pipeline.hgetall(`${FILES_DATA}:${filename}`);
       });
 
-      return Promise.join(
-        filenames,
-        pipeline.exec(),
-        length
-      );
+      return Promise.props({ filenames, props: pipeline.exec(), length });
     })
-    .spread((filenames, props, length) => {
+    .then(data => {
+      const { filenames, props, length } = data;
       const files = filenames.map(function remapData(filename, idx) {
         const meta = props[idx][1];
 

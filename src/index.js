@@ -5,7 +5,7 @@ const path = require('path');
 const fsort = require('redis-filtered-sort');
 const moment = require('moment');
 const LockManager = require('dlock');
-const postProcess = require('./actions/process.js');
+const postProcess = require('./utils/process.js');
 const RedisCluster = require('ioredis').Cluster;
 const listFiles = require('./actions/list.js');
 
