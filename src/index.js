@@ -78,6 +78,7 @@ class Files extends Mservice {
     hooks: {
       'files:info:pre': [],
       'files:upload:pre': [],
+      'files:update:pre': [],
       'files:process:post': [],
     },
     // storage options

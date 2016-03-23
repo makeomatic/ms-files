@@ -87,12 +87,8 @@ describe('update suite', function suite() {
         .send(message, 45000)
         .reflect()
         .then(inspectPromise())
-        .then(rsp => {
-          assert.equal(rsp.uploadId, message.uploadId);
-          assert.deepEqual(rsp.name, message.meta.name);
-          assert.deepEqual(rsp.description, message.meta.description);
-          assert.deepEqual(rsp.tags, message.meta.tags);
-          assert.deepEqual(rsp.website, message.meta.website);
+        .then(result => {
+          assert.equal(result, 'OK');
         });
     });
   });

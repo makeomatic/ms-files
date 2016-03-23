@@ -11,9 +11,6 @@
     },
     "meta": {
       "$ref": "common#/definitions/meta"
-    },
-    "isAdmin": {
-      "type": "boolean"
     }
   }
 }
