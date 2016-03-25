@@ -25,6 +25,8 @@ const redisHosts = Object.keys(env)
     port: env[key.replace('ADDR', 'PORT')],
   }));
 
+const admin = 'admin@makeomatic.ru';
+
 // full configuration
 module.exports = {
   amqp,
@@ -51,6 +53,7 @@ module.exports = {
     },
     cname: true,
   },
+  admin,
   hooks: {
     // return input, assume there are models
     'files:upload:pre': files => files,
@@ -58,5 +61,6 @@ module.exports = {
     'files:process:post': [],
     // alias -> username
     'files:info:pre': alias => alias,
+    'files:update:pre': username => username === admin
   },
 };

@@ -91,5 +91,22 @@ describe('update suite', function suite() {
           assert.equal(result, 'OK');
         });
     });
+
+    it('returns correct response format when user is admin', function test() {
+
+      const message = {
+        uploadId: this.response.uploadId,
+        username: config.admin,
+        meta
+      };
+
+      return this
+        .send(message, 45000)
+        .reflect()
+        .then(inspectPromise())
+        .then(result => {
+          assert.equal(result, 'OK');
+        });
+    });
   });
 });
