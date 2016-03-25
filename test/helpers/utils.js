@@ -254,8 +254,16 @@ function bindSend(route) {
   };
 }
 
+//
+// check whether user is admin
+//
+function checkAdminMock (username) {
+  return username === admin;
+}
+
 // pre-cache data
 const owner = 'v@makeomatic.ru';
+const admin = 'admin@makeomatic.ru';
 const model = readFile('model');
 const textures = [readFile('texture-1'), readFile('texture-2')];
 const preview = readFile('preview');
@@ -283,4 +291,6 @@ module.exports = exports = {
   stopService,
   bindSend,
   initAndUpload,
+  admin,
+  checkAdminMock
 };
