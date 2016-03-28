@@ -21,11 +21,11 @@ module.exports = function processFile(key, data) {
         .spread((processedData = {}) => {
           // omit location, since it's used once during upload
           const fileKeys = [];
-          const files = JSON.parse(data.files)
-            .map(file => {
-              fileKeys.push(`${UPLOAD_DATA}:${file.filename}`);
-              return omit(file, METADATA_BLACKLIST);
-            });
+          const parsedFiles = typeof data.files === 'string' ? JSON.parse(data.files) : data.files;
+          const files = parsedFiles.map(file => {
+            fileKeys.push(`${UPLOAD_DATA}:${file.filename}`);
+            return omit(file, METADATA_BLACKLIST);
+          });
 
           // create new fileData
           const fileData = {
