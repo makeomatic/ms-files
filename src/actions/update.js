@@ -1,5 +1,5 @@
 const Promise = require('bluebird');
-const { FILES_DATA } = require('../constant.js');
+const { FILES_DATA, FILES_TAGS } = require('../constant.js');
 const getUploadStatus = require('../utils/getUploadStatus.js');
 const hasAccess = require('../utils/hasAccess.js');
 const isProcessed = require('../utils/isProcessed.js');
@@ -44,16 +44,20 @@ module.exports = function initFileUpdate(opts) {
     .then(() => {
       return Promise.try(function updateMetadata() {
 
+        const pipeline = redis.pipeline();
+        const keyTags = `${FILES_TAGS}:${uploadId}`;
+
         if (meta.tags) {
-          meta.tags = JSON.stringify(meta.tags);
+          meta.tags.forEach(tag => pipeline.sadd(keyTags, tag));
+          meta.tags = keyTags;
         }
 
-        return redis
-          .pipeline()
+        return pipeline
           .hmset(key, meta)
           .exec()
-          .spread(result => {
-            return result[1];
+          .spread((...args) => {
+            const resultOfSet = args[args.length - 1];
+            return resultOfSet[1];
           });
       });
     });

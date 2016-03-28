@@ -11,7 +11,6 @@ const {
   initAndUpload,
   processUpload,
   config,
-  admin
 } = require('../helpers/utils.js');
 
 const route = 'files.update';
@@ -97,7 +96,7 @@ describe('update suite', function suite() {
 
       const message = {
         uploadId: this.response.uploadId,
-        username: admin,
+        username: config.admin,
         meta
       };
 

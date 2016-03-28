@@ -1,15 +1,6 @@
 // cache env ref
 const env = process.env;
 const path = require('path');
-const { checkAdminMock } = require('./utils.js');
-
-console.log('*********************');
-console.log('*********************');
-console.log('*********************');
-console.log(checkAdminMock);
-console.log('*********************');
-console.log('*********************');
-console.log('*********************');
 
 try {
   env.DOTENV_FILE_PATH = env.DOTENV_FILE_PATH || path.resolve(__dirname, '../.env');
@@ -33,6 +24,8 @@ const redisHosts = Object.keys(env)
     host: env[key],
     port: env[key.replace('ADDR', 'PORT')],
   }));
+
+const admin = 'admin@makeomatic.ru';
 
 // full configuration
 module.exports = {
@@ -60,6 +53,7 @@ module.exports = {
     },
     cname: true,
   },
+  admin,
   hooks: {
     // return input, assume there are models
     'files:upload:pre': files => files,
@@ -67,6 +61,6 @@ module.exports = {
     'files:process:post': [],
     // alias -> username
     'files:info:pre': alias => alias,
-    'files:update:pre': checkAdminMock
+    'files:update:pre': username => username === admin
   },
 };
