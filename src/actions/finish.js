@@ -48,15 +48,15 @@ module.exports = function completeFileUpload(opts) {
     })
     .then(data => {
       const { uploadId, update } = data;
-      const [parts, incr, status, pub] = update;
+      const [parts, incr, status] = update;
 
       // errors
-      const err = parts[0] || incr[0] || status[0] || pub[0];
+      const err = parts[0] || incr[0] || status[0];
       if (err) {
         throw err;
       }
 
-      const [currentStatus, totalParts, username] = parts[1];
+      const [currentStatus, totalParts, username, isPublic] = parts[1];
       const currentParts = incr[1];
 
       if (currentParts < totalParts) {
@@ -80,7 +80,6 @@ module.exports = function completeFileUpload(opts) {
           .sadd(`${FILES_INDEX}:${username}`, uploadId);
 
       // convert 1 or undef to Boolean
-      const isPublic = !!pub[1];
       if (isPublic) {
         const FILES_INDEX_PUBLIC = `${FILES_INDEX}:${username}:pub`;
         pipeline.sadd(FILES_INDEX_PUBLIC, uploadId);
