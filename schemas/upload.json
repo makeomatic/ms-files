@@ -25,6 +25,16 @@
     },
     "username": {
       "$ref": "common#/definitions/owner"
+    },
+    "access": {
+      "type": "object",
+      "required": ["setPublic"],
+      "properties": {
+        "setPublic": {
+          "type": "boolean",
+          "default": false
+        }
+      }
     }
   }
 }

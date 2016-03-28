@@ -1,7 +1,12 @@
 const Promise = require('bluebird');
 const fetchData = require('../utils/fetchData.js');
 const { HttpStatusError } = require('common-errors');
-const { STATUS_UPLOADED, STATUS_PENDING, UPLOAD_DATA, FILES_INDEX, FILES_DATA, FILES_OWNER_FIELD } = require('../constant.js');
+const {
+  STATUS_UPLOADED, STATUS_PENDING,
+  UPLOAD_DATA,
+  FILES_INDEX, FILES_DATA,
+  FILES_OWNER_FIELD, FILES_PUBLIC_FIELD,
+} = require('../constant.js');
 
 /**
  * Finish upload
@@ -32,7 +37,7 @@ module.exports = function completeFileUpload(opts) {
         uploadId,
         update: redis
           .pipeline()
-          .hmget(uploadKey, 'status', 'parts', FILES_OWNER_FIELD)
+          .hmget(uploadKey, 'status', 'parts', FILES_OWNER_FIELD, FILES_PUBLIC_FIELD)
           .hincrby(uploadKey, 'uploaded', 1)
           .hmset(key, {
             status: STATUS_UPLOADED,
@@ -51,7 +56,7 @@ module.exports = function completeFileUpload(opts) {
         throw err;
       }
 
-      const [currentStatus, totalParts, username] = parts[1];
+      const [currentStatus, totalParts, username, isPublic] = parts[1];
       const currentParts = incr[1];
 
       if (currentParts < totalParts) {
@@ -63,8 +68,7 @@ module.exports = function completeFileUpload(opts) {
       }
 
       const uploadKey = `${FILES_DATA}:${uploadId}`;
-
-      return redis
+      const pipeline = redis
         .pipeline()
           .persist(uploadKey)
           .hmset(uploadKey, {
@@ -73,8 +77,15 @@ module.exports = function completeFileUpload(opts) {
           })
           // now that it is uploaded - add them to index
           .sadd(FILES_INDEX, uploadId)
-          .sadd(`${FILES_INDEX}:${username}`, uploadId)
-        .exec()
+          .sadd(`${FILES_INDEX}:${username}`, uploadId);
+
+      // convert 1 or undef to Boolean
+      if (isPublic) {
+        const FILES_INDEX_PUBLIC = `${FILES_INDEX}:${username}:pub`;
+        pipeline.sadd(FILES_INDEX_PUBLIC, uploadId);
+      }
+
+      return pipeline.exec()
         .return(uploadId);
     })
     .then(uploadId => {
