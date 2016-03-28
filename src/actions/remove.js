@@ -32,15 +32,13 @@ module.exports = function removeFile(opts) {
         })
         .then(() => {
           const pipeline = redis.pipeline();
-          pipeline.del(key);
-          pipeline.srem(FILES_INDEX, filename);
+          pipeline
+            .del(key)
+            .srem(FILES_INDEX, filename)
+            .srem(`${FILES_INDEX}:${data[FILES_OWNER_FIELD]}`, filename);
 
-          // removes from indices
-          if (data[FILES_OWNER_FIELD]) {
-            pipeline.srem(`${FILES_INDEX}:${data[FILES_OWNER_FIELD]}`, filename);
-            if (data[FILES_PUBLIC_FIELD]) {
-              pipeline.srem(`${FILES_INDEX}:${data[FILES_OWNER_FIELD]}:pub`, filename);
-            }
+          if (data[FILES_PUBLIC_FIELD]) {
+            pipeline.srem(`${FILES_INDEX}:${data[FILES_OWNER_FIELD]}:pub`, filename);
           }
 
           return pipeline.exec();
