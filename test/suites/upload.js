@@ -144,6 +144,6 @@ describe('upload suite', function suite() {
 
   it('able to download public files right away', function test() {
     const file = this.response.files[0];
-    return request.get(`https://www.googleapis.com/${bucketName}/${file.filename}`);
+    return request.get(`https://storage.googleapis.com/${bucketName}/${file.filename}`);
   });
 });
