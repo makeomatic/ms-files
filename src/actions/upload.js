@@ -2,7 +2,8 @@ const Promise = require('bluebird');
 const uuid = require('node-uuid');
 const md5 = require('md5');
 const sumBy = require('lodash/sumBy');
-const { STATUS_PENDING, UPLOAD_DATA, FILES_DATA } = require('../constant.js');
+const get = require('lodash/get');
+const { STATUS_PENDING, UPLOAD_DATA, FILES_DATA, FILES_PUBLIC_FIELD } = require('../constant.js');
 
 const TYPE_MAP = {
   'c-bin': '.bin.gz',
@@ -27,6 +28,7 @@ module.exports = function initFileUpload(opts) {
   const { provider, redis } = this;
   const prefix = md5(username);
   const uploadId = uuid.v4();
+  const isPublic = get(opts, 'access.setPublic', false);
 
   return Promise
     .bind(this, ['files:upload:pre', files, username])
@@ -44,7 +46,13 @@ module.exports = function initFileUpload(opts) {
         ...metadata,
         type,
         filename,
-        location: provider.initResumableUpload({ filename, metadata }),
+        location: provider.initResumableUpload({
+          filename,
+          metadata: {
+            ...metadata,
+            predefinedAcl: isPublic ? 'publicRead' : '',
+          },
+        }),
       });
     })
     .then(parts => {
@@ -58,6 +66,10 @@ module.exports = function initFileUpload(opts) {
         status: STATUS_PENDING,
         parts: files.length,
       };
+
+      if (isPublic) {
+        fileData[FILES_PUBLIC_FIELD] = 1;
+      }
 
       const pipeline = redis.pipeline();
       const uploadKey = `${FILES_DATA}:${uploadId}`;
