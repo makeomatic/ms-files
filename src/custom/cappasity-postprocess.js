@@ -9,11 +9,11 @@ const TYPE_MAP = {
 
 module.exports = function extractMetadata(data) {
   return Promise.try(function parseMeta() {
-    const files = JSON.parse(data.files);
+    const parsedFiles = typeof data.files === 'string' ? JSON.parse(data.files) : data.files;
     const output = {};
 
     let textures = 0;
-    files.forEach(({ type, filename }) => {
+    parsedFiles.forEach(({ type, filename }) => {
       const responsibility = TYPE_MAP[type];
       if (responsibility === 'texture') {
         output[`texture_${textures++}`] = filename;
@@ -21,6 +21,9 @@ module.exports = function extractMetadata(data) {
         output[responsibility] = filename;
       }
     });
+
+    // so that we don't parse it again later
+    data.files = parsedFiles;
 
     return output;
   });
