@@ -1,7 +1,6 @@
 const Promise = require('bluebird');
 const { FILES_DATA, FILES_TAGS } = require('../constant.js');
 const getUploadStatus = require('../utils/getUploadStatus.js');
-const hasAccess = require('../utils/hasAccess.js');
 const isProcessed = require('../utils/isProcessed.js');
 const { HttpStatusError } = require('common-errors');
 
@@ -25,21 +24,9 @@ module.exports = function initFileUpdate(opts) {
     .then(isProcessed)
     .then(data => {
 
-      if (!username) {
-        throw new HttpStatusError(403, 'file does not belong to the provided user');
-      }
-
       return Promise
-        .bind(this, ['files:update:pre', username])
-        .spread(this.postHook)
-        .spread(isAdmin => {
-          if (isAdmin) {
-            return;
-          } else {
-            return hasAccess(username)(data);
-          }
-        });
-
+        .bind(this, ['files:update:pre', username, data])
+        .spread(this.postHook);
     })
     .then(() => {
       return Promise.try(function updateMetadata() {
@@ -48,7 +35,10 @@ module.exports = function initFileUpdate(opts) {
         const keyTags = `${FILES_TAGS}:${uploadId}`;
 
         if (meta.tags) {
-          meta.tags.forEach(tag => pipeline.sadd(keyTags, tag));
+          pipeline
+            .del(keyTags)
+            .sadd(keyTags, ...meta.tags);
+
           meta.tags = keyTags;
         }
 

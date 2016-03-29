@@ -1,6 +1,7 @@
 const Promise = require('bluebird');
+const hasAccess = require('../utils/hasAccess.js');
 
-module.exports = function extractMetadata(username) {
+module.exports = function extractMetadata(username, data) {
   const { amqp, config } = this;
   const { users: { audience, getMetadata } } = config;
 
@@ -11,6 +12,6 @@ module.exports = function extractMetadata(username) {
         return true;
       }
 
-      return false;
+      return hasAccess(username)(data);
     });
 };

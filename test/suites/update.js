@@ -11,6 +11,7 @@ const {
   initAndUpload,
   processUpload,
   config,
+  admin
 } = require('../helpers/utils.js');
 
 const route = 'files.update';
@@ -65,16 +66,6 @@ describe('update suite', function suite() {
       return processUpload.call(this, this.response);
     });
 
-    it('returns 403 on a user mismatch', function test() {
-      return this
-        .send({ uploadId: this.response.uploadId, username: 'test@test.com' })
-        .reflect()
-        .then(inspectPromise(false))
-        .then(err => {
-          assert.equal(err.statusCode, 403);
-        });
-    });
-
     it('initiates update and returns correct response format', function test() {
 
       const message = {
@@ -96,7 +87,7 @@ describe('update suite', function suite() {
 
       const message = {
         uploadId: this.response.uploadId,
-        username: config.admin,
+        username: admin,
         meta
       };
 
