@@ -1,7 +1,6 @@
 // cache env ref
 const env = process.env;
 const path = require('path');
-const { checkAdminMock } = require('./utils.js');
 
 try {
   env.DOTENV_FILE_PATH = env.DOTENV_FILE_PATH || path.resolve(__dirname, '../.env');
@@ -59,6 +58,6 @@ module.exports = {
     'files:process:post': [],
     // alias -> username
     'files:info:pre': alias => alias,
-    'files:update:pre': username => username === 'admin@makeomatic.ru' // checkAdminMock - undefined
+    'files:update:pre': []
   },
 };

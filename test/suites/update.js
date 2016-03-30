@@ -10,20 +10,15 @@ const {
   bindSend,
   initAndUpload,
   processUpload,
-  config,
-  admin
+  config
 } = require('../helpers/utils.js');
 
 const route = 'files.update';
-
+const username = owner;
 const meta = {
   name: 'name',
   description: 'description',
-  tags: [
-    'tag1',
-    'tag2',
-    'tag3'
-  ],
+  tags: [ 'tag1', 'tag2', 'tag3' ],
   website: 'http://website.com'
 };
 
@@ -36,7 +31,7 @@ describe('update suite', function suite() {
 
   it('returns 404 when file not found', function test() {
     return this
-      .send({ uploadId: uuid.v4(), username: owner })
+      .send({ uploadId: uuid.v4(), username, meta })
       .reflect()
       .then(inspectPromise(false))
       .then(err => {
@@ -45,15 +40,8 @@ describe('update suite', function suite() {
   });
 
   it('returns 412 when file is not processed', function test() {
-
-    const message = {
-      uploadId: this.response.uploadId,
-      username: owner,
-      meta: meta
-    };
-
     return this
-      .send(message, 45000)
+      .send({ uploadId: this.response.uploadId, username, meta }, 45000)
       .reflect()
       .then(inspectPromise(false))
       .then(err => {
@@ -67,32 +55,8 @@ describe('update suite', function suite() {
     });
 
     it('initiates update and returns correct response format', function test() {
-
-      const message = {
-        uploadId: this.response.uploadId,
-        username: owner,
-        meta
-      };
-
       return this
-        .send(message, 45000)
-        .reflect()
-        .then(inspectPromise())
-        .then(result => {
-          assert.equal(result, 'OK');
-        });
-    });
-
-    it('returns correct response format when user is admin', function test() {
-
-      const message = {
-        uploadId: this.response.uploadId,
-        username: admin,
-        meta
-      };
-
-      return this
-        .send(message, 45000)
+        .send({ uploadId: this.response.uploadId, username, meta }, 45000)
         .reflect()
         .then(inspectPromise())
         .then(result => {

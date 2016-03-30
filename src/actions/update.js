@@ -1,5 +1,5 @@
 const Promise = require('bluebird');
-const { FILES_DATA, FILES_TAGS } = require('../constant.js');
+const { FILES_DATA, FILES_INDEX_TAGS } = require('../constant.js');
 const getUploadStatus = require('../utils/getUploadStatus.js');
 const isProcessed = require('../utils/isProcessed.js');
 const { HttpStatusError } = require('common-errors');
@@ -22,33 +22,26 @@ module.exports = function initFileUpdate(opts) {
     .bind(this, key)
     .then(getUploadStatus)
     .then(isProcessed)
-    .then(data => {
+    .then(data => ['files:update:pre', username, data])
+    .spread(this.postHook)
+    .then(() => Promise.try(function updateMetadata() {
+      const pipeline = redis.pipeline();
 
-      return Promise
-        .bind(this, ['files:update:pre', username, data])
-        .spread(this.postHook);
-    })
-    .then(() => {
-      return Promise.try(function updateMetadata() {
+      if (meta.tags) {
+        meta.tags.forEach(tag => {
+          const tagKey = `${FILES_INDEX_TAGS}:${tag}`;
+          pipeline.sadd(tagKey, uploadId);
+        });
 
-        const pipeline = redis.pipeline();
-        const keyTags = `${FILES_TAGS}:${uploadId}`;
+        delete meta.tags;
+      }
 
-        if (meta.tags) {
-          pipeline
-            .del(keyTags)
-            .sadd(keyTags, ...meta.tags);
-
-          meta.tags = keyTags;
-        }
-
-        return pipeline
-          .hmset(key, meta)
-          .exec()
-          .spread((...args) => {
-            const resultOfSet = args[args.length - 1];
-            return resultOfSet[1];
-          });
-      });
-    });
+      return pipeline
+        .hmset(key, meta)
+        .exec()
+        .spread((...args) => {
+          const resultOfSet = args[args.length - 1];
+          return resultOfSet[1];
+        });
+    }));
 };
