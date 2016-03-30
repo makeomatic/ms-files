@@ -18,8 +18,8 @@ const username = owner;
 const meta = {
   name: 'name',
   description: 'description',
-  tags: [ 'tag1', 'tag2', 'tag3' ],
-  website: 'http://website.com'
+  tags: ['tag1', 'tag2', 'tag3'],
+  website: 'http://website.com',
 };
 
 describe('update suite', function suite() {

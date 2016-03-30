@@ -1,5 +1,10 @@
 const Promise = require('bluebird');
-const { FILES_INDEX, FILES_DATA, FILES_PUBLIC_FIELD, FILES_OWNER_FIELD } = require('../constant.js');
+const { FILES_INDEX,
+        FILES_DATA,
+        FILES_PUBLIC_FIELD,
+        FILES_OWNER_FIELD,
+        FILES_INDEX_TAGS,
+      } = require('../constant.js');
 const hasAccess = require('../utils/hasAccess.js');
 const fetchData = require('../utils/fetchData.js');
 
@@ -41,6 +46,10 @@ module.exports = function removeFile(opts) {
             if (data[FILES_PUBLIC_FIELD]) {
               pipeline.srem(`${FILES_INDEX}:${data[FILES_OWNER_FIELD]}:pub`, filename);
             }
+          }
+
+          if (data.tags) {
+            data.tags.forEach(tag => pipeline.srem(`${FILES_INDEX_TAGS}:${tag}`, filename));
           }
 
           return pipeline.exec();

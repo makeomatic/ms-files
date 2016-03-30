@@ -1,4 +1,3 @@
-const Promise = require('bluebird');
 const hasAccess = require('../utils/hasAccess.js');
 
 module.exports = function extractMetadata(username, data) {

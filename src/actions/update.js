@@ -2,7 +2,6 @@ const Promise = require('bluebird');
 const { FILES_DATA, FILES_INDEX_TAGS } = require('../constant.js');
 const fetchData = require('../utils/fetchData.js');
 const isProcessed = require('../utils/isProcessed.js');
-const { HttpStatusError } = require('common-errors');
 
 /**
  * Initiates update
@@ -14,24 +13,20 @@ const { HttpStatusError } = require('common-errors');
  */
 module.exports = function initFileUpdate(opts) {
   const { uploadId, username } = opts;
-  const { provider, redis } = this;
+  const { redis } = this;
   const key = `${FILES_DATA}:${uploadId}`;
-  let meta = opts.meta;
+  const meta = opts.meta;
 
   return Promise
     .bind(this, key)
     .then(fetchData)
     .then(isProcessed)
-    .tap(data => this.postHook('files:update:pre', username, data))
+    .tap(data => this.postHook.call(this, 'files:update:pre', username, data))
     .then(data => Promise.try(function updateMetadata() {
       const pipeline = redis.pipeline();
 
       if (data.tags) {
-        let tags = JSON.parse(data.tags);
-        tags.forEach(tag => {
-          const tagKey = `${FILES_INDEX_TAGS}:${tag}`;
-          pipeline.srem(tagKey, uploadId);
-        });
+        data.tags.forEach(tag => pipeline.srem(`${FILES_INDEX_TAGS}:${tag}`, uploadId));
       }
 
       if (meta.tags) {

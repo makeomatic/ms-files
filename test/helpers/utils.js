@@ -282,5 +282,5 @@ module.exports = exports = {
   startService,
   stopService,
   bindSend,
-  initAndUpload
+  initAndUpload,
 };
