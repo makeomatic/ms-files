@@ -9,7 +9,7 @@ module.exports = function extractMetadata(username, data) {
     .get(audience)
     .then(({ roles = [] }) => {
       if (roles.indexOf('admin') >= 0) {
-        return true;
+        return data;
       }
 
       return hasAccess(username)(data);

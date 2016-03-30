@@ -60,7 +60,7 @@ describe('update suite', function suite() {
         .reflect()
         .then(inspectPromise())
         .then(result => {
-          assert.equal(result, 'OK');
+          assert.equal(result, true);
         });
     });
   });
