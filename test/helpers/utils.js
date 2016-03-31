@@ -260,6 +260,12 @@ const model = readFile('model');
 const textures = [readFile('texture-1'), readFile('texture-2')];
 const preview = readFile('preview');
 const modelData = modelMessage(model, textures, preview, owner);
+const meta = {
+  name: 'name',
+  description: 'description',
+  tags: ['tag1', 'tag2', 'tag3'],
+  website: 'http://website.com',
+};
 
 // Public API
 module.exports = exports = {
@@ -283,4 +289,5 @@ module.exports = exports = {
   stopService,
   bindSend,
   initAndUpload,
+  meta,
 };

@@ -10,17 +10,13 @@ const {
   bindSend,
   initAndUpload,
   processUpload,
-  config
+  config,
+  meta,
 } = require('../helpers/utils.js');
 
 const route = 'files.update';
+const infoRoute = 'files.info';
 const username = owner;
-const meta = {
-  name: 'name',
-  description: 'description',
-  tags: ['tag1', 'tag2', 'tag3'],
-  website: 'http://website.com',
-};
 
 describe('update suite', function suite() {
 
@@ -61,6 +57,55 @@ describe('update suite', function suite() {
         .then(inspectPromise())
         .then(result => {
           assert.equal(result, true);
+        });
+    });
+  });
+
+  describe('process info', function afterUpdateSuite() {
+    it('returns file info', function test() {
+      return this
+        .amqp.publishAndWait(infoRoute, {
+          filename: this.response.uploadId,
+          username,
+        })
+        .reflect()
+        .then(inspectPromise())
+        .then(result => {
+          assert.equal(result.username, username);
+          assert.equal(result.file.uploadId, this.response.uploadId);
+          assert.equal(result.file.name, meta.name);
+          assert.equal(result.file.description, meta.description);
+          assert.equal(result.file.website, meta.website);
+          assert.deepEqual(result.file.tags, meta.tags);
+        });
+    });
+  });
+
+  describe('process update again', function afterUpdateSuite() {
+    it('initiates update again with other tags', function test() {
+      meta.tags = ['tag4', 'tag5', 'tag6'];
+
+      return this
+        .send({ uploadId: this.response.uploadId, username, meta }, 45000)
+        .reflect()
+        .then(inspectPromise())
+        .then(result => {
+          assert.equal(result, true);
+        });
+    });
+  });
+
+  describe('process info again', function afterUpdateSuite() {
+    it('returns file info to check updated tags', function test() {
+      return this
+        .amqp.publishAndWait(infoRoute, {
+          filename: this.response.uploadId,
+          username,
+        })
+        .reflect()
+        .then(inspectPromise())
+        .then(result => {
+          assert.deepEqual(result.file.tags, meta.tags);
         });
     });
   });

@@ -10,12 +10,13 @@ module.exports = function exists(key) {
     .spread((fileExistsResponse, dataResponse) => {
       const fileExists = fileExistsResponse[1];
       const data = dataResponse[1];
+      let field;
 
-      for (key in data) {
-        if (key === 'tags') {
-          data[key] = data[key].toJSON();
+      for (field in data) {
+        if (field === 'tags') {
+          data[field] = JSON.parse(data[field]);
         } else {
-          data[key] = data[key].toString('utf8');
+          data[field] = data[field].toString('utf8');
         }
       }
 
