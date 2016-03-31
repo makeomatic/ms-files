@@ -11,4 +11,5 @@ module.exports = {
   FILES_OWNER_FIELD: 'owner',
   FILES_PUBLIC_FIELD: 'public',
   WEBHOOK_RESOURCE_ID: 'gce:webhook',
+  FILES_INDEX_TAGS: 'files-index-tags',
 };

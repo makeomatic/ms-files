@@ -1,0 +1,16 @@
+{
+  "id": "update",
+  "type": "object",
+  "required": [ "uploadId", "username", "meta" ],
+  "properties": {
+    "uploadId": {
+      "$ref": "common#/definitions/uuid-v4"
+    },
+    "username": {
+      "$ref": "common#/definitions/owner"
+    },
+    "meta": {
+      "$ref": "common#/definitions/meta"
+    }
+  }
+}
