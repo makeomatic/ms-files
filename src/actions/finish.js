@@ -4,7 +4,7 @@ const { HttpStatusError } = require('common-errors');
 const {
   STATUS_UPLOADED, STATUS_PENDING,
   UPLOAD_DATA,
-  FILES_INDEX, FILES_DATA,
+  FILES_INDEX, FILES_DATA, FILES_INDEX_PUBLIC,
   FILES_OWNER_FIELD, FILES_PUBLIC_FIELD,
 } = require('../constant.js');
 
@@ -81,8 +81,8 @@ module.exports = function completeFileUpload(opts) {
 
       // convert 1 or undef to Boolean
       if (isPublic) {
-        const FILES_INDEX_PUBLIC = `${FILES_INDEX}:${username}:pub`;
         pipeline.sadd(FILES_INDEX_PUBLIC, uploadId);
+        pipeline.sadd(`${FILES_INDEX}:${username}:pub`, uploadId);
       }
 
       return pipeline.exec()

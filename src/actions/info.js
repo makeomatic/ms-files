@@ -11,10 +11,10 @@ const { FILES_DATA, FILES_OWNER_FIELD } = require('../constant.js');
  * @return {Promise}
  */
 module.exports = function getFileInfo(opts) {
-  const { filename } = opts;
+  const { filename, username: owner } = opts;
 
   return Promise
-    .bind(this, ['files:info:pre', opts.username])
+    .bind(this, ['files:info:pre', owner])
     .spread(this.postHook)
     .spread(username => {
       if (!username) {

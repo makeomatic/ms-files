@@ -8,20 +8,16 @@ const { FILES_DATA, FILES_INDEX, FILES_INDEX_PUBLIC } = require('../constant.js'
  * @return {Promise}
  */
 module.exports = function postProcessFile(opts) {
-  const { redis } = this;
+  const { redis, log } = this;
   const { owner, filter, public: isPublic, offset, limit, order, criteria } = opts;
   const strFilter = is.string(filter) ? filter : fsort.filter(filter || {});
 
   return Promise
-    .bind(this)
-    .then(() => {
-      if (!owner) {
-        return [];
-      }
-
-      return this.postHook.call(this, 'files:info:pre', owner);
-    })
+    .bind(this, ['files:info:pre', owner])
+    .spread(this.postHook)
     .spread(username => {
+      log.debug('[list]: resolved %s to %s', owner, username);
+
       // choose which set to use
       let filesIndex;
       if (isPublic && username) {
