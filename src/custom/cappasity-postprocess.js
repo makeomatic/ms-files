@@ -37,12 +37,10 @@ module.exports = function extractMetadata(data) {
 
       const { amqp, redis, config } = this;
       const { owner: username, uploadId } = data;
-      const { users: { prefix, audience, getMetadata, updateMetadata } } = config;
-      const update = `${prefix}.${updateMetadata}`;
-      const get = `${prefix}.${getMetadata}`;
+      const { users: { audience, getMetadata, updateMetadata } } = config;
 
       return amqp
-        .publishAndWait(get, { username, audience })
+        .publishAndWait(getMetadata, { username, audience })
         .get(audience)
         .then(metadata => {
           if (metadata.roles && metadata.roles.indexOf('admin') >= 0) {
@@ -68,7 +66,7 @@ module.exports = function extractMetadata(data) {
 
               // publish
               return amqp
-                .publishAndWait(update, message)
+                .publishAndWait(updateMetadata, message)
                 .then(() => redis.hset(`${FILES_DATA}:${uploadId}`, FILES_PROCESS_ERROR_FIELD, '402'))
                 .throw(new HttpStatusError(402, 'no more models are available'));
             });
