@@ -26,7 +26,7 @@ module.exports = function removeFile(opts) {
     .then(fetchData)
     .then(hasAccess(username))
     .then(data => {
-      const files = JSON.parse(data.files);
+      const { files } = data;
 
       return Promise
         .mapSeries(files, file => {
