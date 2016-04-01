@@ -1,6 +1,7 @@
 const Promise = require('bluebird');
 const fsort = require('redis-filtered-sort');
 const is = require('is');
+const safeParse = require('../utils/safeParse');
 const { FILES_DATA, FILES_INDEX, FILES_INDEX_PUBLIC, FILES_TAGS_FIELD } = require('../constant.js');
 
 /**
@@ -57,8 +58,8 @@ module.exports = function postProcessFile(opts) {
         return {
           ...meta,
           id: filename,
-          files: JSON.parse(meta.files),
-          [FILES_TAGS_FIELD]: meta[FILES_TAGS_FIELD] && JSON.parse(meta[FILES_TAGS_FIELD]) || [],
+          files: safeParse(meta.files, []),
+          [FILES_TAGS_FIELD]: safeParse(meta[FILES_TAGS_FIELD], []),
         };
       });
 
