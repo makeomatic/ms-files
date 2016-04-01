@@ -3,7 +3,7 @@ const uuid = require('node-uuid');
 const md5 = require('md5');
 const sumBy = require('lodash/sumBy');
 const get = require('lodash/get');
-const { STATUS_PENDING, UPLOAD_DATA, FILES_DATA, FILES_PUBLIC_FIELD } = require('../constant.js');
+const { STATUS_PENDING, UPLOAD_DATA, FILES_DATA, FILES_PUBLIC_FIELD, FILES_TAGS_FIELD } = require('../constant.js');
 
 const TYPE_MAP = {
   'c-bin': '.bin.gz',
@@ -56,6 +56,10 @@ module.exports = function initFileUpload(opts) {
       });
     })
     .then(parts => {
+      if (meta[FILES_TAGS_FIELD]) {
+        meta[FILES_TAGS_FIELD] = JSON.stringify(meta[FILES_TAGS_FIELD]);
+      }
+
       const fileData = {
         ...meta,
         uploadId,

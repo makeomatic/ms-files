@@ -38,11 +38,8 @@ module.exports = function getFileInfo(opts) {
         throw new HttpStatusError(404, 'file not found');
       }
 
-      // parse files
-      info.files = JSON.parse(info.files);
-
       // rewire owner to requested username
-      info.owner = opts.username;
+      info.owner = owner;
 
       return data;
     });

@@ -1,12 +1,13 @@
 const Promise = require('bluebird');
-const { FILES_INDEX,
-        FILES_DATA,
-        FILES_PUBLIC_FIELD,
-        FILES_OWNER_FIELD,
-        FILES_INDEX_TAGS,
-      } = require('../constant.js');
 const hasAccess = require('../utils/hasAccess.js');
 const fetchData = require('../utils/fetchData.js');
+const { FILES_INDEX,
+  FILES_DATA,
+  FILES_PUBLIC_FIELD,
+  FILES_OWNER_FIELD,
+  FILES_INDEX_TAGS,
+  FILES_TAGS_FIELD,
+} = require('../constant.js');
 
 /**
  * Initiates upload
@@ -46,8 +47,8 @@ module.exports = function removeFile(opts) {
             pipeline.srem(`${FILES_INDEX}:${data[FILES_OWNER_FIELD]}:pub`, filename);
           }
 
-          if (data.tags) {
-            data.tags.forEach(tag => pipeline.srem(`${FILES_INDEX_TAGS}:${tag}`, filename));
+          if (data[FILES_TAGS_FIELD]) {
+            data[FILES_TAGS_FIELD].forEach(tag => pipeline.srem(`${FILES_INDEX_TAGS}:${tag}`, filename));
           }
 
           return pipeline.exec();

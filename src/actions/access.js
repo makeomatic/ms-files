@@ -54,9 +54,6 @@ module.exports = function adjustAccess(opts) {
     .then(fetchData)
     .then(hasAccess(username))
     .then(isProcessed)
-    .then(data => {
-      data.files = JSON.parse(data.files);
-      return [uploadId, data];
-    })
+    .then(data => [uploadId, data])
     .spread(setPublic ? addToPublic : removeFromPublic);
 };

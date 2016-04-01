@@ -4,8 +4,8 @@ const { HttpStatusError } = require('common-errors');
 const {
   STATUS_UPLOADED, STATUS_PENDING,
   UPLOAD_DATA,
-  FILES_INDEX, FILES_DATA, FILES_INDEX_PUBLIC,
-  FILES_OWNER_FIELD, FILES_PUBLIC_FIELD,
+  FILES_INDEX, FILES_DATA, FILES_INDEX_PUBLIC, FILES_INDEX_TAGS,
+  FILES_OWNER_FIELD, FILES_PUBLIC_FIELD, FILES_TAGS_FIELD,
 } = require('../constant.js');
 
 /**
@@ -37,7 +37,7 @@ module.exports = function completeFileUpload(opts) {
         uploadId,
         update: redis
           .pipeline()
-          .hmget(uploadKey, 'status', 'parts', FILES_OWNER_FIELD, FILES_PUBLIC_FIELD)
+          .hmget(uploadKey, 'status', 'parts', FILES_TAGS_FIELD, FILES_OWNER_FIELD, FILES_PUBLIC_FIELD)
           .hincrby(uploadKey, 'uploaded', 1)
           .hmset(key, {
             status: STATUS_UPLOADED,
@@ -56,7 +56,7 @@ module.exports = function completeFileUpload(opts) {
         throw err;
       }
 
-      const [currentStatus, totalParts, username, isPublic] = parts[1];
+      const [currentStatus, totalParts, tags, username, isPublic] = parts[1];
       const currentParts = incr[1];
 
       if (currentParts < totalParts) {
@@ -83,6 +83,13 @@ module.exports = function completeFileUpload(opts) {
       if (isPublic) {
         pipeline.sadd(FILES_INDEX_PUBLIC, uploadId);
         pipeline.sadd(`${FILES_INDEX}:${username}:pub`, uploadId);
+      }
+
+      // push to tags index
+      if (tags) {
+        JSON.parse(tags).forEach(tag => {
+          pipeline.sadd(`${FILES_INDEX_TAGS}:${tag}`, uploadId);
+        });
       }
 
       return pipeline.exec()

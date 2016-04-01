@@ -1,7 +1,7 @@
 const Promise = require('bluebird');
 const fsort = require('redis-filtered-sort');
 const is = require('is');
-const { FILES_DATA, FILES_INDEX, FILES_INDEX_PUBLIC } = require('../constant.js');
+const { FILES_DATA, FILES_INDEX, FILES_INDEX_PUBLIC, FILES_TAGS_FIELD } = require('../constant.js');
 
 /**
  * List files
@@ -58,6 +58,7 @@ module.exports = function postProcessFile(opts) {
           ...meta,
           id: filename,
           files: JSON.parse(meta.files),
+          [FILES_TAGS_FIELD]: meta[FILES_TAGS_FIELD] && JSON.parse(meta[FILES_TAGS_FIELD]) || [],
         };
       });
 

@@ -10,6 +10,7 @@ module.exports = {
   FILES_PROCESS_ERROR_FIELD: 'error',
   FILES_OWNER_FIELD: 'owner',
   FILES_PUBLIC_FIELD: 'public',
+  FILES_TAGS_FIELD: 'tags',
   WEBHOOK_RESOURCE_ID: 'gce:webhook',
   FILES_INDEX_TAGS: 'files-index-tags',
 };

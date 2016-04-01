@@ -26,8 +26,7 @@ module.exports = function getDownloadURL(opts) {
     .then(isProcessed)
     .then(data => {
       // parse file data
-      const { name } = data;
-      const files = JSON.parse(data.files);
+      const { name, files } = data;
 
       // check status and if we have public link available - use it
       let urls;
