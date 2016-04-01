@@ -1,5 +1,6 @@
 const { HttpStatusError } = require('common-errors');
 const { FILES_TAGS_FIELD } = require('../constant.js');
+const safeParse = require('./safeParse.js');
 const JSON_FIELDS = [FILES_TAGS_FIELD, 'files'];
 
 module.exports = function exists(key) {
@@ -16,7 +17,7 @@ module.exports = function exists(key) {
 
       for (field in data) {
         if (JSON_FIELDS.indexOf(field) !== -1) {
-          data[field] = JSON.parse(data[field]);
+          data[field] = safeParse(data[field], []);
         } else {
           data[field] = data[field].toString('utf8');
         }

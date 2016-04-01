@@ -92,7 +92,6 @@
     },
     "meta": {
       "type": "object",
-      "required": ["name"],
       "additionalProperties": false,
       "properties": {
         "name": {

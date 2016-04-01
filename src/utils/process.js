@@ -1,11 +1,16 @@
 const Promise = require('bluebird');
 const omit = require('lodash/omit');
-const { STATUS_PROCESSED, UPLOAD_DATA, FILES_DATA, FILES_PROCESS_ERROR_FIELD } = require('../constant.js');
+const safeParse = require('./safeParse.js');
+const { STATUS_PROCESSED, UPLOAD_DATA, FILES_DATA, FILES_PROCESS_ERROR_FIELD, FILES_TAGS_FIELD } = require('../constant.js');
 
 // blacklist of metadata that must be returned
 const METADATA_BLACKLIST = [
   'location',
 ];
+
+function parseString(data, returnValue) {
+  return typeof data === 'string' ? safeParse(data, returnValue) : data;
+}
 
 module.exports = function processFile(key, data) {
   const { redis, dlock } = this;
@@ -21,7 +26,8 @@ module.exports = function processFile(key, data) {
         .spread((processedData = {}) => {
           // omit location, since it's used once during upload
           const fileKeys = [];
-          const parsedFiles = typeof data.files === 'string' ? JSON.parse(data.files) : data.files;
+          const parsedFiles = parseString(data.files);
+          const parsedTags = parseString(data[FILES_TAGS_FIELD], []);
           const files = parsedFiles.map(file => {
             fileKeys.push(`${UPLOAD_DATA}:${file.filename}`);
             return omit(file, METADATA_BLACKLIST);
@@ -32,6 +38,7 @@ module.exports = function processFile(key, data) {
             ...data,
             ...processedData,
             files: JSON.stringify(files),
+            [FILES_TAGS_FIELD]: JSON.stringify(parsedTags),
             status: STATUS_PROCESSED,
           };
 

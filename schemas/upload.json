@@ -21,7 +21,15 @@
       }
     },
     "meta": {
-      "$ref": "common#/definitions/meta"
+      "allOf": [
+        {
+          "$ref": "common#/definitions/meta"
+        },
+        {
+          "type": "object",
+          "required": ["name"]
+        }
+      ]
     },
     "username": {
       "$ref": "common#/definitions/owner"
