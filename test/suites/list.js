@@ -10,9 +10,15 @@ const {
   stopService,
   inspectPromise,
   bindSend,
+  initAndUpload,
+  processUpload,
+  modelData,
+  meta,
+  owner: username,
 } = require('../helpers/utils.js');
 
 const route = 'files.list';
+const updateRoute = 'files.update';
 const {
   STATUS_UPLOADED, STATUS_PROCESSED,
   FILES_DATA, FILES_INDEX, FILES_INDEX_PUBLIC,
@@ -22,6 +28,7 @@ const {
 describe('list suite', function suite() {
   // setup functions
   before('start service', startService);
+  before('pre-upload file', initAndUpload(modelData));
   before('helpers', bindSend(route));
 
   // tear-down
@@ -30,6 +37,7 @@ describe('list suite', function suite() {
   // helper to create fake file
   const statusValues = [STATUS_UPLOADED, STATUS_PROCESSED];
   const owners = ld.times(5, faker.internet.email);
+  owners.push(username); // for some intersection with updated file
 
   function createFakeFile() {
     const owner = ld.sample(owners);
@@ -426,6 +434,68 @@ describe('list suite', function suite() {
 
         data.files.forEach(file => {
           assert.equal(file.owner, owner);
+        });
+      });
+    });
+  });
+
+  describe('tags-based list', function testSuite() {
+    before('process', function pretest() {
+      return processUpload.call(this, this.response);
+    });
+
+    it('update file with correct meta', function test() {
+      return this.amqp.publishAndWait(updateRoute, {
+        uploadId: this.response.uploadId,
+        username,
+        meta,
+      })
+      .reflect()
+      .then(inspectPromise())
+      .then(result => {
+        assert.equal(result, true);
+      });
+    });
+
+    it('returns files sorted by their tags', function test() {
+      return this.amqp.publishAndWait('files.list', {
+        filter: {},
+        tags: meta.tags,
+        order: 'ASC',
+        offset: 30,
+        limit: 10,
+      })
+      .reflect()
+      .then(inspectPromise())
+      .then(data => {
+        assert.ok(data.files);
+        ascSortFilename(data.files);
+        assert.equal(data.cursor, 40);
+        assert.equal(data.page, 4);
+        assert.ok(data.pages);
+      });
+    });
+
+    it('returns files sorted by their filename and tags', function test() {
+      return this.amqp.publishAndWait('files.list', {
+        filter: {},
+        tags: meta.tags,
+        owner: username,
+        order: 'ASC',
+        offset: 30,
+        limit: 10,
+      })
+      .reflect()
+      .then(inspectPromise())
+      .then(data => {
+        assert.ok(data.files);
+        ascSortFilename(data.files);
+        assert.equal(data.cursor, 40);
+        assert.equal(data.page, 4);
+        assert.ok(data.pages);
+
+        data.files.forEach(file => {
+          assert.equal(file.owner, username);
         });
       });
     });

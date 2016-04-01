@@ -2,7 +2,14 @@ const Promise = require('bluebird');
 const fsort = require('redis-filtered-sort');
 const is = require('is');
 const safeParse = require('../utils/safeParse');
-const { FILES_DATA, FILES_INDEX, FILES_INDEX_PUBLIC, FILES_TAGS_FIELD } = require('../constant.js');
+const {
+  FILES_DATA,
+  FILES_INDEX,
+  FILES_INDEX_PUBLIC,
+  FILES_INDEX_TAGS,
+  FILES_LIST,
+  FILES_TAGS_FIELD,
+} = require('../constant.js');
 
 /**
  * List files
@@ -10,7 +17,7 @@ const { FILES_DATA, FILES_INDEX, FILES_INDEX_PUBLIC, FILES_TAGS_FIELD } = requir
  */
 module.exports = function postProcessFile(opts) {
   const { redis, log } = this;
-  const { owner, filter, public: isPublic, offset, limit, order, criteria } = opts;
+  const { owner, filter, public: isPublic, offset, limit, order, criteria, tags } = opts;
   const strFilter = is.string(filter) ? filter : fsort.filter(filter || {});
 
   return Promise
@@ -31,6 +38,36 @@ module.exports = function postProcessFile(opts) {
         filesIndex = FILES_INDEX;
       }
 
+      if (!tags) {
+        return filesIndex;
+      }
+
+      const tagKeys = [];
+      const interstoreKeyTTL = 30; // 30 sec
+      let interstoreKey = `{FILES_LIST}:${filesIndex}`;
+
+      tags.sort().forEach(tag => {
+        const tagKey = `${FILES_INDEX_TAGS}:${tag}`;
+        tagKeys.push(tagKey);
+        interstoreKey = `${interstoreKey}:${tagKey}`;
+      });
+
+      return redis
+        .exists(interstoreKey)
+        .then(exists => {
+          if (exists) {
+            return interstoreKey;
+          }
+
+          return redis
+            .pipeline()
+            .sinterstore(interstoreKey, filesIndex, ...tagKeys)
+            .expire(interstoreKey, interstoreKeyTTL)
+            .exec()
+            .return(interstoreKey);
+        });
+    })
+    .then(filesIndex => {
       return redis.fsort(filesIndex, `${FILES_DATA}:*`, criteria, order, strFilter, offset, limit);
     })
     .then(filenames => {

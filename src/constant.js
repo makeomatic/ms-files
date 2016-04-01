@@ -13,4 +13,5 @@ module.exports = {
   FILES_TAGS_FIELD: 'tags',
   WEBHOOK_RESOURCE_ID: 'gce:webhook',
   FILES_INDEX_TAGS: 'files-index-tags',
+  FILES_LIST: 'files-list',
 };
