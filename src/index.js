@@ -102,6 +102,8 @@ class Files extends Mservice {
       getMetadata: 'users.getMetadata',
       updateMetadata: 'users.updateMetadata',
     },
+    // minimum remaining time(ms) to a previously saved key for action list
+    minListTTL: 1000,
   };
 
   constructor(opts = {}) {

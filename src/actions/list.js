@@ -16,7 +16,7 @@ const {
  * @return {Promise}
  */
 module.exports = function postProcessFile(opts) {
-  const { redis, log } = this;
+  const { redis, log, config: { minListTTL } } = this;
   const { owner, filter, public: isPublic, offset, limit, order, criteria, tags } = opts;
   const strFilter = is.string(filter) ? filter : fsort.filter(filter || {});
 
@@ -53,15 +53,15 @@ module.exports = function postProcessFile(opts) {
       });
 
       return redis
-        .exists(interstoreKey)
-        .then(exists => {
-          if (exists) {
+        .pttl(interstoreKey)
+        .then(result => {
+          if (result > minListTTL) {
             return interstoreKey;
           }
 
           return redis
             .pipeline()
-            .sinterstore(interstoreKey, filesIndex, ...tagKeys)
+            .sinterstore(interstoreKey, filesIndex, tagKeys)
             .expire(interstoreKey, interstoreKeyTTL)
             .exec()
             .return(interstoreKey);
