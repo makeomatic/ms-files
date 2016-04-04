@@ -16,7 +16,7 @@ const {
  * @return {Promise}
  */
 module.exports = function postProcessFile(opts) {
-  const { redis, log, config: { minListTTL } } = this;
+  const { redis, log, config: { interstoreKeyTTL, interstoreKeyMinTimeleft } } = this;
   const { owner, filter, public: isPublic, offset, limit, order, criteria, tags } = opts;
   const strFilter = is.string(filter) ? filter : fsort.filter(filter || {});
 
@@ -43,7 +43,6 @@ module.exports = function postProcessFile(opts) {
       }
 
       const tagKeys = [];
-      const interstoreKeyTTL = 30; // 30 sec
       let interstoreKey = `{FILES_LIST}:${filesIndex}`;
 
       tags.sort().forEach(tag => {
@@ -55,7 +54,7 @@ module.exports = function postProcessFile(opts) {
       return redis
         .pttl(interstoreKey)
         .then(result => {
-          if (result > minListTTL) {
+          if (result > interstoreKeyMinTimeleft) {
             return interstoreKey;
           }
 
