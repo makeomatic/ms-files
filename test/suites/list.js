@@ -440,20 +440,15 @@ describe('list suite', function suite() {
   });
 
   describe('tags-based list', function testSuite() {
-    before('process', function pretest() {
+    before('upload', function pretest() {
       return processUpload.call(this, this.response);
     });
 
-    it('update file with correct meta', function test() {
+    before('update', function pretest() {
       return this.amqp.publishAndWait(updateRoute, {
         uploadId: this.response.uploadId,
         username,
         meta,
-      })
-      .reflect()
-      .then(inspectPromise())
-      .then(result => {
-        assert.equal(result, true);
       });
     });
 

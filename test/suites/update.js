@@ -10,7 +10,6 @@ const {
   bindSend,
   initAndUpload,
   processUpload,
-  config,
   meta,
 } = require('../helpers/utils.js');
 
@@ -19,7 +18,6 @@ const infoRoute = 'files.info';
 const username = owner;
 
 describe('update suite', function suite() {
-
   before('start service', startService);
   before('pre-upload file', initAndUpload(modelData));
   before('helpers', bindSend(route));
