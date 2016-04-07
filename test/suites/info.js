@@ -114,9 +114,11 @@ describe('info suite', function suite() {
 
             assert.ok(rsp.file.files);
             rsp.file.files.forEach(file => {
-              assert.ok(file.decompressedLength);
               assert.ok(file.contentLength);
-              assert.ok(file.decompressedLength > file.contentLength);
+              if (file.type === 'c-bin') {
+                assert.ok(file.decompressedLength);
+                assert.ok(file.decompressedLength > file.contentLength);
+              }
             });
           });
       });
@@ -139,9 +141,11 @@ describe('info suite', function suite() {
 
               assert.ok(rsp.file.files);
               rsp.file.files.forEach(file => {
-                assert.ok(file.decompressedLength);
                 assert.ok(file.contentLength);
-                assert.ok(file.decompressedLength > file.contentLength);
+                if (file.type === 'c-bin') {
+                  assert.ok(file.decompressedLength);
+                  assert.ok(file.decompressedLength > file.contentLength);
+                }
               });
             });
         });
