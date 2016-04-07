@@ -16,7 +16,7 @@
     },
     "cappasity-binary": {
       "type": "object",
-      "required": ["type", "contentType", "contentLength", "contentEncoding", "md5Hash"],
+      "required": ["type", "contentType", "contentLength", "contentEncoding", "md5Hash", "decompressedLength"],
       "additionalProperties": false,
       "properties": {
         "type": {
@@ -30,6 +30,13 @@
         "contentLength": {
           "type": "integer",
           "minimum": 1,
+          "maximum": 2000000000
+        },
+        "decompressedLength": {
+          "type": "integer",
+          "minimum": {
+            "$data": "1/contentLength"
+          },
           "maximum": 2000000000
         },
         "contentEncoding": {

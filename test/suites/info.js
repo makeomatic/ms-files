@@ -111,6 +111,13 @@ describe('info suite', function suite() {
             assert.equal(rsp.username, owner);
             assert.equal(rsp.file.status, STATUS_PROCESSED);
             assert.ifError(rsp.file.public);
+
+            assert.ok(rsp.files);
+            rsp.files.forEach(file => {
+              assert.ok(file.decompressedLength);
+              assert.ok(file.contentLength);
+              assert.ok(file.decompressedLength > file.contentLength);
+            });
           });
       });
 
@@ -129,6 +136,13 @@ describe('info suite', function suite() {
               assert.equal(rsp.file.owner, owner);
               assert.equal(rsp.file.public, '1');
               assert.equal(rsp.file.status, STATUS_PROCESSED);
+
+              assert.ok(rsp.files);
+              rsp.files.forEach(file => {
+                assert.ok(file.decompressedLength);
+                assert.ok(file.contentLength);
+                assert.ok(file.decompressedLength > file.contentLength);
+              });
             });
         });
       });

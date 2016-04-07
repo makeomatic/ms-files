@@ -1,6 +1,7 @@
 const Promise = require('bluebird');
 const fsort = require('redis-filtered-sort');
 const is = require('is');
+const noop = require('lodash/noop');
 const safeParse = require('../utils/safeParse');
 const {
   FILES_DATA,
@@ -16,7 +17,7 @@ const {
  * @return {Promise}
  */
 module.exports = function postProcessFile(opts) {
-  const { redis, log, config: { interstoreKeyTTL, interstoreKeyMinTimeleft } } = this;
+  const { redis, dlock, log, config: { interstoreKeyTTL, interstoreKeyMinTimeleft } } = this;
   const { owner, filter, public: isPublic, offset, limit, order, criteria, tags } = opts;
   const strFilter = is.string(filter) ? filter : fsort.filter(filter || {});
 
@@ -43,7 +44,7 @@ module.exports = function postProcessFile(opts) {
       }
 
       const tagKeys = [];
-      let interstoreKey = `{FILES_LIST}:${filesIndex}`;
+      let interstoreKey = `${FILES_LIST}:${filesIndex}`;
 
       tags.sort().forEach(tag => {
         const tagKey = `${FILES_INDEX_TAGS}:${tag}`;
@@ -58,12 +59,21 @@ module.exports = function postProcessFile(opts) {
             return interstoreKey;
           }
 
-          return redis
-            .pipeline()
-            .sinterstore(interstoreKey, filesIndex, tagKeys)
-            .expire(interstoreKey, interstoreKeyTTL)
-            .exec()
-            .return(interstoreKey);
+          return Promise.fromNode(next => {
+            dlock
+              .push(interstoreKey, next)
+              .then(completed => {
+                redis
+                  .pipeline()
+                  .sinterstore(interstoreKey, filesIndex, tagKeys)
+                  .expire(interstoreKey, interstoreKeyTTL)
+                  .exec()
+                  .return(interstoreKey)
+                  .asCallback(completed);
+              })
+              .catch({ name: 'LockAcquisitionError' }, noop)
+              .catch(err => next(err));
+          });
         });
     })
     .then(filesIndex => {

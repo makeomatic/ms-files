@@ -13,6 +13,7 @@ const assert = require('assert');
 const Files = require('../../src');
 const config = require('./config.js');
 const partial = require('lodash/partial');
+const zlib = require('zlib');
 
 // helpers
 const cache = {};
@@ -47,6 +48,7 @@ function modelMessage(model, textures, preview, owner) {
     type: 'c-bin',
     contentType: 'application/octet-stream',
     contentLength: model.length,
+    decompressedLength: zlib.gunzipSync(model).length,
     contentEncoding: 'gzip',
     md5Hash: md5(model).toString('hex'),
   };
