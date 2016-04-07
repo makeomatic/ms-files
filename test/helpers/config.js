@@ -58,6 +58,6 @@ module.exports = {
     'files:process:post': [],
     // alias -> username
     'files:info:pre': alias => alias,
-    'files:update:pre': []
+    'files:update:pre': [],
   },
 };
