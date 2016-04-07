@@ -457,17 +457,21 @@ describe('list suite', function suite() {
         filter: {},
         tags: meta.tags,
         order: 'ASC',
-        offset: 30,
+        offset: 0,
         limit: 10,
       })
       .reflect()
       .then(inspectPromise())
       .then(data => {
         assert.ok(data.files);
-        ascSortFilename(data.files);
-        assert.equal(data.cursor, 40);
-        assert.equal(data.page, 4);
+        assert.equal(data.cursor, 10);
+        assert.equal(data.page, 1);
         assert.ok(data.pages);
+
+        data.files.forEach(file => {
+          assert.equal(file.owner, username);
+          assert.deepEqual(file.tags, meta.tags);
+        });
       });
     });
 
@@ -477,20 +481,17 @@ describe('list suite', function suite() {
         tags: meta.tags,
         owner: username,
         order: 'ASC',
-        offset: 30,
+        offset: 0,
         limit: 10,
       })
       .reflect()
       .then(inspectPromise())
       .then(data => {
         assert.ok(data.files);
-        ascSortFilename(data.files);
-        assert.equal(data.cursor, 40);
-        assert.equal(data.page, 4);
-        assert.ok(data.pages);
 
         data.files.forEach(file => {
           assert.equal(file.owner, username);
+          assert.deepEqual(file.tags, meta.tags);
         });
       });
     });
