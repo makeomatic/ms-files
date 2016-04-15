@@ -59,5 +59,7 @@ module.exports = {
     // alias -> username
     'files:info:pre': alias => alias,
     'files:update:pre': [],
+    // return same username, because we mock it
+    'files:download:alias': username => username,
   },
 };

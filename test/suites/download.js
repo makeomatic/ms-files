@@ -105,6 +105,7 @@ describe('download suite', function suite() {
             assert.ok(rsp.uploadId);
             assert.ok(rsp.files);
             assert.ok(rsp.urls);
+            assert.equal(rsp.username, this.response.owner);
 
             rsp.urls.forEach((link, idx) => {
               const parsedLink = url.parse(link, true);
