@@ -42,6 +42,13 @@ module.exports = function initFileUpload(opts) {
         md5Hash: new Buffer(md5Hash, 'hex').toString('base64'),
       };
 
+      // this is an override, because safari has a bug:
+      // it doesn't decode gzip encoding when contentType is not one of
+      // it's supported ones
+      if (type === 'c-bin') {
+        metadata.contentType = 'text/plain';
+      }
+
       return Promise.props({
         ...metadata,
         type,
