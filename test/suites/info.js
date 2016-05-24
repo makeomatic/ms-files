@@ -55,8 +55,9 @@ describe('info suite', function suite() {
       .reflect()
       .then(inspectPromise())
       .then(rsp => {
+        const responseWithEmbed = Object.assign({}, this.response, { embed: [] });
         assert.equal(rsp.username, owner);
-        assert.deepEqual(rsp.file, this.response);
+        assert.deepEqual(rsp.file, responseWithEmbed);
         assert.equal(rsp.file.status, STATUS_PENDING);
       });
   });

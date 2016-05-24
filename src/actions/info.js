@@ -42,5 +42,16 @@ module.exports = function getFileInfo(opts) {
       info.owner = owner;
 
       return data;
+    })
+    .then(data => {
+      const info = data.file;
+
+      return Promise
+        .bind(this, ['files:info:post', info])
+        .spread(this.postHook)
+        .then(embedInfo => {
+          data.file.embed = embedInfo;
+          return data;
+        });
     });
 };
