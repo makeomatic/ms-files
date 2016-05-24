@@ -1,5 +1,6 @@
 const assert = require('assert');
 const uuid = require('uuid');
+const fs = require('fs');
 
 // helpers
 const {
@@ -55,7 +56,15 @@ describe('info suite', function suite() {
       .reflect()
       .then(inspectPromise())
       .then(rsp => {
-        const responseWithEmbed = Object.assign({}, this.response, { embed: [] });
+        const responseWithEmbed = Object.assign({}, this.response, { embed: {
+          code: fs.readFileSync('src/utils/embeddedCode.hbs').toString(),
+          params: {
+            id: this.response.uploadId,
+            autorun: 0,
+            width: 800,
+            height: 800,
+          },
+        } });
         assert.equal(rsp.username, owner);
         assert.deepEqual(rsp.file, responseWithEmbed);
         assert.equal(rsp.file.status, STATUS_PENDING);

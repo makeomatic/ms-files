@@ -50,7 +50,7 @@ module.exports = function getFileInfo(opts) {
         .bind(this, ['files:info:post', info])
         .spread(this.postHook)
         .then(embedInfo => {
-          data.file.embed = embedInfo;
+          data.file.embed = embedInfo[0];
           return data;
         });
     });

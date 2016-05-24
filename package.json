@@ -3,7 +3,7 @@
   "description": "Core of microservice",
   "main": "./lib/index.js",
   "scripts": {
-    "compile": "./node_modules/.bin/babel -d ./lib ./src",
+    "compile": "./node_modules/.bin/babel -d ./lib ./src && cp ./src/utils/*hbs ./lib/utils/",
     "prepublish": "npm run compile",
     "test": "./test/docker.sh",
     "start": "node ./bin/mservice.js | ./node_modules/.bin/bunyan -o short",
