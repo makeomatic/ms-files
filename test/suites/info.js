@@ -1,6 +1,5 @@
 const assert = require('assert');
 const uuid = require('uuid');
-const fs = require('fs');
 
 // helpers
 const {
@@ -56,17 +55,9 @@ describe('info suite', function suite() {
       .reflect()
       .then(inspectPromise())
       .then(rsp => {
-        const responseWithEmbed = Object.assign({}, this.response, { embed: {
-          code: fs.readFileSync('src/utils/embeddedCode.hbs').toString(),
-          params: {
-            id: this.response.uploadId,
-            autorun: 0,
-            width: 800,
-            height: 800,
-          },
-        } });
         assert.equal(rsp.username, owner);
-        assert.deepEqual(rsp.file, responseWithEmbed);
+        assert.equal(rsp.file.embed, undefined);
+        assert.deepEqual(rsp.file, this.response);
         assert.equal(rsp.file.status, STATUS_PENDING);
       });
   });
@@ -129,6 +120,19 @@ describe('info suite', function suite() {
                 assert.ok(file.decompressedLength);
                 assert.ok(file.decompressedLength > file.contentLength);
               }
+            });
+
+            assert.ok(rsp.file.embed);
+            assert.ok(rsp.file.embed.code);
+            assert.equal(typeof rsp.file.embed.code, 'string');
+            assert.notEqual(rsp.file.embed.code.length, 0);
+            assert.ok(rsp.file.embed.params);
+
+            Object.keys(rsp.file.embed.params).forEach(key => {
+              const param = rsp.file.embed.params[key];
+              assert.ok(param.type);
+              assert.notEqual(param.default, undefined);
+              assert.ok(param.description);
             });
           });
       });
