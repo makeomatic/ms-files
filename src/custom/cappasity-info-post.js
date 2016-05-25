@@ -1,11 +1,14 @@
 const fs = require('fs');
+const embeddedCodeFilePath = process.env.NODE_ENV === 'development'
+  ? 'src/utils/embeddedCode.hbs'
+  : '/src/lib/utils/embeddedCode.hbs';
 
-module.exports = function getEmbeddedInfo(info) {
-  const { uploadId: id } = info;
+const code = fs.readFileSync(embeddedCodeFilePath).toString();
 
-  const code = fs.readFileSync('src/utils/embeddedCode.hbs').toString();
+module.exports = function getEmbeddedInfo(data) {
+  const { uploadId: id } = data.file;
 
-  return {
+  data.file.embed = {
     code,
     params: {
       id,
@@ -14,4 +17,6 @@ module.exports = function getEmbeddedInfo(info) {
       height: 800,
     },
   };
+
+  return data;
 };

@@ -43,15 +43,5 @@ module.exports = function getFileInfo(opts) {
 
       return data;
     })
-    .then(data => {
-      const info = data.file;
-
-      return Promise
-        .bind(this, ['files:info:post', info])
-        .spread(this.postHook)
-        .then(embedInfo => {
-          data.file.embed = embedInfo[0];
-          return data;
-        });
-    });
+    .tap(data => this.postHook.call(this, 'files:info:post', data));
 };
