@@ -46,7 +46,7 @@ class Files extends Mservice {
    * Helper method to return wanted provider
    */
   provider = (...args) => {
-    return this.config.selectTransport(...args);
+    return this.config.selectTransport.apply(this, args);
   }
 
   /**
