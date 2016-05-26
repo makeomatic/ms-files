@@ -80,6 +80,7 @@ class Files extends Mservice {
       'files:upload:pre': [],
       'files:update:pre': [],
       'files:process:post': [],
+      'files:info:post': [],
     },
     // storage options
     redis: {

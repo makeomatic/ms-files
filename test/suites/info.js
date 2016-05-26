@@ -56,6 +56,7 @@ describe('info suite', function suite() {
       .then(inspectPromise())
       .then(rsp => {
         assert.equal(rsp.username, owner);
+        assert.equal(rsp.file.embed, undefined);
         assert.deepEqual(rsp.file, this.response);
         assert.equal(rsp.file.status, STATUS_PENDING);
       });
@@ -119,6 +120,19 @@ describe('info suite', function suite() {
                 assert.ok(file.decompressedLength);
                 assert.ok(file.decompressedLength > file.contentLength);
               }
+            });
+
+            assert.ok(rsp.file.embed);
+            assert.ok(rsp.file.embed.code);
+            assert.equal(typeof rsp.file.embed.code, 'string');
+            assert.notEqual(rsp.file.embed.code.length, 0);
+            assert.ok(rsp.file.embed.params);
+
+            Object.keys(rsp.file.embed.params).forEach(key => {
+              const param = rsp.file.embed.params[key];
+              assert.ok(param.type);
+              assert.notEqual(param.default, undefined);
+              assert.ok(param.description);
             });
           });
       });

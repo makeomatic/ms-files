@@ -42,5 +42,6 @@ module.exports = function getFileInfo(opts) {
       info.owner = owner;
 
       return data;
-    });
+    })
+    .tap(data => this.postHook.call(this, 'files:info:post', data));
 };
