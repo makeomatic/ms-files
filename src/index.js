@@ -19,6 +19,10 @@ class Files extends Mservice {
    */
   static defaultOpts = require('./defaults.js');
 
+  /**
+   * class Constructor, initializes configuration
+   * and internal providers
+   */
   constructor(opts = {}) {
     super(ld.merge({}, Files.defaultOpts, opts));
     const config = this._config;
