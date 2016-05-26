@@ -32,8 +32,8 @@ export IMAGE=makeomatic/alpine-node:$NODE_VER
 $COMPOSE -f $DC up -d
 
 if [[ "$SKIP_REBUILD" != "1" ]]; then
-  echo "rebuilding native dependencies..."
-  $COMPOSE -f $DC run --rm tester npm rebuild
+  echo "reinstalling dependencies"
+  $COMPOSE -f $DC run --rm tester /bin/sh -c "rm -rf node_modules; npm i"
 fi
 
 echo "cleaning old coverage"
