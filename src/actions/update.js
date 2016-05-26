@@ -21,7 +21,7 @@ module.exports = function initFileUpdate(opts) {
     .bind(this, key)
     .then(fetchData)
     .then(isProcessed)
-    .tap(data => this.postHook.call(this, 'files:update:pre', username, data))
+    .tap(data => this.hook.call(this, 'files:update:pre', username, data))
     .then(data => Promise.try(function updateMetadata() {
       const pipeline = redis.pipeline();
 

@@ -22,7 +22,7 @@ module.exports = function processFile(key, data) {
 
       return Promise
         .bind(this, ['files:process:post', data])
-        .spread(this.postHook)
+        .spread(this.hook)
         .spread((processedData = {}) => {
           // omit location, since it's used once during upload
           const fileKeys = [];

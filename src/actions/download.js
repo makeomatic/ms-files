@@ -34,7 +34,7 @@ module.exports = function getDownloadURL(opts) {
       if (data[FILES_PUBLIC_FIELD]) {
         urls = files.map(file => `${cname}/${encodeURIComponent(file.filename)}`);
         // extract alias
-        alias = this.postHook
+        alias = this.hook
           .call(this, 'files:download:alias', data[FILES_OWNER_FIELD])
           .get(0);
       } else if (!username) {
