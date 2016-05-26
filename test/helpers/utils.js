@@ -51,6 +51,7 @@ function modelMessage(model, textures, preview, owner) {
     decompressedLength: zlib.gunzipSync(model).length,
     contentEncoding: 'gzip',
     md5Hash: md5(model).toString('hex'),
+    'source-sha256': 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855',
   };
 
   // generate textures metadata
