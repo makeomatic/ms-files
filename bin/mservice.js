@@ -12,7 +12,7 @@ if (process.env.NODE_ENV === 'production') {
 
 // accepts conf through .env file
 // suitable for configuring this in the docker env
-var configuration = require('ms-amqp-conf');
+var configuration = require('ms-conf');
 var Service = require(dir);
 var service = new Service(configuration);
 service.connect()

@@ -53,7 +53,7 @@ module.exports = function initFileUpload(opts) {
         ...metadata,
         type,
         filename,
-        location: provider.initResumableUpload({
+        location: provider().initResumableUpload({
           filename,
           metadata: {
             ...metadata,

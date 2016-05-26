@@ -237,7 +237,7 @@ function stopService() {
     .redis
       .to('masters')
       .call('flushdb')
-    .finally(() => Promise.fromNode(next => service.provider._bucket.deleteFiles({ force: true }, next)))
+    .finally(() => Promise.fromNode(next => service.provider()._bucket.deleteFiles({ force: true }, next)))
     .finally(() => service.close())
     .finally(() => {
       this.amqp = null;

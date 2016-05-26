@@ -15,7 +15,7 @@ function addToPublic(filename, data) {
   const id = `${FILES_DATA}:${filename}`;
 
   return Promise
-    .map(files, file => provider.makePublic(file.filename))
+    .map(files, file => provider().makePublic(file.filename))
     .then(() => {
       return redis
         .pipeline()
@@ -34,7 +34,7 @@ function removeFromPublic(filename, data) {
   const id = `${FILES_DATA}:${filename}`;
 
   return Promise
-    .map(files, file => provider.makePrivate(file.filename))
+    .map(files, file => provider().makePrivate(file.filename))
     .then(() =>
       redis
         .pipeline()

@@ -16,7 +16,7 @@
     },
     "cappasity-binary": {
       "type": "object",
-      "required": ["type", "contentType", "contentLength", "contentEncoding", "md5Hash", "decompressedLength"],
+      "required": ["type", "contentType", "contentLength", "contentEncoding", "md5Hash", "decompressedLength", "source-sha256"],
       "additionalProperties": false,
       "properties": {
         "type": {
@@ -46,6 +46,10 @@
         "md5Hash": {
           "type": "string",
           "pattern": "^[0-9A-Fa-f]{32}$"
+        },
+        "source-sha256": {
+          "type": "string",
+          "pattern": "^[0-9A-Fa-f]{64}$"
         }
       }
     },

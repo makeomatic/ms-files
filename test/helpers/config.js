@@ -4,7 +4,7 @@ const path = require('path');
 
 try {
   env.DOTENV_FILE_PATH = env.DOTENV_FILE_PATH || path.resolve(__dirname, '../.env');
-  require('ms-amqp-conf');
+  require('ms-conf');
 } catch (e) {
   // fails on CI
 }
@@ -31,7 +31,7 @@ module.exports = {
   redis: {
     hosts: redisHosts,
   },
-  transport: {
+  transport: [{
     options: {
       gce: {
         projectId: env.GCLOUD_PROJECT_ID,
@@ -50,7 +50,7 @@ module.exports = {
       // test for direct public URLs
     },
     cname: true,
-  },
+  }],
   hooks: {
     // return input, assume there are models
     'files:upload:pre': files => files,
@@ -58,6 +58,7 @@ module.exports = {
     'files:process:post': [],
     // alias -> username
     'files:info:pre': alias => alias,
+    // update pre-processor
     'files:update:pre': [],
     // return same username, because we mock it
     'files:download:alias': username => username,

@@ -52,7 +52,7 @@ module.exports = function getDownloadURL(opts) {
         };
 
         alias = username;
-        urls = Promise.map(files, file => provider.createSignedURL({ ...settings, resource: file.filename }));
+        urls = Promise.map(files, file => provider().createSignedURL({ ...settings, resource: file.filename }));
       }
 
       return Promise.props({ uploadId, name, files, urls, username: alias });
