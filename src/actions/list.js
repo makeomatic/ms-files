@@ -109,15 +109,13 @@ module.exports = function postProcessFile(opts) {
           [FILES_TAGS_FIELD]: safeParse(meta[FILES_TAGS_FIELD], []),
         };
 
-        return this.hook.call(this, 'files:info:post', fileData).then(() => fileData);
+        return this.hook.call(this, 'files:info:post', fileData).return(fileData);
       })
-      .then(files => {
-        return {
-          files,
-          cursor: offset + limit,
-          page: Math.floor(offset / limit + 1),
-          pages: Math.ceil(length / limit),
-        };
-      });
+      .then(files => ({
+        files,
+        cursor: offset + limit,
+        page: Math.floor(offset / limit + 1),
+        pages: Math.ceil(length / limit),
+      }));
     });
 };
