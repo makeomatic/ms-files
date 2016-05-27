@@ -3,7 +3,14 @@ const uuid = require('node-uuid');
 const md5 = require('md5');
 const sumBy = require('lodash/sumBy');
 const get = require('lodash/get');
-const { STATUS_PENDING, UPLOAD_DATA, FILES_DATA, FILES_PUBLIC_FIELD, FILES_TAGS_FIELD } = require('../constant.js');
+const {
+  STATUS_PENDING,
+  UPLOAD_DATA,
+  FILES_DATA,
+  FILES_PUBLIC_FIELD,
+  FILES_TAGS_FIELD,
+  FILES_TEMP_FIELD,
+} = require('../constant.js');
 
 const TYPE_MAP = {
   'c-bin': '.bin.gz',
@@ -24,7 +31,7 @@ function typeToExtension(type) {
  * @return {Promise}
  */
 module.exports = function initFileUpload(opts) {
-  const { files, meta, username } = opts;
+  const { files, meta, username, temp } = opts;
   const { provider, redis } = this;
   const prefix = md5(username);
   const uploadId = uuid.v4();
@@ -80,6 +87,10 @@ module.exports = function initFileUpload(opts) {
 
       if (isPublic) {
         fileData[FILES_PUBLIC_FIELD] = 1;
+      }
+
+      if (temp) {
+        fileData[FILES_TEMP_FIELD] = 1;
       }
 
       const pipeline = redis.pipeline();

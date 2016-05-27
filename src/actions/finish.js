@@ -5,7 +5,7 @@ const {
   STATUS_UPLOADED, STATUS_PENDING,
   UPLOAD_DATA,
   FILES_INDEX, FILES_DATA, FILES_INDEX_PUBLIC, FILES_INDEX_TAGS,
-  FILES_OWNER_FIELD, FILES_PUBLIC_FIELD, FILES_TAGS_FIELD,
+  FILES_OWNER_FIELD, FILES_PUBLIC_FIELD, FILES_TAGS_FIELD, FILES_TEMP_FIELD,
 } = require('../constant.js');
 
 /**
@@ -37,7 +37,7 @@ module.exports = function completeFileUpload(opts) {
         uploadId,
         update: redis
           .pipeline()
-          .hmget(uploadKey, 'status', 'parts', FILES_TAGS_FIELD, FILES_OWNER_FIELD, FILES_PUBLIC_FIELD)
+          .hmget(uploadKey, 'status', 'parts', FILES_TAGS_FIELD, FILES_OWNER_FIELD, FILES_PUBLIC_FIELD, FILES_TEMP_FIELD)
           .hincrby(uploadKey, 'uploaded', 1)
           .hmset(key, {
             status: STATUS_UPLOADED,
@@ -56,7 +56,7 @@ module.exports = function completeFileUpload(opts) {
         throw err;
       }
 
-      const [currentStatus, totalParts, tags, username, isPublic] = parts[1];
+      const [currentStatus, totalParts, tags, username, isPublic, isTemporary] = parts[1];
       const currentParts = incr[1];
 
       if (currentParts < totalParts) {
@@ -74,10 +74,13 @@ module.exports = function completeFileUpload(opts) {
           .hmset(uploadKey, {
             status: STATUS_UPLOADED,
             uploadedAt: Date.now(),
-          })
-          // now that it is uploaded - add them to index
-          .sadd(FILES_INDEX, uploadId)
-          .sadd(`${FILES_INDEX}:${username}`, uploadId);
+          });
+
+      // unless file is temp -> add them to index
+      if (!isTemporary) {
+        pipeline.sadd(FILES_INDEX, uploadId);
+        pipeline.sadd(`${FILES_INDEX}:${username}`, uploadId);
+      }
 
       // convert 1 or undef to Boolean
       if (isPublic) {

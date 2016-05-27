@@ -2,24 +2,24 @@ const assert = require('assert');
 const uuid = require('uuid');
 const url = require('url');
 
-// helpers
-const {
-  startService,
-  stopService,
-  inspectPromise,
-  owner,
-  modelData,
-  bindSend,
-  initAndUpload,
-  processUpload,
-  config,
-  updateAccess,
-} = require('../helpers/utils.js');
-
-const route = 'files.download';
-const bucketName = config.transport[0].options.bucket.name;
-
 describe('download suite', function suite() {
+  // helpers
+  const {
+    startService,
+    stopService,
+    inspectPromise,
+    owner,
+    modelData,
+    bindSend,
+    initAndUpload,
+    processUpload,
+    config,
+    updateAccess,
+  } = require('../helpers/utils.js');
+
+  const route = 'files.download';
+  const bucketName = config.transport[0].options.bucket.name;
+
   // setup functions
   before('start service', startService);
 
