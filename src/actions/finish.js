@@ -78,23 +78,22 @@ module.exports = function completeFileUpload(opts) {
 
       // unless file is temp -> add them to index
       if (!isTemporary) {
+        pipeline.persist(uploadKey);
         pipeline.sadd(FILES_INDEX, uploadId);
         pipeline.sadd(`${FILES_INDEX}:${username}`, uploadId);
-      } else {
-        pipeline.persist(uploadKey);
-      }
 
-      // convert 1 or undef to Boolean
-      if (isPublic) {
-        pipeline.sadd(FILES_INDEX_PUBLIC, uploadId);
-        pipeline.sadd(`${FILES_INDEX}:${username}:pub`, uploadId);
-      }
+        // convert 1 or undef to Boolean
+        if (isPublic) {
+          pipeline.sadd(FILES_INDEX_PUBLIC, uploadId);
+          pipeline.sadd(`${FILES_INDEX}:${username}:pub`, uploadId);
+        }
 
-      // push to tags index
-      if (tags) {
-        JSON.parse(tags).forEach(tag => {
-          pipeline.sadd(`${FILES_INDEX_TAGS}:${tag}`, uploadId);
-        });
+        // push to tags index
+        if (tags) {
+          JSON.parse(tags).forEach(tag => {
+            pipeline.sadd(`${FILES_INDEX_TAGS}:${tag}`, uploadId);
+          });
+        }
       }
 
       return pipeline.exec()
