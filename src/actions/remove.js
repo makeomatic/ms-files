@@ -18,7 +18,8 @@ const { FILES_INDEX,
  */
 module.exports = function removeFile(opts) {
   const { filename, username } = opts;
-  const { redis, provider } = this;
+  const { redis } = this;
+  const provider = this.provider();
   const key = `${FILES_DATA}:${filename}`;
 
   return Promise

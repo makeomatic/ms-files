@@ -78,12 +78,12 @@ describe('download suite', function suite() {
 
           rsp.urls.forEach((link, idx) => {
             const parsedLink = url.parse(link, true);
-            assert.equal(parsedLink.protocol, 'https:');
-            assert.equal(parsedLink.host, 'storage.googleapis.com');
-            assert.equal(parsedLink.pathname, `/${bucketName}/${encodeURIComponent(rsp.files[idx].filename)}`);
-            assert.ok(parsedLink.query.GoogleAccessId);
-            assert.ok(parsedLink.query.Expires);
-            assert.ok(parsedLink.query.Signature);
+            assert.equal(parsedLink.protocol, 'https:', link);
+            assert.equal(parsedLink.host, 'storage.googleapis.com', link);
+            assert.equal(parsedLink.pathname, `/${bucketName}/${encodeURIComponent(rsp.files[idx].filename)}`, link);
+            assert.ok(parsedLink.query.GoogleAccessId, link);
+            assert.ok(parsedLink.query.Expires, link);
+            assert.ok(parsedLink.query.Signature, link);
           });
         });
     });
@@ -109,12 +109,12 @@ describe('download suite', function suite() {
 
             rsp.urls.forEach((link, idx) => {
               const parsedLink = url.parse(link, true);
-              assert.equal(parsedLink.protocol, 'https:');
-              assert.equal(parsedLink.host, bucketName);
-              assert.equal(parsedLink.pathname, `/${encodeURIComponent(rsp.files[idx].filename)}`);
-              assert.ifError(parsedLink.query.GoogleAccessId);
-              assert.ifError(parsedLink.query.Expires);
-              assert.ifError(parsedLink.query.Signature);
+              assert.equal(parsedLink.protocol, 'https:', link);
+              assert.equal(parsedLink.host, bucketName, link);
+              assert.equal(parsedLink.pathname, `/${encodeURIComponent(rsp.files[idx].filename)}`, link);
+              assert.ifError(parsedLink.query.GoogleAccessId, link);
+              assert.ifError(parsedLink.query.Expires, link);
+              assert.ifError(parsedLink.query.Signature, link);
             });
           });
       });

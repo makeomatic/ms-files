@@ -71,10 +71,13 @@ class Files extends Mservice {
 
     // init cname based on provider type and settings
     if (transport.cname === true) {
-      transport.cname = `https://${bucket}`;
+      provider.cname = `https://${bucket}`;
     } else if (transport.name === 'gce') {
-      transport.cname = `https://storage.googleapis.com/${bucket}`;
+      provider.cname = `https://storage.googleapis.com/${bucket}`;
     }
+
+    // pass on expiration configuration
+    provider.expire = transport.expire;
 
     return provider;
   }
