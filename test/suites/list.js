@@ -134,6 +134,23 @@ describe('list suite', function suite() {
 
         data.files.forEach(file => {
           assert.equal(file.owner, owner);
+
+          if (file.status === STATUS_PROCESSED) {
+            assert.ok(file.embed);
+            assert.ok(file.embed.code);
+            assert.equal(typeof file.embed.code, 'string');
+            assert.notEqual(file.embed.code.length, 0);
+            assert.ok(file.embed.params);
+
+            Object.keys(file.embed.params).forEach(key => {
+              const param = file.embed.params[key];
+              assert.ok(param.type);
+              assert.notEqual(param.default, undefined);
+              assert.ok(param.description);
+            });
+          } else {
+            assert.equal(file.embed, undefined);
+          }
         });
       });
     });

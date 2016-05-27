@@ -28,15 +28,15 @@ function getEmbeddedCode(id) {
   />`;
 }
 
-module.exports = function getEmbeddedInfo(data) {
-  const { uploadId: id, status } = data.file;
+module.exports = function getEmbeddedInfo(file) {
+  const { uploadId: id, status } = file;
 
   if (status === STATUS_PROCESSED) {
-    data.file.embed = {
+    file.embed = {
       code: getEmbeddedCode(id),
       params,
     };
   }
 
-  return data;
+  return file;
 };

@@ -15,7 +15,7 @@ module.exports = function getFileInfo(opts) {
 
   return Promise
     .bind(this, ['files:info:pre', owner])
-    .spread(this.postHook)
+    .spread(this.hook)
     .spread(username => {
       if (!username) {
         throw new NotImplementedError('files:info:pre hook must be specified to use this endpoint');
@@ -43,5 +43,5 @@ module.exports = function getFileInfo(opts) {
 
       return data;
     })
-    .tap(data => this.postHook.call(this, 'files:info:post', data));
+    .tap(data => this.hook.call(this, 'files:info:post', data.file));
 };

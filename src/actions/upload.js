@@ -33,7 +33,7 @@ module.exports = function initFileUpload(opts) {
   return Promise
     .bind(this, ['files:upload:pre', files, username])
     // extra input validation
-    .spread(this.postHook).get(0)
+    .spread(this.hook).get(0)
     // init uploads
     .map(function initResumableUpload({ md5Hash, type, ...rest }) {
       const filename = `${prefix}/${uploadId}/${uuid.v4()}${typeToExtension(type)}`;

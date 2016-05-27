@@ -23,7 +23,7 @@ module.exports = function postProcessFile(opts) {
 
   return Promise
     .bind(this, ['files:info:pre', owner])
-    .spread(this.postHook)
+    .spread(this.hook)
     .spread(username => {
       log.debug('[list]: resolved %s to %s', owner, username);
 
@@ -98,22 +98,24 @@ module.exports = function postProcessFile(opts) {
     })
     .then(data => {
       const { filenames, props, length } = data;
-      const files = filenames.map(function remapData(filename, idx) {
+
+      return Promise.map(filenames, (filename, idx) => {
         const meta = props[idx][1];
 
-        return {
+        const fileData = {
           ...meta,
           id: filename,
           files: safeParse(meta.files, []),
           [FILES_TAGS_FIELD]: safeParse(meta[FILES_TAGS_FIELD], []),
         };
-      });
 
-      return {
+        return this.hook.call(this, 'files:info:post', fileData).return(fileData);
+      })
+      .then(files => ({
         files,
         cursor: offset + limit,
         page: Math.floor(offset / limit + 1),
         pages: Math.ceil(length / limit),
-      };
+      }));
     });
 };
