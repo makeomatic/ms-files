@@ -74,4 +74,6 @@ module.exports = {
   interstoreKeyTTL: 15,
   // minimum remaining time(ms) to a previously saved key for action list
   interstoreKeyMinTimeleft: 2000,
+  // upload expiration time
+  uploadTTL: 86400 * 4,
 };

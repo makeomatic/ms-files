@@ -68,18 +68,20 @@ module.exports = function completeFileUpload(opts) {
       }
 
       const uploadKey = `${FILES_DATA}:${uploadId}`;
-      const pipeline = redis
-        .pipeline()
-          .persist(uploadKey)
-          .hmset(uploadKey, {
-            status: STATUS_UPLOADED,
-            uploadedAt: Date.now(),
-          });
+      const pipeline = redis.pipeline();
+
+      // update key
+      pipeline.hmset(uploadKey, {
+        status: STATUS_UPLOADED,
+        uploadedAt: Date.now(),
+      });
 
       // unless file is temp -> add them to index
       if (!isTemporary) {
         pipeline.sadd(FILES_INDEX, uploadId);
         pipeline.sadd(`${FILES_INDEX}:${username}`, uploadId);
+      } else {
+        pipeline.persist(uploadKey);
       }
 
       // convert 1 or undef to Boolean

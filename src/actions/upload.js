@@ -32,7 +32,7 @@ function typeToExtension(type) {
  */
 module.exports = function initFileUpload(opts) {
   const { files, meta, username, temp } = opts;
-  const { provider, redis } = this;
+  const { provider, redis, config: { uploadTTL } } = this;
   const prefix = md5(username);
   const uploadId = uuid.v4();
   const isPublic = get(opts, 'access.setPublic', false);
@@ -98,13 +98,13 @@ module.exports = function initFileUpload(opts) {
 
       pipeline
         .hmset(uploadKey, fileData)
-        .expire(uploadKey, 86400);
+        .expire(uploadKey, uploadTTL);
 
       parts.forEach(part => {
         const partKey = `${UPLOAD_DATA}:${part.filename}`;
         pipeline
           .hmset(partKey, { status: STATUS_PENDING, uploadId })
-          .expire(partKey, 86400);
+          .expire(partKey, uploadTTL);
       });
 
       return pipeline
