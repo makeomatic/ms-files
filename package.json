@@ -8,7 +8,6 @@
     "test": "npm run lint && ./test/docker.sh",
     "start": "node ./bin/mservice.js | bunyan -o short",
     "lint": "eslint ./src",
-    "pretest": "npm run compile",
     "semantic-release": "semantic-release pre && npm publish && semantic-release post"
   },
   "repository": {
@@ -58,7 +57,7 @@
     "md5": "^2.0.0",
     "mocha": "^2.4.4",
     "request-promise": "^3.0.0",
-    "semantic-release": "^4.3.5"
+    "semantic-release": "^6.2.2"
   },
   "release": {
     "verifyConditions": []

@@ -17,7 +17,7 @@ const {
 } = require('../helpers/utils.js');
 
 const route = 'files.download';
-const bucketName = config.transport.options.bucket.name;
+const bucketName = config.transport[0].options.bucket.name;
 
 describe('download suite', function suite() {
   // setup functions

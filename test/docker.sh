@@ -24,7 +24,7 @@ fi
 
 function finish {
   $COMPOSE -f $DC stop
-  $COMPOSE -f $DC rm -f
+  $COMPOSE -f $DC rm --all -f
 }
 trap finish EXIT
 
@@ -32,8 +32,8 @@ export IMAGE=makeomatic/alpine-node:$NODE_VER
 $COMPOSE -f $DC up -d
 
 if [[ "$SKIP_REBUILD" != "1" ]]; then
-  echo "reinstalling dependencies"
-  $COMPOSE -f $DC run --rm tester /bin/sh -c "rm -rf node_modules; npm i"
+  echo "rebuilding dependencies"
+  $COMPOSE -f $DC run --rm tester npm rb grpc --update-binary
 fi
 
 echo "cleaning old coverage"
@@ -41,6 +41,7 @@ rm -rf ./coverage
 
 echo "running tests"
 for fn in $TESTS; do
+  echo "running $fn"
   $COMPOSE -f $DC run --rm tester /bin/sh -c "$NODE $COVER --dir ./coverage/${fn##*/} $MOCHA -- $fn" || exit 1
 done
 
