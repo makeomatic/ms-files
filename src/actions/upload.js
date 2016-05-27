@@ -10,6 +10,7 @@ const {
   FILES_PUBLIC_FIELD,
   FILES_TAGS_FIELD,
   FILES_TEMP_FIELD,
+  FILES_BUCKET_FIELD,
 } = require('../constant.js');
 
 const TYPE_MAP = {
@@ -32,10 +33,13 @@ function typeToExtension(type) {
  */
 module.exports = function initFileUpload(opts) {
   const { files, meta, username, temp } = opts;
-  const { provider, redis, config: { uploadTTL } } = this;
+  const { redis, config: { uploadTTL } } = this;
+
+  const provider = this.provider();
   const prefix = md5(username);
   const uploadId = uuid.v4();
   const isPublic = get(opts, 'access.setPublic', false);
+  const bucketName = provider.bucket.name;
 
   return Promise
     .bind(this, ['files:upload:pre', files, username])
@@ -46,7 +50,8 @@ module.exports = function initFileUpload(opts) {
       const filename = `${prefix}/${uploadId}/${uuid.v4()}${typeToExtension(type)}`;
       const metadata = {
         ...rest,
-        md5Hash: new Buffer(md5Hash, 'hex').toString('base64'),
+        md5Hash: Buffer.from(md5Hash, 'hex').toString('base64'),
+        [FILES_BUCKET_FIELD]: bucketName,
       };
 
       // this is an override, because safari has a bug:
@@ -60,7 +65,7 @@ module.exports = function initFileUpload(opts) {
         ...metadata,
         type,
         filename,
-        location: provider().initResumableUpload({
+        location: provider.initResumableUpload({
           filename,
           predefinedAcl: isPublic ? 'publicRead' : '',
           metadata: {
@@ -83,6 +88,7 @@ module.exports = function initFileUpload(opts) {
         contentLength: sumBy(parts, 'contentLength'),
         status: STATUS_PENDING,
         parts: files.length,
+        [FILES_BUCKET_FIELD]: bucketName,
       };
 
       if (isPublic) {
