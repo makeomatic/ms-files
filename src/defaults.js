@@ -66,6 +66,7 @@ module.exports = {
   // configuration for dependant services
   users: {
     audience: '*.localhost',
+    exportAudience: 'ms-files',
     getInternalData: 'users.getInternalData',
     getMetadata: 'users.getMetadata',
     updateMetadata: 'users.updateMetadata',

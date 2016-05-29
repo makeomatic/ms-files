@@ -11,6 +11,7 @@ const {
   FILES_TAGS_FIELD,
   FILES_TEMP_FIELD,
   FILES_BUCKET_FIELD,
+  FILES_OWNER_FIELD,
 } = require('../constant.js');
 
 const TYPE_MAP = {
@@ -42,10 +43,9 @@ module.exports = function initFileUpload(opts) {
   const bucketName = provider.bucket.name;
 
   return Promise
-    .bind(this, ['files:upload:pre', files, username])
-    // extra input validation
-    .spread(this.hook).get(0)
-    // init uploads
+    .bind(this, ['files:upload:pre', opts])
+    .spread(this.hook)
+    .return(files)
     .map(function initResumableUpload({ md5Hash, type, ...rest }) {
       const filename = `${prefix}/${uploadId}/${uuid.v4()}${typeToExtension(type)}`;
       const metadata = {
@@ -82,12 +82,12 @@ module.exports = function initFileUpload(opts) {
       const fileData = {
         ...meta,
         uploadId,
-        owner: username,
         startedAt: Date.now(),
         files: JSON.stringify(parts),
         contentLength: sumBy(parts, 'contentLength'),
         status: STATUS_PENDING,
         parts: files.length,
+        [FILES_OWNER_FIELD]: username,
         [FILES_BUCKET_FIELD]: bucketName,
       };
 
@@ -116,5 +116,6 @@ module.exports = function initFileUpload(opts) {
       return pipeline
         .exec()
         .return({ ...fileData, files: parts });
-    });
+    })
+    .tap(data => this.hook.call(this, 'files:upload:post', data));
 };

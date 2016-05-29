@@ -25,7 +25,7 @@ function getEmbeddedCode(id) {
     height=“{{ height }}“
     border="0"
     src="https://api.cappasity.com/api/player/${id}/embedded?autorun={{ autorun }}“
-  />`;
+  />`.replace(/\s+/g, ' ');
 }
 
 module.exports = function getEmbeddedInfo(file) {

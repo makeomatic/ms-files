@@ -5,8 +5,11 @@ const {
   STATUS_UPLOADED, STATUS_PENDING,
   UPLOAD_DATA,
   FILES_INDEX, FILES_DATA, FILES_INDEX_PUBLIC, FILES_INDEX_TAGS,
-  FILES_OWNER_FIELD, FILES_PUBLIC_FIELD, FILES_TAGS_FIELD, FILES_TEMP_FIELD,
+  FILES_OWNER_FIELD, FILES_PUBLIC_FIELD, FILES_TAGS_FIELD, FILES_TEMP_FIELD, FILES_STATUS_FIELD, FILES_PARTS_FIELD,
 } = require('../constant.js');
+
+// cached vars
+const fields = [FILES_STATUS_FIELD, FILES_PARTS_FIELD, FILES_TAGS_FIELD, FILES_OWNER_FIELD, FILES_PUBLIC_FIELD, FILES_TEMP_FIELD];
 
 /**
  * Finish upload
@@ -25,7 +28,7 @@ module.exports = function completeFileUpload(opts) {
     .bind(this, key)
     .then(fetchData)
     .then(data => {
-      if (data.status !== STATUS_PENDING) {
+      if (data[FILES_STATUS_FIELD] !== STATUS_PENDING) {
         throw new HttpStatusError(412, 'upload has already been marked as finished');
       }
 
@@ -37,7 +40,7 @@ module.exports = function completeFileUpload(opts) {
         uploadId,
         update: redis
           .pipeline()
-          .hmget(uploadKey, 'status', 'parts', FILES_TAGS_FIELD, FILES_OWNER_FIELD, FILES_PUBLIC_FIELD, FILES_TEMP_FIELD)
+          .hmget(uploadKey, fields)
           .hincrby(uploadKey, 'uploaded', 1)
           .hmset(key, {
             status: STATUS_UPLOADED,
@@ -96,8 +99,7 @@ module.exports = function completeFileUpload(opts) {
         }
       }
 
-      return pipeline.exec()
-        .return(uploadId);
+      return pipeline.exec().return(uploadId);
     })
     .then(uploadId => {
       if (opts.skipProcessing) {
