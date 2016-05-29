@@ -55,6 +55,7 @@ module.exports = {
     // return input, assume there are models
     'files:upload:pre': files => files,
     // process files hook -> noop
+    'files:process:pre': [],
     'files:process:post': [],
     // alias -> username
     'files:info:pre': alias => alias,

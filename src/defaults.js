@@ -41,6 +41,7 @@ module.exports = {
     'files:info:pre': [],
     'files:upload:pre': [],
     'files:update:pre': [],
+    'files:process:pre': [],
     'files:process:post': [],
     'files:info:post': [],
   },

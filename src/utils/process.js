@@ -61,7 +61,7 @@ module.exports = function processFile(key, data) {
             });
         })
         .tap(() => lock.extend())
-        .tap(finalizedData => this.hook.call('files:process:post', finalizedData, lock))
+        .tap(finalizedData => this.hook.call(this, 'files:process:post', finalizedData, lock))
         .finally(() => lock.release());
     });
 };
