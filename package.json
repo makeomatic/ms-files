@@ -36,6 +36,9 @@
     "mservice": "^2.0.0",
     "redis-filtered-sort": "^1.1.1"
   },
+  "optionalDependencies": {
+    "hiredis": "^0.4.1"
+  },
   "devDependencies": {
     "babel-cli": "^6.4.5",
     "babel-eslint": "^6.0.0",
