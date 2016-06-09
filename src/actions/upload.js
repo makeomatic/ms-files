@@ -55,10 +55,8 @@ module.exports = function initFileUpload(opts) {
         filename,
         location: provider.initResumableUpload({
           filename,
-          metadata: {
-            ...metadata,
-            predefinedAcl: isPublic ? 'publicRead' : '',
-          },
+          predefinedAcl: isPublic ? 'publicRead' : '',
+          metadata: { ...metadata },
         }),
       });
     })
