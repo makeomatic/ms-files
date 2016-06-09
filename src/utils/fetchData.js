@@ -13,15 +13,16 @@ module.exports = function exists(key) {
     .spread((fileExistsResponse, dataResponse) => {
       const fileExists = fileExistsResponse[1];
       const data = dataResponse[1];
-      let field;
+      const fields = Object.keys(data);
 
-      for (field in data) {
+      fields.forEach(field => {
+        const value = data[field];
         if (JSON_FIELDS.indexOf(field) !== -1) {
-          data[field] = safeParse(data[field], []);
+          data[field] = safeParse(value, []);
         } else {
-          data[field] = data[field].toString('utf8');
+          data[field] = value.toString('utf8');
         }
-      }
+      });
 
       if (!fileExists) {
         throw new HttpStatusError(404, 'could not find associated data');
