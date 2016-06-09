@@ -4,7 +4,7 @@ const path = require('path');
 
 try {
   env.DOTENV_FILE_PATH = env.DOTENV_FILE_PATH || path.resolve(__dirname, '../.env');
-  require('ms-amqp-conf');
+  require('ms-conf');
 } catch (e) {
   // fails on CI
 }
