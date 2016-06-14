@@ -1,35 +1,12 @@
 const Promise = require('bluebird');
 const Mservice = require('mservice');
 const ld = require('lodash');
-const path = require('path');
 const fsort = require('redis-filtered-sort');
-const moment = require('moment');
 const LockManager = require('dlock');
-const postProcess = require('./utils/process.js');
 const RedisCluster = require('ioredis').Cluster;
-const listFiles = require('./actions/list.js');
 
 // constants
-const { STATUS_UPLOADED, WEBHOOK_RESOURCE_ID, FILES_DATA } = require('./constant.js');
-
-/**
- * Message resolver
- */
-function resolveMessage(err, data, actionName, actions) {
-  if (!err) {
-    actions.ack();
-    return data;
-  }
-
-  const { name } = err;
-  if (actionName !== 'process' || name === 'ValidationError' || name === 'HttpStatusError') {
-    actions.reject();
-    return Promise.reject(err);
-  }
-
-  actions.retry();
-  return Promise.reject(err);
-}
+const { WEBHOOK_RESOURCE_ID } = require('./constant.js');
 
 /**
  * @class Files
@@ -42,21 +19,16 @@ class Files extends Mservice {
    */
   static defaultOpts = require('./defaults.js');
 
+  /**
+   * class Constructor, initializes configuration
+   * and internal providers
+   */
   constructor(opts = {}) {
     super(ld.merge({}, Files.defaultOpts, opts));
     const config = this._config;
 
     // init file transfer provider
-    const Provider = require(`ms-files-${config.transport.name}`);
-    config.transport.options.logger = this.log;
-    this.provider = new Provider(config.transport.options);
-    const bucket = config.transport.options.bucket.name;
-
-    if (config.transport.cname === true) {
-      config.transport.cname = `https://${bucket}`;
-    } else if (config.transport.name === 'gce') {
-      config.transport.cname = `https://storage.googleapis.com/${bucket}`;
-    }
+    this.providers = config.transport.map(this.initProvider);
 
     // init scripts
     this.on('plugin:connect:redisCluster', (redis) => {
@@ -75,73 +47,78 @@ class Files extends Mservice {
   }
 
   /**
+   * Helper method to return wanted provider
+   */
+  provider = (...args) => {
+    return this.config.selectTransport.apply(this, args);
+  }
+
+  /**
+   * Initializes provider based on the configuration
+   * @param  {Object} conf
+   * @return {Provider}
+   */
+  initProvider = (transport) => {
+    // get abstraction module
+    const Provider = require(`ms-files-${transport.name}`);
+    const bucket = transport.options.bucket.name;
+
+    // delegate logging facility
+    transport.options.logger = this.log.child({ bucket });
+
+    // init provider
+    const provider = new Provider(transport.options);
+
+    // init cname based on provider type and settings
+    if (transport.cname === true) {
+      provider.cname = `https://${bucket}`;
+    } else if (transport.name === 'gce') {
+      provider.cname = `https://storage.googleapis.com/${bucket}`;
+    }
+
+    // pass on expiration configuration
+    provider.expire = transport.expire;
+
+    return provider;
+  }
+
+  /**
    * Init's webhook
    */
   initWebhook() {
     this.log.debug('initializing webhook');
-
-    const { provider, redis } = this;
+    const { redis } = this;
     return Promise
-      .bind(provider)
-      .then(() => process.env.WEBHOOK_RESOURCE_ID || redis.get(WEBHOOK_RESOURCE_ID))
-      .then(provider.setupChannel)
-      .then(resourceId => resourceId && redis.set(WEBHOOK_RESOURCE_ID, resourceId));
+      .map(this.providers, (provider, idx) => {
+        const hookId = `${WEBHOOK_RESOURCE_ID}_${idx}`;
+        return Promise
+          .bind(provider)
+          .then(() => process.env[hookId] || redis.get(hookId))
+          .then(provider.setupChannel)
+          .then(resourceId => resourceId && redis.set(hookId, resourceId));
+      });
   }
 
   /**
    * Terminate notifications
    */
   stopWebhook() {
-    return this
-      .provider
-      .stopChannel()
-      .tap(data => this.log.info('stopped channel', data))
-      .then(() => this.redis.del(WEBHOOK_RESOURCE_ID))
-      .catch(e => this.log.error('failed to stop channel', e));
+    return Promise
+      .map(this.providers, (provider, idx) => {
+        const hookId = `${WEBHOOK_RESOURCE_ID}_${idx}`;
+        return provider
+          .stopChannel()
+          .tap(data => this.log.info('stopped channel', data))
+          .then(() => this.redis.del(hookId))
+          .catch(e => this.log.error('failed to stop channel', e));
+      });
   }
 
   /**
    * Invoke this method to start post-processing of all pending files
    * @return {Promise}
    */
-  postProcess(offset = 0, uploadedAt) {
-    const filter = {
-      status: {
-        eq: STATUS_UPLOADED,
-      },
-      uploadedAt: {
-        lte: uploadedAt || moment().subtract(1, 'hour').valueOf(),
-      },
-    };
-
-    return listFiles
-      .call(this, { filter, limit: 20, offset })
-      .then(data => {
-        const { files, cursor, page, pages } = data;
-
-        return Promise
-          .resolve(files)
-          .mapSeries(file => {
-            // make sure to call reflect so that we do not interrupt the procedure
-            return postProcess
-              .call(this, `${FILES_DATA}:${file.id}`, file)
-              .reflect()
-              .tap(result => {
-                this.log.info({ owner: file.owner }, '%s |', file.id, result.isFulfilled() ? 'processed' : result.reason());
-              });
-          })
-          .then(() => {
-            if (page < pages) {
-              return this.postProcess(cursor, filter.uploadedAt.lte);
-            }
-
-            return null;
-          });
-      })
-      .then(() => {
-        this.log.info('completed files post-processing');
-      });
-  }
+  postProcess = require('./postProcess.js');
 
   /**
    * Overload close and make sure pubsub is stopped
@@ -162,7 +139,7 @@ class Files extends Mservice {
   connect() {
     this.log.debug('started connecting');
     return Promise
-      .join(super.connect(), this.provider.connect())
+      .join(super.connect(), Promise.map(this.providers, provider => provider.connect()))
       .then(() => this.initWebhook()); // will be a noop when configuration for it is missing
   }
 

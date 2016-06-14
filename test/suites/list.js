@@ -23,7 +23,7 @@ const {
   STATUS_UPLOADED, STATUS_PROCESSED,
   FILES_DATA, FILES_INDEX, FILES_INDEX_PUBLIC,
   FILES_OWNER_FIELD, FILES_PUBLIC_FIELD,
-} = require('../../src/constant.js');
+} = require('../../lib/constant.js');
 
 describe('list suite', function suite() {
   // setup functions

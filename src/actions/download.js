@@ -15,9 +15,11 @@ const THREE_HOURS = 1000 * 60 * 60 * 3;
  * @return {Promise}
  */
 module.exports = function getDownloadURL(opts) {
-  const { provider, config } = this;
+  const provider = this.provider('download', opts);
+
   const { uploadId, username } = opts;
-  const { transport: { cname, expire } } = config;
+  const { cname, expire } = provider;
+
   const key = `${FILES_DATA}:${uploadId}`;
 
   return Promise

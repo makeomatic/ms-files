@@ -43,6 +43,7 @@ redis_client:
 
 tester:
   image: ${IMAGE}
+  dns: 8.8.8.8
   links:
     - redis_1
     - redis_2
@@ -55,6 +56,5 @@ tester:
   container_name: tester
   environment:
     NODE_ENV: "development"
-    SKIP_REBUILD: ${SKIP_REBUILD}
-    DEBUG: ${DEBUG}
+    DEBUG: "ioredis:*"
   command: tail -f /dev/null

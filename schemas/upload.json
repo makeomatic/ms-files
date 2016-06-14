@@ -13,9 +13,6 @@
           },
           {
             "$ref": "common#/definitions/cappasity-image"
-          },
-          {
-            "$ref": "common#/definitions/cappasity-archive"
           }
         ]
       }
@@ -43,6 +40,14 @@
           "default": false
         }
       }
+    },
+    "temp": {
+      "type": "boolean",
+      "default": false
+    },
+    "unlisted": {
+      "type": "boolean",
+      "default": false
     }
   }
 }

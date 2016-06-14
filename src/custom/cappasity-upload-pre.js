@@ -1,18 +1,37 @@
 const Promise = require('bluebird');
 const assert = require('assert');
 
-module.exports = function extractMetadata(files) {
+module.exports = function extractMetadata({ files, meta }) {
+  let sourceSHA;
+
   return Promise
     .try(function verifyUploadData() {
       const fileTypes = {};
-      files.forEach(({ type }) => {
-        fileTypes[type] = fileTypes[type] && ++fileTypes[type] || 1;
+      let differentFileTypes = 0;
+
+      // calculate file types
+      files.forEach(props => {
+        const type = props.type;
+
+        if (fileTypes[type]) {
+          fileTypes[type]++;
+        } else {
+          differentFileTypes++;
+          fileTypes[type] = 1;
+        }
+
+        if (type === 'c-bin') {
+          sourceSHA = props['source-sha'];
+        }
       });
 
-      assert.equal(fileTypes['c-bin'], 1, 'must contain exactly one binary upload');
-      assert.equal(fileTypes['c-preview'], 1, 'must contain preview');
-      assert.ok(typeof fileTypes['c-archive'] === 'undefined' || fileTypes['c-archive'] <= 1, 'must contain not more than 1 prepared archive');
-      assert.ok(fileTypes['c-texture'] >= 1, 'must contain at least one texture');
-    })
-    .return(files);
+      // assert constraints
+      if (differentFileTypes === 1) {
+        assert.equal(fileTypes['c-preview'], 1, 'must contain exactly one preview');
+      } else {
+        // must always be true if it's not a simple preview upload
+        assert.equal(fileTypes['c-bin'], 1, 'must contain exactly one binary upload');
+        meta.sourceSHA = sourceSHA;
+      }
+    });
 };

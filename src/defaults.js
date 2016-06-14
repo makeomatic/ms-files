@@ -1,4 +1,7 @@
-{
+const path = require('path');
+const resolveMessage = require('./messageResolver.js');
+
+module.exports = {
   // enable plugins
   plugins: ['validator', 'logger', 'amqp', 'redisCluster'],
   // default logger
@@ -13,6 +16,7 @@
     neck: 100,
     // initRoutes and router
     initRoutes: true,
+    // automatically load src/actions into routes
     initRouter: true,
     // prefixes
     prefix: 'files',
@@ -37,6 +41,7 @@
     'files:info:pre': [],
     'files:upload:pre': [],
     'files:update:pre': [],
+    'files:process:pre': [],
     'files:process:post': [],
     'files:info:post': [],
   },
@@ -44,21 +49,29 @@
   redis: {
     options: {
       keyPrefix: '{ms-files}',
-      dropBufferSupport: false,
-      redisOptions: {},
+      dropBufferSupport: true,
+      redisOptions: {
+        dropBufferSupport: true,
+      },
     },
   },
   // default storage for files
-  transport: {
+  transport: [{
     // transport name
     name: 'gce',
     // provide config options
     options: {},
     // set to true when using as a public name
     cname: false,
+  }],
+  // default transport selection logic
+  selectTransport: function selectTransport() {
+    return this.providers[0];
   },
+  // configuration for dependant services
   users: {
     audience: '*.localhost',
+    exportAudience: 'ms-files',
     getInternalData: 'users.getInternalData',
     getMetadata: 'users.getMetadata',
     updateMetadata: 'users.updateMetadata',
@@ -67,4 +80,6 @@
   interstoreKeyTTL: 15,
   // minimum remaining time(ms) to a previously saved key for action list
   interstoreKeyMinTimeleft: 2000,
+  // upload expiration time
+  uploadTTL: 86400 * 4,
 };

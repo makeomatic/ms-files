@@ -22,7 +22,7 @@ fi
 
 function finish {
   $COMPOSE -f $DC stop
-  $COMPOSE -f $DC rm -f
+  $COMPOSE -f $DC rm --all -f
 }
 trap finish EXIT
 

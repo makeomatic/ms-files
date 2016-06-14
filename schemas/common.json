@@ -16,7 +16,7 @@
     },
     "cappasity-binary": {
       "type": "object",
-      "required": ["type", "contentType", "contentLength", "contentEncoding", "md5Hash", "decompressedLength"],
+      "required": ["type", "contentType", "contentLength", "contentEncoding", "md5Hash", "decompressedLength", "source-sha256"],
       "additionalProperties": false,
       "properties": {
         "type": {
@@ -46,6 +46,10 @@
         "md5Hash": {
           "type": "string",
           "pattern": "^[0-9A-Fa-f]{32}$"
+        },
+        "source-sha256": {
+          "type": "string",
+          "pattern": "^[0-9A-Fa-f]{64}$"
         }
       }
     },
@@ -66,30 +70,6 @@
           "type": "integer",
           "minimum": 1,
           "maximum": 20000000
-        },
-        "md5Hash": {
-          "type": "string",
-          "pattern": "^[0-9A-Fa-f]{32}$"
-        }
-      }
-    },
-    "cappasity-archive": {
-      "type": "object",
-      "required": ["type", "contentType", "contentLength", "md5Hash"],
-      "additionalProperties": false,
-      "properties": {
-        "type": {
-          "type": "string",
-          "constant": "c-archive"
-        },
-        "contentType": {
-          "type": "string",
-          "constant": "application/cappasity-archive"
-        },
-        "contentLength": {
-          "type": "integer",
-          "minimum": 1,
-          "maximum": 2000000000
         },
         "md5Hash": {
           "type": "string",

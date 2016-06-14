@@ -10,7 +10,7 @@ const faker = require('faker');
 const md5 = require('md5');
 const request = require('request-promise');
 const assert = require('assert');
-const Files = require('../../src');
+const Files = require('../../lib');
 const config = require('./config.js');
 const partial = require('lodash/partial');
 const zlib = require('zlib');
@@ -51,6 +51,7 @@ function modelMessage(model, textures, preview, owner) {
     decompressedLength: zlib.gunzipSync(model).length,
     contentEncoding: 'gzip',
     md5Hash: md5(model).toString('hex'),
+    'source-sha256': 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855',
   };
 
   // generate textures metadata
@@ -235,7 +236,11 @@ function stopService() {
   const service = this.files;
   return Promise
     .map(service.redis.nodes('master'), node => node.flushdb())
-    .finally(() => Promise.fromNode(next => service.provider._bucket.deleteFiles({ force: true }, next)))
+    .finally(() => Promise
+      .map(service.providers, transport => Promise.fromNode(next => (
+        transport._bucket.deleteFiles({ force: true }, next)
+      ))
+    ))
     .finally(() => service.close())
     .finally(() => {
       this.amqp = null;
