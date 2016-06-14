@@ -63,6 +63,6 @@ module.exports = {
     'files:update:pre': [],
     // return same username, because we mock it
     'files:download:alias': username => username,
-    'files:info:post': require('../../lib/custom/cappasity-info-post'),
+    'files:info:post': require('../../src/custom/cappasity-info-post'),
   },
 };

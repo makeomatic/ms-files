@@ -18,7 +18,7 @@ const {
 // data
 const route = 'files.upload';
 const bucketName = config.transport[0].options.bucket.name;
-const { STATUS_PENDING } = require('../../lib/constant.js');
+const { STATUS_PENDING } = require('../../src/constant.js');
 
 describe('upload suite', function suite() {
   // setup functions

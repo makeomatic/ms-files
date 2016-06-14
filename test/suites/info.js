@@ -16,7 +16,7 @@ const {
 } = require('../helpers/utils.js');
 
 const route = 'files.info';
-const { STATUS_PENDING, STATUS_UPLOADED, STATUS_PROCESSED } = require('../../lib/constant.js');
+const { STATUS_PENDING, STATUS_UPLOADED, STATUS_PROCESSED } = require('../../src/constant.js');
 
 describe('info suite', function suite() {
   // setup functions

@@ -14,7 +14,7 @@ const {
 
 // data
 const route = 'files.process';
-const { STATUS_PROCESSED } = require('../../lib/constant.js');
+const { STATUS_PROCESSED } = require('../../src/constant.js');
 
 describe('process suite', function suite() {
   // setup functions
