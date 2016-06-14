@@ -1,4 +1,5 @@
 const Promise = require('bluebird');
+const find = require('lodash/find');
 const { HttpStatusError } = require('common-errors');
 const { FILES_OWNER_FIELD } = require('../constant.js');
 
