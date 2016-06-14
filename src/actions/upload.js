@@ -12,14 +12,8 @@ const {
   FILES_TEMP_FIELD,
   FILES_BUCKET_FIELD,
   FILES_OWNER_FIELD,
+  TYPE_MAP,
 } = require('../constant.js');
-
-const TYPE_MAP = {
-  'c-bin': '.bin.gz',
-  'c-texture': '.jpeg',
-  'c-preview': '.jpeg',
-  'c-archive': '.zip',
-};
 
 function typeToExtension(type) {
   return TYPE_MAP[type] || '.bin';
@@ -36,7 +30,7 @@ module.exports = function initFileUpload(opts) {
   const { files, meta, username, temp } = opts;
   const { redis, config: { uploadTTL } } = this;
 
-  const provider = this.provider();
+  const provider = this.provider('upload', opts);
   const prefix = md5(username);
   const uploadId = uuid.v4();
   const isPublic = get(opts, 'access.setPublic', false);

@@ -15,7 +15,7 @@ const THREE_HOURS = 1000 * 60 * 60 * 3;
  * @return {Promise}
  */
 module.exports = function getDownloadURL(opts) {
-  const provider = this.provider();
+  const provider = this.provider('download', opts);
 
   const { uploadId, username } = opts;
   const { cname, expire } = provider;

@@ -19,4 +19,12 @@ module.exports = {
   FILES_TEMP_FIELD: 'temporary',
   FILES_STATUS_FIELD: 'status',
   FILES_PARTS_FIELD: 'parts',
+
+  // type map
+  TYPE_MAP: {
+    'c-bin': '.bin.gz',
+    'c-texture': '.jpeg',
+    'c-preview': '.jpeg',
+    'c-archive': '.zip',
+  },
 };

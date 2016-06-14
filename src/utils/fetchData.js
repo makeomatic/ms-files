@@ -1,6 +1,5 @@
 const { HttpStatusError } = require('common-errors');
 const { FILES_TAGS_FIELD } = require('../constant.js');
-const mapValues = require('lodash/mapValues');
 const safeParse = require('./safeParse.js');
 const JSON_FIELDS = [FILES_TAGS_FIELD, 'files'];
 

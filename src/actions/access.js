@@ -13,9 +13,10 @@ function addToPublic(filename, data) {
   const owner = data[FILES_OWNER_FIELD];
   const index = `${FILES_INDEX}:${owner}:pub`;
   const id = `${FILES_DATA}:${filename}`;
+  const transport = provider('access', data);
 
   return Promise
-    .map(files, file => provider().makePublic(file.filename))
+    .map(files, file => transport.makePublic(file.filename))
     .then(() => {
       return redis
         .pipeline()
@@ -32,9 +33,10 @@ function removeFromPublic(filename, data) {
   const owner = data[FILES_OWNER_FIELD];
   const index = `${FILES_INDEX}:${owner}:pub`;
   const id = `${FILES_DATA}:${filename}`;
+  const transport = provider('access', data);
 
   return Promise
-    .map(files, file => provider().makePrivate(file.filename))
+    .map(files, file => transport.makePrivate(file.filename))
     .then(() =>
       redis
         .pipeline()
