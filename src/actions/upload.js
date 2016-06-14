@@ -39,7 +39,7 @@ module.exports = function initFileUpload(opts) {
       const filename = `${prefix}/${uploadId}/${uuid.v4()}${typeToExtension(type)}`;
       const metadata = {
         ...rest,
-        md5Hash: new Buffer(md5Hash, 'hex').toString('base64'),
+        md5Hash: Buffer.from(md5Hash, 'hex').toString('base64'),
       };
 
       // this is an override, because safari has a bug:

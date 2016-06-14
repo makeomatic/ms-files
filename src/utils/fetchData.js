@@ -8,7 +8,7 @@ module.exports = function exists(key) {
   return redis
     .pipeline()
     .exists(key)
-    .hgetallBuffer(key)
+    .hgetall(key)
     .exec()
     .spread((fileExistsResponse, dataResponse) => {
       const fileExists = fileExistsResponse[1];
