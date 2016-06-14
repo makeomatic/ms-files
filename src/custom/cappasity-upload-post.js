@@ -8,7 +8,12 @@ module.exports = function uploadPost(props) {
 
   return Promise
     .try(function verifyUploadData() {
-      const sourceSHA = find(props.files, { type: 'c-bin' })['source-sha'];
+      const binary = find(props.files, { type: 'c-bin' });
+      if (!binary) {
+        return null;
+      }
+
+      const sourceSHA = binary['source-sha'];
 
       // check if we already have exported that item
       const message = {

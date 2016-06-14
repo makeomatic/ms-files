@@ -56,5 +56,5 @@ tester:
   container_name: tester
   environment:
     NODE_ENV: "development"
-    DEBUG: ${DEBUG}
+    DEBUG: "ioredis:*"
   command: tail -f /dev/null
