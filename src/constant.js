@@ -19,6 +19,7 @@ module.exports = {
   FILES_TEMP_FIELD: 'temporary',
   FILES_STATUS_FIELD: 'status',
   FILES_PARTS_FIELD: 'parts',
+  FILES_UNLISTED_FIELD: 'unlisted',
 
   // type map
   TYPE_MAP: {

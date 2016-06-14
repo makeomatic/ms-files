@@ -1,7 +1,7 @@
 // this file contains logic for selecting transport for uploading
 // input is upload opts
 const findIndex = require('lodash/findIndex');
-const { FILES_BUCKET_FIELD } = require('../constant.js');
+const { FILES_BUCKET_FIELD, FILES_TEMP_FIELD } = require('../constant.js');
 
 // action handler
 // if file is temporary, use provider index `1`
@@ -11,8 +11,8 @@ function uploadSelector({ temp }) {
 }
 
 // access changes are only available on the persistent store
-function accessSelector() {
-  return 0;
+function accessSelector(opts) {
+  return opts[FILES_TEMP_FIELD] ? 1 : 0;
 }
 
 // downloads can be performed from both public and temp store

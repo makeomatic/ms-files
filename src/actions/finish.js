@@ -2,14 +2,28 @@ const Promise = require('bluebird');
 const fetchData = require('../utils/fetchData.js');
 const { HttpStatusError } = require('common-errors');
 const {
-  STATUS_UPLOADED, STATUS_PENDING,
+  STATUS_UPLOADED,
+  STATUS_PENDING,
   UPLOAD_DATA,
-  FILES_INDEX, FILES_DATA, FILES_INDEX_PUBLIC, FILES_INDEX_TAGS,
-  FILES_OWNER_FIELD, FILES_PUBLIC_FIELD, FILES_TAGS_FIELD, FILES_TEMP_FIELD, FILES_STATUS_FIELD, FILES_PARTS_FIELD,
+  FILES_INDEX,
+  FILES_DATA,
+  FILES_INDEX_PUBLIC,
+  FILES_INDEX_TAGS,
+  FILES_OWNER_FIELD,
+  FILES_PUBLIC_FIELD,
+  FILES_TAGS_FIELD,
+  FILES_TEMP_FIELD,
+  FILES_STATUS_FIELD,
+  FILES_PARTS_FIELD,
+  FILES_UNLISTED_FIELD,
 } = require('../constant.js');
 
 // cached vars
-const fields = [FILES_STATUS_FIELD, FILES_PARTS_FIELD, FILES_TAGS_FIELD, FILES_OWNER_FIELD, FILES_PUBLIC_FIELD, FILES_TEMP_FIELD];
+const fields = [
+  FILES_STATUS_FIELD, FILES_PARTS_FIELD, FILES_TAGS_FIELD,
+  FILES_OWNER_FIELD, FILES_PUBLIC_FIELD, FILES_TEMP_FIELD,
+  FILES_UNLISTED_FIELD,
+];
 
 /**
  * Finish upload
@@ -59,7 +73,7 @@ module.exports = function completeFileUpload(opts) {
         throw err;
       }
 
-      const [currentStatus, totalParts, tags, username, isPublic, isTemporary] = parts[1];
+      const [currentStatus, totalParts, tags, username, isPublic, isTemporary, isUnlisted] = parts[1];
       const currentParts = incr[1];
 
       if (currentParts < totalParts) {
@@ -82,20 +96,23 @@ module.exports = function completeFileUpload(opts) {
       // unless file is temp -> add them to index
       if (!isTemporary) {
         pipeline.persist(uploadKey);
-        pipeline.sadd(FILES_INDEX, uploadId);
-        pipeline.sadd(`${FILES_INDEX}:${username}`, uploadId);
 
-        // convert 1 or undef to Boolean
-        if (isPublic) {
-          pipeline.sadd(FILES_INDEX_PUBLIC, uploadId);
-          pipeline.sadd(`${FILES_INDEX}:${username}:pub`, uploadId);
-        }
+        if (!isUnlisted) {
+          pipeline.sadd(FILES_INDEX, uploadId);
+          pipeline.sadd(`${FILES_INDEX}:${username}`, uploadId);
 
-        // push to tags index
-        if (tags) {
-          JSON.parse(tags).forEach(tag => {
-            pipeline.sadd(`${FILES_INDEX_TAGS}:${tag}`, uploadId);
-          });
+          // convert 1 or undef to Boolean
+          if (isPublic) {
+            pipeline.sadd(FILES_INDEX_PUBLIC, uploadId);
+            pipeline.sadd(`${FILES_INDEX}:${username}:pub`, uploadId);
+          }
+
+          // push to tags index
+          if (tags) {
+            JSON.parse(tags).forEach(tag => {
+              pipeline.sadd(`${FILES_INDEX_TAGS}:${tag}`, uploadId);
+            });
+          }
         }
       }
 

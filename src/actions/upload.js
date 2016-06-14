@@ -12,6 +12,7 @@ const {
   FILES_TEMP_FIELD,
   FILES_BUCKET_FIELD,
   FILES_OWNER_FIELD,
+  FILES_UNLISTED_FIELD,
   TYPE_MAP,
 } = require('../constant.js');
 
@@ -27,7 +28,7 @@ function typeToExtension(type) {
  * @return {Promise}
  */
 module.exports = function initFileUpload(opts) {
-  const { files, meta, username, temp } = opts;
+  const { files, meta, username, temp, unlisted } = opts;
   const { redis, config: { uploadTTL } } = this;
 
   const provider = this.provider('upload', opts);
@@ -91,6 +92,10 @@ module.exports = function initFileUpload(opts) {
 
       if (temp) {
         fileData[FILES_TEMP_FIELD] = 1;
+      }
+
+      if (unlisted) {
+        fileData[FILES_UNLISTED_FIELD] = 1;
       }
 
       const pipeline = redis.pipeline();

@@ -1,6 +1,7 @@
 const Promise = require('bluebird');
 const hasAccess = require('../utils/hasAccess.js');
 const fetchData = require('../utils/fetchData.js');
+const isUnlisted = require('../utils/isUnlisted.js');
 const { FILES_INDEX,
   FILES_DATA,
   FILES_PUBLIC_FIELD,
@@ -25,6 +26,7 @@ module.exports = function removeFile(opts) {
   return Promise
     .bind(this, key)
     .then(fetchData)
+    .then(isUnlisted)
     .then(hasAccess(username))
     .then(data => {
       const { files } = data;

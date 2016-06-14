@@ -1,7 +1,12 @@
 const Promise = require('bluebird');
-const { FILES_DATA, FILES_INDEX_TAGS, FILES_TAGS_FIELD } = require('../constant.js');
 const fetchData = require('../utils/fetchData.js');
 const isProcessed = require('../utils/isProcessed.js');
+const isUnlisted = require('../utils/isUnlisted.js');
+const {
+  FILES_DATA,
+  FILES_INDEX_TAGS,
+  FILES_TAGS_FIELD,
+} = require('../constant.js');
 
 /**
  * Initiates update
@@ -21,6 +26,7 @@ module.exports = function initFileUpdate(opts) {
     .bind(this, key)
     .then(fetchData)
     .then(isProcessed)
+    .then(isUnlisted)
     .tap(data => this.hook.call(this, 'files:update:pre', username, data))
     .then(data => Promise.try(function updateMetadata() {
       const pipeline = redis.pipeline();
