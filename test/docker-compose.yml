@@ -57,4 +57,4 @@ tester:
   environment:
     NODE_ENV: "development"
     DEBUG: ${DEBUG}
-  command: 'true'
+  command: tail -f /dev/null

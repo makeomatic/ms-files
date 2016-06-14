@@ -49,6 +49,8 @@ module.exports = {
   redis: {
     options: {
       keyPrefix: '{ms-files}',
+      dropBufferSupport: false,
+      redisOptions: {},
     },
   },
   // default storage for files

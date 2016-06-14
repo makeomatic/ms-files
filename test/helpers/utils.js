@@ -234,11 +234,9 @@ function startService() {
 //
 function stopService() {
   const service = this.files;
-  return service
-    .redis
-      .to('masters')
-      .call('flushdb')
-    .finally(() => Promise.fromNode(next => service.provider()._bucket.deleteFiles({ force: true }, next)))
+  return Promise
+    .map(service.redis.nodes('master'), node => node.flushdb())
+    .finally(() => Promise.fromNode(next => service.provider._bucket.deleteFiles({ force: true }, next)))
     .finally(() => service.close())
     .finally(() => {
       this.amqp = null;
