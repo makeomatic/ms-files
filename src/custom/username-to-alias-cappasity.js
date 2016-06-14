@@ -8,6 +8,12 @@ module.exports = function extractMetadata(username) {
   }
 
   return amqp
-    .publishAndWait(getMetadata, { username, audience, fields: { [audience]: ['alias'] } })
+    .publishAndWait(getMetadata, {
+      username,
+      audience,
+      fields: {
+        [audience]: ['alias'],
+      },
+    })
     .then(it => it[audience].alias);
 };

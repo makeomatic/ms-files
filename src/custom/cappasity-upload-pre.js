@@ -21,7 +21,7 @@ module.exports = function extractMetadata({ files, meta }) {
         }
 
         if (type === 'c-bin') {
-          sourceSHA = props['source-sha'];
+          sourceSHA = props['source-sha256'];
         }
       });
 

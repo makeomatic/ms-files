@@ -14,7 +14,7 @@ module.exports = function uploadPost(props) {
         return null;
       }
 
-      const sourceSHA = binary['source-sha'];
+      const sourceSHA = binary['source-sha256'];
 
       // check if we already have exported that item
       const message = {
