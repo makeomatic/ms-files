@@ -49,7 +49,7 @@ module.exports = {
   redis: {
     options: {
       keyPrefix: '{ms-files}',
-      dropBufferSupport: false,
+      dropBufferSupport: true,
       redisOptions: {},
     },
   },
