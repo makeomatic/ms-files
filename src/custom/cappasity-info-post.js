@@ -3,8 +3,13 @@ const { STATUS_PROCESSED } = require('../constant.js');
 const params = {
   autorun: {
     type: 'boolean',
-    default: false,
+    default: 0,
     description: 'Auto-start player',
+  },
+  closebutton: {
+    type: 'boolean',
+    default: 0,
+    description: 'Show close button',
   },
   width: {
     type: 'integer',
@@ -21,11 +26,15 @@ const params = {
 function getEmbeddedCode(id) {
   return `<iframe
     allowfullscreen
+    mozallowfullscreen="true"
+    webkitallowfullscreen="true"
     width=“{{ width }}“
     height=“{{ height }}“
-    border="0"
-    src="https://api.cappasity.com/api/player/${id}/embedded?autorun={{ autorun }}“
-  />`.replace(/\s+/g, ' ');
+    frameborder="0"
+    style="border:0;"
+    onmousewheel=""
+    src="https://api.cappasity.com/api/player/${id}/embedded?autorun={{ autorun }}&closebutton={{ closebutton }}“
+  ></iframe>`.replace(/\s+/g, ' ');
 }
 
 module.exports = function getEmbeddedInfo(file) {

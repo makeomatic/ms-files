@@ -33,7 +33,7 @@
     "ms-conf": "^1.0.0",
     "ms-files-gce": "^1.0.1",
     "ms-validation": "^2.0.0",
-    "mservice": "^2.2.0",
+    "mservice": "^2.3.0",
     "redis-filtered-sort": "^1.1.1"
   },
   "optionalDependencies": {
