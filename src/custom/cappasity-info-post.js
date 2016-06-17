@@ -28,12 +28,12 @@ function getEmbeddedCode(id) {
     allowfullscreen
     mozallowfullscreen="true"
     webkitallowfullscreen="true"
-    width=“{{ width }}“
-    height=“{{ height }}“
+    width="{{ width }}"
+    height="{{ height }}"
     frameborder="0"
     style="border:0;"
     onmousewheel=""
-    src="https://api.cappasity.com/api/player/${id}/embedded?autorun={{ autorun }}&closebutton={{ closebutton }}“
+    src="https://api.cappasity.com/api/player/${id}/embedded?autorun={{ autorun }}&closebutton={{ closebutton }}"
   ></iframe>`.replace(/\s+/g, ' ');
 }
 
