@@ -19,7 +19,7 @@ const amqp = {
 
 // redis conf
 const redisHosts = Object.keys(env)
-  .filter(key => /^redis_\d+_port_6379_tcp_addr$/i.test(key))
+  .filter(key => /^redis[_\-]\d+_port_6379_tcp_addr$/i.test(key))
   .map(key => ({
     host: env[key],
     port: env[key.replace('ADDR', 'PORT')],

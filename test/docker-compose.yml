@@ -1,26 +1,26 @@
-redis_1:
-  container_name: redis_1
-  hostname: redis_1
+redis-1:
+  container_name: redis-1
+  hostname: redis-1
   expose:
     - "6379"
     - "16379"
   image: makeomatic/alpine-redis
 
-redis_2:
+redis-2:
   expose:
     - "6379"
     - "16379"
-  container_name: redis_2
-  hostname: redis_2
+  container_name: redis-2
+  hostname: redis-2
   image: makeomatic/alpine-redis
 
-redis_3:
+redis-3:
   expose:
     - "6379"
     - "16379"
-  container_name: redis_3
+  container_name: redis-3
   image: makeomatic/alpine-redis
-  hostname: redis_3
+  hostname: redis-3
 
 rabbitmq:
   expose:
@@ -32,24 +32,23 @@ rabbitmq:
   container_name: rabbitmq
   hostname: rabbitmq
 
-redis_client:
+redis-client:
   links:
-    - redis_1
-    - redis_2
-    - redis_3
-  container_name: redis_client
-  hostname: redis_client
+    - redis-1
+    - redis-2
+    - redis-3
+  container_name: redis-client
+  hostname: redis-client
   image: makeomatic/redis-trib
 
 tester:
-  image: ${IMAGE}
-  dns: 8.8.8.8
+  image: makeomatic/node:6.2.2-tester
   links:
-    - redis_1
-    - redis_2
-    - redis_3
+    - redis-1
+    - redis-2
+    - redis-3
     - rabbitmq
-    - redis_client
+    - redis-client
   working_dir: /src
   volumes:
     - ${PWD}:/src

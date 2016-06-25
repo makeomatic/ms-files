@@ -139,7 +139,7 @@ function finishMessage(rsp, skipProcessing = true) {
 function initUpload(data) {
   return function init() {
     return this.amqp
-      .publishAndWait('files.upload', data.message, { timeout: 5000 })
+      .publishAndWait('files.upload', data.message, { timeout: 10000 })
       .tap(rsp => {
         this.response = rsp;
       })
