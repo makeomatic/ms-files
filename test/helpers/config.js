@@ -12,17 +12,16 @@ try {
 // amqp conf
 const amqp = {
   connection: {
-    host: env.RABBITMQ_PORT_5672_TCP_ADDR,
-    port: env.RABBITMQ_PORT_5672_TCP_PORT,
+    host: 'rabbitmq',
+    port: 5672,
   },
 };
 
 // redis conf
-const redisHosts = Object.keys(env)
-  .filter(key => /^redis_\d+_port_6379_tcp_addr$/i.test(key))
-  .map(key => ({
-    host: env[key],
-    port: env[key.replace('ADDR', 'PORT')],
+const redisHosts = ['1','2','3']
+  .map(idx => ({
+    host: `redis-${idx}`,
+    port: 6379
   }));
 
 // full configuration

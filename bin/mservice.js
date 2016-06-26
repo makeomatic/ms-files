@@ -12,9 +12,10 @@ if (process.env.NODE_ENV === 'production') {
 
 // accepts conf through .env file
 // suitable for configuring this in the docker env
-var configuration = require('ms-conf');
-var Service = require(dir);
-var service = new Service(configuration);
+const configuration = require('ms-conf').get('/');
+const Service = require(dir);
+const service = new Service(configuration);
+
 service.connect()
   .then(function serviceUp() {
     service.log.info('Started service');
