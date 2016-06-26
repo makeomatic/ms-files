@@ -1,6 +1,7 @@
 #!/bin/bash
 
-export NODE_ENV=development
+set -x
+
 BIN=node_modules/.bin
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 DC="$DIR/docker-compose.yml"
@@ -48,7 +49,7 @@ done
 echo "started generating combined coverage"
 docker exec tester test/aggregate-report.js
 
-if [[ "$CI" == "true" ]]; then
+if [[ x"$CI" == x"true" ]]; then
   echo "uploading coverage report from ./coverage/lcov.info"
   $BIN/codecov -f ./coverage/lcov.info
 fi

@@ -63,6 +63,6 @@ services:
       - ${PWD}:/src
     container_name: tester
     environment:
-      NODE_ENV: "development"
+      NODE_ENV: "test"
       DEBUG: "${DEBUG}"
     command: tail -f /dev/null
