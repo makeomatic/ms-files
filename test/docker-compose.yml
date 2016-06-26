@@ -1,59 +1,66 @@
-redis-1:
-  container_name: redis-1
-  hostname: redis-1
-  expose:
-    - "6379"
-    - "16379"
-  image: makeomatic/alpine-redis
+version: '2'
 
-redis-2:
-  expose:
-    - "6379"
-    - "16379"
-  container_name: redis-2
-  hostname: redis-2
-  image: makeomatic/alpine-redis
+services:
+  redis-1:
+    container_name: redis-1
+    hostname: redis-1
+    expose:
+      - "6379"
+      - "16379"
+    image: makeomatic/alpine-redis
 
-redis-3:
-  expose:
-    - "6379"
-    - "16379"
-  container_name: redis-3
-  image: makeomatic/alpine-redis
-  hostname: redis-3
+  redis-2:
+    expose:
+      - "6379"
+      - "16379"
+    container_name: redis-2
+    hostname: redis-2
+    image: makeomatic/alpine-redis
 
-rabbitmq:
-  expose:
-    - "4369"
-    - "5672"
-    - "15672"
-    - "25672"
-  image: makeomatic/alpine-rabbitmq:3.5.7
-  container_name: rabbitmq
-  hostname: rabbitmq
+  redis-3:
+    expose:
+      - "6379"
+      - "16379"
+    container_name: redis-3
+    image: makeomatic/alpine-redis
+    hostname: redis-3
 
-redis-client:
-  links:
-    - redis-1
-    - redis-2
-    - redis-3
-  container_name: redis-client
-  hostname: redis-client
-  image: makeomatic/redis-trib
+  rabbitmq:
+    expose:
+      - "4369"
+      - "5672"
+      - "15672"
+      - "25672"
+    image: makeomatic/rabbitmq:3.6.2
+    container_name: rabbitmq
+    hostname: rabbitmq
 
-tester:
-  image: makeomatic/node:6.2.2-tester
-  links:
-    - redis-1
-    - redis-2
-    - redis-3
-    - rabbitmq
-    - redis-client
-  working_dir: /src
-  volumes:
-    - ${PWD}:/src
-  container_name: tester
-  environment:
-    NODE_ENV: "development"
-    DEBUG: "ioredis:*"
-  command: tail -f /dev/null
+  redis-client:
+    links:
+      - redis-1
+      - redis-2
+      - redis-3
+    container_name: redis-client
+    hostname: redis-client
+    image: makeomatic/redis-trib
+    environment:
+      - REDIS_1=redis-1
+      - REDIS_2=redis-2
+      - REDIS_3=redis-3
+
+  tester:
+    image: makeomatic/node:6.2.2-tester
+    links:
+      - redis-1
+      - redis-2
+      - redis-3
+      - rabbitmq
+      - redis-client
+    working_dir: /src
+    volumes:
+      - ${PWD}:/src
+    container_name: tester
+    environment:
+      NODE_ENV: "development"
+      DEBUG: "ioredis:*"
+    command: tail -f /dev/null

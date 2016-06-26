@@ -55,5 +55,5 @@ docker exec tester test/aggregate-report.js
 
 if [[ "$CI" == "true" ]]; then
   echo "uploading coverage report from ./coverage/lcov.info"
-  cat ./coverage/lcov.info | $BIN/codecov
+  $BIN/codecov -f ./coverage/lcov.info
 fi
