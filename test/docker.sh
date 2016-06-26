@@ -1,6 +1,7 @@
 #!/bin/bash
 
-export NODE_ENV=development
+set -x
+
 BIN=node_modules/.bin
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 DC="$DIR/docker-compose.yml"
@@ -23,7 +24,7 @@ fi
 if [[ x"$CI" == x"true" ]]; then
   trap "$COMPOSE stop; $COMPOSE rm -f;" EXIT
 else
-  trap "echo \"to remove containers use: '$COMPOSE stop; $COMPOSE rm -f;'\"" EXIT
+  trap "printf \"to remove containers use:\n\n$COMPOSE stop;\n$COMPOSE rm -f;\n\n\"" EXIT
 fi
 
 # bring compose up
@@ -31,11 +32,6 @@ $COMPOSE up -d
 
 if [[ "$SKIP_REBUILD" != "1" ]]; then
   # add glibc
-  docker exec tester /bin/sh -c "apk --no-cache add ca-certificates openssl make g++ python linux-headers \
-    && printf '-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEApZ2u1KJKUu/fW4A25y9m\ny70AGEa/J3Wi5ibNVGNn1gT1r0VfgeWd0pUybS4UmcHdiNzxJPgoWQhV2SSW1JYu\ntOqKZF5QSN6X937PTUpNBjUvLtTQ1ve1fp39uf/lEXPpFpOPL88LKnDBgbh7wkCp\nm2KzLVGChf83MS0ShL6G9EQIAUxLm99VpgRjwqTQ/KfzGtpke1wqws4au0Ab4qPY\nKXvMLSPLUp7cfulWvhmZSegr5AdhNw5KNizPqCJT8ZrGvgHypXyiFvvAH5YRtSsc\nZvo9GI2e2MaZyo9/lvb+LbLEJZKEQckqRj4P26gmASrZEPStwc+yqy1ShHLA0j6m\n1QIDAQAB\n-----END PUBLIC KEY-----\n' > /etc/apk/keys/sgerrand.rsa.pub \
-    && wget https://github.com/sgerrand/alpine-pkg-glibc/releases/download/2.23-r2/glibc-2.23-r2.apk \
-    && apk add glibc-2.23-r2.apk \
-    && rm glibc-2.23-r2.apk" || exit 1
   echo "rebuilding native dependencies..."
   docker exec tester npm rebuild hiredis
   docker exec tester npm rebuild grpc --update-binary
@@ -53,7 +49,7 @@ done
 echo "started generating combined coverage"
 docker exec tester test/aggregate-report.js
 
-if [[ "$CI" == "true" ]]; then
+if [[ x"$CI" == x"true" ]]; then
   echo "uploading coverage report from ./coverage/lcov.info"
   $BIN/codecov -f ./coverage/lcov.info
 fi
