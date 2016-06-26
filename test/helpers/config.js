@@ -7,6 +7,7 @@ try {
   require('ms-conf');
 } catch (e) {
   // fails on CI
+  console.warn(e); // eslint-disable-line no-console
 }
 
 // amqp conf
@@ -18,10 +19,10 @@ const amqp = {
 };
 
 // redis conf
-const redisHosts = ['1','2','3']
+const redisHosts = ['1', '2', '3']
   .map(idx => ({
     host: `redis-${idx}`,
-    port: 6379
+    port: 6379,
   }));
 
 // full configuration
