@@ -249,6 +249,11 @@ function stopService() {
     });
 }
 
+// resets sinon
+function resetSinon() {
+  config.hooks['files:process:post'].reset();
+}
+
 //
 // bind send to specific route
 //
@@ -295,4 +300,5 @@ module.exports = exports = {
   bindSend,
   initAndUpload,
   meta,
+  resetSinon,
 };

@@ -1,6 +1,7 @@
 const Promise = require('bluebird');
 const omit = require('lodash/omit');
 const safeParse = require('./safeParse.js');
+const { HttpStatusError } = require('common-errors');
 const {
   STATUS_PROCESSED,
   STATUS_PROCESSING,
@@ -26,6 +27,9 @@ module.exports = function processFile(key, data) {
 
   return dlock
     .once(`postprocess:${key}`)
+    .catch({ name: 'LockAcquisitionError' }, () => {
+      throw new HttpStatusError(409, 'file is being processed');
+    })
     .then(lock => {
       const { uploadId } = data;
 
@@ -65,6 +69,7 @@ module.exports = function processFile(key, data) {
             files: JSON.stringify(container.finalizedData.files),
             [FILES_STATUS_FIELD]: STATUS_PROCESSED,
           })
+          .hdel(`${FILES_DATA}:${uploadId}`, 'export')
           .del(container.keys)
           .exec()
           .return({
