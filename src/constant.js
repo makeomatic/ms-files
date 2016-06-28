@@ -3,6 +3,7 @@ module.exports = {
   STATUS_UPLOADED: '2',
   STATUS_PROCESSED: '3',
   STATUS_PROCESSING: '4',
+  STATUS_FAILED: '5',
 
   FILES_INDEX: 'files-index',
   FILES_INDEX_PUBLIC: 'files-index-pub',
