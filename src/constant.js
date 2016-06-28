@@ -2,6 +2,8 @@ module.exports = {
   STATUS_PENDING: '1',
   STATUS_UPLOADED: '2',
   STATUS_PROCESSED: '3',
+  STATUS_PROCESSING: '4',
+
   FILES_INDEX: 'files-index',
   FILES_INDEX_PUBLIC: 'files-index-pub',
   FILES_DATA: 'files-data',

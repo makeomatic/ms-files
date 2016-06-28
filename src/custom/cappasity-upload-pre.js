@@ -1,7 +1,8 @@
+const Errors = require('common-errors');
 const Promise = require('bluebird');
 const assert = require('assert');
 
-module.exports = function extractMetadata({ files, meta }) {
+module.exports = function extractMetadata({ files, meta, temp }) {
   let sourceSHA;
 
   return Promise
@@ -32,6 +33,10 @@ module.exports = function extractMetadata({ files, meta }) {
         // must always be true if it's not a simple preview upload
         assert.equal(fileTypes['c-bin'], 1, 'must contain exactly one binary upload');
         meta.sourceSHA = sourceSHA;
+      }
+
+      if (meta.export && !temp) {
+        throw new Errors.HttpStatusError(412, 'temp must be set to true');
       }
     });
 };
