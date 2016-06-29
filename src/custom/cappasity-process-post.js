@@ -29,7 +29,7 @@ module.exports = function finishPost(fileData, lock) {
     .then(() => lock.extend(timeout))
     .then(() => amqp.publishAndWait(route, message, { timeout }))
     .then(file => {
-      fileData[message.export.outputFormat] = file.fileName;
+      fileData[file.type] = file.filename;
       fileData.files.push(file);
       return file;
     });
