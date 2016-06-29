@@ -28,21 +28,23 @@
         },
         "meta": {
           "type": "object",
-          "^.+$": {
-            "anyOf": [{
-              "type": "string"
-            }, {
-              "type": "number"
-            }, {
-              "type": "array",
-              "items": {
-                "oneOf": [{
-                  "type": "string"
-                }, {
-                  "type": "number"
-                }]
-              }
-            }]
+          "patternProperties": {
+            "^.+$": {
+              "anyOf": [{
+                "type": "string"
+              }, {
+                "type": "number"
+              }, {
+                "type": "array",
+                "items": {
+                  "oneOf": [{
+                    "type": "string"
+                  }, {
+                    "type": "number"
+                  }]
+                }
+              }]
+            }
           }
         }
       }
