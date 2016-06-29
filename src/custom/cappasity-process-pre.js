@@ -60,6 +60,10 @@ module.exports = function finishPost(props) {
     return Promise.try(() => parseMeta(props));
   }
 
+  if (!sourceSHA) {
+    throw new HttpStatusError(412, 'source-sha256 must be provided');
+  }
+
   // write down
   const exportedAt = Date.now().toString();
   const message = {

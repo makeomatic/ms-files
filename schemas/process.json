@@ -5,6 +5,12 @@
   "properties": {
     "uploadId": {
       "$ref": "common#/definitions/uuid-v4"
+    },
+    "export": {
+      "$ref": "common#/definitions/export"
+    },
+    "username": {
+      "$ref": "common#/definitions/owner"
     }
   }
 }

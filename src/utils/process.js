@@ -1,12 +1,16 @@
 const Promise = require('bluebird');
 const omit = require('lodash/omit');
 const safeParse = require('./safeParse.js');
+const { HttpStatusError } = require('common-errors');
 const {
   STATUS_PROCESSED,
+  STATUS_PROCESSING,
+  STATUS_FAILED,
   UPLOAD_DATA,
   FILES_DATA,
   FILES_PROCESS_ERROR_FIELD,
   FILES_TAGS_FIELD,
+  FILES_STATUS_FIELD,
 } = require('../constant.js');
 
 // blacklist of metadata that must be returned
@@ -23,6 +27,9 @@ module.exports = function processFile(key, data) {
 
   return dlock
     .once(`postprocess:${key}`)
+    .catch({ name: 'LockAcquisitionError' }, () => {
+      throw new HttpStatusError(409, 'file is being processed');
+    })
     .then(lock => {
       const { uploadId } = data;
 
@@ -41,27 +48,43 @@ module.exports = function processFile(key, data) {
           });
 
           // create new fileData
-          const fileData = {
+          const finalizedData = {
             ...data,
             ...processedData,
-            files: JSON.stringify(files),
+            files,
             [FILES_TAGS_FIELD]: JSON.stringify(parsedTags),
-            status: STATUS_PROCESSED,
           };
 
           return redis
-            .pipeline()
-            .hmset(`${FILES_DATA}:${uploadId}`, fileData)
-            .hdel(`${FILES_DATA}:${uploadId}`, FILES_PROCESS_ERROR_FIELD)
-            .del(fileKeys)
-            .exec()
-            .return({
-              ...fileData,
-              files,
-            });
+            .hset(`${FILES_DATA}:${uploadId}`, FILES_STATUS_FIELD, STATUS_PROCESSING)
+            .return({ finalizedData, parsedTags, fileKeys });
         })
         .tap(() => lock.extend())
-        .tap(finalizedData => this.hook.call(this, 'files:process:post', finalizedData, lock))
+        .tap(container => this.hook.call(this, 'files:process:post', container.finalizedData, lock))
+        .then(container => redis
+          .pipeline()
+          .hdel(`${FILES_DATA}:${uploadId}`, FILES_PROCESS_ERROR_FIELD)
+          .hmset(`${FILES_DATA}:${uploadId}`, {
+            ...container.finalizedData,
+            files: JSON.stringify(container.finalizedData.files),
+            [FILES_STATUS_FIELD]: STATUS_PROCESSED,
+          })
+          .hdel(`${FILES_DATA}:${uploadId}`, 'export')
+          .del(container.keys)
+          .exec()
+          .return({
+            ...container.finalizedData,
+            [FILES_TAGS_FIELD]: container.parsedTags,
+            [FILES_STATUS_FIELD]: STATUS_PROCESSED,
+          })
+        )
+        .catch(err => redis
+          .hmset(`${FILES_DATA}:${uploadId}`, {
+            [FILES_STATUS_FIELD]: STATUS_FAILED,
+            [FILES_PROCESS_ERROR_FIELD]: err.message,
+          })
+          .throw(err)
+        )
         .finally(() => lock.release());
     });
 };

@@ -1,6 +1,8 @@
 // cache env ref
 const env = process.env;
 const path = require('path');
+const sinon = require('sinon');
+const Promise = require('bluebird');
 
 try {
   env.DOTENV_FILE_PATH = env.DOTENV_FILE_PATH || path.resolve(__dirname, '../.env');
@@ -56,7 +58,15 @@ module.exports = {
     'files:upload:pre': files => files,
     // process files hook -> noop
     'files:process:pre': [],
-    'files:process:post': [],
+    'files:process:post': sinon.spy(fileData => {
+      if (!fileData.export) {
+        // skip processing
+        return null;
+      }
+
+      fileData[fileData.export.format] = 1;
+      return Promise.delay(100);
+    }),
     // alias -> username
     'files:info:pre': alias => alias,
     // update pre-processor
