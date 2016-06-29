@@ -25,8 +25,8 @@ build: docker tag
 
 %.production.tag:
 	@echo "tagging build $@"
-	docker tag -f $(PKG_PREFIX_ENV) $(PKG_PREFIX)
-	docker tag -f $(PKG_PREFIX_ENV) $(PKG_PREFIX)-$(PKG_VERSION)
+	docker tag $(PKG_PREFIX_ENV) $(PKG_PREFIX)
+	docker tag $(PKG_PREFIX_ENV) $(PKG_PREFIX)-$(PKG_VERSION)
 
 %.tag: ;
 

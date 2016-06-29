@@ -13,6 +13,11 @@ module.exports = function finishPost(fileData, lock) {
     return null;
   }
 
+  if (!fileData.bucket) {
+    const provider = this.provider('download', fileData);
+    fileData.bucket = provider._config.bucket.name;
+  }
+
   const message = {
     ...fileData,
     export: {
