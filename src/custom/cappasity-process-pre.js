@@ -34,17 +34,17 @@ local balance = redis.call("hget", KEYS[1], ARGV[1]);
 local roles = redis.call("hget", KEYS[1], "roles");
 local isAdmin = roles and string.match(roles, '"admin"');
 
-if (isAdmin == nil and tonumber(balance) < 1) {
+if isAdmin == nil and tonumber(balance) < 1 then
   return redis.error_reply("insufficient balance");
-}
+end
 
 # add exported property
 redis.call("hset", KEYS[2], ARGV[3], ARGV[4]);
 
 # if we dont have an admin account - subtract model
-if (isAdmin ~= nil) {
+if isAdmin ~= nil then
   return redis.call("hincrby", KEYS[1], ARGV[1], ARGV[2]);
-}
+end
 
 # return current amount of models for consistency
 return redis.call("hget", KEYS[1], ARGV[1]);
