@@ -8,6 +8,9 @@
     },
     "export": {
       "$ref": "common#/definitions/export"
+    },
+    "username": {
+      "$ref": "common#/definitions/owner"
     }
   }
 }

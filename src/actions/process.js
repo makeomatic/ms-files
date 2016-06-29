@@ -3,6 +3,7 @@ const { HttpStatusError } = require('common-errors');
 const { STATUS_PENDING, STATUS_PROCESSING, STATUS_UPLOADED, STATUS_FAILED, FILES_DATA } = require('../constant.js');
 const postProcess = require('../utils/process.js');
 const fetchData = require('../utils/fetchData.js');
+const hasAccess = require('../utils/hasAccess.js');
 
 /**
  * Post process file
@@ -11,12 +12,13 @@ const fetchData = require('../utils/fetchData.js');
  * @return {Promise}
  */
 module.exports = function postProcessFile(opts) {
-  const { uploadId, export: exportSettings } = opts;
+  const { uploadId, username, export: exportSettings } = opts;
   const key = `${FILES_DATA}:${uploadId}`;
 
   return Promise
     .bind(this, key)
     .then(fetchData)
+    .then(hasAccess(username))
     .then(data => {
       const status = data.status;
 
