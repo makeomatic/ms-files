@@ -88,7 +88,7 @@ module.exports = function postProcessFile(opts) {
         };
       }
 
-      const pipeline = filenames.map(filename => fetchData(`${FILES_DATA}:${filename}`));
+      const pipeline = filenames.map(filename => fetchData.call(this, `${FILES_DATA}:${filename}`));
       return Promise.props({ filenames, props: pipeline, length });
     })
     .then(data => {
