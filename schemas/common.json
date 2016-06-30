@@ -14,6 +14,14 @@
       "type": "string",
       "pattern": "^[0-9A-Fa-f]{32}\/[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-4[0-9A-Fa-f]{3}-[89ABab][0-9A-Fa-f]{3}-[0-9A-Fa-f]{12}\/[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-4[0-9A-Fa-f]{3}-[89ABab][0-9A-Fa-f]{3}-[0-9A-Fa-f]{12}"
     },
+    "controlsData": {
+      "type": "array",
+      "minItems": 29,
+      "maxItems": 29,
+      "items": {
+        "type": "number"
+      }
+    },
     "export": {
       "type": "object",
       "required": ["format", "compression"],
@@ -141,6 +149,9 @@
         },
         "export": {
           "$ref": "common#/definitions/export"
+        },
+        "controlsData": {
+          "$ref": "common#/definitions/controlsData"
         }
       }
     },
