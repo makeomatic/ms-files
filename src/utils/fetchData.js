@@ -1,5 +1,5 @@
 const { HttpStatusError } = require('common-errors');
-const { FILES_TAGS_FIELD } = require('../constant.js');
+const { FIELDS_TO_STRINGIFY, FILES_TAGS_FIELD } = require('../constant.js');
 const safeParse = require('./safeParse.js');
 const JSON_FIELDS = [FILES_TAGS_FIELD, 'files'];
 
@@ -19,8 +19,10 @@ module.exports = function exists(key) {
         const value = data[field];
         if (JSON_FIELDS.indexOf(field) !== -1) {
           data[field] = safeParse(value, []);
+        } else if (FIELDS_TO_STRINGIFY.indexOf(field) !== -1) {
+          data[field] = safeParse(value);
         } else {
-          data[field] = value.toString('utf8');
+          data[field] = value;
         }
       });
 

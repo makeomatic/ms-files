@@ -2,10 +2,12 @@ const Promise = require('bluebird');
 const fetchData = require('../utils/fetchData.js');
 const isProcessed = require('../utils/isProcessed.js');
 const isUnlisted = require('../utils/isUnlisted.js');
+const stringify = require('../utils/stringify.js');
 const {
   FILES_DATA,
   FILES_INDEX_TAGS,
   FILES_TAGS_FIELD,
+  FIELDS_TO_STRINGIFY,
 } = require('../constant.js');
 
 /**
@@ -40,8 +42,11 @@ module.exports = function initFileUpdate(opts) {
           const tagKey = `${FILES_INDEX_TAGS}:${tag}`;
           pipeline.sadd(tagKey, uploadId);
         });
-        meta[FILES_TAGS_FIELD] = JSON.stringify(meta[FILES_TAGS_FIELD]);
       }
+
+      FIELDS_TO_STRINGIFY.forEach(field => {
+        stringify(meta, field);
+      });
 
       return pipeline
         .hmset(key, meta)

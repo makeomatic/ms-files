@@ -12,7 +12,6 @@ COVER="$BIN/isparta cover"
 NODE=$BIN/babel-node
 TESTS=${TESTS:-test/suites/*.js}
 COMPOSE_VER=${COMPOSE_VER:-1.7.1}
-NODE_VER=${NODE_VER:-6.2.1}
 COMPOSE="docker-compose -f $DC"
 
 if ! [ -x "$(which docker-compose)" ]; then
@@ -30,6 +29,11 @@ fi
 # bring compose up
 $COMPOSE up -d
 
+echo "cleaning old coverage"
+rm -rf ./coverage
+
+set -e
+
 if [[ "$SKIP_REBUILD" != "1" ]]; then
   # add glibc
   echo "rebuilding native dependencies..."
@@ -37,13 +41,10 @@ if [[ "$SKIP_REBUILD" != "1" ]]; then
   docker exec tester npm rebuild grpc --update-binary
 fi
 
-echo "cleaning old coverage"
-rm -rf ./coverage
-
 echo "running tests"
 for fn in $TESTS; do
   echo "running tests for $fn"
-  docker exec tester /bin/sh -c "$NODE $COVER --dir ./coverage/${fn##*/} $MOCHA -- $fn" || exit 1
+  docker exec tester /bin/sh -c "$NODE $COVER --dir ./coverage/${fn##*/} $MOCHA -- $fn"
 done
 
 echo "started generating combined coverage"
