@@ -10,7 +10,14 @@
       "$ref": "common#/definitions/owner"
     },
     "meta": {
-      "$ref": "common#/definitions/meta"
+      "allOf": [
+        {
+          "not": { "required": ["export"] }
+        },
+        {
+          "$ref": "common#/definitions/meta"
+        }
+      ]
     }
   }
 }

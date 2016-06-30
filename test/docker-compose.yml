@@ -61,6 +61,7 @@ services:
     working_dir: /src
     volumes:
       - ${PWD}:/src
+      - /etc/localtime:/etc/localtime:ro
     container_name: tester
     environment:
       NODE_ENV: "test"
