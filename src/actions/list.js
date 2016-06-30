@@ -2,14 +2,13 @@ const Promise = require('bluebird');
 const fsort = require('redis-filtered-sort');
 const is = require('is');
 const noop = require('lodash/noop');
-const safeParse = require('../utils/safeParse');
+const fetchData = require('../utils/fetchData.js');
 const {
   FILES_DATA,
   FILES_INDEX,
   FILES_INDEX_PUBLIC,
   FILES_INDEX_TAGS,
   FILES_LIST,
-  FILES_TAGS_FIELD,
 } = require('../constant.js');
 
 /**
@@ -89,26 +88,16 @@ module.exports = function postProcessFile(opts) {
         };
       }
 
-      const pipeline = redis.pipeline();
-      filenames.forEach(filename => {
-        pipeline.hgetall(`${FILES_DATA}:${filename}`);
-      });
-
-      return Promise.props({ filenames, props: pipeline.exec(), length });
+      const pipeline = Promise.map(filenames, filename => fetchData.call(this, `${FILES_DATA}:${filename}`));
+      return Promise.props({ filenames, props: pipeline, length });
     })
     .then(data => {
       const { filenames, props, length } = data;
 
-      return Promise.map(filenames, (filename, idx) => {
-        const meta = props[idx][1];
-
-        const fileData = {
-          ...meta,
-          id: filename,
-          files: safeParse(meta.files, []),
-          [FILES_TAGS_FIELD]: safeParse(meta[FILES_TAGS_FIELD], []),
-        };
-
+      return Promise
+      .map(filenames, (filename, idx) => {
+        const fileData = props[idx];
+        fileData.id = filename;
         return this.hook.call(this, 'files:info:post', fileData).return(fileData);
       })
       .then(files => ({

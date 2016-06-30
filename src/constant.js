@@ -1,4 +1,4 @@
-module.exports = {
+module.exports = exports = {
   STATUS_PENDING: '1',
   STATUS_UPLOADED: '2',
   STATUS_PROCESSED: '3',
@@ -23,6 +23,8 @@ module.exports = {
   FILES_STATUS_FIELD: 'status',
   FILES_PARTS_FIELD: 'parts',
   FILES_UNLISTED_FIELD: 'unlisted',
+  FILES_CONTROLS_FIELD: 'controlsData',
+  FILES_EXPORT_FIELD: 'export',
 
   // type map
   TYPE_MAP: {
@@ -32,3 +34,9 @@ module.exports = {
     'c-archive': '.zip',
   },
 };
+
+exports.FIELDS_TO_STRINGIFY = [
+  exports.FILES_TAGS_FIELD,
+  exports.FILES_EXPORT_FIELD,
+  exports.FILES_CONTROLS_FIELD,
+];
