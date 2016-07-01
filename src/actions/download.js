@@ -15,11 +15,7 @@ const THREE_HOURS = 1000 * 60 * 60 * 3;
  * @return {Promise}
  */
 module.exports = function getDownloadURL(opts) {
-  const provider = this.provider('download', opts);
-
   const { uploadId, username } = opts;
-  const { cname, expire } = provider;
-
   const key = `${FILES_DATA}:${uploadId}`;
 
   return Promise
@@ -28,7 +24,9 @@ module.exports = function getDownloadURL(opts) {
     .then(isProcessed)
     .then(data => {
       // parse file data
+      const provider = this.provider('download', data);
       const { name, files } = data;
+      const { cname, expire } = provider;
 
       // check status and if we have public link available - use it
       let urls;
@@ -46,6 +44,7 @@ module.exports = function getDownloadURL(opts) {
         hasAccess(username)(data);
 
         // signed URL settings
+
         const settings = {
           action: 'read',
           // 3 hours
