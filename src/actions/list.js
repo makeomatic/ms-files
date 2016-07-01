@@ -18,7 +18,7 @@ const {
  */
 module.exports = function postProcessFile(opts) {
   const { redis, dlock, log, config: { interstoreKeyTTL, interstoreKeyMinTimeleft } } = this;
-  const { owner, filter, public: isPublic, offset, limit, order, criteria, tags, temp } = opts;
+  const { owner, filter, public: isPublic, offset, limit, order, criteria, tags, temp, expiration = 30000 } = opts;
   const strFilter = is.string(filter) ? filter : fsort.filter(filter || {});
 
   return Promise
@@ -79,7 +79,7 @@ module.exports = function postProcessFile(opts) {
         });
     })
     .then(filesIndex => {
-      return redis.fsort(filesIndex, `${FILES_DATA}:*`, criteria, order, strFilter, offset, limit);
+      return redis.fsort(filesIndex, `${FILES_DATA}:*`, criteria, order, strFilter, offset, limit, expiration);
     })
     .then(filenames => {
       const length = +filenames.pop();

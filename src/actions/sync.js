@@ -19,7 +19,7 @@ function iterateOverUploadedFiles(lock, opts = {}) {
   const route = `${prefix}.finish`;
 
   return Promise
-    .bind(this, { offset, limit, filter, temp: true })
+    .bind(this, { offset, limit, filter, temp: true, expiration: 10000 })
     .then(list)
     .then(data => {
       // we resolved files, now iterate over them
