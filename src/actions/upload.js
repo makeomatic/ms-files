@@ -3,16 +3,17 @@ const uuid = require('node-uuid');
 const md5 = require('md5');
 const sumBy = require('lodash/sumBy');
 const get = require('lodash/get');
+const stringify = require('../utils/stringify.js');
 const {
   STATUS_PENDING,
   UPLOAD_DATA,
   FILES_DATA,
   FILES_PUBLIC_FIELD,
-  FILES_TAGS_FIELD,
   FILES_TEMP_FIELD,
   FILES_BUCKET_FIELD,
   FILES_OWNER_FIELD,
   FILES_UNLISTED_FIELD,
+  FIELDS_TO_STRINGIFY,
   TYPE_MAP,
 } = require('../constant.js');
 
@@ -70,9 +71,9 @@ module.exports = function initFileUpload(opts) {
       });
     })
     .then(parts => {
-      if (meta[FILES_TAGS_FIELD]) {
-        meta[FILES_TAGS_FIELD] = JSON.stringify(meta[FILES_TAGS_FIELD]);
-      }
+      FIELDS_TO_STRINGIFY.forEach(field => {
+        stringify(meta, field);
+      });
 
       const fileData = {
         ...meta,

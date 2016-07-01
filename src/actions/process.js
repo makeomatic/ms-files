@@ -12,7 +12,7 @@ const hasAccess = require('../utils/hasAccess.js');
  * @return {Promise}
  */
 module.exports = function postProcessFile(opts) {
-  const { uploadId, username, export: exportSettings } = opts;
+  const { uploadId, username } = opts;
   const key = `${FILES_DATA}:${uploadId}`;
 
   return Promise
@@ -21,6 +21,7 @@ module.exports = function postProcessFile(opts) {
     .then(hasAccess(username))
     .then(data => {
       const status = data.status;
+      const exportSettings = opts.export || data.export;
 
       if (exportSettings) {
         if (data[exportSettings.format]) {
