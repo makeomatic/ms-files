@@ -80,7 +80,7 @@ describe('finish upload suite', function suite() {
       });
   });
 
-  it('returns "upload completed, proessing skipped" on final part', function test() {
+  it('returns "upload completed, processing skipped" on final part', function test() {
     const file = this.response.files[3];
     return this
       .send({ filename: file.filename, skipProcessing: true })

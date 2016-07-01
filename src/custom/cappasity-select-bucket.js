@@ -41,6 +41,7 @@ const ACTION_TO_SELECTOR = {
   access: accessSelector,
   download: downloadSelector,
   remove: downloadSelector,
+  sync: downloadSelector,
 };
 
 // fn for selection

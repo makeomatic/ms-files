@@ -5,6 +5,7 @@ module.exports = exports = {
   STATUS_PROCESSING: '4',
   STATUS_FAILED: '5',
 
+  FILES_INDEX_TEMP: 'files-index-temp',
   FILES_INDEX: 'files-index',
   FILES_INDEX_PUBLIC: 'files-index-pub',
   FILES_DATA: 'files-data',

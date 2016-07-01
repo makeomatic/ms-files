@@ -8,6 +8,7 @@ const {
   FILES_INDEX,
   FILES_INDEX_PUBLIC,
   FILES_INDEX_TAGS,
+  FILES_INDEX_TEMP,
   FILES_LIST,
 } = require('../constant.js');
 
@@ -17,7 +18,7 @@ const {
  */
 module.exports = function postProcessFile(opts) {
   const { redis, dlock, log, config: { interstoreKeyTTL, interstoreKeyMinTimeleft } } = this;
-  const { owner, filter, public: isPublic, offset, limit, order, criteria, tags } = opts;
+  const { owner, filter, public: isPublic, offset, limit, order, criteria, tags, temp } = opts;
   const strFilter = is.string(filter) ? filter : fsort.filter(filter || {});
 
   return Promise
@@ -34,6 +35,8 @@ module.exports = function postProcessFile(opts) {
         filesIndex = `${FILES_INDEX}:${username}`;
       } else if (isPublic) {
         filesIndex = FILES_INDEX_PUBLIC;
+      } else if (temp) {
+        filesIndex = FILES_INDEX_TEMP;
       } else {
         filesIndex = FILES_INDEX;
       }
