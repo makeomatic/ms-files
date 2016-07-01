@@ -37,13 +37,14 @@ describe('finish upload suite', function suite() {
       });
   });
 
-  it('returns 404 on missing filename', function test() {
+  it('returns 200: 404 on missing filename', function test() {
     return this
       .send({ filename: [md5(owner), uuid.v4(), uuid.v4()].join('/') })
       .reflect()
       .then(inspectPromise(false))
       .then(err => {
-        assert.equal(err.statusCode, 404);
+        assert.equal(err.statusCode, 200);
+        assert.ok(/^404: /.test(err.message));
       });
   });
 
@@ -73,7 +74,8 @@ describe('finish upload suite', function suite() {
           .reflect()
           .then(inspectPromise(false))
           .then(err => {
-            assert.equal(err.statusCode, 412);
+            assert.equal(err.statusCode, 200);
+            assert.ok(/^412: /.test(err.message));
           });
       });
   });

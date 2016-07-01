@@ -25,6 +25,8 @@ const fields = [
   FILES_UNLISTED_FIELD,
 ];
 
+const MissingError = new HttpStatusError(200, '404: could not find upload');
+
 /**
  * Finish upload
  * @param  {Object}  opts
@@ -41,9 +43,11 @@ module.exports = function completeFileUpload(opts) {
   return Promise
     .bind(this, key)
     .then(fetchData)
+    .catchThrow({ statusCode: 404 }, MissingError)
     .then(data => {
       if (data[FILES_STATUS_FIELD] !== STATUS_PENDING) {
-        throw new HttpStatusError(412, 'upload has already been marked as finished');
+        // we do not send 412, because google might decide to delay notifications
+        throw new HttpStatusError(200, '412: upload has already been marked as finished');
       }
 
       const { uploadId } = data;
@@ -81,7 +85,8 @@ module.exports = function completeFileUpload(opts) {
       }
 
       if (currentStatus !== STATUS_PENDING) {
-        throw new HttpStatusError(412, 'upload was already processed');
+        // we do not send 412, because google might decide to delay notifications
+        throw new HttpStatusError(200, '412: upload was already processed');
       }
 
       const uploadKey = `${FILES_DATA}:${uploadId}`;
