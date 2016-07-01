@@ -1,5 +1,6 @@
 // this file contains logic for selecting transport for uploading
 // input is upload opts
+const is = require('is');
 const findIndex = require('lodash/findIndex');
 const { FILES_BUCKET_FIELD, FILES_TEMP_FIELD } = require('../constant.js');
 
@@ -45,7 +46,7 @@ const ACTION_TO_SELECTOR = {
 // fn for selection
 function selectTransport(action, opts) {
   const thunk = ACTION_TO_SELECTOR[action];
-  if (!thunk) {
+  if (!is.fn(thunk)) {
     throw new Error(`${action} selector not defined`);
   }
 
