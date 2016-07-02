@@ -7,6 +7,7 @@ const {
   UPLOAD_DATA,
   FILES_INDEX,
   FILES_DATA,
+  FILES_INDEX_TEMP,
   FILES_INDEX_PUBLIC,
   FILES_INDEX_TAGS,
   FILES_OWNER_FIELD,
@@ -97,6 +98,9 @@ module.exports = function completeFileUpload(opts) {
         status: STATUS_UPLOADED,
         uploadedAt: Date.now(),
       });
+
+      // remove reference
+      pipeline.srem(FILES_INDEX_TEMP, uploadId);
 
       // unless file is temp -> add them to index
       if (!isTemporary) {

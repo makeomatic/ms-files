@@ -27,6 +27,12 @@
     "public": {
       "type": "boolean"
     },
+    "temp": {
+      "type": "boolean"
+    },
+    "expiration": {
+      "type": "integer"
+    },
     "filter": {
       "type": "object",
       "additionalProperties": false,

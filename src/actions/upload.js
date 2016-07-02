@@ -14,6 +14,7 @@ const {
   FILES_OWNER_FIELD,
   FILES_UNLISTED_FIELD,
   FIELDS_TO_STRINGIFY,
+  FILES_INDEX_TEMP,
   TYPE_MAP,
 } = require('../constant.js');
 
@@ -103,6 +104,7 @@ module.exports = function initFileUpload(opts) {
       const uploadKey = `${FILES_DATA}:${uploadId}`;
 
       pipeline
+        .sadd(FILES_INDEX_TEMP, uploadId)
         .hmset(uploadKey, fileData)
         .expire(uploadKey, uploadTTL);
 
