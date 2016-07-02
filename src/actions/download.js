@@ -4,9 +4,18 @@ const { HttpStatusError } = require('common-errors');
 const fetchData = require('../utils/fetchData.js');
 const hasAccess = require('../utils/hasAccess.js');
 const isProcessed = require('../utils/isProcessed.js');
+const path = require('path');
 
 // default signed URL expiration time
 const THREE_HOURS = 1000 * 60 * 60 * 3;
+
+// basename
+const Extension = name => path.basename(name).replace(/^[^\.]+\.(.*)$/, '$1');
+const PromptToSave = (counter, file, name) => {
+  const ext = Extension(file);
+  counter[ext] = counter[ext] && ++counter[ext] || 1;
+  return `${name}_${counter[ext]}.${ext}`;
+};
 
 /**
  * Get download url
@@ -25,6 +34,9 @@ module.exports = function getDownloadURL(opts) {
     .then(data => {
       // parse file data
       const provider = this.provider('download', data);
+      const counter = {};
+
+      // metadata
       const { name, files } = data;
       const { cname, expire } = provider;
 
@@ -32,7 +44,11 @@ module.exports = function getDownloadURL(opts) {
       let urls;
       let alias;
       if (data[FILES_PUBLIC_FIELD]) {
-        urls = files.map(file => `${cname}/${encodeURIComponent(file.filename)}`);
+        urls = files.map(file => {
+          const promptSaveAs = PromptToSave(counter, file.filename, name);
+          const saveAs = `response-content-disposition=attachment;%20filename="${encodeURIComponent(promptSaveAs)}"`;
+          return `${cname}/${encodeURIComponent(file.filename)}?${saveAs}`;
+        });
         // extract alias
         alias = this.hook
           .call(this, 'files:download:alias', data[FILES_OWNER_FIELD])
@@ -53,7 +69,11 @@ module.exports = function getDownloadURL(opts) {
         };
 
         alias = username;
-        urls = Promise.map(files, file => provider.createSignedURL({ ...settings, resource: file.filename }));
+        urls = Promise.map(files, file => provider.createSignedURL({
+          ...settings,
+          resource: file.filename,
+          promptSaveAs: PromptToSave(counter, file.filename, name),
+        }));
       }
 
       return Promise
