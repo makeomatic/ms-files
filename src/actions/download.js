@@ -18,7 +18,7 @@ const PromptToSave = (counter, file, name) => {
 };
 
 // url signature
-const sign = (provider, files, expire) => {
+const sign = (provider, files, name, expire) => {
   // signed URL settings
   const counter = {};
   const settings = {
@@ -69,7 +69,7 @@ module.exports = function getDownloadURL(opts) {
 
         // form URLs
         if (rename) {
-          urls = sign(provider, files, expire);
+          urls = sign(provider, files, name, expire);
         } else {
           urls = files.map(file => `${cname}/${encodeURIComponent(file.filename)}`);
         }
@@ -82,7 +82,7 @@ module.exports = function getDownloadURL(opts) {
       } else if (hasAccess(username)(data)) {
         // alias is username, sign URLs
         alias = username;
-        urls = sign(provider, files, expire);
+        urls = sign(provider, files, name, expire);
       }
 
       return Promise
