@@ -31,7 +31,7 @@
     "md5": "^2.1.0",
     "ms-amqp-transport": "^3.0.0",
     "ms-conf": "^2.1.0",
-    "ms-files-gce": "^1.0.1",
+    "ms-files-gce": "^1.2.0",
     "ms-files-providers": "^1.0.2",
     "ms-validation": "^2.0.0",
     "mservice": "^2.5.1",

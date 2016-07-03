@@ -241,7 +241,7 @@ function stopService() {
         transport._bucket.deleteFiles({ force: true }, next)
       ))
     ))
-    .finally(() => service.close())
+    .finally(() => service.close().reflect())
     .finally(() => {
       this.amqp = null;
       this.files = null;

@@ -17,6 +17,24 @@ const PromptToSave = (counter, file, name) => {
   return `${name}_${counter[ext]}.${ext}`;
 };
 
+// url signature
+const sign = (provider, files, expire) => {
+  // signed URL settings
+  const counter = {};
+  const settings = {
+    action: 'read',
+    // 3 hours
+    expires: Date.now() + (expire || THREE_HOURS),
+    // resource: filename <- specified per file
+  };
+
+  return Promise.map(files, file => provider.createSignedURL({
+    ...settings,
+    resource: file.filename,
+    promptSaveAs: PromptToSave(counter, file.filename, name),
+  }));
+};
+
 /**
  * Get download url
  * @param  {Object} opts.filename
@@ -24,7 +42,7 @@ const PromptToSave = (counter, file, name) => {
  * @return {Promise}
  */
 module.exports = function getDownloadURL(opts) {
-  const { uploadId, username } = opts;
+  const { uploadId, username, rename, types } = opts;
   const key = `${FILES_DATA}:${uploadId}`;
 
   return Promise
@@ -34,46 +52,37 @@ module.exports = function getDownloadURL(opts) {
     .then(data => {
       // parse file data
       const provider = this.provider('download', data);
-      const counter = {};
+      const files = types ? data.files.filter(file => types.includes(file.type)) : data.files;
 
       // metadata
-      const { name, files } = data;
+      const { name } = data;
       const { cname, expire } = provider;
 
       // check status and if we have public link available - use it
-      let urls;
       let alias;
+      let urls;
       if (data[FILES_PUBLIC_FIELD]) {
-        urls = files.map(file => {
-          const promptSaveAs = PromptToSave(counter, file.filename, name);
-          const saveAs = `response-content-disposition=attachment;%20filename="${encodeURIComponent(promptSaveAs)}"`;
-          return `${cname}/${encodeURIComponent(file.filename)}?${saveAs}`;
-        });
-        // extract alias
+        // fetch alias
         alias = this.hook
           .call(this, 'files:download:alias', data[FILES_OWNER_FIELD])
           .get(0);
+
+        // form URLs
+        if (rename) {
+          urls = sign(provider, files, expire);
+        } else {
+          urls = files.map(file => `${cname}/${encodeURIComponent(file.filename)}`);
+        }
+
+      // no username - throw
       } else if (!username) {
         throw new HttpStatusError(401, 'file does not belong to the provided user');
-      } else {
-        // will throw if no access
-        hasAccess(username)(data);
 
-        // signed URL settings
-
-        const settings = {
-          action: 'read',
-          // 3 hours
-          expires: Date.now() + (expire || THREE_HOURS),
-          // resource: filename <- specified per file
-        };
-
+      // will throw if no access
+      } else if (hasAccess(username)(data)) {
+        // alias is username, sign URLs
         alias = username;
-        urls = Promise.map(files, file => provider.createSignedURL({
-          ...settings,
-          resource: file.filename,
-          promptSaveAs: PromptToSave(counter, file.filename, name),
-        }));
+        urls = sign(provider, files, expire);
       }
 
       return Promise
