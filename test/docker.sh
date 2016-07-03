@@ -37,7 +37,6 @@ set -e
 if [[ "$SKIP_REBUILD" != "1" ]]; then
   # add glibc
   echo "rebuilding native dependencies..."
-  docker exec tester npm rebuild hiredis
   docker exec tester npm rebuild grpc --update-binary
 fi
 

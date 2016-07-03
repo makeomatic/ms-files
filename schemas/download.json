@@ -8,6 +8,19 @@
     },
     "username": {
       "$ref": "common#/definitions/owner"
+    },
+    "types": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "enum": ["c-bin", "c-texture", "c-preview", "obj", "stl", "wrl"]
+      }
+    },
+    "rename": {
+      "type": "boolean",
+      "default": false
     }
   }
 }

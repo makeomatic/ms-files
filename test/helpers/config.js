@@ -51,7 +51,8 @@ module.exports = {
       },
       // test for direct public URLs
     },
-    cname: true,
+    // its not a public name!
+    cname: 'gce',
   }],
   hooks: {
     // return input, assume there are models
