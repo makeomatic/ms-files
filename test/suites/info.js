@@ -93,13 +93,13 @@ describe('info suite', function suite() {
         return processUpload.call(this, this.response);
       });
 
-      it('returns 404 on invalid user id', function test() {
+      it('returns 401 on invalid user id', function test() {
         return this
           .send({ filename: this.response.uploadId, username: 'martial@arts.com' })
           .reflect()
           .then(inspectPromise(false))
           .then(err => {
-            assert.equal(err.statusCode, 404);
+            assert.equal(err.statusCode, 401);
           });
       });
 
