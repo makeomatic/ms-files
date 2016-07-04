@@ -39,13 +39,13 @@ describe('info suite', function suite() {
       });
   });
 
-  it('404 on valid upload id, invalid user', function test() {
+  it('401 on valid upload id, invalid user', function test() {
     return this
       .send({ filename: this.response.uploadId, username: 'martial@arts.com' })
       .reflect()
       .then(inspectPromise(false))
       .then(err => {
-        assert.equal(err.statusCode, 404);
+        assert.equal(err.statusCode, 401);
       });
   });
 
@@ -67,13 +67,13 @@ describe('info suite', function suite() {
       return finishUpload.call(this, this.response);
     });
 
-    it('404 on invalid user id', function test() {
+    it('401 on invalid user id', function test() {
       return this
         .send({ filename: this.response.uploadId, username: 'martial@arts.com' })
         .reflect()
         .then(inspectPromise(false))
         .then(err => {
-          assert.equal(err.statusCode, 404);
+          assert.equal(err.statusCode, 401);
         });
     });
 
@@ -93,13 +93,13 @@ describe('info suite', function suite() {
         return processUpload.call(this, this.response);
       });
 
-      it('returns 404 on invalid user id', function test() {
+      it('returns 401 on invalid user id', function test() {
         return this
           .send({ filename: this.response.uploadId, username: 'martial@arts.com' })
           .reflect()
           .then(inspectPromise(false))
           .then(err => {
-            assert.equal(err.statusCode, 404);
+            assert.equal(err.statusCode, 401);
           });
       });
 

@@ -35,7 +35,7 @@ module.exports = function getFileInfo(opts) {
       // check that owner is a match
       // even in-case with public we want the user to specify username
       if (info[FILES_OWNER_FIELD] !== data.username) {
-        throw new HttpStatusError(404, 'file not found');
+        throw new HttpStatusError(401, 'please sign as an owner of this model to access it');
       }
 
       // rewire owner to requested username
