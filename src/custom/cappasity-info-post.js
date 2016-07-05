@@ -8,7 +8,7 @@ const params = {
   },
   closebutton: {
     type: 'boolean',
-    default: 0,
+    default: 1,
     description: 'Show close button',
   },
   width: {
