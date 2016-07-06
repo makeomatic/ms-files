@@ -32,6 +32,8 @@ module.exports = function getFileInfo(opts) {
       // ref file
       const info = data.file;
 
+      this.log.debug(info);
+
       // check that owner is a match
       // even in-case with public we want the user to specify username
       if (info[FILES_OWNER_FIELD] !== data.username) {

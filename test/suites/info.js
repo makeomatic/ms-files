@@ -1,5 +1,5 @@
 const assert = require('assert');
-const uuid = require('uuid');
+const uuid = require('node-uuid');
 
 // helpers
 const {
@@ -111,6 +111,13 @@ describe('info suite', function suite() {
           .then(rsp => {
             assert.equal(rsp.username, owner);
             assert.equal(rsp.file.status, STATUS_PROCESSED);
+
+            assert.ok(Array.isArray(rsp.file.controlsData));
+            assert.ok(Array.isArray(rsp.file.tags));
+
+            assert.equal(rsp.file.controlsData.length, 29);
+            assert.deepEqual(rsp.file.tags, ['ok', 'done']);
+
             assert.ifError(rsp.file.public);
 
             assert.ok(rsp.file.files);

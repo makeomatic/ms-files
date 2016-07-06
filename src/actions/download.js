@@ -13,8 +13,9 @@ const THREE_HOURS = 1000 * 60 * 60 * 3;
 const Extension = name => path.basename(name).replace(/^[^\.]+\.(.*)$/, '$1');
 const PromptToSave = (counter, file, name) => {
   const ext = Extension(file);
-  counter[ext] = counter[ext] && ++counter[ext] || 1;
-  return `${name}_${counter[ext]}.${ext}`;
+  const val = (counter[ext] || 0) + 1;
+  counter[ext] = val;
+  return `${name}_${val}.${ext}`;
 };
 
 // url signature

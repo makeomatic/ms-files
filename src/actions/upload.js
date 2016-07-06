@@ -72,12 +72,14 @@ module.exports = function initFileUpload(opts) {
       });
     })
     .then(parts => {
+      const serialized = {};
       FIELDS_TO_STRINGIFY.forEach(field => {
-        stringify(meta, field);
+        stringify(meta, field, serialized);
       });
 
       const fileData = {
         ...meta,
+        ...serialized,
         uploadId,
         startedAt: Date.now(),
         files: JSON.stringify(parts),
@@ -117,7 +119,11 @@ module.exports = function initFileUpload(opts) {
 
       return pipeline
         .exec()
-        .return({ ...fileData, files: parts });
+        .return({
+          ...fileData,
+          ...meta,
+          files: parts,
+        });
     })
     .tap(data => this.hook.call(this, 'files:upload:post', data));
 };

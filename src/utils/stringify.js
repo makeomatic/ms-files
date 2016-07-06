@@ -1,6 +1,8 @@
-module.exports = function stringify(data, field) {
+module.exports = function stringify(data, field, _output) {
+  const output = _output || data;
   const datum = data[field];
+
   if (datum) {
-    data[field] = JSON.stringify(datum);
+    output[field] = JSON.stringify(datum);
   }
 };

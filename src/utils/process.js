@@ -1,6 +1,6 @@
 const Promise = require('bluebird');
 const omit = require('lodash/omit');
-const safeParse = require('./safeParse.js');
+const stringify = require('./stringify.js');
 const { HttpStatusError } = require('common-errors');
 const {
   STATUS_PROCESSED,
@@ -9,18 +9,19 @@ const {
   UPLOAD_DATA,
   FILES_DATA,
   FILES_PROCESS_ERROR_FIELD,
-  FILES_TAGS_FIELD,
   FILES_STATUS_FIELD,
+  FIELDS_TO_STRINGIFY,
 } = require('../constant.js');
+
+const STRINGIFY_LIST = [
+  ...FIELDS_TO_STRINGIFY,
+  'files',
+];
 
 // blacklist of metadata that must be returned
 const METADATA_BLACKLIST = [
   'location',
 ];
-
-function parseString(data, returnValue) {
-  return typeof data === 'string' ? safeParse(data, returnValue) : data;
-}
 
 module.exports = function processFile(key, data) {
   const { redis, dlock } = this;
@@ -40,9 +41,7 @@ module.exports = function processFile(key, data) {
         .spread((processedData = {}) => {
           // omit location, since it's used once during upload
           const fileKeys = [];
-          const parsedFiles = parseString(data.files);
-          const parsedTags = parseString(data[FILES_TAGS_FIELD], []);
-          const files = parsedFiles.map(file => {
+          const files = data.files.map(file => {
             fileKeys.push(`${UPLOAD_DATA}:${file.filename}`);
             return omit(file, METADATA_BLACKLIST);
           });
@@ -52,32 +51,36 @@ module.exports = function processFile(key, data) {
             ...data,
             ...processedData,
             files,
-            [FILES_TAGS_FIELD]: JSON.stringify(parsedTags),
           };
 
           return redis
             .hset(`${FILES_DATA}:${uploadId}`, FILES_STATUS_FIELD, STATUS_PROCESSING)
-            .return({ finalizedData, parsedTags, fileKeys });
+            .return({ finalizedData, fileKeys });
         })
         .tap(() => lock.extend())
         .tap(container => this.hook.call(this, 'files:process:post', container.finalizedData, lock))
-        .then(container => redis
-          .pipeline()
-          .hdel(`${FILES_DATA}:${uploadId}`, FILES_PROCESS_ERROR_FIELD)
-          .hmset(`${FILES_DATA}:${uploadId}`, {
-            ...container.finalizedData,
-            files: JSON.stringify(container.finalizedData.files),
-            [FILES_STATUS_FIELD]: STATUS_PROCESSED,
-          })
-          .hdel(`${FILES_DATA}:${uploadId}`, 'export')
-          .del(container.keys)
-          .exec()
-          .return({
-            ...container.finalizedData,
-            [FILES_TAGS_FIELD]: container.parsedTags,
-            [FILES_STATUS_FIELD]: STATUS_PROCESSED,
-          })
-        )
+        .then(container => {
+          const serialized = {};
+          STRINGIFY_LIST.forEach(field => {
+            stringify(container.finalizedData, field, serialized);
+          });
+
+          return redis
+            .pipeline()
+            .hdel(`${FILES_DATA}:${uploadId}`, FILES_PROCESS_ERROR_FIELD)
+            .hmset(`${FILES_DATA}:${uploadId}`, {
+              ...container.finalizedData,
+              ...serialized,
+              [FILES_STATUS_FIELD]: STATUS_PROCESSED,
+            })
+            .hdel(`${FILES_DATA}:${uploadId}`, 'export')
+            .del(container.keys)
+            .exec()
+            .return({
+              ...container.finalizedData,
+              [FILES_STATUS_FIELD]: STATUS_PROCESSED,
+            });
+        })
         .catch(err => redis
           .hmset(`${FILES_DATA}:${uploadId}`, {
             [FILES_STATUS_FIELD]: STATUS_FAILED,
