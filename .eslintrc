@@ -8,7 +8,8 @@
     "max-len": [2, 150],
     "arrow-body-style": 0,
     "global-require": 0,
-    "no-underscore-dangle": 0
+    "no-underscore-dangle": 0,
+    "import/no-extraneous-dependencies": 0
   },
   "plugins": [
     "mocha"

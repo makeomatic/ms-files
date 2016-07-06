@@ -49,6 +49,7 @@ describe('upload suite', function suite() {
         assert.ifError(rsp.public);
         assert.equal(rsp.status, STATUS_PENDING);
         assert.equal(rsp.parts, message.files.length);
+        assert.deepEqual(rsp.controlsData, message.meta.controlsData);
 
         // verify that location is present
         rsp.files.forEach(part => {

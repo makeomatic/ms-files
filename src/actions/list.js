@@ -106,7 +106,7 @@ module.exports = function postProcessFile(opts) {
       .then(files => ({
         files,
         cursor: offset + limit,
-        page: Math.floor(offset / limit + 1),
+        page: Math.floor(offset / limit) + 1,
         pages: Math.ceil(length / limit),
       }));
     });
