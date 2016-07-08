@@ -1,5 +1,5 @@
 const Promise = require('bluebird');
-const { FILES_OWNER_FIELD, FILES_TEMP_FIELD } = require('../constant.js');
+const { FILES_OWNER_FIELD } = require('../constant.js');
 const { HttpStatusError } = require('common-errors');
 
 const TYPE_MAP = {
