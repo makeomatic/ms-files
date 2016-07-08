@@ -1,5 +1,5 @@
 const Promise = require('bluebird');
-const { FILES_OWNER_FIELD, FILES_TEMP_FIELD } = require('../constant.js');
+const { FILES_OWNER_FIELD } = require('../constant.js');
 const { HttpStatusError } = require('common-errors');
 
 const TYPE_MAP = {
@@ -55,7 +55,7 @@ module.exports = function finishPost(props) {
   const { updateMetadata, audience, exportAudience } = config.users;
   const { exported, sourceSHA } = props;
 
-  if (!props[FILES_TEMP_FIELD] || exported) {
+  if (exported || !props.export) {
     // do not charge if we have exported file
     return Promise.try(() => parseMeta(props));
   }
