@@ -98,16 +98,16 @@ module.exports = function postProcessFile(opts) {
       const { filenames, props, length } = data;
 
       return Promise
-      .map(filenames, (filename, idx) => {
-        const fileData = props[idx];
-        fileData.id = filename;
-        return this.hook.call(this, 'files:info:post', fileData).return(fileData);
-      })
-      .then(files => ({
-        files,
-        cursor: offset + limit,
-        page: Math.floor(offset / limit) + 1,
-        pages: Math.ceil(length / limit),
-      }));
+        .map(filenames, (filename, idx) => {
+          const fileData = props[idx];
+          fileData.id = filename;
+          return this.hook.call(this, 'files:info:post', fileData).return(fileData);
+        })
+        .then(files => ({
+          files,
+          cursor: offset + limit,
+          page: Math.floor(offset / limit) + 1,
+          pages: Math.ceil(length / limit),
+        }));
     });
 };

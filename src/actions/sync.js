@@ -1,11 +1,11 @@
 const Promise = require('bluebird');
 const fsort = require('redis-filtered-sort');
-const { STATUS_PENDING, FILES_INDEX_TEMP } = require('../constant.js');
-const filter = fsort.filter({ status: { eq: STATUS_PENDING } });
 const moment = require('moment');
-
-// action
 const list = require('./list.js');
+const { STATUS_PENDING, FILES_INDEX_TEMP } = require('../constant.js');
+
+// cached filter
+const filter = fsort.filter({ status: { eq: STATUS_PENDING } });
 
 /**
  * Iterates over files with pending state and tries
@@ -28,34 +28,35 @@ function iterateOverUploadedFiles(lock, opts = {}) {
       // found files
       this.log.debug('found files ~ %d/%d/%d', cursor, page, pages);
 
-      return Promise.map(files, container => {
-        // transport to fetch "exists" data
-        const transport = provider('sync', container);
-        const started = moment(container.startedAt);
+      return Promise
+        .map(files, container => {
+          // transport to fetch "exists" data
+          const transport = provider('sync', container);
+          const started = moment(container.startedAt);
 
-        // cleanup after 0.5 TTL, so that we have time to react for id without meta
-        if (moment().diff(started, 'seconds') >= uploadTTL * 0.5) {
-          return redis.srem(FILES_INDEX_TEMP, container.uploadId);
-        }
+          // cleanup after 0.5 TTL, so that we have time to react for id without meta
+          if (moment().diff(started, 'seconds') >= uploadTTL * 0.5) {
+            return redis.srem(FILES_INDEX_TEMP, container.uploadId);
+          }
 
-        return Promise
-          .map(container.files, file => transport.exists(file.filename).then(exists => {
-            this.log.debug('checked file %s | %s', file.filename, exists);
+          return Promise
+            .map(container.files, file => transport.exists(file.filename).then(exists => {
+              this.log.debug('checked file %s | %s', file.filename, exists);
 
-            if (!exists) {
-              return null;
-            }
+              if (!exists) {
+                return null;
+              }
 
-            return amqp.publish(route, { filename: file.filename });
-          }));
-      })
-      .then(() => {
-        if (page >= pages) {
-          return null;
-        }
+              return amqp.publish(route, { filename: file.filename });
+            }));
+        })
+        .then(() => {
+          if (page >= pages) {
+            return null;
+          }
 
-        return iterateOverUploadedFiles.call(this, lock, { offset: cursor, limit });
-      });
+          return iterateOverUploadedFiles.call(this, lock, { offset: cursor, limit });
+        });
     });
 }
 
