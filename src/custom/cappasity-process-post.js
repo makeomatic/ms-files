@@ -1,7 +1,8 @@
 const Promise = require('bluebird');
-const ALLOWED_TYPES = ['c-bin', 'c-texture'];
 const md5 = require('md5');
 const { FILES_OWNER_FIELD } = require('../constant.js');
+
+const ALLOWED_TYPES = ['c-bin', 'c-texture'];
 
 module.exports = function finishPost(fileData, lock) {
   const { amqp, config } = this;

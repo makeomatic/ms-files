@@ -1,6 +1,7 @@
 const { HttpStatusError } = require('common-errors');
 const { FIELDS_TO_STRINGIFY, FILES_TAGS_FIELD } = require('../constant.js');
 const safeParse = require('./safeParse.js');
+
 const JSON_FIELDS = [FILES_TAGS_FIELD, 'files'];
 
 module.exports = function exists(key) {
