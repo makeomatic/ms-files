@@ -10,6 +10,8 @@ module.exports = {
   plugins: ['validator', 'logger', 'router', 'amqp', 'redisCluster'],
   // default logger
   logger: true,
+  // if env isnt production - print debug logs
+  debug: process.env.NODE_ENV !== 'production',
   // schemas
   validator: ['../schemas'],
   // amqp options
