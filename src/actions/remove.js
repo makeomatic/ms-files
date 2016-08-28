@@ -17,10 +17,10 @@ const { FILES_INDEX,
  * @param  {String} opts.filename
  * @return {Promise}
  */
-module.exports = function removeFile(opts) {
-  const { filename, username } = opts;
+module.exports = function removeFile({ params }) {
+  const { filename, username } = params;
   const { redis } = this;
-  const provider = this.provider('remove', opts);
+  const provider = this.provider('remove', params);
   const key = `${FILES_DATA}:${filename}`;
 
   return Promise

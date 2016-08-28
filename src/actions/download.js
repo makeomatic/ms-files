@@ -38,12 +38,13 @@ const sign = (provider, files, name, expire) => {
 
 /**
  * Get download url
- * @param  {Object} opts.filename
- * @param  {Object} opts.username
+ * @param  {Object} opts.params
+ * @param  {Object} opts.params.filename
+ * @param  {Object} opts.params.username
  * @return {Promise}
  */
-module.exports = function getDownloadURL(opts) {
-  const { uploadId, username, rename, types } = opts;
+module.exports = function getDownloadURL({ params }) {
+  const { uploadId, username, rename, types } = params;
   const key = `${FILES_DATA}:${uploadId}`;
 
   return Promise

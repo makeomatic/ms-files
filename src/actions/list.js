@@ -16,17 +16,15 @@ const {
  * List files
  * @return {Promise}
  */
-module.exports = function postProcessFile(opts) {
-  const { redis, dlock, log, config: { interstoreKeyTTL, interstoreKeyMinTimeleft } } = this;
-  const { owner, filter, public: isPublic, offset, limit, order, criteria, tags, temp, expiration = 30000 } = opts;
+module.exports = function listFiles({ params }) {
+  const { redis, dlock, config: { interstoreKeyTTL, interstoreKeyMinTimeleft } } = this;
+  const { owner, filter, public: isPublic, offset, limit, order, criteria, tags, temp, expiration = 30000 } = params;
   const strFilter = is.string(filter) ? filter : fsort.filter(filter || {});
 
   return Promise
     .bind(this, ['files:info:pre', owner])
     .spread(this.hook)
     .spread(username => {
-      log.debug('[list]: resolved %s to %s', owner, username);
-
       // choose which set to use
       let filesIndex;
       if (isPublic && username) {

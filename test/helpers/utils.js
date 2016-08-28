@@ -234,7 +234,7 @@ function startService() {
     .connect()
     .tap(() => {
       const amqp = this.amqp = service.amqp;
-      this.send = function send(route, msg, timeout = 1500) {
+      this.send = function send(route, msg, timeout = 5500) {
         return amqp.publishAndWait(route, msg, { timeout });
       };
     });

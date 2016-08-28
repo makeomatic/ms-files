@@ -13,6 +13,7 @@ const {
   FILES_BUCKET_FIELD,
   FILES_OWNER_FIELD,
   FILES_UNLISTED_FIELD,
+  FILES_STATUS_FIELD,
   FIELDS_TO_STRINGIFY,
   FILES_INDEX_TEMP,
   TYPE_MAP,
@@ -25,22 +26,23 @@ function typeToExtension(type) {
 /**
  * Initiates upload
  * @param  {Object} opts
- * @param  {Array}  opts.files
- * @param  {Object} opts.meta
+ * @param  {Object} opts.params
+ * @param  {Array}  opts.params.files
+ * @param  {Object} opts.params.meta
  * @return {Promise}
  */
-module.exports = function initFileUpload(opts) {
-  const { files, meta, username, temp, unlisted } = opts;
+module.exports = function initFileUpload({ params }) {
+  const { files, meta, username, temp, unlisted } = params;
   const { redis, config: { uploadTTL } } = this;
 
-  const provider = this.provider('upload', opts);
+  const provider = this.provider('upload', params);
   const prefix = md5(username);
   const uploadId = uuid.v4();
-  const isPublic = get(opts, 'access.setPublic', false);
+  const isPublic = get(params, 'access.setPublic', false);
   const bucketName = provider.bucket.name;
 
   return Promise
-    .bind(this, ['files:upload:pre', opts])
+    .bind(this, ['files:upload:pre', params])
     .spread(this.hook)
     .return(files)
     .map(function initResumableUpload({ md5Hash, type, ...rest }) {
@@ -84,8 +86,8 @@ module.exports = function initFileUpload(opts) {
         startedAt: Date.now(),
         files: JSON.stringify(parts),
         contentLength: sumBy(parts, 'contentLength'),
-        status: STATUS_PENDING,
         parts: files.length,
+        [FILES_STATUS_FIELD]: STATUS_PENDING,
         [FILES_OWNER_FIELD]: username,
         [FILES_BUCKET_FIELD]: bucketName,
       };
@@ -113,7 +115,7 @@ module.exports = function initFileUpload(opts) {
       parts.forEach(part => {
         const partKey = `${UPLOAD_DATA}:${part.filename}`;
         pipeline
-          .hmset(partKey, { status: STATUS_PENDING, uploadId })
+          .hmset(partKey, { [FILES_STATUS_FIELD]: STATUS_PENDING, uploadId })
           .expire(partKey, uploadTTL);
       });
 

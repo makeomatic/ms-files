@@ -30,14 +30,15 @@ const MissingError = new HttpStatusError(200, '404: could not find upload');
 
 /**
  * Finish upload
- * @param  {Object}  opts
- * @param  {String}  opts.filename
- * @param  {Boolean} opts.skipProcessing
- * @param  {Boolean} opts.await
+ * @param  {Object} opts
+ * @param  {Object} opts.params
+ * @param  {String} opts.params.filename
+ * @param  {Boolean} opts.params.skipProcessing
+ * @param  {Boolean} opts.params.await
  * @return {Promise}
  */
-module.exports = function completeFileUpload(opts) {
-  const { filename } = opts;
+module.exports = function completeFileUpload({ params }) {
+  const { filename } = params;
   const { redis, config, amqp } = this;
   const key = `${UPLOAD_DATA}:${filename}`;
 
@@ -128,12 +129,12 @@ module.exports = function completeFileUpload(opts) {
       return pipeline.exec().return(uploadId);
     })
     .then(uploadId => {
-      if (opts.skipProcessing) {
+      if (params.skipProcessing) {
         return 'upload completed, proessing skipped';
       }
 
       const amqpConfig = config.amqp;
-      const action = opts.await ? 'publishAndWait' : 'publish';
+      const action = params.await ? 'publishAndWait' : 'publish';
       const route = `${amqpConfig.prefix}.process`;
       return amqp[action](route, { uploadId });
     });

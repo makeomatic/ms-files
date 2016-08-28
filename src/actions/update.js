@@ -18,11 +18,10 @@ const {
  * @param  {String}  opts.username
  * @return {Promise}
  */
-module.exports = function initFileUpdate(opts) {
-  const { uploadId, username } = opts;
+module.exports = function initFileUpdate({ params }) {
+  const { uploadId, username, meta } = params;
   const { redis } = this;
   const key = `${FILES_DATA}:${uploadId}`;
-  const meta = opts.meta;
 
   return Promise
     .bind(this, key)

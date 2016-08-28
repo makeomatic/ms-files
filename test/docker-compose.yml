@@ -66,4 +66,5 @@ services:
     environment:
       NODE_ENV: "test"
       DEBUG: "${DEBUG}"
+      LD_LIBRARY_PATH: "/usr/glibc-compat/lib/"
     command: tail -f /dev/null
