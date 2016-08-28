@@ -1,4 +1,5 @@
 const findIndex = require('lodash/findIndex');
+
 const PROPS_TO_ADD = ['model', 'obj', 'wrl', 'stl'];
 
 /**
