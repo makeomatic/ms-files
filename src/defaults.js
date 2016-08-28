@@ -62,8 +62,10 @@ module.exports = {
   redis: {
     options: {
       keyPrefix: '{ms-files}',
-      dropBufferSupport: true,
       lazyConnect: true,
+      redisOptions: {
+        dropBufferSupport: true,
+      },
     },
   },
   // default storage for files

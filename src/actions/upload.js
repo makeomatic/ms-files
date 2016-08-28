@@ -13,6 +13,7 @@ const {
   FILES_BUCKET_FIELD,
   FILES_OWNER_FIELD,
   FILES_UNLISTED_FIELD,
+  FILES_STATUS_FIELD,
   FIELDS_TO_STRINGIFY,
   FILES_INDEX_TEMP,
   TYPE_MAP,
@@ -85,8 +86,8 @@ module.exports = function initFileUpload({ params }) {
         startedAt: Date.now(),
         files: JSON.stringify(parts),
         contentLength: sumBy(parts, 'contentLength'),
-        status: STATUS_PENDING,
         parts: files.length,
+        [FILES_STATUS_FIELD]: STATUS_PENDING,
         [FILES_OWNER_FIELD]: username,
         [FILES_BUCKET_FIELD]: bucketName,
       };
@@ -114,7 +115,7 @@ module.exports = function initFileUpload({ params }) {
       parts.forEach(part => {
         const partKey = `${UPLOAD_DATA}:${part.filename}`;
         pipeline
-          .hmset(partKey, { status: STATUS_PENDING, uploadId })
+          .hmset(partKey, { [FILES_STATUS_FIELD]: STATUS_PENDING, uploadId })
           .expire(partKey, uploadTTL);
       });
 

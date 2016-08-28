@@ -32,7 +32,7 @@
     "moment": "^2.14.1",
     "ms-amqp-transport": "^4.0.0",
     "ms-conf": "^2.1.0",
-    "ms-files-gce": "^2.0.0",
+    "ms-files-gce": "^2.0.1",
     "ms-files-providers": "^1.0.4",
     "ms-validation": "^3.0.0",
     "mservice": "^3.7.1",
