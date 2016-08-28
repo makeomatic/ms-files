@@ -47,8 +47,8 @@ function removeFromPublic(filename, data) {
     );
 }
 
-module.exports = function adjustAccess(opts) {
-  const { uploadId, setPublic, username } = opts;
+module.exports = function adjustAccess({ params }) {
+  const { uploadId, setPublic, username } = params;
   const id = `${FILES_DATA}:${uploadId}`;
 
   return Promise

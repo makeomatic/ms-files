@@ -120,6 +120,29 @@
         }
       }
     },
+    "image": {
+      "type": "object",
+      "required": ["type", "contentType", "contentLength", "md5Hash"],
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "contentType": {
+          "type": "string",
+          "enum": ["image/jpeg", "image/png", "image/svg+xml"]
+        },
+        "contentLength": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 20000000
+        },
+        "md5Hash": {
+          "type": "string",
+          "pattern": "^[0-9A-Fa-f]{32}$"
+        }
+      }
+    },
     "meta": {
       "type": "object",
       "additionalProperties": false,

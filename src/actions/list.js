@@ -16,9 +16,9 @@ const {
  * List files
  * @return {Promise}
  */
-module.exports = function postProcessFile(opts) {
+module.exports = function postProcessFile({ params }) {
   const { redis, dlock, log, config: { interstoreKeyTTL, interstoreKeyMinTimeleft } } = this;
-  const { owner, filter, public: isPublic, offset, limit, order, criteria, tags, temp, expiration = 30000 } = opts;
+  const { owner, filter, public: isPublic, offset, limit, order, criteria, tags, temp, expiration = 30000 } = params;
   const strFilter = is.string(filter) ? filter : fsort.filter(filter || {});
 
   return Promise

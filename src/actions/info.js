@@ -10,8 +10,8 @@ const { FILES_DATA, FILES_OWNER_FIELD } = require('../constant.js');
  * @param  {Object} opts.username
  * @return {Promise}
  */
-module.exports = function getFileInfo(opts) {
-  const { filename, username: owner } = opts;
+module.exports = function getFileInfo({ params }) {
+  const { filename, username: owner } = params;
 
   return Promise
     .bind(this, ['files:info:pre', owner])

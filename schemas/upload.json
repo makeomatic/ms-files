@@ -13,6 +13,9 @@
           },
           {
             "$ref": "common#/definitions/cappasity-image"
+          },
+          {
+            "$ref": "common#/definitions/image"
           }
         ]
       }

@@ -1,29 +1,42 @@
 const path = require('path');
 const resolveMessage = require('./messageResolver.js');
+const routerExtension = require('mservice').routerExtension;
+
+const autoSchema = routerExtension('validate/schemaLessAction');
+const auditLog = routerExtension('audit/log');
 
 module.exports = {
   // enable plugins
-  plugins: ['validator', 'logger', 'amqp', 'redisCluster'],
+  plugins: ['validator', 'logger', 'router', 'amqp', 'redisCluster'],
   // default logger
   logger: true,
   // schemas
   validator: ['../schemas'],
   // amqp options
   amqp: {
-    // round-robin on this queue name
-    queue: 'ms-files',
-    // we need QoS for certain operations
-    neck: 100,
-    // initRoutes and router
-    initRoutes: true,
-    // automatically load src/actions into routes
-    initRouter: true,
-    // prefixes
-    prefix: 'files',
-    // postfixes for routes
-    postfix: path.join(__dirname, 'actions'),
-    // add default onComplete handelr
-    onComplete: resolveMessage,
+    transport: {
+      // round-robin on this queue name
+      queue: 'ms-files',
+      // we need QoS for certain operations
+      neck: 100,
+      // add default onComplete handelr
+      onComplete: resolveMessage,
+    },
+    router: {
+      enabled: true,
+    },
+  },
+  router: {
+    routes: {
+      directory: path.join(__dirname, 'actions'),
+      prefix: 'files',
+      setTransportsAsDefault: true,
+      transports: ['amqp'],
+    },
+    extensions: {
+      enabled: ['postRequest', 'preRequest', 'preResponse'],
+      register: [autoSchema, auditLog],
+    },
   },
   // dlock configuration
   lockManager: {
@@ -50,9 +63,7 @@ module.exports = {
     options: {
       keyPrefix: '{ms-files}',
       dropBufferSupport: true,
-      redisOptions: {
-        dropBufferSupport: true,
-      },
+      lazyConnect: true,
     },
   },
   // default storage for files
