@@ -18,7 +18,7 @@ module.exports = function postProcess(offset = 0, uploadedAt) {
   };
 
   return listFiles
-    .call(this, { filter, limit: 20, offset })
+    .call(this, { params: { filter, limit: 20, offset } })
     .then(data => {
       const { files, cursor, page, pages } = data;
 
