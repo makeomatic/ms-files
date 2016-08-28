@@ -34,6 +34,12 @@ rm -rf ./coverage
 
 set -e
 
+if [[ "$SKIP_REBUILD" != "1" ]]; then
+  # add glibc
+  echo "rebuilding native dependencies..."
+  docker exec tester npm rebuild grpc --update-binary
+fi
+
 echo "running tests"
 for fn in $TESTS; do
   echo "running tests for $fn"
