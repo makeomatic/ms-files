@@ -4,6 +4,7 @@ const md5 = require('md5');
 const sumBy = require('lodash/sumBy');
 const get = require('lodash/get');
 const stringify = require('../utils/stringify.js');
+const extension = require('../utils/extension.js');
 const {
   STATUS_PENDING,
   UPLOAD_DATA,
@@ -16,12 +17,7 @@ const {
   FILES_STATUS_FIELD,
   FIELDS_TO_STRINGIFY,
   FILES_INDEX_TEMP,
-  TYPE_MAP,
 } = require('../constant.js');
-
-function typeToExtension(type) {
-  return TYPE_MAP[type] || '.bin';
-}
 
 /**
  * Initiates upload
@@ -46,7 +42,14 @@ module.exports = function initFileUpload({ params }) {
     .spread(this.hook)
     .return(files)
     .map(function initResumableUpload({ md5Hash, type, ...rest }) {
-      const filename = `${prefix}/${uploadId}/${uuid.v4()}${typeToExtension(type)}`;
+      // generate filename
+      const filename = [
+        // name
+        [prefix, uploadId, uuid.v4()].join('/'),
+        // extension
+        extension(type, rest.contentType),
+      ].join('.');
+
       const metadata = {
         ...rest,
         md5Hash: Buffer.from(md5Hash, 'hex').toString('base64'),
