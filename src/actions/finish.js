@@ -133,9 +133,9 @@ module.exports = function completeFileUpload({ params }) {
         return 'upload completed, proessing skipped';
       }
 
-      const amqpConfig = config.amqp;
+      const prefix = config.router.routes.prefix;
       const action = params.await ? 'publishAndWait' : 'publish';
-      const route = `${amqpConfig.prefix}.process`;
+      const route = `${prefix}.process`;
       return amqp[action](route, { uploadId });
     });
 };
