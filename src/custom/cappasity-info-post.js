@@ -4,6 +4,10 @@ const {
   FILES_PLAYER_CLOSEBUTTON,
   FILES_PLAYER_HIDECONTROLS,
   FILES_PLAYER_LIMITNAME,
+  FILES_PLAYER_BACKGROUND_URL,
+  FILES_PLAYER_BACKGROUND_COLOR,
+  FILES_TYPES_MAP,
+  FILES_TYPE_FIELD,
 } = require('../constant.js');
 
 const defaultPlayerOpts = {
@@ -28,6 +32,20 @@ const defaultPlayerOpts = {
     type: 'string',
     default: 'default',
     description: 'Model controls limit preset',
+    path: `file.attributes.${FILES_TYPE_FIELD}`,
+    enum: FILES_TYPES_MAP,
+  },
+  [FILES_PLAYER_BACKGROUND_COLOR]: {
+    type: 'string',
+    default: 'rgb(255,255,255)',
+    description: 'Color of background in rgb(r, g, b) or hex("#rrbbcc") variant.',
+    paid: true,
+  },
+  [FILES_PLAYER_BACKGROUND_URL]: {
+    type: 'string',
+    default: null,
+    description: 'Background image URL',
+    paid: true,
   },
 };
 
