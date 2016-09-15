@@ -26,6 +26,7 @@ module.exports = exports = {
   FILES_UNLISTED_FIELD: 'unlisted',
   FILES_CONTROLS_FIELD: 'controlsData',
   FILES_EXPORT_FIELD: 'export',
+  FILES_TYPE_FIELD: 'type',
 
   // type map
   TYPE_MAP: {
@@ -34,6 +35,12 @@ module.exports = exports = {
     'c-preview': '.jpeg',
     'c-archive': '.zip',
   },
+
+  FILES_PLAYER_AUTORUN: 'autorun',
+  FILES_PLAYER_CLOSEBUTTON: 'closebutton',
+  FILES_PLAYER_HIDECONTROLS: 'hidecontrols',
+  FILES_PLAYER_SHOWLOGO: 'showlogo',
+  FILES_PLAYER_LIMITNAME: 'limitname',
 };
 
 exports.FIELDS_TO_STRINGIFY = [

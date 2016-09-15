@@ -1,16 +1,37 @@
-const { STATUS_PROCESSED } = require('../constant.js');
+const {
+  STATUS_PROCESSED,
+  FILES_PLAYER_AUTORUN,
+  FILES_PLAYER_CLOSEBUTTON,
+  FILES_PLAYER_HIDECONTROLS,
+  FILES_PLAYER_LIMITNAME,
+} = require('../constant.js');
 
-const params = {
-  autorun: {
+const defaultPlayerOpts = {
+  [FILES_PLAYER_AUTORUN]: {
     type: 'boolean',
     default: 0,
     description: 'Auto-start player',
+    paid: true,
   },
-  closebutton: {
+  [FILES_PLAYER_CLOSEBUTTON]: {
     type: 'boolean',
     default: 1,
     description: 'Show close button',
   },
+  [FILES_PLAYER_HIDECONTROLS]: {
+    type: 'boolean',
+    default: 0,
+    description: 'Hide player controls',
+    paid: true,
+  },
+  [FILES_PLAYER_LIMITNAME]: {
+    type: 'string',
+    default: 'default',
+    description: 'Model controls limit preset',
+  },
+};
+
+const defaultWindowOptions = {
   width: {
     type: 'integer',
     default: 800,
@@ -18,12 +39,16 @@ const params = {
   },
   height: {
     type: 'integer',
-    default: 800,
+    default: 600,
     description: 'Height of embedded window',
   },
 };
 
-function getEmbeddedCode(id) {
+function getQueryString(params) {
+  return Object.keys(params).map(key => `${key}={{ ${key} }}`).join('&');
+}
+
+function getEmbeddedCode(id, qs) {
   return `<iframe
     allowfullscreen
     mozallowfullscreen="true"
@@ -33,7 +58,7 @@ function getEmbeddedCode(id) {
     frameborder="0"
     style="border:0;"
     onmousewheel=""
-    src="https://api.cappasity.com/api/player/${id}/embedded?autorun={{ autorun }}&closebutton={{ closebutton }}"
+    src="https://api.cappasity.com/api/player/${id}/embedded?${qs}"
   ></iframe>`.replace(/\s+/g, ' ');
 }
 
@@ -42,8 +67,11 @@ module.exports = function getEmbeddedInfo(file) {
 
   if (status === STATUS_PROCESSED) {
     file.embed = {
-      code: getEmbeddedCode(id),
-      params,
+      code: getEmbeddedCode(id, getQueryString(defaultPlayerOpts)),
+      params: {
+        ...defaultPlayerOpts,
+        ...defaultWindowOptions,
+      },
     };
   }
 
