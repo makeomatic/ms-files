@@ -142,7 +142,7 @@ describe('info suite', function suite() {
             Object.keys(rsp.file.embed.params).forEach(key => {
               const param = rsp.file.embed.params[key];
               assert.ok(param.type);
-              assert.notEqual(param.default, undefined);
+              assert.notStrictEqual(param.default, undefined);
               assert.ok(param.description);
             });
           });
