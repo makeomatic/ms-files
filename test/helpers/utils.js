@@ -85,6 +85,7 @@ function modelMessage(model, textures, preview, owner) {
         0.06709221005439758, 0.21647998690605164, 1,
       ],
       tags: ['ok', 'done'],
+      type: 'object',
     },
     files: [
       binaryMessage,

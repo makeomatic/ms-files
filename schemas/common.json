@@ -178,6 +178,16 @@
         },
         "controlsData": {
           "$ref": "common#/definitions/controlsData"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "default",
+            "object",
+            "dslr",
+            "human",
+            "user"
+          ]
         }
       }
     },
