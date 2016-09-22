@@ -51,6 +51,10 @@
     "unlisted": {
       "type": "boolean",
       "default": false
+    },
+    "origin": {
+      "type": "string",
+      "format": "uri"
     }
   }
 }
