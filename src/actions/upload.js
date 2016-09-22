@@ -23,12 +23,13 @@ const {
  * Initiates upload
  * @param  {Object} opts
  * @param  {Object} opts.params
+ * @param  {String} [opts.params.origin]
  * @param  {Array}  opts.params.files
  * @param  {Object} opts.params.meta
  * @return {Promise}
  */
 module.exports = function initFileUpload({ params }) {
-  const { files, meta, username, temp, unlisted } = params;
+  const { files, meta, username, temp, unlisted, origin } = params;
   const { redis, config: { uploadTTL } } = this;
 
   const provider = this.provider('upload', params);
@@ -69,6 +70,7 @@ module.exports = function initFileUpload({ params }) {
         filename,
         location: provider.initResumableUpload({
           filename,
+          origin,
           predefinedAcl: isPublic ? 'publicRead' : '',
           metadata: {
             ...metadata,
