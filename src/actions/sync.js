@@ -21,7 +21,7 @@ function iterateOverUploadedFiles(lock, opts = {}) {
   return Promise
     .bind(this, { params: { offset, limit, filter, temp: true, expiration: 10000 } })
     .then(list)
-    .then(data => {
+    .then((data) => {
       // we resolved files, now iterate over them
       const { files, cursor, page, pages } = data;
 
@@ -29,7 +29,7 @@ function iterateOverUploadedFiles(lock, opts = {}) {
       this.log.debug('found files ~ %d/%d/%d', cursor, page, pages);
 
       return Promise
-        .map(files, container => {
+        .map(files, (container) => {
           // transport to fetch "exists" data
           const transport = provider('sync', container);
           const started = moment(container.startedAt);
@@ -40,7 +40,7 @@ function iterateOverUploadedFiles(lock, opts = {}) {
           }
 
           return Promise
-            .map(container.files, file => transport.exists(file.filename).then(exists => {
+            .map(container.files, file => transport.exists(file.filename).then((exists) => {
               this.log.debug('checked file %s | %s', file.filename, exists);
 
               if (!exists) {

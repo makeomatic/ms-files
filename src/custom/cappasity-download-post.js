@@ -8,7 +8,7 @@ const PROPS_TO_ADD = ['model', 'obj', 'wrl', 'stl'];
 module.exports = function decorateOutput(originalData, output) {
   const files = output.files;
 
-  PROPS_TO_ADD.forEach(prop => {
+  PROPS_TO_ADD.forEach((prop) => {
     const nonResolvedLink = originalData[prop];
     if (nonResolvedLink) {
       const idx = findIndex(files, { filename: nonResolvedLink });

@@ -31,7 +31,7 @@ module.exports = function processFile(key, data) {
     .catch({ name: 'LockAcquisitionError' }, () => {
       throw new HttpStatusError(409, 'file is being processed');
     })
-    .then(lock => {
+    .then((lock) => {
       const { uploadId } = data;
 
       return Promise
@@ -41,7 +41,7 @@ module.exports = function processFile(key, data) {
         .spread((processedData = {}) => {
           // omit location, since it's used once during upload
           const fileKeys = [];
-          const files = data.files.map(file => {
+          const files = data.files.map((file) => {
             fileKeys.push(`${UPLOAD_DATA}:${file.filename}`);
             return omit(file, METADATA_BLACKLIST);
           });
@@ -59,9 +59,9 @@ module.exports = function processFile(key, data) {
         })
         .tap(() => lock.extend())
         .tap(container => this.hook.call(this, 'files:process:post', container.finalizedData, lock))
-        .then(container => {
+        .then((container) => {
           const serialized = {};
-          STRINGIFY_LIST.forEach(field => {
+          STRINGIFY_LIST.forEach((field) => {
             stringify(container.finalizedData, field, serialized);
           });
 

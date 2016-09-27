@@ -24,7 +24,7 @@ module.exports = function listFiles({ params }) {
   return Promise
     .bind(this, ['files:info:pre', owner])
     .spread(this.hook)
-    .spread(username => {
+    .spread((username) => {
       // choose which set to use
       let filesIndex;
       if (isPublic && username) {
@@ -46,7 +46,7 @@ module.exports = function listFiles({ params }) {
       const tagKeys = [];
       let interstoreKey = `${FILES_LIST}:${filesIndex}`;
 
-      tags.sort().forEach(tag => {
+      tags.sort().forEach((tag) => {
         const tagKey = `${FILES_INDEX_TAGS}:${tag}`;
         tagKeys.push(tagKey);
         interstoreKey = `${interstoreKey}:${tagKey}`;
@@ -54,15 +54,15 @@ module.exports = function listFiles({ params }) {
 
       return redis
         .pttl(interstoreKey)
-        .then(result => {
+        .then((result) => {
           if (result > interstoreKeyMinTimeleft) {
             return interstoreKey;
           }
 
-          return Promise.fromNode(next => {
+          return Promise.fromNode((next) => {
             dlock
               .push(interstoreKey, next)
-              .then(completed => {
+              .then((completed) => {
                 redis
                   .pipeline()
                   .sinterstore(interstoreKey, filesIndex, tagKeys)
@@ -76,10 +76,10 @@ module.exports = function listFiles({ params }) {
           });
         });
     })
-    .then(filesIndex => {
+    .then((filesIndex) => {
       return redis.fsort(filesIndex, `${FILES_DATA}:*`, criteria, order, strFilter, offset, limit, expiration);
     })
-    .then(filenames => {
+    .then((filenames) => {
       const length = +filenames.pop();
       if (length === 0 || filenames.length === 0) {
         return {
@@ -92,7 +92,7 @@ module.exports = function listFiles({ params }) {
       const pipeline = Promise.map(filenames, filename => fetchData.call(this, `${FILES_DATA}:${filename}`));
       return Promise.props({ filenames, props: pipeline, length });
     })
-    .then(data => {
+    .then((data) => {
       const { filenames, props, length } = data;
 
       return Promise

@@ -11,13 +11,13 @@ module.exports = function extractMetadata({ files, meta, temp }) {
       let differentFileTypes = 0;
 
       // calculate file types
-      files.forEach(props => {
+      files.forEach((props) => {
         const type = props.type;
 
         if (fileTypes[type]) {
-          fileTypes[type]++;
+          fileTypes[type] += 1;
         } else {
-          differentFileTypes++;
+          differentFileTypes += 1;
           fileTypes[type] = 1;
         }
 

@@ -48,7 +48,7 @@ module.exports = function initFileUpload({ params }) {
         // name
         [prefix, uploadId, uuid.v4()].join('/'),
         // extension
-        extension(type, rest.contentType),
+        extension(type, rest.contentType).slice(1),
       ].join('.');
 
       const metadata = {
@@ -78,9 +78,9 @@ module.exports = function initFileUpload({ params }) {
         }),
       });
     })
-    .then(parts => {
+    .then((parts) => {
       const serialized = {};
-      FIELDS_TO_STRINGIFY.forEach(field => {
+      FIELDS_TO_STRINGIFY.forEach((field) => {
         stringify(meta, field, serialized);
       });
 
@@ -117,7 +117,7 @@ module.exports = function initFileUpload({ params }) {
         .hmset(uploadKey, fileData)
         .expire(uploadKey, uploadTTL);
 
-      parts.forEach(part => {
+      parts.forEach((part) => {
         const partKey = `${UPLOAD_DATA}:${part.filename}`;
         pipeline
           .hmset(partKey, { [FILES_STATUS_FIELD]: STATUS_PENDING, uploadId })

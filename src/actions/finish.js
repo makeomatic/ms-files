@@ -46,7 +46,7 @@ module.exports = function completeFileUpload({ params }) {
     .bind(this, key)
     .then(fetchData)
     .catchThrow({ statusCode: 404 }, MissingError)
-    .then(data => {
+    .then((data) => {
       if (data[FILES_STATUS_FIELD] !== STATUS_PENDING) {
         // we do not send 412, because google might decide to delay notifications
         throw new HttpStatusError(200, '412: upload has already been marked as finished');
@@ -69,7 +69,7 @@ module.exports = function completeFileUpload({ params }) {
           .exec(),
       });
     })
-    .then(data => {
+    .then((data) => {
       const { uploadId, update } = data;
       const [parts, incr, status] = update;
 
@@ -119,7 +119,7 @@ module.exports = function completeFileUpload({ params }) {
 
           // push to tags index
           if (tags) {
-            JSON.parse(tags).forEach(tag => {
+            JSON.parse(tags).forEach((tag) => {
               pipeline.sadd(`${FILES_INDEX_TAGS}:${tag}`, uploadId);
             });
           }
@@ -128,7 +128,7 @@ module.exports = function completeFileUpload({ params }) {
 
       return pipeline.exec().return(uploadId);
     })
-    .then(uploadId => {
+    .then((uploadId) => {
       if (params.skipProcessing) {
         return 'upload completed, proessing skipped';
       }
