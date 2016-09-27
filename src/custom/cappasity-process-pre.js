@@ -17,7 +17,8 @@ function parseMeta(data) {
   parsedFiles.forEach(({ type, filename }) => {
     const responsibility = TYPE_MAP[type];
     if (responsibility === 'texture') {
-      output[`texture_${textures++}`] = filename;
+      output[`texture_${textures}`] = filename;
+      textures += 1;
     } else {
       output[responsibility] = filename;
     }
@@ -84,7 +85,7 @@ module.exports = function finishPost(props) {
       props.exported = exportedAt;
       return parseMeta(props);
     })
-    .catch(e => {
+    .catch((e) => {
       if (e.message === 'insufficient balance') {
         throw new HttpStatusError(402, 'no more models are available');
       }

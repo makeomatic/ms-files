@@ -1,7 +1,7 @@
 const Promise = require('bluebird');
 const find = require('lodash/find');
 const { HttpStatusError } = require('common-errors');
-const { FILES_OWNER_FIELD } = require('../constant.js');
+const { FILES_OWNER_FIELD, FILES_EXPORT_FIELD } = require('../constant.js');
 
 module.exports = function uploadPost(props) {
   const { amqp, config } = this;
@@ -9,6 +9,10 @@ module.exports = function uploadPost(props) {
 
   return Promise
     .try(function verifyUploadData() {
+      if (!props[FILES_EXPORT_FIELD]) {
+        return null;
+      }
+
       const binary = find(props.files, { type: 'c-bin' });
       if (!binary) {
         return null;
@@ -29,7 +33,7 @@ module.exports = function uploadPost(props) {
       // getMetadata
       return amqp
         .publishAndWait(getMetadata, message)
-        .then(it => {
+        .then((it) => {
           props.exported = it[exportAudience][sourceSHA] || false;
           props.availableModels = it[audience].models;
 

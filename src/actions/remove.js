@@ -28,14 +28,14 @@ module.exports = function removeFile({ params }) {
     .then(fetchData)
     .then(isUnlisted)
     .then(hasAccess(username))
-    .then(data => {
+    .then((data) => {
       const { files } = data;
 
       return Promise
-        .mapSeries(files, file => {
+        .mapSeries(files, (file) => {
           return provider
             .remove(file.filename)
-            .catch({ code: 404 }, err => {
+            .catch({ code: 404 }, (err) => {
               this.log.warn('file %s was already deleted', file.filename, err.code, err.message);
             });
         })

@@ -21,7 +21,7 @@ module.exports = function postProcessFile({ params }) {
     .bind(this, key)
     .then(fetchData)
     .then(hasAccess(username))
-    .then(data => {
+    .then((data) => {
       const status = data.status;
       const exportSettings = params.export || data.export;
 

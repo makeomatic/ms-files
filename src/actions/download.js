@@ -51,7 +51,7 @@ module.exports = function getDownloadURL({ params }) {
     .bind(this, key)
     .then(fetchData)
     .then(isProcessed)
-    .then(data => {
+    .then((data) => {
       // parse file data
       const provider = this.provider('download', data);
       const files = types ? data.files.filter(file => types.includes(file.type)) : data.files;

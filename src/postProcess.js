@@ -19,17 +19,17 @@ module.exports = function postProcess(offset = 0, uploadedAt) {
 
   return listFiles
     .call(this, { params: { filter, limit: 20, offset } })
-    .then(data => {
+    .then((data) => {
       const { files, cursor, page, pages } = data;
 
       return Promise
         .resolve(files)
-        .mapSeries(file => {
+        .mapSeries((file) => {
           // make sure to call reflect so that we do not interrupt the procedure
           return postProcess
             .call(this, `${FILES_DATA}:${file.id}`, file)
             .reflect()
-            .tap(result => {
+            .tap((result) => {
               this.log.info({ owner: file.owner }, '%s |', file.id, result.isFulfilled() ? 'processed' : result.reason());
             });
         })

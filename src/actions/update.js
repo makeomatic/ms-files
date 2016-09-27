@@ -37,13 +37,13 @@ module.exports = function initFileUpdate({ params }) {
       }
 
       if (meta[FILES_TAGS_FIELD]) {
-        meta[FILES_TAGS_FIELD].forEach(tag => {
+        meta[FILES_TAGS_FIELD].forEach((tag) => {
           const tagKey = `${FILES_INDEX_TAGS}:${tag}`;
           pipeline.sadd(tagKey, uploadId);
         });
       }
 
-      FIELDS_TO_STRINGIFY.forEach(field => {
+      FIELDS_TO_STRINGIFY.forEach((field) => {
         stringify(meta, field);
       });
 

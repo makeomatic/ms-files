@@ -16,7 +16,7 @@ module.exports = function exists(key) {
       const data = dataResponse[1];
       const fields = Object.keys(data);
 
-      fields.forEach(field => {
+      fields.forEach((field) => {
         const value = data[field];
         if (JSON_FIELDS.indexOf(field) !== -1) {
           data[field] = safeParse(value, []);

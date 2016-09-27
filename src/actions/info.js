@@ -16,7 +16,7 @@ module.exports = function getFileInfo({ params }) {
   return Promise
     .bind(this, ['files:info:pre', owner])
     .spread(this.hook)
-    .spread(username => {
+    .spread((username) => {
       if (!username) {
         throw new NotImplementedError('files:info:pre hook must be specified to use this endpoint');
       }
@@ -28,7 +28,7 @@ module.exports = function getFileInfo({ params }) {
         file: fetchData.call(this, `${FILES_DATA}:${filename}`),
       });
     })
-    .then(data => {
+    .then((data) => {
       // ref file
       const info = data.file;
 

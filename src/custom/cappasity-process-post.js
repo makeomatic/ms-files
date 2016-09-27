@@ -34,7 +34,7 @@ module.exports = function finishPost(fileData, lock) {
     .bind(this)
     .then(() => lock.extend(timeout))
     .then(() => amqp.publishAndWait(route, message, { timeout }))
-    .then(file => {
+    .then((file) => {
       fileData[file.type] = file.filename;
       fileData.files.push(file);
       return file;
