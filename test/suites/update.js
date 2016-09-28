@@ -91,6 +91,18 @@ describe('update suite', function suite() {
           assert.equal(result, true);
         });
     });
+
+    it('update background color', function test() {
+      meta.backgroundColor = '#00ffFa';
+
+      return this
+        .send({ uploadId: this.response.uploadId, username, meta }, 45000)
+        .reflect()
+        .then(inspectPromise())
+        .then(result => {
+          assert.equal(result, true);
+        });
+    });
   });
 
   describe('process info again', function afterUpdateSuite() {
@@ -104,6 +116,7 @@ describe('update suite', function suite() {
         .then(inspectPromise())
         .then(result => {
           assert.deepEqual(result.file.tags, meta.tags);
+          assert.equal(result.file.backgroundColor, meta.backgroundColor);
         });
     });
   });
