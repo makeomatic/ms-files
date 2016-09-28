@@ -32,13 +32,14 @@ const defaultPlayerOpts = {
     type: 'string',
     default: 'default',
     description: 'Model controls limit preset',
-    path: `file.attributes.${FILES_TYPE_FIELD}`,
+    path: `attributes.${FILES_TYPE_FIELD}`,
     enum: FILES_TYPES_MAP,
   },
   [FILES_PLAYER_BACKGROUND_COLOR]: {
     type: 'string',
-    default: 'rgb(255,255,255)',
+    default: null,
     description: 'Color of background in rgb(r, g, b) or hex("#rrbbcc") variant.',
+    path: `attributes.${FILES_PLAYER_BACKGROUND_COLOR}`,
     paid: true,
   },
   [FILES_PLAYER_BACKGROUND_URL]: {
