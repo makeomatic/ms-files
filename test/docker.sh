@@ -10,7 +10,8 @@ COMPOSE=$(which docker-compose)
 MOCHA=$BIN/_mocha
 COVER="$BIN/isparta cover"
 NODE=$BIN/babel-node
-TESTS=${TESTS:-test/suites/*.js}
+# TESTS=${TESTS:-test/suites/*.js}
+TESTS=test/suites/update.js
 COMPOSE_VER=${COMPOSE_VER:-1.7.1}
 COMPOSE="docker-compose -f $DC"
 

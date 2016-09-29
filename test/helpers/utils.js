@@ -231,6 +231,11 @@ function downloadFile({ uploadId, username }) {
     .publishAndWait('files.download', { uploadId, username });
 }
 
+function getInfo({ filename, username }) {
+  return this.amqp
+    .publishAndWait('files.info', { filename, username });
+}
+
 //
 // Simple sync helper for promise inspection
 //
@@ -342,6 +347,7 @@ module.exports = exports = {
   finishUpload,
   processUpload,
   downloadFile,
+  getInfo,
   updateAccess,
   inspectPromise,
   startService,
