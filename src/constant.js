@@ -26,6 +26,8 @@ module.exports = exports = {
   FILES_UNLISTED_FIELD: 'unlisted',
   FILES_CONTROLS_FIELD: 'controlsData',
   FILES_EXPORT_FIELD: 'export',
+  FILES_BACKGROUND_URL_FIELD: 'backgroundURL',
+  FILES_BACKGROUND_COLOR_FIELD: 'backgroundColor',
 
   // metatype of file
   FILES_TYPE_FIELD: 'type',
@@ -47,9 +49,6 @@ module.exports = exports = {
   FILES_PLAYER_CLOSEBUTTON: 'closebutton',
   FILES_PLAYER_HIDECONTROLS: 'hidecontrols',
   FILES_PLAYER_SHOWLOGO: 'showlogo',
-  FILES_PLAYER_LIMITNAME: 'limitname',
-  FILES_PLAYER_BACKGROUND_URL: 'backgroundURL',
-  FILES_PLAYER_BACKGROUND_COLOR: 'backgroundColor',
 };
 
 exports.FIELDS_TO_STRINGIFY = [
@@ -57,11 +56,3 @@ exports.FIELDS_TO_STRINGIFY = [
   exports.FILES_EXPORT_FIELD,
   exports.FILES_CONTROLS_FIELD,
 ];
-
-exports.FILES_TYPES_MAP = {
-  [exports.FILES_TYPE_DEFAULT]: 'Default',
-  [exports.FILES_TYPE_OBJECT]: 'Object',
-  [exports.FILES_TYPE_DSLR]: 'Object with DSLR',
-  [exports.FILES_TYPE_HUMAN]: 'Human',
-  [exports.FILES_TYPE_USER]: 'User-defined settings',
-};
