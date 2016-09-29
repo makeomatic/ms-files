@@ -87,7 +87,7 @@ describe('finish upload suite', function suite() {
       .reflect()
       .then(inspectPromise())
       .then(response => {
-        assert.equal(response, 'upload completed, proessing skipped');
+        assert.equal(response, 'upload completed, processing skipped');
       });
   });
 });
