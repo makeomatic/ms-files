@@ -7,16 +7,12 @@ services:
     expose:
       - "6379"
       - "16379"
-    ports:
-      - "6379:6379"
     image: makeomatic/alpine-redis
 
   redis-2:
     expose:
       - "6379"
       - "16379"
-    ports:
-      - "6380:6379"
     container_name: redis-2
     hostname: redis-2
     image: makeomatic/alpine-redis
@@ -25,8 +21,6 @@ services:
     expose:
       - "6379"
       - "16379"
-    ports:
-      - "6381:6379"
     container_name: redis-3
     image: makeomatic/alpine-redis
     hostname: redis-3
