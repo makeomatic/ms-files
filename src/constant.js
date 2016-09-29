@@ -26,7 +26,7 @@ module.exports = exports = {
   FILES_UNLISTED_FIELD: 'unlisted',
   FILES_CONTROLS_FIELD: 'controlsData',
   FILES_EXPORT_FIELD: 'export',
-  FILES_BACKGROUND_URL_FIELD: 'backgroundURL',
+  FILES_BACKGROUND_IMAGE_FIELD: 'backgroundImage',
   FILES_BACKGROUND_COLOR_FIELD: 'backgroundColor',
 
   // metatype of file
@@ -55,4 +55,5 @@ exports.FIELDS_TO_STRINGIFY = [
   exports.FILES_TAGS_FIELD,
   exports.FILES_EXPORT_FIELD,
   exports.FILES_CONTROLS_FIELD,
+  exports.FILES_BACKGROUND_IMAGE_FIELD,
 ];

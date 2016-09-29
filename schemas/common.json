@@ -186,6 +186,34 @@
         "backgroundColor": {
           "$ref": "common#/definitions/color"
         },
+        "backgroundImage": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "uploadId": {
+              "$ref": "common#/definitions/uuid-v4"
+            },
+            "username": {
+              "$ref": "common#/definitions/owner"
+            },
+            "filename": {
+              "$ref": "common#/definitions/filename"
+            },
+            "contentType": {
+              "type": "string",
+              "enum": ["image/jpeg", "image/png"]
+            },
+            "contentLength": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 20000000
+            },
+            "url": {
+              "type": "string",
+              "format": "uri"
+            }
+          }
+        },
         "type": {
           "type": "string",
           "enum": [

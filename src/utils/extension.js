@@ -9,7 +9,7 @@ const { extension } = require('mime-types');
  */
 const typeToExtension = (type, contentType) =>
   TYPE_MAP[type] ||
-  extension(contentType) ||
+  `.${extension(contentType)}` ||
   '.bin';
 
 module.exports = typeToExtension;

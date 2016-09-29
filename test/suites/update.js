@@ -10,7 +10,9 @@ const {
   bindSend,
   initAndUpload,
   processUpload,
+  downloadFile,
   meta,
+  backgroundData,
 } = require('../helpers/utils.js');
 
 const route = 'files.update';
@@ -95,6 +97,40 @@ describe('update suite', function suite() {
     it('update background color', function test() {
       meta.backgroundColor = '#00ffFa';
 
+      return this
+        .send({ uploadId: this.response.uploadId, username, meta }, 45000)
+        .reflect()
+        .then(inspectPromise())
+        .then(result => {
+          assert.equal(result, true);
+        });
+    });
+  });
+
+  describe('update background image', function afterUpdateSuite() {
+    let background;
+
+    before('upload background image', function upload() {
+      return initAndUpload(backgroundData, false).call(this)
+        .then(downloadFile.bind(this))
+        .then(({ uploadId, username, files, urls }) => { // eslint-disable-line no-shadow
+          const url = urls[0];
+          const file = files[0];
+          const { filename, contentType, contentLength } = file;
+
+          background = {
+            uploadId,
+            username,
+            url,
+            filename,
+            contentType,
+            contentLength,
+          };
+        });
+    });
+
+    it('update background image', function test() {
+      meta.backgroundImage = background;
       return this
         .send({ uploadId: this.response.uploadId, username, meta }, 45000)
         .reflect()

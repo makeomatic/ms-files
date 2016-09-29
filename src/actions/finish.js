@@ -130,7 +130,7 @@ module.exports = function completeFileUpload({ params }) {
     })
     .then((uploadId) => {
       if (params.skipProcessing) {
-        return 'upload completed, proessing skipped';
+        return 'upload completed, processing skipped';
       }
 
       const prefix = config.router.routes.prefix;
