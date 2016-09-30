@@ -3,6 +3,7 @@ const fetchData = require('../utils/fetchData.js');
 const isProcessed = require('../utils/isProcessed.js');
 const isUnlisted = require('../utils/isUnlisted.js');
 const stringify = require('../utils/stringify.js');
+const isValidBackgroundOrigin = require('../utils/isValidBackgroundOrigin.js');
 const {
   FILES_DATA,
   FILES_INDEX_TAGS,
@@ -28,6 +29,7 @@ module.exports = function initFileUpdate({ params }) {
     .then(fetchData)
     .then(isProcessed)
     .then(isUnlisted)
+    .then(isValidBackgroundOrigin)
     .tap(data => this.hook.call(this, 'files:update:pre', username, data))
     .then(data => Promise.try(function updateMetadata() {
       const pipeline = redis.pipeline();

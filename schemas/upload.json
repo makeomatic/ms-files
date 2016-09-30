@@ -16,6 +16,9 @@
           },
           {
             "$ref": "common#/definitions/image"
+          },
+          {
+            "$ref": "common#/definitions/background-image"
           }
         ]
       }

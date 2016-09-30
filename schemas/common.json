@@ -124,6 +124,30 @@
         }
       }
     },
+    "background-image": {
+      "type": "object",
+      "required": ["type", "contentType", "contentLength", "md5Hash"],
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "type": "string",
+          "constant": "background"
+        },
+        "contentType": {
+          "type": "string",
+          "enum": ["image/jpeg", "image/png"]
+        },
+        "contentLength": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 2097152
+        },
+        "md5Hash": {
+          "type": "string",
+          "pattern": "^[0-9A-Fa-f]{32}$"
+        }
+      }
+    },
     "image": {
       "type": "object",
       "required": ["type", "contentType", "contentLength", "md5Hash"],
@@ -190,23 +214,12 @@
           "type": "object",
           "additionalProperties": false,
           "properties": {
-            "uploadId": {
-              "$ref": "common#/definitions/uuid-v4"
-            },
-            "username": {
-              "$ref": "common#/definitions/owner"
-            },
             "filename": {
               "$ref": "common#/definitions/filename"
             },
             "contentType": {
               "type": "string",
               "enum": ["image/jpeg", "image/png"]
-            },
-            "contentLength": {
-              "type": "integer",
-              "minimum": 1,
-              "maximum": 20000000
             },
             "url": {
               "type": "string",

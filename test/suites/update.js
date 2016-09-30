@@ -1,5 +1,6 @@
 const assert = require('assert');
 const uuid = require('uuid');
+const faker = require('faker');
 
 const {
   startService,
@@ -126,18 +127,15 @@ describe('update suite', function suite() {
     before('upload background image', function upload() {
       return initAndUpload(backgroundData, false).call(this)
         .then(downloadFile.bind(this))
-        .then(({ uploadId, username, files, urls }) => { // eslint-disable-line no-shadow
+        .then(({ files, urls }) => { // eslint-disable-line no-shadow
           const url = urls[0];
           const file = files[0];
-          const { filename, contentType, contentLength } = file;
+          const { filename, contentType } = file;
 
           meta.backgroundImage = {
-            uploadId,
-            username,
             url,
             filename,
             contentType,
-            contentLength,
           };
         });
     });
@@ -157,6 +155,17 @@ describe('update suite', function suite() {
           .tap(verifyResult => {
             assert.deepEqual(verifyResult.file.backgroundImage, meta.backgroundImage);
           });
+        });
+    });
+
+    it('failed to update background image due to wrong origin', function test() {
+      meta.backgroundImage.url = faker.image.imageUrl();
+      return this
+        .send({ uploadId: this.response.uploadId, username, meta }, 45000)
+        .reflect()
+        .then(inspectPromise(false))
+        .then(err => {
+          assert.equal(err.statusCode, 412);
         });
     });
   });

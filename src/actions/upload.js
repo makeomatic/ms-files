@@ -5,6 +5,7 @@ const sumBy = require('lodash/sumBy');
 const get = require('lodash/get');
 const stringify = require('../utils/stringify.js');
 const extension = require('../utils/extension.js');
+const isValidBackgroundOrigin = require('../utils/isValidBackgroundOrigin.js');
 const {
   STATUS_PENDING,
   UPLOAD_DATA,
@@ -41,6 +42,7 @@ module.exports = function initFileUpload({ params }) {
   return Promise
     .bind(this, ['files:upload:pre', params])
     .spread(this.hook)
+    .tap(() => isValidBackgroundOrigin.call(this, meta))
     .return(files)
     .map(function initResumableUpload({ md5Hash, type, ...rest }) {
       // generate filename
