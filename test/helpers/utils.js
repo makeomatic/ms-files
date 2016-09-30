@@ -35,6 +35,7 @@ readFile('shoe.bin.gz', 'model');
 readFile('shoe_tex_0.jpg', 'texture-1');
 readFile('shoe_tex_1.jpg', 'texture-2');
 readFile('shoe_preview.jpg', 'preview');
+readFile('background.jpg', 'background');
 
 //
 // helper for cappasity model uploader
@@ -97,6 +98,29 @@ function modelMessage(model, textures, preview, owner) {
   return {
     files: [model, ...textures, preview],
     message,
+  };
+}
+
+function modelBackgroundImageMessage(background, owner) {
+  return {
+    files: [background],
+    message: {
+      username: owner,
+      meta: {
+        name: 'background',
+      },
+      files: [{
+        type: 'background',
+        contentType: 'image/jpeg',
+        contentLength: background.length,
+        md5Hash: md5(background).toString('hex'),
+      }],
+      access: {
+        setPublic: true,
+      },
+      temp: false,
+      unlisted: false,
+    },
   };
 }
 
@@ -200,6 +224,19 @@ function updateAccess(uploadId, username, setPublic) {
 }
 
 //
+// Download a file
+//
+function downloadFile({ uploadId, username }) {
+  return this.amqp
+    .publishAndWait('files.download', { uploadId, username });
+}
+
+function getInfo({ filename, username }) {
+  return this.amqp
+    .publishAndWait('files.info', { filename, username });
+}
+
+//
 // Simple sync helper for promise inspection
 //
 function inspectPromise(mustBeFulfilled = true) {
@@ -288,6 +325,8 @@ const meta = {
   tags: ['tag1', 'tag2', 'tag3'],
   website: 'http://website.com',
 };
+const background = readFile('background');
+const backgroundData = modelBackgroundImageMessage(background, owner);
 
 // Public API
 module.exports = exports = {
@@ -295,7 +334,9 @@ module.exports = exports = {
   model,
   textures,
   preview,
+  background,
   modelData,
+  backgroundData,
   config,
   upload,
   readFile,
@@ -305,6 +346,8 @@ module.exports = exports = {
   finishMessage,
   finishUpload,
   processUpload,
+  downloadFile,
+  getInfo,
   updateAccess,
   inspectPromise,
   startService,

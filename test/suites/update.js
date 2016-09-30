@@ -10,11 +10,13 @@ const {
   bindSend,
   initAndUpload,
   processUpload,
+  downloadFile,
+  getInfo,
   meta,
+  backgroundData,
 } = require('../helpers/utils.js');
 
 const route = 'files.update';
-const infoRoute = 'files.info';
 const username = owner;
 
 describe('update suite', function suite() {
@@ -61,21 +63,20 @@ describe('update suite', function suite() {
 
   describe('process info', function afterUpdateSuite() {
     it('returns file info', function test() {
-      return this
-        .amqp.publishAndWait(infoRoute, {
-          filename: this.response.uploadId,
-          username,
-        })
-        .reflect()
-        .then(inspectPromise())
-        .then(result => {
-          assert.equal(result.username, username);
-          assert.equal(result.file.uploadId, this.response.uploadId);
-          assert.equal(result.file.name, meta.name);
-          assert.equal(result.file.description, meta.description);
-          assert.equal(result.file.website, meta.website);
-          assert.deepEqual(result.file.tags, meta.tags);
-        });
+      getInfo.call(this, {
+        filename: this.response.uploadId,
+        username,
+      })
+      .reflect()
+      .then(inspectPromise())
+      .then(result => {
+        assert.equal(result.username, username);
+        assert.equal(result.file.uploadId, this.response.uploadId);
+        assert.equal(result.file.name, meta.name);
+        assert.equal(result.file.description, meta.description);
+        assert.equal(result.file.website, meta.website);
+        assert.deepEqual(result.file.tags, meta.tags);
+      });
     });
   });
 
@@ -89,6 +90,14 @@ describe('update suite', function suite() {
         .then(inspectPromise())
         .then(result => {
           assert.equal(result, true);
+
+          return getInfo.call(this, {
+            filename: this.response.uploadId,
+            username,
+          })
+          .tap(verifyResult => {
+            assert.deepEqual(verifyResult.file.tags, meta.tags);
+          });
         });
     });
 
@@ -101,22 +110,53 @@ describe('update suite', function suite() {
         .then(inspectPromise())
         .then(result => {
           assert.equal(result, true);
+
+          return getInfo.call(this, {
+            filename: this.response.uploadId,
+            username,
+          })
+          .tap(verifyResult => {
+            assert.equal(verifyResult.file.backgroundColor, meta.backgroundColor);
+          });
         });
     });
   });
 
-  describe('process info again', function afterUpdateSuite() {
-    it('returns file info to check updated tags', function test() {
+  describe('update background image', function afterUpdateSuite() {
+    before('upload background image', function upload() {
+      return initAndUpload(backgroundData, false).call(this)
+        .then(downloadFile.bind(this))
+        .then(({ uploadId, username, files, urls }) => { // eslint-disable-line no-shadow
+          const url = urls[0];
+          const file = files[0];
+          const { filename, contentType, contentLength } = file;
+
+          meta.backgroundImage = {
+            uploadId,
+            username,
+            url,
+            filename,
+            contentType,
+            contentLength,
+          };
+        });
+    });
+
+    it('update background image', function test() {
       return this
-        .amqp.publishAndWait(infoRoute, {
-          filename: this.response.uploadId,
-          username,
-        })
+        .send({ uploadId: this.response.uploadId, username, meta }, 45000)
         .reflect()
         .then(inspectPromise())
         .then(result => {
-          assert.deepEqual(result.file.tags, meta.tags);
-          assert.equal(result.file.backgroundColor, meta.backgroundColor);
+          assert.equal(result, true);
+
+          return getInfo.call(this, {
+            filename: this.response.uploadId,
+            username,
+          })
+          .tap(verifyResult => {
+            assert.deepEqual(verifyResult.file.backgroundImage, meta.backgroundImage);
+          });
         });
     });
   });
