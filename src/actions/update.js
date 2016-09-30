@@ -25,9 +25,8 @@ module.exports = function initFileUpdate({ params }) {
   const key = `${FILES_DATA}:${uploadId}`;
 
   return Promise
-    .bind(this)
+    .bind(this, meta)
     // do some extra validation
-    .return(meta)
     .tap(isValidBackgroundOrigin)
     // fetch data
     .return(key)

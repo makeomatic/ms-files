@@ -6,7 +6,7 @@ module.exports = function isValidBackgroundOrigin(data) {
 
   if (backgroundImage) {
     const { url } = backgroundImage;
-    const provider = this.provider('update');
+    const provider = this.provider('update', data);
     const isValidOrigin = url.indexOf(provider.cname) === 0;
 
     if (!isValidOrigin) {
