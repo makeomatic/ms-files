@@ -42,7 +42,10 @@ module.exports = function initFileUpload({ params }) {
   return Promise
     .bind(this, ['files:upload:pre', params])
     .spread(this.hook)
-    .tap(() => isValidBackgroundOrigin.call(this, meta))
+    // do some extra meta validation
+    .return(meta)
+    .tap(isValidBackgroundOrigin)
+    // process files
     .return(files)
     .map(function initResumableUpload({ md5Hash, type, ...rest }) {
       // generate filename

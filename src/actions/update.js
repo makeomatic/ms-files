@@ -25,11 +25,15 @@ module.exports = function initFileUpdate({ params }) {
   const key = `${FILES_DATA}:${uploadId}`;
 
   return Promise
-    .bind(this, key)
+    .bind(this)
+    // do some extra validation
+    .return(meta)
+    .tap(isValidBackgroundOrigin)
+    // fetch data
+    .return(key)
     .then(fetchData)
     .then(isProcessed)
     .then(isUnlisted)
-    .then(isValidBackgroundOrigin)
     .tap(data => this.hook.call(this, 'files:update:pre', username, data))
     .then(data => Promise.try(function updateMetadata() {
       const pipeline = redis.pipeline();
