@@ -3,6 +3,7 @@ const fetchData = require('../utils/fetchData.js');
 const isProcessed = require('../utils/isProcessed.js');
 const isUnlisted = require('../utils/isUnlisted.js');
 const stringify = require('../utils/stringify.js');
+const isValidBackgroundOrigin = require('../utils/isValidBackgroundOrigin.js');
 const {
   FILES_DATA,
   FILES_INDEX_TAGS,
@@ -24,7 +25,11 @@ module.exports = function initFileUpdate({ params }) {
   const key = `${FILES_DATA}:${uploadId}`;
 
   return Promise
-    .bind(this, key)
+    .bind(this, meta)
+    // do some extra validation
+    .tap(isValidBackgroundOrigin)
+    // fetch data
+    .return(key)
     .then(fetchData)
     .then(isProcessed)
     .then(isUnlisted)
