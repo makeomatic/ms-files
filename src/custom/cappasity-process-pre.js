@@ -33,9 +33,9 @@ function parseMeta(data) {
 const lua = `
 local balance = redis.call("hget", KEYS[1], ARGV[1]);
 local roles = redis.call("hget", KEYS[1], "roles");
-local isAdmin = roles and string.match(roles, '"admin"');
+local isAdmin = roles and string.match(roles, '"admin"') or nil;
 
-if isAdmin == nil and tonumber(balance) < 1 then
+if tonumber(balance) < 1 and isAdmin == nil then
   return redis.error_reply("insufficient balance");
 end
 
