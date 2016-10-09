@@ -27,23 +27,31 @@ module.exports = function extractMetadata({ files, meta, temp, unlisted, access 
         }
       });
 
-      if (isCappasityUpload(Object.keys(fileTypes))) {
-        // assert constraints
-        if (differentFileTypes === 1) {
+      const cappasityUpload = isCappasityUpload(Object.keys(fileTypes));
+
+      // assert constraints
+      if (differentFileTypes === 1) {
+        if (cappasityUpload) {
           assert.equal(fileTypes['c-preview'], 1, 'must contain exactly one preview');
-        } else {
-          // must always be true if it's not a simple preview upload
-          assert.equal(fileTypes['c-bin'], 1, 'must contain exactly one binary upload');
-          meta.sourceSHA = sourceSHA;
         }
+
+        if (!unlisted) {
+          throw new Errors.HttpStatusError(412, 'following upload must be unlisted');
+        }
+
+        if (!access.setPublic) {
+          throw new Errors.HttpStatusError(412, 'following upload must be public');
+        }
+      } else if (cappasityUpload) {
+        // must always be true if it's not a simple preview upload
+        assert.equal(fileTypes['c-bin'], 1, 'must contain exactly one binary upload');
+        meta.sourceSHA = sourceSHA;
 
         if (meta.export && !temp) {
           throw new Errors.HttpStatusError(412, 'temp must be set to true');
         }
-      } else if (!unlisted) {
-        throw new Errors.HttpStatusError(412, 'uploads of types other than cappasity-models must be unlisted');
-      } else if (!access.setPublic) {
-        throw new Errors.HttpStatusError(412, 'uploads of types other than cappasity-models must be public');
+      } else {
+        throw new Errors.HttpStatusError(400, 'should be either a cappasity model or a single image');
       }
     });
 };
