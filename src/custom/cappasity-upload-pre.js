@@ -3,7 +3,7 @@ const Promise = require('bluebird');
 const assert = require('assert');
 const isCappasityUpload = require('../utils/isCappasityUpload');
 
-module.exports = function extractMetadata({ files, meta, temp }) {
+module.exports = function extractMetadata({ files, meta, temp, unlisted, access }) {
   let sourceSHA;
 
   return Promise
@@ -36,10 +36,14 @@ module.exports = function extractMetadata({ files, meta, temp }) {
           assert.equal(fileTypes['c-bin'], 1, 'must contain exactly one binary upload');
           meta.sourceSHA = sourceSHA;
         }
-      }
 
-      if (meta.export && !temp) {
-        throw new Errors.HttpStatusError(412, 'temp must be set to true');
+        if (meta.export && !temp) {
+          throw new Errors.HttpStatusError(412, 'temp must be set to true');
+        }
+      } else if (!unlisted) {
+        throw new Errors.HttpStatusError(412, 'uploads of types other than cappasity-models must be unlisted');
+      } else if (!access.setPublic) {
+        throw new Errors.HttpStatusError(412, 'uploads of types other than cappasity-models must be public');
       }
     });
 };
