@@ -1,13 +1,6 @@
 const Promise = require('bluebird');
-const { FILES_OWNER_FIELD } = require('../constant.js');
+const { FILES_OWNER_FIELD, CAPPASITY_TYPE_MAP } = require('../constant.js');
 const { HttpStatusError } = require('common-errors');
-
-const TYPE_MAP = {
-  'c-preview': 'preview',
-  'c-bin': 'model',
-  'c-texture': 'texture',
-  'c-archive': 'archive',
-};
 
 function parseMeta(data) {
   const parsedFiles = typeof data.files === 'string' ? JSON.parse(data.files) : data.files;
@@ -15,7 +8,7 @@ function parseMeta(data) {
 
   let textures = 0;
   parsedFiles.forEach(({ type, filename }) => {
-    const responsibility = TYPE_MAP[type];
+    const responsibility = CAPPASITY_TYPE_MAP[type];
     if (responsibility === 'texture') {
       output[`texture_${textures}`] = filename;
       textures += 1;
