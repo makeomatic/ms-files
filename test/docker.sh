@@ -41,7 +41,6 @@ if [[ "$SKIP_REBUILD" != "1" ]]; then
 fi
 
 echo "running tests"
-echo $TESTS
 for fn in $TESTS; do
   echo "running tests for $fn"
   docker exec tester /bin/sh -c "$NODE $COVER --dir ./coverage/${fn##*/} $MOCHA -- $fn"
