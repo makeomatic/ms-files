@@ -57,3 +57,10 @@ exports.FIELDS_TO_STRINGIFY = [
   exports.FILES_CONTROLS_FIELD,
   exports.FILES_BACKGROUND_IMAGE_FIELD,
 ];
+
+exports.CAPPASITY_TYPE_MAP = {
+  'c-preview': 'preview',
+  'c-bin': 'model',
+  'c-texture': 'texture',
+  'c-archive': 'archive',
+};

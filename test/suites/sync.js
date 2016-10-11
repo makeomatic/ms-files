@@ -25,6 +25,8 @@ describe('finish upload suite', function suite() {
   // tear-down
   after('stop service', stopService);
 
+  it('...wait while upload completes', () => Promise.delay(10000));
+
   it('runs sync service', function test() {
     return this.send({}, 15000);
   });

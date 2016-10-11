@@ -1,8 +1,9 @@
 const Errors = require('common-errors');
 const Promise = require('bluebird');
 const assert = require('assert');
+const isCappasityUpload = require('../utils/isCappasityUpload');
 
-module.exports = function extractMetadata({ files, meta, temp }) {
+module.exports = function extractMetadata({ files, meta, temp, unlisted, access }) {
   let sourceSHA;
 
   return Promise
@@ -26,17 +27,31 @@ module.exports = function extractMetadata({ files, meta, temp }) {
         }
       });
 
+      const cappasityUpload = isCappasityUpload(Object.keys(fileTypes));
+
       // assert constraints
       if (differentFileTypes === 1) {
-        assert.equal(fileTypes['c-preview'], 1, 'must contain exactly one preview');
-      } else {
+        if (cappasityUpload) {
+          assert.equal(fileTypes['c-preview'], 1, 'must contain exactly one preview');
+        }
+
+        if (!unlisted) {
+          throw new Errors.HttpStatusError(412, 'following upload must be unlisted');
+        }
+
+        if (!access.setPublic) {
+          throw new Errors.HttpStatusError(412, 'following upload must be public');
+        }
+      } else if (cappasityUpload) {
         // must always be true if it's not a simple preview upload
         assert.equal(fileTypes['c-bin'], 1, 'must contain exactly one binary upload');
         meta.sourceSHA = sourceSHA;
-      }
 
-      if (meta.export && !temp) {
-        throw new Errors.HttpStatusError(412, 'temp must be set to true');
+        if (meta.export && !temp) {
+          throw new Errors.HttpStatusError(412, 'temp must be set to true');
+        }
+      } else {
+        throw new Errors.HttpStatusError(400, 'should be either a cappasity model or a single image');
       }
     });
 };
