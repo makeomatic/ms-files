@@ -36,7 +36,7 @@ end
 local exported = redis.call("hsetnx", KEYS[2], ARGV[3], ARGV[4]);
 
 -- if we dont have an admin account - subtract model
-if isAdmin ~= nil and exported == 1 then
+if isAdmin == nil and exported == 1 then
   return redis.call("hincrby", KEYS[1], ARGV[1], ARGV[2]);
 end
 
