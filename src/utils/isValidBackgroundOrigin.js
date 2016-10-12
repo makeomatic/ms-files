@@ -17,7 +17,8 @@ module.exports = function isValidBackgroundOrigin(data) {
      *  https://github.com/makeomatic/ms-files/blob/master/src/custom/cappasity-select-bucket.js#L10
      */
     const provider = this.provider('upload', data);
-    const isValidOrigin = url.match(`^${provider.cname}/${FILENAME_RE}$`);
+    const pattern = `^${provider.cname}/${FILENAME_RE}$`.replace(/\./g, '\\.');
+    const isValidOrigin = url.match(pattern);
 
     if (!isValidOrigin) {
       throw new HttpStatusError(412, 'invalid origin');
