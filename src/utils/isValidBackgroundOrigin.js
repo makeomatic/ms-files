@@ -6,7 +6,13 @@ module.exports = function isValidBackgroundOrigin(data) {
 
   if (backgroundImage) {
     const { url } = backgroundImage;
-    const provider = this.provider('update', data);
+
+    /**
+     *  Using 'upload' selector here since background images are always
+     *  contained in the persistent store
+     *  https://github.com/makeomatic/ms-files/blob/master/src/custom/cappasity-select-bucket.js#L10
+     */
+    const provider = this.provider('upload', data);
     const isValidOrigin = url.indexOf(provider.cname) === 0;
 
     if (!isValidOrigin) {
