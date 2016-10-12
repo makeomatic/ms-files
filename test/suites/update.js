@@ -127,16 +127,8 @@ describe('update suite', function suite() {
     before('upload background image', function upload() {
       return initAndUpload(backgroundData, false).call(this)
         .then(downloadFile.bind(this))
-        .then(({ files, urls }) => { // eslint-disable-line no-shadow
-          const url = urls[0];
-          const file = files[0];
-          const { filename, contentType } = file;
-
-          meta.backgroundImage = {
-            url,
-            filename,
-            contentType,
-          };
+        .then(({ urls }) => {
+          meta.backgroundImage = urls[0];
         });
     });
 
@@ -153,13 +145,32 @@ describe('update suite', function suite() {
             username,
           })
           .tap(verifyResult => {
-            assert.deepEqual(verifyResult.file.backgroundImage, meta.backgroundImage);
+            assert.equal(verifyResult.file.backgroundImage, meta.backgroundImage);
+          });
+        });
+    });
+
+    it('able to unset backgroundImage passing an empty string', function test() {
+      meta.backgroundImage = '';
+      return this
+        .send({ uploadId: this.response.uploadId, username, meta }, 45000)
+        .reflect()
+        .then(inspectPromise())
+        .then(result => {
+          assert.equal(result, true);
+
+          return getInfo.call(this, {
+            filename: this.response.uploadId,
+            username,
+          })
+          .tap(verifyResult => {
+            assert.equal(verifyResult.file.backgroundImage, meta.backgroundImage);
           });
         });
     });
 
     it('failed to update background image due to wrong origin', function test() {
-      meta.backgroundImage.url = faker.image.imageUrl();
+      meta.backgroundImage = faker.image.imageUrl();
       return this
         .send({ uploadId: this.response.uploadId, username, meta }, 45000)
         .reflect()
