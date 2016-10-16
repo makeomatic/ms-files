@@ -3,6 +3,7 @@ const {
   FILES_PLAYER_AUTORUN,
   FILES_PLAYER_CLOSEBUTTON,
   FILES_PLAYER_HIDECONTROLS,
+  FILES_PLAYER_LOGO,
 } = require('../constant.js');
 
 const defaultPlayerOpts = {
@@ -22,6 +23,11 @@ const defaultPlayerOpts = {
     default: 0,
     description: 'Hide player controls',
     paid: true,
+  },
+  [FILES_PLAYER_LOGO]: {
+    type: 'boolean',
+    default: 1,
+    description: 'Show logo',
   },
 };
 
