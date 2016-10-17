@@ -28,6 +28,7 @@ const defaultPlayerOpts = {
     type: 'boolean',
     default: 1,
     description: 'Show logo',
+    paid: true,
   },
 };
 
