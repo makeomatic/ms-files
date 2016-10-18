@@ -11,7 +11,6 @@ const defaultPlayerOpts = {
     type: 'boolean',
     default: 0,
     description: 'Auto-start player',
-    paid: true,
   },
   [FILES_PLAYER_CLOSEBUTTON]: {
     type: 'boolean',
