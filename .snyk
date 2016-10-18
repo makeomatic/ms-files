@@ -1,0 +1,10 @@
+version: v1.5.0
+ignore: {}
+patch:
+  'npm:request:20160119':
+    - ms-files-gce > gcs-resumable-upload > google-auto-auth > google-auth-library > request:
+        patched: '2016-10-18T11:21:53.045Z'
+    - ms-files-gce > @google-cloud/storage > gcs-resumable-upload > google-auto-auth > google-auth-library > request:
+        patched: '2016-10-18T11:21:53.045Z'
+    - ms-files-gce > @google-cloud/storage > @google-cloud/common > google-auto-auth > google-auth-library > request:
+        patched: '2016-10-18T11:21:53.045Z'
