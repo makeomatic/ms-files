@@ -26,6 +26,7 @@ const defaultPlayerOpts = {
   [FILES_PLAYER_LOGO]: {
     type: 'boolean',
     default: 1,
+    paidDefault: 0,
     description: 'Show logo',
     paid: true,
   },
