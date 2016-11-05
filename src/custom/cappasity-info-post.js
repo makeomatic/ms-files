@@ -3,6 +3,7 @@ const {
   FILES_PLAYER_AUTORUN,
   FILES_PLAYER_CLOSEBUTTON,
   FILES_PLAYER_HIDECONTROLS,
+  FILES_PLAYER_HIDEFULLSCREEN,
   FILES_PLAYER_LOGO,
 } = require('../constant.js');
 
@@ -29,6 +30,11 @@ const defaultPlayerOpts = {
     default: 1,
     description: 'Show logo',
     paid: true,
+  },
+  [FILES_PLAYER_HIDEFULLSCREEN]: {
+    type: 'boolean',
+    default: 0,
+    description: 'Hide fullscreen button',
   },
 };
 

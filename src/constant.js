@@ -49,6 +49,7 @@ module.exports = exports = {
   FILES_PLAYER_CLOSEBUTTON: 'closebutton',
   FILES_PLAYER_HIDECONTROLS: 'hidecontrols',
   FILES_PLAYER_LOGO: 'logo',
+  FILES_PLAYER_HIDEFULLSCREEN: 'hidefullscreen',
 };
 
 exports.FIELDS_TO_STRINGIFY = [
