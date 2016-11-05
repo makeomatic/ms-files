@@ -10,7 +10,7 @@ const path = require('path');
 const THREE_HOURS = 1000 * 60 * 60 * 3;
 
 // basename
-const Extension = name => path.basename(name).replace(/^[^\.]+\.(.*)$/, '$1');
+const Extension = name => path.basename(name).replace(/^[^.]+\.(.*)$/, '$1');
 const PromptToSave = (counter, file, name) => {
   const ext = Extension(file);
   const val = (counter[ext] || 0) + 1;
