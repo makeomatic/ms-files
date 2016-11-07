@@ -30,7 +30,7 @@ const {
  * @return {Promise}
  */
 module.exports = function initFileUpload({ params }) {
-  const { files, meta, username, temp, unlisted, origin } = params;
+  const { files, meta, username, temp, unlisted, origin, resumable, expires } = params;
   const { redis, config: { uploadTTL } } = this;
 
   const provider = this.provider('upload', params);
@@ -38,6 +38,7 @@ module.exports = function initFileUpload({ params }) {
   const uploadId = uuid.v4();
   const isPublic = get(params, 'access.setPublic', false);
   const bucketName = provider.bucket.name;
+  const signingMethod = resumable ? 'initResumableUpload' : 'createSignedURL';
 
   return Promise
     .bind(this, ['files:upload:pre', params])
@@ -69,14 +70,29 @@ module.exports = function initFileUpload({ params }) {
         metadata.contentType = 'text/plain';
       }
 
+      // basic extension headers
+      const extensionHeaders = {};
+
+      if (isPublic) {
+        extensionHeaders['x-goog-acl'] = 'public-read';
+      }
+
       return Promise.props({
         ...metadata,
         type,
         filename,
-        location: provider.initResumableUpload({
+        location: provider[signingMethod]({
+          // simple upload
+          action: 'write',
+          md5: metadata.md5Hash,
+          type: metadata.contentType,
+          resource: filename,
+          extensionHeaders,
+          expires: Date.now() + (expires * 1000),
+          // resumable-upload
           filename,
           origin,
-          predefinedAcl: isPublic ? 'publicRead' : '',
+          predefinedAcl: extensionHeaders['x-goog-acl'] || '',
           metadata: {
             ...metadata,
           },

@@ -48,3 +48,4 @@ docker-release.sh
 .eslintrc
 .gitignore
 .npmignore
+pk.json

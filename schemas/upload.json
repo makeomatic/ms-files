@@ -58,6 +58,14 @@
     "origin": {
       "type": "string",
       "format": "uri"
+    },
+    "resumable": {
+      "type": "boolean",
+      "default": true
+    },
+    "expires": {
+      "type": "integer",
+      "default": 900
     }
   }
 }
