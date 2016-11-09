@@ -32,13 +32,13 @@ module.exports = function removeFile({ params }) {
       const { files } = data;
 
       return Promise
-        .mapSeries(files, (file) => {
+        .map(files, (file) => {
           return provider
             .remove(file.filename)
             .catch({ code: 404 }, (err) => {
               this.log.warn('file %s was already deleted', file.filename, err.code, err.message);
             });
-        })
+        }, { concurrency: 20 })
         .then(() => {
           const pipeline = redis.pipeline();
           pipeline

@@ -1,18 +1,17 @@
 #!/usr/bin/env node
 
-'use strict';
-
-var dir;
-if (process.env.NODE_ENV === 'production') {
-  dir = '../lib';
-} else {
-  dir = '../src';
+let dir;
+try {
   require('babel-register');
+  dir = '../src';
+} catch (e) {
+  dir = '../lib';
 }
 
 // accepts conf through .env file
 // suitable for configuring this in the docker env
 const configuration = require('ms-conf').get('/');
+// eslint-disable-next-line import/no-dynamic-require
 const Service = require(dir);
 const service = new Service(configuration);
 
