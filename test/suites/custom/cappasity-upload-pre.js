@@ -13,6 +13,7 @@ describe('cappasity-upload-pre hook test suite', function suite() {
         type: 'c-archive',
       }],
       meta: {},
+      resumable: true,
     };
 
     it('should pass', function test() {
@@ -108,10 +109,10 @@ describe('cappasity-upload-pre hook test suite', function suite() {
       const payload = {
         ...data,
         files: [{
-          type: 'simple',
+          type: 'c-simple',
         }],
         resumable: false,
-        unlisted: undefined,
+        uploadType: 'simple',
       };
 
       return hook(payload)
@@ -119,14 +120,13 @@ describe('cappasity-upload-pre hook test suite', function suite() {
         .then(inspectPromise());
     });
 
-    it('should fail when passed simple model with options of resumable upload', function test() {
+    it('should fail when passed a simpe model, but uploadType is not defined', function test() {
       const payload = {
         ...data,
         files: [{
-          type: 'simple',
+          type: 'c-simple',
         }],
         resumable: false,
-        temp: true,
       };
 
       return hook(payload)

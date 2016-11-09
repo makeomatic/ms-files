@@ -143,22 +143,29 @@ function modelBackgroundImageMessage(background, owner) {
   };
 }
 
-function modelSimpleUpload(simple, owner) {
+function modelSimpleUpload(simple, preview, owner) {
   const files = values(simple);
 
   return {
-    files,
+    files: [...files, preview],
     message: {
       username: owner,
       meta: {
         name: 'background',
       },
-      files: files.map(file => ({
-        type: 'image',
-        contentType: 'image/jpeg',
-        contentLength: file.length,
-        md5Hash: md5(file).toString('hex'),
-      })),
+      files: files
+        .map(file => ({
+          type: 'c-simple',
+          contentType: 'image/jpeg',
+          contentLength: file.length,
+          md5Hash: md5(file).toString('hex'),
+        }))
+        .concat({
+          type: 'c-preview',
+          contentType: 'image/jpeg',
+          contentLength: preview.length,
+          md5Hash: md5(preview).toString('hex'),
+        }),
       resumable: false,
     },
   };
@@ -391,7 +398,7 @@ const meta = {
 const background = readFile('background');
 const backgroundData = modelBackgroundImageMessage(background, owner);
 const simple = readFile('simple');
-const simpleData = modelSimpleUpload(simple, owner);
+const simpleData = modelSimpleUpload(simple, preview, owner);
 
 // Public API
 module.exports = exports = {

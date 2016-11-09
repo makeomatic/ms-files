@@ -164,6 +164,7 @@ describe('upload suite', function suite() {
           access: {
             setPublic: true,
           },
+          uploadType: 'simple',
         })
         .reflect()
         .then(inspectPromise())
@@ -210,6 +211,23 @@ describe('upload suite', function suite() {
           assert.equal(resp.statusCode, 200);
           return null;
         });
+    });
+
+    it('should fail when trying to upload non-resumable upload with resumable modifiers', function type() {
+      const { message } = simpleData;
+
+      return this
+        .send({
+          ...message,
+          resumable: false,
+          access: {
+            setPublic: true,
+          },
+          unlisted: true,
+          temp: true,
+        })
+        .reflect()
+        .then(inspectPromise(false));
     });
   });
 });

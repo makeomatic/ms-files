@@ -5,7 +5,7 @@
   "switch": [
     {
       "if": {
-        "required": [ "resumable" ],
+        "required": ["resumable"],
         "properties": {
           "resumable": {
             "constant": false
@@ -13,10 +13,40 @@
         }
       },
       "then": {
+        "not": {
+          "properties": {
+            "unlisted": {
+              "constant": true
+            },
+            "temp": {
+              "constant": true
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "required": ["uploadType"],
+        "properties": {
+          "uploadType": {
+            "constant": "simple"
+          }
+        }
+      },
+      "then": {
         "properties": {
           "files": {
             "items": {
-              "$ref": "common#/definitions/image"
+              "$ref": "common#/definitions/cappasity-image"
+            },
+            "contains": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "constant": "c-preview"
+                }
+              }
             }
           }
         }
@@ -87,6 +117,10 @@
     "unlisted": {
       "type": "boolean",
       "default": false
+    },
+    "uploadType": {
+      "type": "string",
+      "enum": [ "simple", "image", "background", "model" ]
     }
   }
 }

@@ -63,4 +63,5 @@ exports.CAPPASITY_TYPE_MAP = {
   'c-bin': 'model',
   'c-texture': 'texture',
   'c-archive': 'archive',
+  'c-simple': 'simple',
 };
