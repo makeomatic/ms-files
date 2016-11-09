@@ -38,7 +38,6 @@ module.exports = function initFileUpload({ params }) {
   const uploadId = uuid.v4();
   const isPublic = get(params, 'access.setPublic', false);
   const bucketName = provider.bucket.name;
-  const signingMethod = resumable ? 'initResumableUpload' : 'createSignedURL';
 
   return Promise
     .bind(this, ['files:upload:pre', params])
@@ -77,26 +76,37 @@ module.exports = function initFileUpload({ params }) {
         extensionHeaders['x-goog-acl'] = 'public-read';
       }
 
-      return Promise.props({
-        ...metadata,
-        type,
-        filename,
-        location: provider[signingMethod]({
-          // simple upload
+      let location;
+      if (resumable) {
+          // resumable-upload
+        const acl = extensionHeaders['x-goog-acl'];
+        const predefinedAcl = acl ? acl.replace(/-/g, '') : '';
+
+        location = provider.initResumableUpload({
+          filename,
+          origin,
+          predefinedAcl,
+          metadata: {
+            ...metadata,
+          },
+        });
+      } else {
+        // simple upload
+        location = provider.createSignedURL({
           action: 'write',
           md5: metadata.md5Hash,
           type: metadata.contentType,
           resource: filename,
           extensionHeaders,
           expires: Date.now() + (expires * 1000),
-          // resumable-upload
-          filename,
-          origin,
-          predefinedAcl: extensionHeaders['x-goog-acl'] || '',
-          metadata: {
-            ...metadata,
-          },
-        }),
+        });
+      }
+
+      return Promise.props({
+        ...metadata,
+        type,
+        filename,
+        location,
       });
     })
     .then((parts) => {

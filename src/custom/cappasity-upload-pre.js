@@ -3,7 +3,7 @@ const Promise = require('bluebird');
 const assert = require('assert');
 const isCappasityUpload = require('../utils/isCappasityUpload');
 
-module.exports = function extractMetadata({ files, meta, temp, unlisted, access }) {
+module.exports = function extractMetadata({ files, meta, temp, unlisted, access, resumable }) {
   let sourceSHA;
 
   return Promise
@@ -33,6 +33,18 @@ module.exports = function extractMetadata({ files, meta, temp, unlisted, access 
       if (differentFileTypes === 1) {
         if (cappasityUpload) {
           assert.equal(fileTypes['c-preview'], 1, 'must contain exactly one preview');
+        }
+
+        if (!resumable) {
+          if (unlisted) {
+            throw new Errors.HttpStatusError(412, 'simple upload could not be unlisted');
+          }
+
+          if (temp) {
+            throw new Errors.HttpStatusError(412, 'simple upload could not be temp');
+          }
+
+          return;
         }
 
         if (!unlisted) {

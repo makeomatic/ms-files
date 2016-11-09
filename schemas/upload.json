@@ -2,6 +2,27 @@
   "id": "upload",
   "type": "object",
   "required": ["files", "meta", "username"],
+  "switch": [
+    {
+      "if": {
+        "required": [ "resumable" ],
+        "properties": {
+          "resumable": {
+            "constant": false
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "files": {
+            "items": {
+              "$ref": "common#/definitions/image"
+            }
+          }
+        }
+      }
+    }
+  ],
   "properties": {
     "files": {
       "type": "array",
@@ -47,14 +68,6 @@
         }
       }
     },
-    "temp": {
-      "type": "boolean",
-      "default": false
-    },
-    "unlisted": {
-      "type": "boolean",
-      "default": false
-    },
     "origin": {
       "type": "string",
       "format": "uri"
@@ -66,6 +79,14 @@
     "expires": {
       "type": "integer",
       "default": 900
+    },
+    "temp": {
+      "type": "boolean",
+      "default": false
+    },
+    "unlisted": {
+      "type": "boolean",
+      "default": false
     }
   }
 }

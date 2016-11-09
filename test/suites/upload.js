@@ -12,6 +12,7 @@ const {
   bindSend,
   uploadFiles,
   modelData,
+  simpleData,
   owner,
 } = require('../helpers/utils.js');
 
@@ -150,11 +151,15 @@ describe('upload suite', function suite() {
     });
   });
 
-  describe.only('signed url', function signedURLSuite() {
+  describe('signed url', function signedURLSuite() {
+    let response;
+
     it('initiates signed URL upload', function test() {
+      const { message } = simpleData;
+
       return this
         .send({
-          ...modelData.message,
+          ...message,
           resumable: false,
           access: {
             setPublic: true,
@@ -162,8 +167,48 @@ describe('upload suite', function suite() {
         })
         .reflect()
         .then(inspectPromise())
-        .then((resp) => {
-          // TODO: complete the test
+        .then((rsp) => {
+          assert.equal(rsp.name, message.meta.name);
+          assert.equal(rsp.owner, message.username);
+          assert.ok(rsp.uploadId);
+          assert.ok(rsp.startedAt);
+          assert.ok(rsp.files);
+          assert.ok(rsp.public);
+          assert.equal(rsp.status, STATUS_PENDING);
+          assert.equal(rsp.parts, message.files.length);
+
+          // verify that location is present
+          rsp.files.forEach((part) => {
+            assert.ok(part.location);
+
+            // verify upload link
+            const location = url.parse(part.location, true);
+            assert.equal(location.protocol, 'https:');
+            assert.equal(location.hostname, 'storage.googleapis.com');
+            assert.equal(decodeURIComponent(location.pathname), `/${bucketName}/${part.filename}`);
+            assert.ok(location.query.GoogleAccessId);
+            assert.ok(location.query.Signature);
+            assert.ok(location.query.Expires);
+
+            // verify that filename contains multiple parts
+            const [ownerHash, uploadId, filename] = part.filename.split('/');
+            assert.equal(md5(owner), ownerHash);
+            assert.equal(rsp.uploadId, uploadId);
+            assert.ok(filename);
+          });
+
+          // save for the next
+          response = rsp;
+        });
+    });
+
+    it('able to upload files', function test() {
+      return uploadFiles(simpleData, response)
+        .reflect()
+        .then(inspectPromise())
+        .map((resp) => {
+          assert.equal(resp.statusCode, 200);
+          return null;
         });
     });
   });
