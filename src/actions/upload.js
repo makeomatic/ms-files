@@ -128,7 +128,6 @@ module.exports = function initFileUpload({ params }) {
       const fileData = {
         ...meta,
         ...serialized,
-        uploadType,
         uploadId,
         startedAt: Date.now(),
         files: JSON.stringify(parts),
@@ -138,6 +137,10 @@ module.exports = function initFileUpload({ params }) {
         [FILES_OWNER_FIELD]: username,
         [FILES_BUCKET_FIELD]: bucketName,
       };
+
+      if (uploadType) {
+        fileData.uploadType = uploadType;
+      }
 
       if (isPublic) {
         fileData[FILES_PUBLIC_FIELD] = 1;
