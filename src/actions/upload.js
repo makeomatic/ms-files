@@ -30,7 +30,17 @@ const {
  * @return {Promise}
  */
 module.exports = function initFileUpload({ params }) {
-  const { files, meta, username, temp, unlisted, origin, resumable, expires } = params;
+  const {
+    files,
+    meta,
+    username,
+    temp,
+    unlisted,
+    origin,
+    resumable,
+    expires,
+    uploadType,
+  } = params;
   const { redis, config: { uploadTTL } } = this;
 
   const provider = this.provider('upload', params);
@@ -118,6 +128,7 @@ module.exports = function initFileUpload({ params }) {
       const fileData = {
         ...meta,
         ...serialized,
+        uploadType,
         uploadId,
         startedAt: Date.now(),
         files: JSON.stringify(parts),

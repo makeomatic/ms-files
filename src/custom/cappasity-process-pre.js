@@ -9,6 +9,12 @@ function parseMeta(data) {
   let textures = 0;
   parsedFiles.forEach(({ type, filename }) => {
     const responsibility = CAPPASITY_TYPE_MAP[type];
+
+    /** skip for simple uploads */
+    if (!responsibility) {
+      return;
+    }
+
     if (responsibility === 'texture') {
       output[`texture_${textures}`] = filename;
       textures += 1;
