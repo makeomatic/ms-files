@@ -2,6 +2,57 @@
   "id": "upload",
   "type": "object",
   "required": ["files", "meta", "username"],
+  "switch": [
+    {
+      "if": {
+        "required": ["resumable"],
+        "properties": {
+          "resumable": {
+            "constant": false
+          }
+        }
+      },
+      "then": {
+        "not": {
+          "properties": {
+            "unlisted": {
+              "constant": true
+            },
+            "temp": {
+              "constant": true
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "required": ["uploadType"],
+        "properties": {
+          "uploadType": {
+            "constant": "simple"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "files": {
+            "items": {
+              "$ref": "common#/definitions/cappasity-image"
+            },
+            "contains": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "constant": "c-preview"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  ],
   "properties": {
     "files": {
       "type": "array",
@@ -47,6 +98,18 @@
         }
       }
     },
+    "origin": {
+      "type": "string",
+      "format": "uri"
+    },
+    "resumable": {
+      "type": "boolean",
+      "default": true
+    },
+    "expires": {
+      "type": "integer",
+      "default": 900
+    },
     "temp": {
       "type": "boolean",
       "default": false
@@ -55,9 +118,9 @@
       "type": "boolean",
       "default": false
     },
-    "origin": {
+    "uploadType": {
       "type": "string",
-      "format": "uri"
+      "enum": [ "simple", "image", "background", "model" ]
     }
   }
 }

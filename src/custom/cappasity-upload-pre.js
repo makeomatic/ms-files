@@ -3,8 +3,13 @@ const Promise = require('bluebird');
 const assert = require('assert');
 const isCappasityUpload = require('../utils/isCappasityUpload');
 
-module.exports = function extractMetadata({ files, meta, temp, unlisted, access }) {
+module.exports = function extractMetadata({ files, meta, temp, unlisted, access, uploadType }) {
   let sourceSHA;
+
+  // use relevant validation
+  if (uploadType) {
+    return Promise.resolve(null);
+  }
 
   return Promise
     .try(function verifyUploadData() {

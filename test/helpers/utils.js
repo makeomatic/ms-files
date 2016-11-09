@@ -13,7 +13,9 @@ const assert = require('assert');
 const Files = require('../../src');
 const config = require('./config.js');
 const partial = require('lodash/partial');
+const values = require('lodash/values');
 const zlib = require('zlib');
+const url = require('url');
 
 // helpers
 const cache = {};
@@ -21,11 +23,27 @@ const cache = {};
 // readFile into memory and return it
 function readFile(name, alias) {
   const filePath = path.resolve(__dirname, '../fixtures', name);
+
   if (cache[name]) {
     return cache[name];
   }
 
-  const file = fs.readFileSync(filePath);
+  const isDirectory = fs.statSync(filePath).isDirectory();
+
+  let file;
+  if (isDirectory) {
+    const list = fs.readdirSync(filePath);
+
+    file = list.reduce((acc, filename) => {
+      if (!acc[filename]) {
+        acc[filename] = readFile(`${filePath}/${filename}`, `${alias}/${filename}`);
+      }
+      return acc;
+    }, {});
+  } else {
+    file = fs.readFileSync(filePath);
+  }
+
   cache[alias || name] = cache[name] = file;
   return file;
 }
@@ -36,6 +54,7 @@ readFile('shoe_tex_0.jpg', 'texture-1');
 readFile('shoe_tex_1.jpg', 'texture-2');
 readFile('shoe_preview.jpg', 'preview');
 readFile('background.jpg', 'background');
+readFile('brulux01', 'simple');
 
 //
 // helper for cappasity model uploader
@@ -124,6 +143,34 @@ function modelBackgroundImageMessage(background, owner) {
   };
 }
 
+function modelSimpleUpload(simple, preview, owner) {
+  const files = values(simple);
+
+  return {
+    files: [...files, preview],
+    message: {
+      username: owner,
+      meta: {
+        name: 'background',
+      },
+      files: files
+        .map(file => ({
+          type: 'c-simple',
+          contentType: 'image/jpeg',
+          contentLength: file.length,
+          md5Hash: md5(file).toString('hex'),
+        }))
+        .concat({
+          type: 'c-preview',
+          contentType: 'image/jpeg',
+          contentLength: preview.length,
+          md5Hash: md5(preview).toString('hex'),
+        }),
+      resumable: false,
+    },
+  };
+}
+
 //
 // upload single file
 //
@@ -134,6 +181,28 @@ function upload(location, file) {
     headers: {
       'content-length': file.length,
     },
+    simple: false,
+    resolveWithFullResponse: true,
+  });
+}
+
+function uploadSimple(meta, file, isPublic) {
+  const { query: { Expires } } = url.parse(meta.location);
+
+  const headers = {
+    'Content-MD5': meta.md5Hash,
+    'Cache-Control': `public,max-age=${Expires}`,
+    'Content-Type': meta.contentType,
+  };
+
+  if (isPublic) {
+    headers['x-goog-acl'] = 'public-read';
+  }
+
+  return request.put({
+    url: meta.location,
+    body: file,
+    headers,
     simple: false,
     resolveWithFullResponse: true,
   });
@@ -150,7 +219,8 @@ function uploadFiles(msg, rsp) {
     .map(rsp.files, (part, idx) => {
       const file = files[idx];
       const location = part.location;
-      return upload(location, file);
+      const isSimple = location.indexOf('Signature') !== -1;
+      return isSimple ? uploadSimple(part, file, rsp.public) : upload(location, file);
     });
 }
 
@@ -327,6 +397,8 @@ const meta = {
 };
 const background = readFile('background');
 const backgroundData = modelBackgroundImageMessage(background, owner);
+const simple = readFile('simple');
+const simpleData = modelSimpleUpload(simple, preview, owner);
 
 // Public API
 module.exports = exports = {
@@ -335,8 +407,10 @@ module.exports = exports = {
   textures,
   preview,
   background,
+  simple,
   modelData,
   backgroundData,
+  simpleData,
   config,
   upload,
   readFile,

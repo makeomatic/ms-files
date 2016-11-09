@@ -12,6 +12,7 @@ const {
   bindSend,
   uploadFiles,
   modelData,
+  simpleData,
   owner,
 } = require('../helpers/utils.js');
 
@@ -26,125 +27,207 @@ describe('upload suite', function suite() {
   after('stop service', stopService);
   before('helpers', bindSend(route));
 
-  it('verifies input data and rejects on invalid format', function test() {
-    return this
-      .send({ ...modelData.message, username: false })
-      .reflect()
-      .then(inspectPromise(false));
-  });
+  describe('resumable upload suite', function resumableUploadSuite() {
+    it('verifies input data and rejects on invalid format', function test() {
+      return this
+        .send({ ...modelData.message, username: false })
+        .reflect()
+        .then(inspectPromise(false));
+    });
 
-  it('initiates upload and returns correct response format', function test() {
-    const message = modelData.message;
+    it('initiates upload and returns correct response format', function test() {
+      const message = modelData.message;
 
-    return this
-      .send(message, 45000)
-      .reflect()
-      .then(inspectPromise())
-      .then(rsp => {
-        assert.equal(rsp.name, message.meta.name);
-        assert.equal(rsp.owner, message.username);
-        assert.ok(rsp.uploadId);
-        assert.ok(rsp.startedAt);
-        assert.ok(rsp.files);
-        assert.ifError(rsp.public);
-        assert.equal(rsp.status, STATUS_PENDING);
-        assert.equal(rsp.parts, message.files.length);
-        assert.deepEqual(rsp.controlsData, message.meta.controlsData);
+      return this
+        .send(message, 45000)
+        .reflect()
+        .then(inspectPromise())
+        .then((rsp) => {
+          assert.equal(rsp.name, message.meta.name);
+          assert.equal(rsp.owner, message.username);
+          assert.ok(rsp.uploadId);
+          assert.ok(rsp.startedAt);
+          assert.ok(rsp.files);
+          assert.ifError(rsp.public);
+          assert.equal(rsp.status, STATUS_PENDING);
+          assert.equal(rsp.parts, message.files.length);
+          assert.deepEqual(rsp.controlsData, message.meta.controlsData);
 
-        // verify that location is present
-        rsp.files.forEach(part => {
-          assert.ok(part.location);
+          // verify that location is present
+          rsp.files.forEach((part) => {
+            assert.ok(part.location);
 
-          // verify upoad link
-          const location = url.parse(part.location, true);
-          assert.equal(location.protocol, 'https:');
-          assert.equal(location.hostname, 'www.googleapis.com');
-          assert.equal(location.pathname, `/upload/storage/v1/b/${bucketName}/o`);
-          assert.equal(location.query.name, part.filename);
-          assert.equal(location.query.uploadType, 'resumable');
-          assert.ok(location.query.upload_id);
+            // verify upoad link
+            const location = url.parse(part.location, true);
+            assert.equal(location.protocol, 'https:');
+            assert.equal(location.hostname, 'www.googleapis.com');
+            assert.equal(location.pathname, `/upload/storage/v1/b/${bucketName}/o`);
+            assert.equal(location.query.name, part.filename);
+            assert.equal(location.query.uploadType, 'resumable');
+            assert.ok(location.query.upload_id);
 
-          // verify that filename contains multiple parts
-          const [ownerHash, uploadId, filename] = part.filename.split('/');
-          assert.equal(md5(owner), ownerHash);
-          assert.equal(rsp.uploadId, uploadId);
-          assert.ok(filename);
+            // verify that filename contains multiple parts
+            const [ownerHash, uploadId, filename] = part.filename.split('/');
+            assert.equal(md5(owner), ownerHash);
+            assert.equal(rsp.uploadId, uploadId);
+            assert.ok(filename);
+          });
+
+          // save for the next
+          this.response = rsp;
         });
+    });
 
-        // save for the next
-        this.response = rsp;
-      });
-  });
-
-  it('upload is possible based on the returned data', function test() {
-    return uploadFiles(modelData, this.response)
-      .reflect()
-      .then(inspectPromise())
-      .map(resp => {
-        assert.equal(resp.statusCode, 200);
-        return null;
-      });
-  });
-
-  it('initiates public upload and returns correct response format', function test() {
-    const message = modelData.message;
-
-    return this
-      .send({
-        ...message,
-        access: {
-          setPublic: true,
-        },
-      }, 45000)
-      .reflect()
-      .then(inspectPromise())
-      .then(rsp => {
-        assert.equal(rsp.name, message.meta.name);
-        assert.equal(rsp.owner, message.username);
-        assert.ok(rsp.uploadId);
-        assert.ok(rsp.startedAt);
-        assert.ok(rsp.files);
-        assert.ok(rsp.public);
-        assert.equal(rsp.status, STATUS_PENDING);
-        assert.equal(rsp.parts, message.files.length);
-
-        // verify that location is present
-        rsp.files.forEach(part => {
-          assert.ok(part.location);
-
-          // verify upoad link
-          const location = url.parse(part.location, true);
-          assert.equal(location.protocol, 'https:');
-          assert.equal(location.hostname, 'www.googleapis.com');
-          assert.equal(location.pathname, `/upload/storage/v1/b/${bucketName}/o`);
-          assert.equal(location.query.name, part.filename);
-          assert.equal(location.query.uploadType, 'resumable');
-          assert.ok(location.query.upload_id);
-
-          // verify that filename contains multiple parts
-          const [ownerHash, uploadId, filename] = part.filename.split('/');
-          assert.equal(md5(owner), ownerHash);
-          assert.equal(rsp.uploadId, uploadId);
-          assert.ok(filename);
+    it('upload is possible based on the returned data', function test() {
+      return uploadFiles(modelData, this.response)
+        .reflect()
+        .then(inspectPromise())
+        .map((resp) => {
+          assert.equal(resp.statusCode, 200);
+          return null;
         });
+    });
 
-        // save for the next
-        this.response = rsp;
-      });
+    it('initiates public upload and returns correct response format', function test() {
+      const message = modelData.message;
+
+      return this
+        .send({
+          ...message,
+          access: {
+            setPublic: true,
+          },
+        }, 45000)
+        .reflect()
+        .then(inspectPromise())
+        .then((rsp) => {
+          assert.equal(rsp.name, message.meta.name);
+          assert.equal(rsp.owner, message.username);
+          assert.ok(rsp.uploadId);
+          assert.ok(rsp.startedAt);
+          assert.ok(rsp.files);
+          assert.ok(rsp.public);
+          assert.equal(rsp.status, STATUS_PENDING);
+          assert.equal(rsp.parts, message.files.length);
+
+          // verify that location is present
+          rsp.files.forEach((part) => {
+            assert.ok(part.location);
+
+            // verify upoad link
+            const location = url.parse(part.location, true);
+            assert.equal(location.protocol, 'https:');
+            assert.equal(location.hostname, 'www.googleapis.com');
+            assert.equal(location.pathname, `/upload/storage/v1/b/${bucketName}/o`);
+            assert.equal(location.query.name, part.filename);
+            assert.equal(location.query.uploadType, 'resumable');
+            assert.ok(location.query.upload_id);
+
+            // verify that filename contains multiple parts
+            const [ownerHash, uploadId, filename] = part.filename.split('/');
+            assert.equal(md5(owner), ownerHash);
+            assert.equal(rsp.uploadId, uploadId);
+            assert.ok(filename);
+          });
+
+          // save for the next
+          this.response = rsp;
+        });
+    });
+
+    it('upload is possible based on the returned data: public', function test() {
+      return uploadFiles(modelData, this.response)
+        .reflect()
+        .then(inspectPromise())
+        .map((resp) => {
+          assert.equal(resp.statusCode, 200);
+          return null;
+        });
+    });
+
+    it('able to download public files right away', function test() {
+      const file = this.response.files[0];
+      return request.get(`https://storage.googleapis.com/${bucketName}/${file.filename}`);
+    });
   });
 
-  it('upload is possible based on the returned data: public', function test() {
-    return uploadFiles(modelData, this.response)
-      .reflect()
-      .then(inspectPromise())
-      .map(resp => {
-        assert.equal(resp.statusCode, 200);
-        return null;
-      });
-  });
+  describe('signed url', function signedURLSuite() {
+    let response;
 
-  it('able to download public files right away', function test() {
-    const file = this.response.files[0];
-    return request.get(`https://storage.googleapis.com/${bucketName}/${file.filename}`);
+    it('initiates signed URL upload', function test() {
+      const { message } = simpleData;
+
+      return this
+        .send({
+          ...message,
+          resumable: false,
+          access: {
+            setPublic: true,
+          },
+          uploadType: 'simple',
+        })
+        .reflect()
+        .then(inspectPromise())
+        .then((rsp) => {
+          assert.equal(rsp.name, message.meta.name);
+          assert.equal(rsp.owner, message.username);
+          assert.ok(rsp.uploadId);
+          assert.ok(rsp.startedAt);
+          assert.ok(rsp.files);
+          assert.ok(rsp.public);
+          assert.equal(rsp.status, STATUS_PENDING);
+          assert.equal(rsp.parts, message.files.length);
+
+          // verify that location is present
+          rsp.files.forEach((part) => {
+            assert.ok(part.location);
+
+            // verify upload link
+            const location = url.parse(part.location, true);
+            assert.equal(location.protocol, 'https:');
+            assert.equal(location.hostname, 'storage.googleapis.com');
+            assert.equal(decodeURIComponent(location.pathname), `/${bucketName}/${part.filename}`);
+            assert.ok(location.query.GoogleAccessId);
+            assert.ok(location.query.Signature);
+            assert.ok(location.query.Expires);
+
+            // verify that filename contains multiple parts
+            const [ownerHash, uploadId, filename] = part.filename.split('/');
+            assert.equal(md5(owner), ownerHash);
+            assert.equal(rsp.uploadId, uploadId);
+            assert.ok(filename);
+          });
+
+          // save for the next
+          response = rsp;
+        });
+    });
+
+    it('able to upload files', function test() {
+      return uploadFiles(simpleData, response)
+        .reflect()
+        .then(inspectPromise())
+        .map((resp) => {
+          assert.equal(resp.statusCode, 200);
+          return null;
+        });
+    });
+
+    it('should fail when trying to upload non-resumable upload with resumable modifiers', function type() {
+      const { message } = simpleData;
+
+      return this
+        .send({
+          ...message,
+          resumable: false,
+          access: {
+            setPublic: true,
+          },
+          unlisted: true,
+          temp: true,
+        })
+        .reflect()
+        .then(inspectPromise(false));
+    });
   });
 });

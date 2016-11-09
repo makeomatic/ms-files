@@ -30,7 +30,17 @@ const {
  * @return {Promise}
  */
 module.exports = function initFileUpload({ params }) {
-  const { files, meta, username, temp, unlisted, origin } = params;
+  const {
+    files,
+    meta,
+    username,
+    temp,
+    unlisted,
+    origin,
+    resumable,
+    expires,
+    uploadType,
+  } = params;
   const { redis, config: { uploadTTL } } = this;
 
   const provider = this.provider('upload', params);
@@ -69,18 +79,44 @@ module.exports = function initFileUpload({ params }) {
         metadata.contentType = 'text/plain';
       }
 
+      // basic extension headers
+      const extensionHeaders = {};
+
+      if (isPublic) {
+        extensionHeaders['x-goog-acl'] = 'public-read';
+      }
+
+      let location;
+      if (resumable) {
+          // resumable-upload
+        const acl = extensionHeaders['x-goog-acl'];
+        const predefinedAcl = acl ? acl.replace(/-/g, '') : '';
+
+        location = provider.initResumableUpload({
+          filename,
+          origin,
+          predefinedAcl,
+          metadata: {
+            ...metadata,
+          },
+        });
+      } else {
+        // simple upload
+        location = provider.createSignedURL({
+          action: 'write',
+          md5: metadata.md5Hash,
+          type: metadata.contentType,
+          resource: filename,
+          extensionHeaders,
+          expires: Date.now() + (expires * 1000),
+        });
+      }
+
       return Promise.props({
         ...metadata,
         type,
         filename,
-        location: provider.initResumableUpload({
-          filename,
-          origin,
-          predefinedAcl: isPublic ? 'publicRead' : '',
-          metadata: {
-            ...metadata,
-          },
-        }),
+        location,
       });
     })
     .then((parts) => {
@@ -101,6 +137,10 @@ module.exports = function initFileUpload({ params }) {
         [FILES_OWNER_FIELD]: username,
         [FILES_BUCKET_FIELD]: bucketName,
       };
+
+      if (uploadType) {
+        fileData.uploadType = uploadType;
+      }
 
       if (isPublic) {
         fileData[FILES_PUBLIC_FIELD] = 1;

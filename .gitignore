@@ -32,3 +32,4 @@ node_modules
 lib
 .env
 .babel
+pk.json

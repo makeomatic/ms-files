@@ -1,4 +1,3 @@
-const assert = require('assert');
 const hook = require('../../../src/custom/cappasity-upload-pre');
 const reject = require('lodash/reject');
 const { inspectPromise } = require('../../helpers/utils');
@@ -14,6 +13,7 @@ describe('cappasity-upload-pre hook test suite', function suite() {
         type: 'c-archive',
       }],
       meta: {},
+      resumable: true,
     };
 
     it('should pass', function test() {
@@ -83,6 +83,7 @@ describe('cappasity-upload-pre hook test suite', function suite() {
         setPublic: true,
       },
       unlisted: true,
+      resumable: true, // backward compability
     };
 
     it('should pass for cappasity preview', function test() {
@@ -102,6 +103,35 @@ describe('cappasity-upload-pre hook test suite', function suite() {
       return hook(payload)
         .reflect()
         .then(inspectPromise());
+    });
+
+    it('should pass for simple model', function test() {
+      const payload = {
+        ...data,
+        files: [{
+          type: 'c-simple',
+        }],
+        resumable: false,
+        uploadType: 'simple',
+      };
+
+      return hook(payload)
+        .reflect()
+        .then(inspectPromise());
+    });
+
+    it('should fail when passed a simpe model, but uploadType is not defined', function test() {
+      const payload = {
+        ...data,
+        files: [{
+          type: 'c-simple',
+        }],
+        resumable: false,
+      };
+
+      return hook(payload)
+        .reflect()
+        .then(inspectPromise(false));
     });
 
     it('should fail when passed a single non-preview, non-background file', function test() {

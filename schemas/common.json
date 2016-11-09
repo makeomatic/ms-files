@@ -107,11 +107,11 @@
       "properties": {
         "type": {
           "type": "string",
-          "enum": ["c-texture", "c-preview"]
+          "enum": ["c-texture", "c-preview", "c-simple"]
         },
         "contentType": {
           "type": "string",
-          "constant": "image/jpeg"
+          "enum": ["image/jpeg", "image/png"]
         },
         "contentLength": {
           "type": "integer",
@@ -156,7 +156,7 @@
         "type": {
           "type": "string",
           "not": {
-            "enum": ["c-texture", "c-preview"]
+            "enum": ["c-texture", "c-preview", "c-simple"]
           }
         },
         "contentType": {

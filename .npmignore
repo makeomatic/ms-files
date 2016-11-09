@@ -32,3 +32,4 @@ test
 Makefile
 .env
 .babel
+pk.json
