@@ -58,10 +58,11 @@ exports.FIELDS_TO_STRINGIFY = [
   exports.FILES_CONTROLS_FIELD,
 ];
 
+exports.CAPPASITY_IMAGE_MODEL = 'simple';
 exports.CAPPASITY_TYPE_MAP = {
   'c-preview': 'preview',
   'c-bin': 'model',
   'c-texture': 'texture',
   'c-archive': 'archive',
-  'c-simple': 'simple',
+  'c-simple': CAPPASITY_IMAGE_MODEL,
 };
