@@ -70,7 +70,7 @@ function getEmbeddedCode(id, qs) {
 }
 
 module.exports = function getEmbeddedInfo(file) {
-  const { uploadId: id, status } = file;
+  const { uploadId: id, status, uploadType } = file;
 
   if (status === STATUS_PROCESSED) {
     file.embed = {
@@ -78,6 +78,10 @@ module.exports = function getEmbeddedInfo(file) {
       params: {
         ...defaultPlayerOpts,
         ...defaultWindowOptions,
+        [FILES_PLAYER_HIDEFULLSCREEN]: {
+          ...defaultPlayerOpts[FILES_PLAYER_HIDEFULLSCREEN],
+          default: uploadType === 'simple' ? 1 : 0,
+        },
       },
     };
   }
