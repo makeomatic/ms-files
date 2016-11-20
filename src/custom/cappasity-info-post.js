@@ -10,7 +10,7 @@ const {
 } = require('../constant.js');
 
 function getPlayerOpts({ uploadType }) {
-  const isImageModel = uploadType && uploadType === CAPPASITY_IMAGE_MODEL;
+  const isImageModel = uploadType === CAPPASITY_IMAGE_MODEL;
   const defaultPlayerOpts = {
     [FILES_PLAYER_AUTORUN]: {
       type: 'boolean',
@@ -25,8 +25,8 @@ function getPlayerOpts({ uploadType }) {
     },
     [FILES_PLAYER_HIDECONTROLS]: {
       type: 'boolean',
-      default: isImageModel ? 1 : 0,
       description: 'Hide player controls',
+      default: 0,
       paid: true,
       disabled: isImageModel,
     },
@@ -38,7 +38,7 @@ function getPlayerOpts({ uploadType }) {
     },
     [FILES_PLAYER_HIDEFULLSCREEN]: {
       type: 'boolean',
-      default: 0,
+      default: isImageModel ? 1 : 0,
       description: 'Hide fullscreen button',
     },
   };
