@@ -81,10 +81,11 @@ module.exports = function getEmbeddedInfo(file) {
   const { uploadId: id, status } = file;
 
   if (status === STATUS_PROCESSED) {
+    const options = getPlayerOpts(file);
     file.embed = {
-      code: getEmbeddedCode(id, getQueryString(defaultPlayerOpts)),
+      code: getEmbeddedCode(id, getQueryString(options)),
       params: {
-        ...getPlayerOpts(file),
+        ...options,
         ...defaultWindowOptions,
       },
     };
