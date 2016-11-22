@@ -28,7 +28,6 @@ function getPlayerOpts({ uploadType }) {
       description: 'Hide player controls',
       default: 0,
       paid: true,
-      disabled: isImageModel,
     },
     [FILES_PLAYER_LOGO]: {
       type: 'boolean',
@@ -40,6 +39,7 @@ function getPlayerOpts({ uploadType }) {
       type: 'boolean',
       default: isImageModel ? 1 : 0,
       description: 'Hide fullscreen button',
+      disabled: isImageModel,
     },
   };
 
