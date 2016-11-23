@@ -1,5 +1,5 @@
 const assert = require('assert');
-const uuid = require('node-uuid');
+const uuid = require('uuid');
 
 // helpers
 const {

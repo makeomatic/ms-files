@@ -38,9 +38,9 @@
     "ms-files-providers": "^2.0.1",
     "ms-validation": "^3.0.0",
     "mservice": "^4.4.0",
-    "node-uuid": "^1.4.7",
     "redis-filtered-sort": "^1.3.1",
-    "snyk": "^1.19.1"
+    "snyk": "^1.19.1",
+    "uuid": "^3.0.0"
   },
   "devDependencies": {
     "babel-cli": "^6.18.0",
