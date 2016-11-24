@@ -1,6 +1,7 @@
 const Promise = require('bluebird');
 const omit = require('lodash/omit');
 const stringify = require('./stringify.js');
+const bustCache = require('./bustCache.js');
 const { HttpStatusError } = require('common-errors');
 const {
   STATUS_PROCESSED,
@@ -81,12 +82,14 @@ module.exports = function processFile(key, data) {
               [FILES_STATUS_FIELD]: STATUS_PROCESSED,
             });
         })
+        // await for cache busting since we acquired a lock
+        .tap(bustCache(redis, true))
         .catch(err => redis
           .hmset(`${FILES_DATA}:${uploadId}`, {
             [FILES_STATUS_FIELD]: STATUS_FAILED,
             [FILES_PROCESS_ERROR_FIELD]: err.message,
           })
-          .throw(err)
+          .throw(err),
         )
         .finally(() => lock.release());
     });

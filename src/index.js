@@ -93,7 +93,7 @@ class Files extends Mservice {
     return Promise.join(
       super.close(),
       this.dlock.pubsub.disconnect(),
-      process.env.WEBHOOK_TERMINATE ? this.stopWebhook() : ld.noop
+      process.env.WEBHOOK_TERMINATE ? this.stopWebhook() : ld.noop,
     );
   }
 

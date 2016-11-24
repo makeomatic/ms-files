@@ -77,7 +77,7 @@ module.exports = function listFiles({ params }) {
         });
     })
     .then((filesIndex) => {
-      return redis.fsort(filesIndex, `${FILES_DATA}:*`, criteria, order, strFilter, offset, limit, expiration);
+      return redis.fsort(filesIndex, `${FILES_DATA}:*`, criteria, order, strFilter, Date.now(), offset, limit, expiration);
     })
     .then((filenames) => {
       const length = +filenames.pop();
