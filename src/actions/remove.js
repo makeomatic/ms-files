@@ -67,6 +67,6 @@ module.exports = function removeFile({ params }) {
 
         return pipeline.exec();
       }))
-      .tap(bustCache(redis))
+      .tap(bustCache(redis, data, username))
     );
 };

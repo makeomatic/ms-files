@@ -11,6 +11,7 @@ const {
   FILES_DATA,
   FILES_PROCESS_ERROR_FIELD,
   FILES_STATUS_FIELD,
+  FILES_OWNER_FIELD,
   FIELDS_TO_STRINGIFY,
 } = require('../constant.js');
 
@@ -82,8 +83,6 @@ module.exports = function processFile(key, data) {
               [FILES_STATUS_FIELD]: STATUS_PROCESSED,
             });
         })
-        // await for cache busting since we acquired a lock
-        .tap(bustCache(redis, true))
         .catch(err => redis
           .hmset(`${FILES_DATA}:${uploadId}`, {
             [FILES_STATUS_FIELD]: STATUS_FAILED,
@@ -91,6 +90,8 @@ module.exports = function processFile(key, data) {
           })
           .throw(err),
         )
+        // await for cache busting since we acquired a lock
+        .tap(bustCache(redis, data, data[FILES_OWNER_FIELD], true))
         .finally(() => lock.release());
     });
 };
