@@ -89,14 +89,15 @@ module.exports = function listFiles({ params }) {
         };
       }
 
-      const pipeline = Promise.filter(filenames, filename =>
+      const pipeline = Promise.map(filenames, filename =>
         fetchData.call(this, `${FILES_DATA}:${filename}`)
           // catch missing files to avoid collisions after cache busting
           .catch({ statusCode: 404 }, (err) => {
             logger.fatal(err);
             return false;
           })
-      );
+      )
+      .filter(file => file);
 
       return Promise.props({ filenames, props: pipeline, length });
     })
