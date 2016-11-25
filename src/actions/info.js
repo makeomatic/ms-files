@@ -1,8 +1,9 @@
 const Promise = require('bluebird');
-const fetchData = require('../utils/fetchData.js');
+const fetchData = require('../utils/fetchData');
+const resolveFilename = require('../utils/resolveFilename');
 
 const { NotImplementedError, HttpStatusError } = require('common-errors');
-const { FILES_DATA, FILES_OWNER_FIELD } = require('../constant.js');
+const { FILES_DATA, FILES_OWNER_FIELD } = require('../constant');
 
 /**
  * File information
@@ -11,7 +12,7 @@ const { FILES_DATA, FILES_OWNER_FIELD } = require('../constant.js');
  * @return {Promise}
  */
 module.exports = function getFileInfo({ params }) {
-  const { filename, username: owner } = params;
+  const { filename: possibleFilename, username: owner } = params;
 
   return Promise
     .bind(this, ['files:info:pre', owner])
@@ -22,17 +23,17 @@ module.exports = function getFileInfo({ params }) {
       }
 
       return Promise.props({
-        // check for owner later if file is not public
         username,
-        // fetch file data
-        file: fetchData.call(this, `${FILES_DATA}:${filename}`),
+        filename: resolveFilename.call(this, possibleFilename, username),
       });
     })
+    .then(data => Promise.props({
+      username: data.username,
+      file: fetchData.call(this, `${FILES_DATA}:${data.filename}`),
+    }))
     .then((data) => {
       // ref file
       const info = data.file;
-
-      this.log.debug(info);
 
       // check that owner is a match
       // even in-case with public we want the user to specify username

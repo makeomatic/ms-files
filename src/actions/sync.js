@@ -64,7 +64,7 @@ function iterateOverUploadedFiles(lock, opts = {}) {
  * Performs sync of state for pending uploads
  */
 module.exports = function sync() {
-  const acquireLock = () => this.dlock
+  const acquireLock = this.dlock
     .once('bucket-sync')
     .disposer(lock => lock.release());
 
