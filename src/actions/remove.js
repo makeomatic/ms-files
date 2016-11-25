@@ -1,9 +1,10 @@
 const Promise = require('bluebird');
 const hasAccess = require('../utils/hasAccess.js');
 const fetchData = require('../utils/fetchData.js');
-const bustCache = require('../utils/bustCache.js');
 const isUnlisted = require('../utils/isUnlisted.js');
-const { FILES_INDEX,
+const { bustCache } = require('../utils/bustCache.js');
+const {
+  FILES_INDEX,
   FILES_DATA,
   FILES_PUBLIC_FIELD,
   FILES_OWNER_FIELD,
@@ -67,6 +68,6 @@ module.exports = function removeFile({ params }) {
 
         return pipeline.exec();
       }))
-      .tap(bustCache(redis, data, username))
+      .tap(bustCache(redis, data))
     );
 };

@@ -1,7 +1,7 @@
 const Promise = require('bluebird');
 const omit = require('lodash/omit');
 const stringify = require('./stringify.js');
-const bustCache = require('./bustCache.js');
+const { bustCache } = require('./bustCache.js');
 const { HttpStatusError } = require('common-errors');
 const {
   STATUS_PROCESSED,
@@ -11,7 +11,6 @@ const {
   FILES_DATA,
   FILES_PROCESS_ERROR_FIELD,
   FILES_STATUS_FIELD,
-  FILES_OWNER_FIELD,
   FIELDS_TO_STRINGIFY,
 } = require('../constant.js');
 
@@ -91,7 +90,7 @@ module.exports = function processFile(key, data) {
           .throw(err),
         )
         // await for cache busting since we acquired a lock
-        .tap(bustCache(redis, data, data[FILES_OWNER_FIELD], true))
+        .tap(bustCache(redis, data, true))
         .finally(() => lock.release());
     });
 };

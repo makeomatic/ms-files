@@ -4,35 +4,76 @@ const {
   FILES_INDEX,
   FILES_INDEX_PUBLIC,
   FILES_INDEX_TEMP,
+
+  FILES_PUBLIC_FIELD,
+  FILES_TEMP_FIELD,
+  FILES_OWNER_FIELD,
+  FILES_UNLISTED_FIELD,
 } = require('../constant');
 
-function getIndices(file, username) {
-  const FILES_INDEX_USER = `${FILES_INDEX}:${username}`;
-  const FILES_INDEX_USER_PUB = `${FILES_INDEX_USER}:pub`;
+function isUnlisted(file) {
+  return file[FILES_UNLISTED_FIELD];
+}
 
+function isTemporary(file) {
+  return file[FILES_TEMP_FIELD];
+}
+
+function isPublic(file) {
+  return file[FILES_PUBLIC_FIELD];
+}
+
+function getIndiciesList(file) {
+  // unlisted file is not indexed
+  if (isUnlisted(file)) {
+    return [];
+  }
+
+  // Temporary file is contained only in index of temporary files
+  if (isTemporary(file)) {
+    return [FILES_INDEX_TEMP];
+  }
+
+  const username = file[FILES_OWNER_FIELD];
+  const FILES_INDEX_USER = `${FILES_INDEX}:${username}`;
+
+  // Basic indicies
   const INDICIES = [
     FILES_INDEX,
-    FILES_INDEX_TEMP,
-    FILES_INDEX_PUBLIC,
     FILES_INDEX_USER,
-    FILES_INDEX_USER_PUB,
   ];
+
+  if (isPublic(file)) {
+    INDICIES.push(
+      FILES_INDEX_PUBLIC,
+      `${FILES_INDEX_USER}:pub`,
+    );
+  }
 
   return INDICIES;
 }
 
-function bust(redis, file, username) {
+function bustCache(redis, file, wait = false) {
   const now = Date.now();
   const pipeline = redis.pipeline();
-  const indicies = getIndices(file, username);
 
-  indicies.forEach(index => pipeline.fsortBust(index, now));
+  if (isUnlisted(file)) {
+    return Promise.resolve(null);
+  }
 
-  return pipeline.exec();
+  getIndiciesList(file).forEach((index) => {
+    pipeline.fsortBust(index, now);
+  });
+
+  const bust = pipeline.exec();
+
+  if (wait) {
+    return bust;
+  }
+
+  return Promise.resolve(null);
 }
 
-module.exports = function bustCache(redis, file, username, wait = false) {
-  const promise = bust(redis, file, username);
 
-  return Promise.resolve(wait ? promise : null);
-};
+module.exports.getIndiciesList = getIndiciesList;
+module.exports.bustCache = bustCache;

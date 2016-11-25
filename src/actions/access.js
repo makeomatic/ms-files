@@ -2,6 +2,7 @@ const Promise = require('bluebird');
 const fetchData = require('../utils/fetchData.js');
 const hasAccess = require('../utils/hasAccess.js');
 const isProcessed = require('../utils/isProcessed.js');
+const { bustCache } = require('../utils/bustCache.js');
 const {
   FILES_INDEX, FILES_INDEX_PUBLIC,
   FILES_DATA, FILES_OWNER_FIELD, FILES_PUBLIC_FIELD,
@@ -44,7 +45,8 @@ function removeFromPublic(filename, data) {
         .srem(FILES_INDEX_PUBLIC, filename)
         .hdel(id, FILES_PUBLIC_FIELD)
         .exec(),
-    );
+    )
+    .tap(bustCache(redis, data, true));
 }
 
 module.exports = function adjustAccess({ params }) {
