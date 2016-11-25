@@ -1,5 +1,5 @@
 const Promise = require('bluebird');
-const uuid = require('node-uuid');
+const uuid = require('uuid');
 const md5 = require('md5');
 const sumBy = require('lodash/sumBy');
 const get = require('lodash/get');
