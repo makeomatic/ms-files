@@ -87,7 +87,7 @@ module.exports = function processFile(key, data) {
             [FILES_STATUS_FIELD]: STATUS_FAILED,
             [FILES_PROCESS_ERROR_FIELD]: err.message,
           })
-          .throw(err),
+          .throw(err)
         )
         // await for cache busting since we acquired a lock
         .tap(bustCache(redis, data, true))

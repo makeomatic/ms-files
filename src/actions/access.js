@@ -18,14 +18,14 @@ function addToPublic(filename, data) {
 
   return Promise
     .map(files, file => transport.makePublic(file.filename))
-    .then(() => {
-      return redis
+    .then(() =>
+      redis
         .pipeline()
         .sadd(index, filename)
         .sadd(FILES_INDEX_PUBLIC, filename)
         .hset(id, FILES_PUBLIC_FIELD, 1)
-        .exec();
-    });
+        .exec()
+    );
 }
 
 function removeFromPublic(filename, data) {
@@ -44,12 +44,12 @@ function removeFromPublic(filename, data) {
         .srem(index, filename)
         .srem(FILES_INDEX_PUBLIC, filename)
         .hdel(id, FILES_PUBLIC_FIELD)
-        .exec(),
-    )
-    .tap(bustCache(redis, data, true));
+        .exec()
+    );
 }
 
 module.exports = function adjustAccess({ params }) {
+  const { redis } = this;
   const { uploadId, setPublic, username } = params;
   const id = `${FILES_DATA}:${uploadId}`;
 
@@ -58,6 +58,9 @@ module.exports = function adjustAccess({ params }) {
     .then(fetchData)
     .then(hasAccess(username))
     .then(isProcessed)
-    .then(data => [uploadId, data])
-    .spread(setPublic ? addToPublic : removeFromPublic);
+    .then(data =>
+      Promise.bind(this, [uploadId, data])
+        .spread(setPublic ? addToPublic : removeFromPublic)
+        .tap(bustCache(redis, data, true))
+    );
 };

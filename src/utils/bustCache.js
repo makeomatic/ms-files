@@ -46,7 +46,7 @@ function getIndiciesList(file) {
   if (isPublic(file)) {
     INDICIES.push(
       FILES_INDEX_PUBLIC,
-      `${FILES_INDEX_USER}:pub`,
+      `${FILES_INDEX_USER}:pub`
     );
   }
 
@@ -55,20 +55,18 @@ function getIndiciesList(file) {
 
 function bustCache(redis, file, wait = false) {
   const now = Date.now();
-  const pipeline = redis.pipeline();
 
   if (isUnlisted(file)) {
     return Promise.resolve(null);
   }
 
-  getIndiciesList(file).forEach((index) => {
-    pipeline.fsortBust(index, now);
-  });
-
-  const bust = pipeline.exec();
+  const indicies = getIndiciesList(file);
+  const pipeline = Promise.map(indicies, index =>
+    redis.fsortBust(index, now)
+  );
 
   if (wait) {
-    return bust;
+    return pipeline;
   }
 
   return Promise.resolve(null);

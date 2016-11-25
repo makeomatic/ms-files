@@ -17,7 +17,7 @@ const {
  * @return {Promise}
  */
 module.exports = function listFiles({ params }) {
-  const { redis, dlock, config: { interstoreKeyTTL, interstoreKeyMinTimeleft } } = this;
+  const { redis, dlock, logger, config: { interstoreKeyTTL, interstoreKeyMinTimeleft } } = this;
   const { owner, filter, public: isPublic, offset, limit, order, criteria, tags, temp, expiration = 30000 } = params;
   const strFilter = is.string(filter) ? filter : fsort.filter(filter || {});
 
@@ -89,7 +89,15 @@ module.exports = function listFiles({ params }) {
         };
       }
 
-      const pipeline = Promise.map(filenames, filename => fetchData.call(this, `${FILES_DATA}:${filename}`));
+      const pipeline = Promise.filter(filenames, filename =>
+        fetchData.call(this, `${FILES_DATA}:${filename}`)
+          // catch missing files to avoid collisions after cache busting
+          .catch({ statusCode: 404 }, (err) => {
+            logger.fatal(err);
+            return false;
+          })
+      );
+
       return Promise.props({ filenames, props: pipeline, length });
     })
     .then((data) => {
