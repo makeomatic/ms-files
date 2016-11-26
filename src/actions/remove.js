@@ -8,6 +8,8 @@ const { FILES_INDEX,
   FILES_OWNER_FIELD,
   FILES_INDEX_TAGS,
   FILES_TAGS_FIELD,
+  FILES_ALIAS_FIELD,
+  FILES_USR_ALIAS_PTR,
 } = require('../constant.js');
 
 /**
@@ -28,33 +30,41 @@ module.exports = function removeFile({ params }) {
     .then(fetchData)
     .then(isUnlisted)
     .then(hasAccess(username))
-    .then((data) => {
-      const { files } = data;
+    .then(data => (
+      // remove files from upstream
+      Promise.map(data.files, file => (
+        provider
+          .remove(file.filename)
+          .catch({ code: 404 }, (err) => {
+            this.log.warn('file %s was already deleted', file.filename, err.code, err.message);
+          })
+      ), { concurrency: 20 })
+      // cleanup our DB
+      .then(() => {
+        const pipeline = redis.pipeline();
+        const owner = data[FILES_OWNER_FIELD];
 
-      return Promise
-        .map(files, (file) => {
-          return provider
-            .remove(file.filename)
-            .catch({ code: 404 }, (err) => {
-              this.log.warn('file %s was already deleted', file.filename, err.code, err.message);
-            });
-        }, { concurrency: 20 })
-        .then(() => {
-          const pipeline = redis.pipeline();
-          pipeline
-            .del(key)
-            .srem(FILES_INDEX, filename)
-            .srem(`${FILES_INDEX}:${data[FILES_OWNER_FIELD]}`, filename);
+        pipeline
+          .del(key)
+          .srem(FILES_INDEX, filename)
+          .srem(`${FILES_INDEX}:${owner}`, filename);
 
-          if (data[FILES_PUBLIC_FIELD]) {
-            pipeline.srem(`${FILES_INDEX}:${data[FILES_OWNER_FIELD]}:pub`, filename);
-          }
+        if (data[FILES_PUBLIC_FIELD]) {
+          pipeline.srem(`${FILES_INDEX}:${owner}:pub`, filename);
+        }
 
-          if (data[FILES_TAGS_FIELD]) {
-            data[FILES_TAGS_FIELD].forEach(tag => pipeline.srem(`${FILES_INDEX_TAGS}:${tag}`, filename));
-          }
+        const tags = data[FILES_TAGS_FIELD];
+        if (tags) {
+          tags.forEach(tag => pipeline.srem(`${FILES_INDEX_TAGS}:${tag}`, filename));
+        }
 
-          return pipeline.exec();
-        });
-    });
+        // remove pointer for the alias if it existed
+        const alias = data[FILES_ALIAS_FIELD];
+        if (alias) {
+          pipeline.hdel(`${FILES_USR_ALIAS_PTR}:${owner}`, alias);
+        }
+
+        return pipeline.exec();
+      }))
+    );
 };

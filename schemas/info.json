@@ -4,7 +4,11 @@
   "required": ["filename", "username"],
   "properties": {
     "filename": {
-      "$ref": "common#/definitions/uuid-v4"
+      "anyOf": [{
+        "$ref": "common#/definitions/uuid-v4"
+      }, {
+        "$ref": "common#/definitions/meta/properties/alias"
+      }]
     },
     "username": {
       "$ref": "common#/definitions/owner"

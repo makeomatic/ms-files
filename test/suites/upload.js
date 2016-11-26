@@ -35,6 +35,19 @@ describe('upload suite', function suite() {
         .then(inspectPromise(false));
     });
 
+    it('rejects upload if meta.alias is specified', function test() {
+      return this
+        .send({
+          ...modelData.message,
+          meta: {
+            ...modelData.message.meta,
+            alias: 'sample-alias',
+          },
+        })
+        .reflect()
+        .then(inspectPromise(false));
+    });
+
     it('initiates upload and returns correct response format', function test() {
       const message = modelData.message;
 

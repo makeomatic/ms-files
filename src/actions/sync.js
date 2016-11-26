@@ -32,7 +32,7 @@ function iterateOverUploadedFiles(lock, opts = {}) {
         .map(files, (container) => {
           // transport to fetch "exists" data
           const transport = provider('sync', container);
-          const started = moment(container.startedAt);
+          const started = moment(parseInt(container.startedAt, 10));
 
           // cleanup after 0.5 TTL, so that we have time to react for id without meta
           if (moment().diff(started, 'seconds') >= uploadTTL * 0.5) {
@@ -64,7 +64,7 @@ function iterateOverUploadedFiles(lock, opts = {}) {
  * Performs sync of state for pending uploads
  */
 module.exports = function sync() {
-  const acquireLock = () => this.dlock
+  const acquireLock = this.dlock
     .once('bucket-sync')
     .disposer(lock => lock.release());
 

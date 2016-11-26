@@ -9,7 +9,14 @@
     "arrow-body-style": 0,
     "global-require": 0,
     "no-underscore-dangle": 0,
-    "import/no-extraneous-dependencies": 0
+    "import/no-extraneous-dependencies": 0,
+    "comma-dangle": ["error", {
+      "arrays": "always-multiline",
+      "objects": "always-multiline",
+      "imports": "never",
+      "exports": "never",
+      "functions": "never",
+    }]
   },
   "plugins": [
     "mocha"

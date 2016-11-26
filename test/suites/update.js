@@ -31,7 +31,7 @@ describe('update suite', function suite() {
       .send({ uploadId: uuid.v4(), username, meta })
       .reflect()
       .then(inspectPromise(false))
-      .then(err => {
+      .then((err) => {
         assert.equal(err.statusCode, 404);
       });
   });
@@ -41,7 +41,7 @@ describe('update suite', function suite() {
       .send({ uploadId: this.response.uploadId, username, meta }, 45000)
       .reflect()
       .then(inspectPromise(false))
-      .then(err => {
+      .then((err) => {
         assert.equal(err.statusCode, 412);
       });
   });
@@ -56,7 +56,7 @@ describe('update suite', function suite() {
         .send({ uploadId: this.response.uploadId, username, meta }, 45000)
         .reflect()
         .then(inspectPromise())
-        .then(result => {
+        .then((result) => {
           assert.equal(result, true);
         });
     });
@@ -70,7 +70,7 @@ describe('update suite', function suite() {
       })
       .reflect()
       .then(inspectPromise())
-      .then(result => {
+      .then((result) => {
         assert.equal(result.username, username);
         assert.equal(result.file.uploadId, this.response.uploadId);
         assert.equal(result.file.name, meta.name);
@@ -78,6 +78,103 @@ describe('update suite', function suite() {
         assert.equal(result.file.website, meta.website);
         assert.deepEqual(result.file.tags, meta.tags);
       });
+    });
+  });
+
+  describe('assign alias', function assignAliasSuite() {
+    it('creates new alias', function test() {
+      return this
+        .send({ uploadId: this.response.uploadId, username, meta: { alias: 'sku' } }, 15000)
+        .reflect()
+        .then(inspectPromise())
+        .then((result) => {
+          assert.equal(result, true);
+
+          return getInfo.call(this, {
+            filename: 'sku',
+            username,
+          })
+          .tap((verifyResult) => {
+            assert.equal(verifyResult.file.alias, 'sku');
+            assert.equal(verifyResult.file.uploadId, this.response.uploadId);
+          });
+        });
+    });
+
+    it('rejects on conflict', function test() {
+      // even-though we update the same model to the same alias, 409 is correct
+      // and is sufficient, since it makes no sense to do noop update here
+      return this
+        .send({ uploadId: this.response.uploadId, username, meta: { alias: 'sku' } }, 15000)
+        .reflect()
+        .then(inspectPromise(false))
+        .then((error) => {
+          assert.equal(error.statusCode, 409);
+        });
+    });
+
+    it('allows to update to another alias', function test() {
+      // even-though we update the same model to the same alias, 409 is correct
+      // and is sufficient, since it makes no sense to do noop update here
+      return this
+        .send({ uploadId: this.response.uploadId, username, meta: { alias: 'skubidoo' } }, 15000)
+        .reflect()
+        .then(inspectPromise())
+        .then((result) => {
+          assert.equal(result, true);
+
+          return getInfo.call(this, {
+            filename: 'skubidoo',
+            username,
+          })
+          .tap((verifyResult) => {
+            assert.equal(verifyResult.file.alias, 'skubidoo');
+            assert.equal(verifyResult.file.uploadId, this.response.uploadId);
+          });
+        });
+    });
+
+    it('removes alias', function test() {
+      // even-though we update the same model to the same alias, 409 is correct
+      // and is sufficient, since it makes no sense to do noop update here
+      return this
+        .send({ uploadId: this.response.uploadId, username, meta: { alias: '' } }, 15000)
+        .reflect()
+        .then(inspectPromise())
+        .then((result) => {
+          assert.equal(result, true);
+
+          return getInfo.call(this, {
+            filename: 'skubidoo',
+            username,
+          })
+          .reflect()
+          .then(inspectPromise(false))
+          .tap((error) => {
+            assert.equal(error.statusCode, 404);
+          });
+        });
+    });
+
+    it('allows to use the same alias', function test() {
+      // even-though we update the same model to the same alias, 409 is correct
+      // and is sufficient, since it makes no sense to do noop update here
+      return this
+        .send({ uploadId: this.response.uploadId, username, meta: { alias: 'skubidoo' } }, 15000)
+        .reflect()
+        .then(inspectPromise())
+        .then((result) => {
+          assert.equal(result, true);
+
+          return getInfo.call(this, {
+            filename: 'skubidoo',
+            username,
+          })
+          .tap((verifyResult) => {
+            assert.equal(verifyResult.file.alias, 'skubidoo');
+            assert.equal(verifyResult.file.uploadId, this.response.uploadId);
+          });
+        });
     });
   });
 
@@ -89,14 +186,14 @@ describe('update suite', function suite() {
         .send({ uploadId: this.response.uploadId, username, meta }, 45000)
         .reflect()
         .then(inspectPromise())
-        .then(result => {
+        .then((result) => {
           assert.equal(result, true);
 
           return getInfo.call(this, {
             filename: this.response.uploadId,
             username,
           })
-          .tap(verifyResult => {
+          .tap((verifyResult) => {
             assert.deepEqual(verifyResult.file.tags, meta.tags);
           });
         });
@@ -109,14 +206,14 @@ describe('update suite', function suite() {
         .send({ uploadId: this.response.uploadId, username, meta }, 45000)
         .reflect()
         .then(inspectPromise())
-        .then(result => {
+        .then((result) => {
           assert.equal(result, true);
 
           return getInfo.call(this, {
             filename: this.response.uploadId,
             username,
           })
-          .tap(verifyResult => {
+          .tap((verifyResult) => {
             assert.equal(verifyResult.file.backgroundColor, meta.backgroundColor);
           });
         });
@@ -137,14 +234,14 @@ describe('update suite', function suite() {
         .send({ uploadId: this.response.uploadId, username, meta }, 45000)
         .reflect()
         .then(inspectPromise())
-        .then(result => {
+        .then((result) => {
           assert.equal(result, true);
 
           return getInfo.call(this, {
             filename: this.response.uploadId,
             username,
           })
-          .tap(verifyResult => {
+          .tap((verifyResult) => {
             assert.equal(verifyResult.file.backgroundImage, meta.backgroundImage);
           });
         });
@@ -156,14 +253,14 @@ describe('update suite', function suite() {
         .send({ uploadId: this.response.uploadId, username, meta }, 45000)
         .reflect()
         .then(inspectPromise())
-        .then(result => {
+        .then((result) => {
           assert.equal(result, true);
 
           return getInfo.call(this, {
             filename: this.response.uploadId,
             username,
           })
-          .tap(verifyResult => {
+          .tap((verifyResult) => {
             assert.equal(verifyResult.file.backgroundImage, meta.backgroundImage);
           });
         });
@@ -175,7 +272,7 @@ describe('update suite', function suite() {
         .send({ uploadId: this.response.uploadId, username, meta }, 45000)
         .reflect()
         .then(inspectPromise(false))
-        .then(err => {
+        .then((err) => {
           assert.equal(err.statusCode, 412);
         });
     });

@@ -79,7 +79,18 @@ module.exports = function completeFileUpload({ params }) {
         throw err;
       }
 
-      const [currentStatus, totalParts, tags, username, isPublic, isTemporary, isUnlisted] = parts[1];
+      // destructure array
+      // annoying redis format :(
+      const [
+        currentStatus,
+        totalParts,
+        tags,
+        username,
+        isPublic,
+        isTemporary,
+        isUnlisted,
+      ] = parts[1];
+
       const currentParts = incr[1];
 
       if (currentParts < totalParts) {

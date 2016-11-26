@@ -178,6 +178,10 @@
       "type": "object",
       "additionalProperties": false,
       "properties": {
+        "alias": {
+          "type": "string",
+          "pattern": "^[0-9A-Za-z_\\-.]{0,50}$"
+        },
         "name": {
           "type": "string",
           "minLength": 1,
