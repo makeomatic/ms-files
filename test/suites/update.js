@@ -133,6 +133,49 @@ describe('update suite', function suite() {
           });
         });
     });
+
+    it('removes alias', function test() {
+      // even-though we update the same model to the same alias, 409 is correct
+      // and is sufficient, since it makes no sense to do noop update here
+      return this
+        .send({ uploadId: this.response.uploadId, username, meta: { alias: '' } }, 15000)
+        .reflect()
+        .then(inspectPromise())
+        .then((result) => {
+          assert.equal(result, true);
+
+          return getInfo.call(this, {
+            filename: 'skubidoo',
+            username,
+          })
+          .reflect()
+          .then(inspectPromise(false))
+          .tap((error) => {
+            assert.equal(error.statusCode, 404);
+          });
+        });
+    });
+
+    it('allows to use the same alias', function test() {
+      // even-though we update the same model to the same alias, 409 is correct
+      // and is sufficient, since it makes no sense to do noop update here
+      return this
+        .send({ uploadId: this.response.uploadId, username, meta: { alias: 'skubidoo' } }, 15000)
+        .reflect()
+        .then(inspectPromise())
+        .then((result) => {
+          assert.equal(result, true);
+
+          return getInfo.call(this, {
+            filename: 'skubidoo',
+            username,
+          })
+          .tap((verifyResult) => {
+            assert.equal(verifyResult.file.alias, 'skubidoo');
+            assert.equal(verifyResult.file.uploadId, this.response.uploadId);
+          });
+        });
+    });
   });
 
   describe('process update again', function afterUpdateSuite() {
