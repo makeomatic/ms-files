@@ -2,6 +2,7 @@ const Promise = require('bluebird');
 const fetchData = require('../utils/fetchData.js');
 const hasAccess = require('../utils/hasAccess.js');
 const isProcessed = require('../utils/isProcessed.js');
+const { bustCache } = require('../utils/bustCache.js');
 const {
   FILES_INDEX, FILES_INDEX_PUBLIC,
   FILES_DATA, FILES_OWNER_FIELD, FILES_PUBLIC_FIELD,
@@ -17,14 +18,14 @@ function addToPublic(filename, data) {
 
   return Promise
     .map(files, file => transport.makePublic(file.filename))
-    .then(() => {
-      return redis
+    .then(() =>
+      redis
         .pipeline()
         .sadd(index, filename)
         .sadd(FILES_INDEX_PUBLIC, filename)
         .hset(id, FILES_PUBLIC_FIELD, 1)
-        .exec();
-    });
+        .exec()
+    );
 }
 
 function removeFromPublic(filename, data) {
@@ -48,6 +49,7 @@ function removeFromPublic(filename, data) {
 }
 
 module.exports = function adjustAccess({ params }) {
+  const { redis } = this;
   const { uploadId, setPublic, username } = params;
   const id = `${FILES_DATA}:${uploadId}`;
 
@@ -56,6 +58,9 @@ module.exports = function adjustAccess({ params }) {
     .then(fetchData)
     .then(hasAccess(username))
     .then(isProcessed)
-    .then(data => [uploadId, data])
-    .spread(setPublic ? addToPublic : removeFromPublic);
+    .then(data =>
+      Promise.bind(this, [uploadId, data])
+        .spread(setPublic ? addToPublic : removeFromPublic)
+        .tap(bustCache(redis, data, true))
+    );
 };

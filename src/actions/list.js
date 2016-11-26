@@ -17,7 +17,7 @@ const {
  * @return {Promise}
  */
 module.exports = function listFiles({ params }) {
-  const { redis, dlock, config: { interstoreKeyTTL, interstoreKeyMinTimeleft } } = this;
+  const { redis, dlock, logger, config: { interstoreKeyTTL, interstoreKeyMinTimeleft } } = this;
   const { owner, filter, public: isPublic, offset, limit, order, criteria, tags, temp, expiration = 30000 } = params;
   const strFilter = is.string(filter) ? filter : fsort.filter(filter || {});
 
@@ -77,7 +77,7 @@ module.exports = function listFiles({ params }) {
         });
     })
     .then((filesIndex) => {
-      return redis.fsort(filesIndex, `${FILES_DATA}:*`, criteria, order, strFilter, offset, limit, expiration);
+      return redis.fsort(filesIndex, `${FILES_DATA}:*`, criteria, order, strFilter, Date.now(), offset, limit, expiration);
     })
     .then((filenames) => {
       const length = +filenames.pop();
@@ -89,7 +89,16 @@ module.exports = function listFiles({ params }) {
         };
       }
 
-      const pipeline = Promise.map(filenames, filename => fetchData.call(this, `${FILES_DATA}:${filename}`));
+      const pipeline = Promise.map(filenames, filename =>
+        fetchData.call(this, `${FILES_DATA}:${filename}`)
+          // catch missing files to avoid collisions after cache busting
+          .catch({ statusCode: 404 }, (err) => {
+            logger.fatal(err);
+            return false;
+          })
+      )
+      .filter(file => file);
+
       return Promise.props({ filenames, props: pipeline, length });
     })
     .then((data) => {
