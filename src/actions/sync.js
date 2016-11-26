@@ -32,7 +32,7 @@ function iterateOverUploadedFiles(lock, opts = {}) {
         .map(files, (container) => {
           // transport to fetch "exists" data
           const transport = provider('sync', container);
-          const started = moment(container.startedAt);
+          const started = moment(parseInt(container.startedAt, 10));
 
           // cleanup after 0.5 TTL, so that we have time to react for id without meta
           if (moment().diff(started, 'seconds') >= uploadTTL * 0.5) {
