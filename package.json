@@ -39,7 +39,7 @@
     "ms-validation": "^3.0.0",
     "mservice": "^4.7.2",
     "redis-filtered-sort": "^2.0.3",
-    "snyk": "^1.20.0",
+    "snyk": "=1.20.0",
     "uuid": "^3.0.1"
   },
   "devDependencies": {
