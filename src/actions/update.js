@@ -61,6 +61,9 @@ function updateMeta(params) {
 
       if (alias) {
         pipeline.hset(aliasPTRs, alias, uploadId);
+        if (existingAlias) {
+          pipeline.hdel(aliasPTRs, existingAlias);
+        }
       } else if (alias === '' && existingAlias) {
         pipeline
           .hdel(aliasPTRs, existingAlias)
