@@ -3,6 +3,7 @@ const fsort = require('redis-filtered-sort');
 const is = require('is');
 const noop = require('lodash/noop');
 const fetchData = require('../utils/fetchData.js');
+const timing = require('../utils/timing');
 const {
   FILES_DATA,
   FILES_INDEX,
@@ -21,9 +22,12 @@ module.exports = function listFiles({ params }) {
   const { owner, filter, public: isPublic, offset, limit, order, criteria, tags, temp, expiration = 30000 } = params;
   const strFilter = is.string(filter) ? filter : fsort.filter(filter || {});
 
+  const time = timing('list');
+
   return Promise
     .bind(this, ['files:info:pre', owner])
     .spread(this.hook)
+    .tap(time('files:info:pre'))
     .spread((username) => {
       // choose which set to use
       let filesIndex;
@@ -76,9 +80,11 @@ module.exports = function listFiles({ params }) {
           });
         });
     })
+    .tap(time('interstore'))
     .then((filesIndex) => {
       return redis.fsort(filesIndex, `${FILES_DATA}:*`, criteria, order, strFilter, Date.now(), offset, limit, expiration);
     })
+    .tap(time('fsort'))
     .then((filenames) => {
       const length = +filenames.pop();
       if (length === 0 || filenames.length === 0) {
@@ -101,6 +107,7 @@ module.exports = function listFiles({ params }) {
 
       return Promise.props({ filenames, props: pipeline, length });
     })
+    .tap(time('fetch'))
     .then((data) => {
       const { filenames, props, length } = data;
 
@@ -110,11 +117,13 @@ module.exports = function listFiles({ params }) {
           fileData.id = filename;
           return this.hook.call(this, 'files:info:post', fileData).return(fileData);
         })
+        .tap(time('files:info:post', true))
         .then(files => ({
           files,
           cursor: offset + limit,
           page: Math.floor(offset / limit) + 1,
           pages: Math.ceil(length / limit),
+          time: time.timers,
         }));
     });
 };

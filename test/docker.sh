@@ -12,6 +12,7 @@ COVER="$BIN/isparta cover"
 NODE=$BIN/babel-node
 TESTS=${TESTS:-test/suites/**/*.js test/suites/*.js}
 COMPOSE_VER=${COMPOSE_VER:-1.7.1}
+DEBUG=${DEBUG:-ms-files:timing}
 COMPOSE="docker-compose -f $DC"
 
 if ! [ -x "$(which docker-compose)" ]; then
@@ -27,7 +28,7 @@ else
 fi
 
 # bring compose up
-$COMPOSE up -d
+DEBUG="$DEBUG" $COMPOSE up -d
 
 echo "cleaning old coverage"
 rm -rf ./coverage
