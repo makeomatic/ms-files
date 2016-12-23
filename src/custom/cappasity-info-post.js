@@ -48,14 +48,14 @@ function getPlayerOpts({ uploadType }) {
 
 const defaultWindowOptions = {
   width: {
-    type: 'integer',
-    default: 800,
-    description: 'Width of embedded window',
+    type: 'string',
+    default: '100%',
+    description: 'Width of embedded window (px or %)',
   },
   height: {
-    type: 'integer',
-    default: 600,
-    description: 'Height of embedded window',
+    type: 'string',
+    default: '600px',
+    description: 'Height of embedded window (px or %)',
   },
 };
 
