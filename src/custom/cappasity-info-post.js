@@ -53,9 +53,9 @@ const defaultWindowOptions = {
     description: 'Width of embedded window (px or %)',
   },
   height: {
-    type: 'integer',
-    default: 600,
-    description: 'Height of embedded window (px)',
+    type: 'string',
+    default: '600px',
+    description: 'Height of embedded window (px or %)',
   },
 };
 
