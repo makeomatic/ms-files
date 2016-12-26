@@ -1,3 +1,4 @@
+const Promise = require('bluebird');
 const assert = require('assert');
 const uuid = require('uuid');
 
@@ -30,7 +31,7 @@ describe('remove suite', function suite() {
       .send({ filename: uuid.v4(), username: owner })
       .reflect()
       .then(inspectPromise(false))
-      .then(err => {
+      .then((err) => {
         assert.equal(err.name, 'HttpStatusError');
         assert.equal(err.statusCode, 404);
       });
@@ -44,7 +45,7 @@ describe('remove suite', function suite() {
       })
       .reflect()
       .then(inspectPromise(false))
-      .then(err => {
+      .then((err) => {
         assert.equal(err.name, 'HttpStatusError');
         assert.equal(err.statusCode, 403);
       });
@@ -57,12 +58,14 @@ describe('remove suite', function suite() {
       .then(inspectPromise());
   });
 
+  it('waits a bit.... 3seconds', () => Promise.delay(3000));
+
   it('404 on subsequent remove', function test() {
     return this
       .send({ filename: this.response.uploadId, username: owner })
       .reflect()
       .then(inspectPromise(false))
-      .then(err => {
+      .then((err) => {
         assert.equal(err.statusCode, 404);
       });
   });

@@ -36,7 +36,7 @@ describe('access suite', function suite() {
       .call(this, uuid.v4(), owner, true)
       .reflect()
       .then(inspectPromise(false))
-      .then(err => {
+      .then((err) => {
         assert(err.statusCode, 404);
       });
   });
@@ -46,7 +46,7 @@ describe('access suite', function suite() {
       .call(this, this.response.uploadId, 'martial@arts.com', true)
       .reflect()
       .then(inspectPromise(false))
-      .then(err => {
+      .then((err) => {
         assert(err.statusCode, 403);
       });
   });

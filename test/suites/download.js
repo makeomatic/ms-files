@@ -36,7 +36,7 @@ describe('download suite', function suite() {
       .send({ uploadId: uuid.v4(), username: owner })
       .reflect()
       .then(inspectPromise(false))
-      .then(err => {
+      .then((err) => {
         assert.equal(err.statusCode, 404);
       });
   });
@@ -46,7 +46,7 @@ describe('download suite', function suite() {
       .send({ uploadId: this.response.uploadId, username: owner })
       .reflect()
       .then(inspectPromise(false))
-      .then(err => {
+      .then((err) => {
         assert.equal(err.statusCode, 412);
       });
   });
@@ -61,7 +61,7 @@ describe('download suite', function suite() {
         .send({ uploadId: this.response.uploadId, username: 'martial@arts.com' })
         .reflect()
         .then(inspectPromise(false))
-        .then(err => {
+        .then((err) => {
           assert.equal(err.statusCode, 403);
         });
     });
@@ -71,7 +71,7 @@ describe('download suite', function suite() {
         .send({ uploadId: this.response.uploadId, username: owner })
         .reflect()
         .then(inspectPromise())
-        .then(rsp => {
+        .then((rsp) => {
           assert.ok(rsp.uploadId);
           assert.ok(rsp.files);
           assert.ok(rsp.urls);
@@ -98,7 +98,7 @@ describe('download suite', function suite() {
         })
         .reflect()
         .then(inspectPromise())
-        .then(rsp => {
+        .then((rsp) => {
           assert.ok(rsp.uploadId);
           assert.ok(rsp.files);
           assert.ok(rsp.urls);
@@ -132,7 +132,7 @@ describe('download suite', function suite() {
           .send({ uploadId: this.response.uploadId })
           .reflect()
           .then(inspectPromise())
-          .then(rsp => {
+          .then((rsp) => {
             assert.ok(rsp.uploadId);
             assert.ok(rsp.files);
             assert.ok(rsp.urls);
@@ -159,7 +159,7 @@ describe('download suite', function suite() {
           })
           .reflect()
           .then(inspectPromise())
-          .then(rsp => {
+          .then((rsp) => {
             assert.ok(rsp.uploadId);
             assert.ok(rsp.files);
             assert.ok(rsp.urls);

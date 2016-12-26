@@ -246,7 +246,7 @@ function initUpload(data) {
   return function init() {
     return this.amqp
       .publishAndWait('files.upload', data.message, { timeout: 10000 })
-      .tap(rsp => {
+      .tap((rsp) => {
         this.response = rsp;
       })
       .tap(rsp => uploadFiles(data, rsp));
@@ -260,7 +260,7 @@ function initUpload(data) {
 function finishUpload(rsp, skipProcessing = true) {
   const messages = finishMessage(rsp, skipProcessing);
   const amqp = this.amqp;
-  return Promise.map(messages, it => {
+  return Promise.map(messages, (it) => {
     return amqp
       .publishAndWait('files.finish', it)
       .catch({ statusCode: 202 }, err => err.message);

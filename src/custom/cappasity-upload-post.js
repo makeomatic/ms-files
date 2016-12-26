@@ -40,6 +40,8 @@ module.exports = function uploadPost(props) {
           if (!props.exported && !props.availableModels) {
             throw new HttpStatusError(412, 'no available models');
           }
+
+          return null;
         });
     });
 };

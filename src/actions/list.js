@@ -74,6 +74,8 @@ module.exports = function listFiles({ params }) {
                   .exec()
                   .return(interstoreKey)
                   .asCallback(completed);
+
+                return null;
               })
               .catch({ name: 'LockAcquisitionError' }, noop)
               .catch(err => next(err));

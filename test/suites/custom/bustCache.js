@@ -36,9 +36,9 @@ describe('bustCache utils suite', function suite() {
     ];
 
     it('should produce an empty list of indicies if file is unlisted', tester({
-      [FILES_UNLISTED_FIELD]: 1
+      [FILES_UNLISTED_FIELD]: 1,
     }, []));
-  
+
     it('should produce a list of default indicies', tester(file, BASIC_INDICIES));
 
     it('should produce a list of indicies for public file', tester({
@@ -56,7 +56,6 @@ describe('bustCache utils suite', function suite() {
     }, [
       FILES_INDEX_TEMP,
     ]));
-
   });
 });
 
