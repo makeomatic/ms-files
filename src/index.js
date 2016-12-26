@@ -44,6 +44,8 @@ class Files extends Mservice {
         pubsub: new RedisCluster(config.redis.hosts, config.redis.options),
         log: this.log,
       });
+
+      this.migrate('redis', `${__dirname}/migrations`);
     });
   }
 
