@@ -111,9 +111,10 @@ module.exports = function listFiles({ params }) {
     .tap(time('fetch'))
     .then((data) => {
       const { filenames, props, length } = data;
+      const filteredFilenames = filenames.filter((name, idx) => !!props[idx]);
 
       return Promise
-        .map(filenames, (filename, idx) => {
+        .map(filteredFilenames, (filename, idx) => {
           const fileData = props[idx];
           fileData.id = filename;
           return this.hook.call(this, 'files:info:post', fileData).return(fileData);
