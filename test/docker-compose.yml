@@ -31,7 +31,7 @@ services:
       - "5672"
       - "15672"
       - "25672"
-    image: makeomatic/rabbitmq:3.6.2
+    image: makeomatic/rabbitmq:3.6.6
     container_name: rabbitmq
     hostname: rabbitmq
     volumes:
@@ -51,7 +51,7 @@ services:
       - REDIS_3=redis-3
 
   tester:
-    image: makeomatic/node:6.2.2-tester-glibc
+    image: makeomatic/node:6.9.1-tester-glibc
     links:
       - redis-1
       - redis-2
