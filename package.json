@@ -3,7 +3,7 @@
   "description": "Core of microservice",
   "main": "./lib/index.js",
   "scripts": {
-    "compile": "babel -d ./lib ./src",
+    "compile": "babel -d ./lib --copy-files ./src",
     "prepublish": "npm run snyk-protect && npm run compile",
     "test": "snyk test && npm run lint && ./test/docker.sh",
     "start": "node ./bin/mservice.js | bunyan -o short",
