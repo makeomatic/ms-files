@@ -53,7 +53,7 @@ module.exports = function removeFile({ params }) {
       // we do not track this
       cleanupFileProvider(data.files, provider, log)
         .catch(e => log.fatal(
-          'failed to cleanup google cloud for %s', filename, e
+          'failed to cleanup file provider for %s', filename, e
         ));
 
       // cleanup local database
