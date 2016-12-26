@@ -61,7 +61,7 @@ module.exports = {
     'files:upload:pre': files => files,
     // process files hook -> noop
     'files:process:pre': [],
-    'files:process:post': sinon.spy(fileData => {
+    'files:process:post': sinon.spy((fileData) => {
       if (!fileData.export) {
         // skip processing
         return null;

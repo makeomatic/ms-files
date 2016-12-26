@@ -32,7 +32,7 @@ describe('finish upload suite', function suite() {
       .send({ filename: 'random name' })
       .reflect()
       .then(inspectPromise(false))
-      .then(err => {
+      .then((err) => {
         assert.equal(err.name, 'ValidationError');
       });
   });
@@ -42,7 +42,7 @@ describe('finish upload suite', function suite() {
       .send({ filename: [md5(owner), uuid.v4(), uuid.v4()].join('/') })
       .reflect()
       .then(inspectPromise(false))
-      .then(err => {
+      .then((err) => {
         assert.equal(err.statusCode, 200);
         assert.ok(/^404: /.test(err.message));
       });
@@ -57,7 +57,7 @@ describe('finish upload suite', function suite() {
           .send({ filename: file.filename })
           .reflect()
           .then(inspectPromise(false))
-          .then(err => {
+          .then((err) => {
             assert.equal(err.statusCode, 202);
             assert.equal(err.message, `${idx + 1}/${this.response.files.length} uploaded`);
           });
@@ -68,12 +68,12 @@ describe('finish upload suite', function suite() {
     const files = this.response.files.slice(0, 3);
     return Promise
       .resolve(files)
-      .mapSeries(file => {
+      .mapSeries((file) => {
         return this
           .send({ filename: file.filename })
           .reflect()
           .then(inspectPromise(false))
-          .then(err => {
+          .then((err) => {
             assert.equal(err.statusCode, 200);
             assert.ok(/^412: /.test(err.message));
           });
@@ -86,7 +86,7 @@ describe('finish upload suite', function suite() {
       .send({ filename: file.filename, skipProcessing: true })
       .reflect()
       .then(inspectPromise())
-      .then(response => {
+      .then((response) => {
         assert.equal(response, 'upload completed, processing skipped');
       });
   });

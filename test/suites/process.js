@@ -36,7 +36,7 @@ describe('process suite', function suite() {
       .call(this, { uploadId: uuid.v4() })
       .reflect()
       .then(inspectPromise(false))
-      .then(err => {
+      .then((err) => {
         assert.equal(err.statusCode, 404);
       });
   });
@@ -46,7 +46,7 @@ describe('process suite', function suite() {
       .call(this, this.response)
       .reflect()
       .then(inspectPromise())
-      .then(rsp => {
+      .then((rsp) => {
         assert.equal(rsp.status, STATUS_PROCESSED);
         assert.ok(rsp.files);
       });
@@ -57,7 +57,7 @@ describe('process suite', function suite() {
       .call(this, this.response)
       .reflect()
       .then(inspectPromise(false))
-      .then(err => {
+      .then((err) => {
         assert.equal(err.statusCode, 412);
       });
   });
@@ -100,7 +100,7 @@ describe('process suite', function suite() {
       .send(message)
       .reflect()
       .then(inspectPromise(false))
-      .then(err => {
+      .then((err) => {
         assert.equal(err.statusCode, 418);
       });
   });

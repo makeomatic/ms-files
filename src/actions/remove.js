@@ -5,6 +5,7 @@ const isUnlisted = require('../utils/isUnlisted.js');
 const { bustCache } = require('../utils/bustCache.js');
 const {
   FILES_INDEX,
+  FILES_INDEX_PUBLIC,
   FILES_DATA,
   FILES_PUBLIC_FIELD,
   FILES_OWNER_FIELD,
@@ -13,6 +14,22 @@ const {
   FILES_ALIAS_FIELD,
   FILES_USR_ALIAS_PTR,
 } = require('../constant.js');
+const pipelineError = require('../utils/pipelineError');
+
+/**
+ * This function used as coroutine, we don't track the result
+ * of this action
+ */
+function cleanupFileProvider(files, provider, log, opts = { concurrency: 20 }) {
+  return Promise
+    .map(files, file => (
+      provider
+        .remove(file.filename)
+        .catch({ code: 404 }, (err) => {
+          log.warn('file %s was already deleted', file.filename, err.code, err.message);
+        })
+    ), opts);
+}
 
 /**
  * Initiates upload
@@ -23,7 +40,7 @@ const {
  */
 module.exports = function removeFile({ params }) {
   const { filename, username } = params;
-  const { redis } = this;
+  const { redis, log } = this;
   const provider = this.provider('remove', params);
   const key = `${FILES_DATA}:${filename}`;
 
@@ -32,42 +49,42 @@ module.exports = function removeFile({ params }) {
     .then(fetchData)
     .then(isUnlisted)
     .then(hasAccess(username))
-    .then(data => (
-      // remove files from upstream
-      Promise.map(data.files, file => (
-        provider
-          .remove(file.filename)
-          .catch({ code: 404 }, (err) => {
-            this.log.warn('file %s was already deleted', file.filename, err.code, err.message);
-          })
-      ), { concurrency: 20 })
-      // cleanup our DB
-      .then(() => {
-        const pipeline = redis.pipeline();
-        const owner = data[FILES_OWNER_FIELD];
+    .then((data) => {
+      // we do not track this
+      cleanupFileProvider(data.files, provider, log)
+        .catch(e => log.fatal(
+          'failed to cleanup google cloud for %s', filename, e
+        ));
 
-        pipeline
-          .del(key)
-          .srem(FILES_INDEX, filename)
-          .srem(`${FILES_INDEX}:${owner}`, filename);
+      // cleanup local database
+      const pipeline = redis.pipeline();
+      const owner = data[FILES_OWNER_FIELD];
 
-        if (data[FILES_PUBLIC_FIELD]) {
-          pipeline.srem(`${FILES_INDEX}:${owner}:pub`, filename);
-        }
+      pipeline
+        .del(key)
+        .srem(FILES_INDEX, filename)
+        .srem(`${FILES_INDEX}:${owner}`, filename);
 
-        const tags = data[FILES_TAGS_FIELD];
-        if (tags) {
-          tags.forEach(tag => pipeline.srem(`${FILES_INDEX_TAGS}:${tag}`, filename));
-        }
+      if (data[FILES_PUBLIC_FIELD]) {
+        pipeline.srem(FILES_INDEX_PUBLIC, filename);
+        pipeline.srem(`${FILES_INDEX}:${owner}:pub`, filename);
+      }
 
-        // remove pointer for the alias if it existed
-        const alias = data[FILES_ALIAS_FIELD];
-        if (alias) {
-          pipeline.hdel(`${FILES_USR_ALIAS_PTR}:${owner}`, alias);
-        }
+      const tags = data[FILES_TAGS_FIELD];
+      if (tags) {
+        tags.forEach(tag => pipeline.srem(`${FILES_INDEX_TAGS}:${tag}`, filename));
+      }
 
-        return pipeline.exec();
-      }))
-      .tap(bustCache(redis, data))
-    );
+      // remove pointer for the alias if it existed
+      const alias = data[FILES_ALIAS_FIELD];
+      if (alias) {
+        pipeline.hdel(`${FILES_USR_ALIAS_PTR}:${owner}`, alias);
+      }
+
+      // execute pipeline and bustCache right after
+      return pipeline
+        .exec()
+        .tap(bustCache(redis, data))
+        .then(pipelineError);
+    });
 };

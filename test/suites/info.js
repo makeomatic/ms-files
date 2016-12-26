@@ -38,7 +38,7 @@ describe('info suite', function suite() {
       .send({ filename: uuid.v4(), username: owner })
       .reflect()
       .then(inspectPromise(false))
-      .then(err => {
+      .then((err) => {
         assert.equal(err.statusCode, 404);
       });
   });
@@ -48,7 +48,7 @@ describe('info suite', function suite() {
       .send({ filename: this.response.uploadId, username: 'martial@arts.com' })
       .reflect()
       .then(inspectPromise(false))
-      .then(err => {
+      .then((err) => {
         assert.equal(err.statusCode, 401);
       });
   });
@@ -58,7 +58,7 @@ describe('info suite', function suite() {
       .send({ filename: this.response.uploadId, username: owner })
       .reflect()
       .then(inspectPromise())
-      .then(rsp => {
+      .then((rsp) => {
         assert.equal(rsp.username, owner);
         assert.deepEqual(rsp.file, this.response);
         assert.equal(rsp.file.embed, undefined);
@@ -76,7 +76,7 @@ describe('info suite', function suite() {
         .send({ filename: this.response.uploadId, username: 'martial@arts.com' })
         .reflect()
         .then(inspectPromise(false))
-        .then(err => {
+        .then((err) => {
           assert.equal(err.statusCode, 401);
         });
     });
@@ -86,7 +86,7 @@ describe('info suite', function suite() {
         .send({ filename: this.response.uploadId, username: owner })
         .reflect()
         .then(inspectPromise())
-        .then(rsp => {
+        .then((rsp) => {
           assert.equal(rsp.username, owner);
           assert.equal(rsp.file.status, STATUS_UPLOADED);
         });
@@ -102,7 +102,7 @@ describe('info suite', function suite() {
           .send({ filename: this.response.uploadId, username: 'martial@arts.com' })
           .reflect()
           .then(inspectPromise(false))
-          .then(err => {
+          .then((err) => {
             assert.equal(err.statusCode, 401);
           });
       });
@@ -112,7 +112,7 @@ describe('info suite', function suite() {
           .send({ filename: this.response.uploadId, username: owner })
           .reflect()
           .then(inspectPromise())
-          .then(rsp => {
+          .then((rsp) => {
             assert.equal(rsp.username, owner);
             assert.equal(rsp.file.status, STATUS_PROCESSED);
 
@@ -125,7 +125,7 @@ describe('info suite', function suite() {
             assert.ifError(rsp.file.public);
 
             assert.ok(rsp.file.files);
-            rsp.file.files.forEach(file => {
+            rsp.file.files.forEach((file) => {
               assert.ok(file.contentLength);
               if (file.type === 'c-bin') {
                 assert.ok(file.decompressedLength);
@@ -139,7 +139,7 @@ describe('info suite', function suite() {
             assert.notEqual(rsp.file.embed.code.length, 0);
             assert.ok(rsp.file.embed.params);
 
-            Object.keys(rsp.file.embed.params).forEach(key => {
+            Object.keys(rsp.file.embed.params).forEach((key) => {
               const param = rsp.file.embed.params[key];
               assert.ok(param.type);
               assert.notStrictEqual(param.default, undefined);
@@ -158,14 +158,14 @@ describe('info suite', function suite() {
             .send({ filename: this.response.uploadId, username: owner })
             .reflect()
             .then(inspectPromise())
-            .then(rsp => {
+            .then((rsp) => {
               assert.equal(rsp.username, owner);
               assert.equal(rsp.file.owner, owner);
               assert.equal(rsp.file.public, '1');
               assert.equal(rsp.file.status, STATUS_PROCESSED);
 
               assert.ok(rsp.file.files);
-              rsp.file.files.forEach(file => {
+              rsp.file.files.forEach((file) => {
                 assert.ok(file.contentLength);
                 if (file.type === 'c-bin') {
                   assert.ok(file.decompressedLength);

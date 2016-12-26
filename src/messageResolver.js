@@ -1,3 +1,5 @@
+const Promise = require('bluebird');
+
 /**
  * Message resolver
  * This is basically a policy on how to handle results of AMQP actions

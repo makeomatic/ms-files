@@ -96,7 +96,7 @@ describe('list suite', function suite() {
   // type: alphanum, numeric
   // field: to use for sorting
   function sort(direction, type, field) {
-    return data => {
+    return (data) => {
       const copy = [].concat(data);
       copy.sort((type === 'alphanum' ? alphanumSort : numericSort)(direction, field));
       assert.deepEqual(data, copy);
@@ -125,14 +125,14 @@ describe('list suite', function suite() {
       })
       .reflect()
       .then(inspectPromise())
-      .then(data => {
+      .then((data) => {
         assert.ok(data.files);
         ascSortFilename(data.files);
         assert.equal(data.cursor, 40);
         assert.equal(data.page, 4);
         assert.ok(data.pages);
 
-        data.files.forEach(file => {
+        data.files.forEach((file) => {
           assert.equal(file.owner, owner);
 
           if (file.status === STATUS_PROCESSED) {
@@ -142,7 +142,7 @@ describe('list suite', function suite() {
             assert.notEqual(file.embed.code.length, 0);
             assert.ok(file.embed.params);
 
-            Object.keys(file.embed.params).forEach(key => {
+            Object.keys(file.embed.params).forEach((key) => {
               const param = file.embed.params[key];
               assert.ok(param.type);
               assert.notStrictEqual(param.default, undefined);
@@ -165,14 +165,14 @@ describe('list suite', function suite() {
       })
       .reflect()
       .then(inspectPromise())
-      .then(data => {
+      .then((data) => {
         assert.ok(data.files);
         descSortFilename(data.files);
         assert.equal(data.cursor, 40);
         assert.equal(data.page, 4);
         assert.ok(data.pages);
 
-        data.files.forEach(file => {
+        data.files.forEach((file) => {
           assert.equal(file.owner, owner);
         });
       });
@@ -189,14 +189,14 @@ describe('list suite', function suite() {
       })
       .reflect()
       .then(inspectPromise())
-      .then(data => {
+      .then((data) => {
         assert.ok(data.files);
         ascSortStartAt(data.files);
         assert.equal(data.cursor, 40);
         assert.equal(data.page, 4);
         assert.ok(data.pages);
 
-        data.files.forEach(file => {
+        data.files.forEach((file) => {
           assert.equal(file.owner, owner);
         });
       });
@@ -213,14 +213,14 @@ describe('list suite', function suite() {
       })
       .reflect()
       .then(inspectPromise())
-      .then(data => {
+      .then((data) => {
         assert.ok(data.files);
         descSortStartAt(data.files);
         assert.equal(data.cursor, 40);
         assert.equal(data.page, 4);
         assert.ok(data.pages);
 
-        data.files.forEach(file => {
+        data.files.forEach((file) => {
           assert.equal(file.owner, owner);
         });
       });
@@ -240,14 +240,14 @@ describe('list suite', function suite() {
       })
       .reflect()
       .then(inspectPromise())
-      .then(data => {
+      .then((data) => {
         assert.ok(data.files);
         ascSortFilename(data.files);
         assert.equal(data.cursor, 40);
         assert.equal(data.page, 4);
         assert.ok(data.pages);
 
-        data.files.forEach(file => {
+        data.files.forEach((file) => {
           assert.equal(file.owner, owner);
           assert.ok(file.contentLength >= 5, 'gte filter failed');
         });
@@ -268,14 +268,14 @@ describe('list suite', function suite() {
       })
       .reflect()
       .then(inspectPromise())
-      .then(data => {
+      .then((data) => {
         assert.ok(data.files);
         descSortFilename(data.files);
         assert.equal(data.cursor, 40);
         assert.equal(data.page, 4);
         assert.ok(data.pages);
 
-        data.files.forEach(file => {
+        data.files.forEach((file) => {
           assert.equal(file.owner, owner);
           assert.ok(file.contentLength >= 5, 'gte filter failed');
         });
@@ -295,7 +295,7 @@ describe('list suite', function suite() {
       })
       .reflect()
       .then(inspectPromise())
-      .then(data => {
+      .then((data) => {
         assert.ok(data.files);
         ascSortFilename(data.files);
         assert.equal(data.cursor, 40);
@@ -313,7 +313,7 @@ describe('list suite', function suite() {
       })
       .reflect()
       .then(inspectPromise())
-      .then(data => {
+      .then((data) => {
         assert.ok(data.files);
         descSortFilename(data.files);
         assert.equal(data.cursor, 40);
@@ -332,7 +332,7 @@ describe('list suite', function suite() {
       })
       .reflect()
       .then(inspectPromise())
-      .then(data => {
+      .then((data) => {
         assert.ok(data.files);
         ascSortStartAt(data.files);
         assert.equal(data.cursor, 40);
@@ -351,7 +351,7 @@ describe('list suite', function suite() {
       })
       .reflect()
       .then(inspectPromise())
-      .then(data => {
+      .then((data) => {
         assert.ok(data.files);
         descSortStartAt(data.files);
         assert.equal(data.cursor, 40);
@@ -373,14 +373,14 @@ describe('list suite', function suite() {
       })
       .reflect()
       .then(inspectPromise())
-      .then(data => {
+      .then((data) => {
         assert.ok(data.files);
         ascSortFilename(data.files);
         assert.equal(data.cursor, 40);
         assert.equal(data.page, 4);
         assert.ok(data.pages);
 
-        data.files.forEach(file => {
+        data.files.forEach((file) => {
           assert.equal(file.owner, owner);
         });
       });
@@ -399,14 +399,14 @@ describe('list suite', function suite() {
       })
       .reflect()
       .then(inspectPromise())
-      .then(data => {
+      .then((data) => {
         assert.ok(data.files);
         descSortFilename(data.files);
         assert.equal(data.cursor, 40);
         assert.equal(data.page, 4);
         assert.ok(data.pages);
 
-        data.files.forEach(file => {
+        data.files.forEach((file) => {
           assert.equal(file.owner, owner);
         });
       });
@@ -420,14 +420,14 @@ describe('list suite', function suite() {
       })
       .reflect()
       .then(inspectPromise())
-      .then(data => {
+      .then((data) => {
         assert.ok(data.files);
         descSortFilename(data.files);
         assert.equal(data.cursor, 10);
         assert.equal(data.page, 1);
         assert.ok(data.pages);
 
-        data.files.forEach(file => {
+        data.files.forEach((file) => {
           assert.equal(file.public, 1);
         });
       });
@@ -442,14 +442,14 @@ describe('list suite', function suite() {
       })
       .reflect()
       .then(inspectPromise())
-      .then(data => {
+      .then((data) => {
         assert.ok(data.files);
         descSortFilename(data.files);
         assert.equal(data.cursor, 10);
         assert.equal(data.page, 1);
         assert.ok(data.pages);
 
-        data.files.forEach(file => {
+        data.files.forEach((file) => {
           assert.equal(file.owner, owner);
         });
       });
@@ -479,13 +479,13 @@ describe('list suite', function suite() {
       })
       .reflect()
       .then(inspectPromise())
-      .then(data => {
+      .then((data) => {
         assert.ok(data.files);
         assert.equal(data.cursor, 10);
         assert.equal(data.page, 1);
         assert.ok(data.pages);
 
-        data.files.forEach(file => {
+        data.files.forEach((file) => {
           assert.equal(file.owner, username);
           assert.deepEqual(file.tags, meta.tags);
         });
@@ -503,10 +503,10 @@ describe('list suite', function suite() {
       })
       .reflect()
       .then(inspectPromise())
-      .then(data => {
+      .then((data) => {
         assert.ok(data.files);
 
-        data.files.forEach(file => {
+        data.files.forEach((file) => {
           assert.equal(file.owner, username);
           assert.deepEqual(file.tags, meta.tags);
         });

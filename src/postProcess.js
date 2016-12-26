@@ -43,5 +43,6 @@ module.exports = function postProcess(offset = 0, uploadedAt) {
     })
     .then(() => {
       this.log.info('completed files post-processing');
+      return null;
     });
 };

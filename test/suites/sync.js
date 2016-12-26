@@ -38,7 +38,7 @@ describe('finish upload suite', function suite() {
       .publishAndWait('files.info', { filename: this.response.uploadId, username: owner })
       .reflect()
       .then(inspectPromise())
-      .then(rsp => {
+      .then((rsp) => {
         assert.ifError(rsp.file.status === STATUS_PENDING);
       });
   });
