@@ -51,7 +51,7 @@ services:
       - REDIS_3=redis-3
 
   tester:
-    image: makeomatic/node:6.9.1-tester-glibc
+    image: makeomatic/node:6.9.4-tester-glibc
     links:
       - redis-1
       - redis-2
