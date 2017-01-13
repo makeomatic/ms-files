@@ -4,12 +4,11 @@
   "main": "./lib/index.js",
   "scripts": {
     "compile": "babel -d ./lib --copy-files ./src",
-    "prepublish": "npm run snyk-protect && npm run compile",
-    "test": "snyk test && npm run lint && ./test/docker.sh",
+    "prepublish": "npm run compile",
+    "test": "npm run lint && ./test/docker.sh",
     "start": "node ./bin/mservice.js | bunyan -o short",
     "lint": "eslint ./src",
-    "semantic-release": "semantic-release pre && npm publish && semantic-release post",
-    "snyk-protect": "snyk protect"
+    "semantic-release": "semantic-release pre && npm publish && semantic-release post"
   },
   "repository": {
     "type": "git",
@@ -80,6 +79,5 @@
     "commitizen": {
       "path": "./node_modules/cz-conventional-changelog"
     }
-  },
-  "snyk": true
+  }
 }
