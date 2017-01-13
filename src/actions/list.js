@@ -17,8 +17,7 @@ const {
  * Internal functions
  */
 function interstore(username) {
-  const { params, redis } = this;
-  const { isPublic, temp, tags } = params;
+  const { isPublic, temp, tags, redis } = this;
   this.username = username;
 
   // choose which set to use
@@ -79,7 +78,7 @@ function interstore(username) {
  * Perform fetch from redis
  */
 function fetchFromRedis(filesIndex) {
-  const { criteria, order, strFilter, offset, limit, expiration } = this.params;
+  const { criteria, order, strFilter, offset, limit, expiration } = this;
   return this.redis.fsort(filesIndex, `${FILES_DATA}:*`, criteria, order, strFilter, Date.now(), offset, limit, expiration);
 }
 
@@ -159,6 +158,7 @@ module.exports = function listFiles({ params }) {
   const strFilter = is.string(filter) ? filter : fsort.filter(filter || {});
 
   const ctx = {
+    // context
     redis,
     dlock,
     log,
@@ -166,19 +166,19 @@ module.exports = function listFiles({ params }) {
     interstoreKeyMinTimeleft,
     timer,
     service: this,
-    params: {
-      owner,
-      filter,
-      isPublic,
-      offset,
-      limit,
-      order,
-      criteria,
-      tags,
-      temp,
-      expiration,
-      strFilter,
-    },
+
+    // our params
+    owner,
+    filter,
+    isPublic,
+    offset,
+    limit,
+    order,
+    criteria,
+    tags,
+    temp,
+    expiration,
+    strFilter,
   };
 
   return Promise
