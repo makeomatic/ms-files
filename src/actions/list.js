@@ -153,10 +153,10 @@ function prepareResponse(data) {
  * @return {Promise}
  */
 module.exports = function listFiles({ params }) {
+  const timer = perf('list');
   const { redis, dlock, log, config: { interstoreKeyTTL, interstoreKeyMinTimeleft } } = this;
   const { owner, filter, public: isPublic, offset, limit, order, criteria, tags, temp, expiration = 30000 } = params;
   const strFilter = is.string(filter) ? filter : fsort.filter(filter || {});
-  const timer = perf('list');
 
   const ctx = {
     redis,

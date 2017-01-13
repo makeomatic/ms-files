@@ -42,8 +42,7 @@
     "redis-filtered-sort": "^2.0.3",
     "snyk": "^1.22.1",
     "stdout-stream": "^1.4.0",
-    "uuid": "^3.0.1",
-    "weak": "^1.0.1"
+    "uuid": "^3.0.1"
   },
   "devDependencies": {
     "babel-cli": "^6.18.0",
