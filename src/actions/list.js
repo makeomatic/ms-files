@@ -2,7 +2,7 @@ const Promise = require('bluebird');
 const fsort = require('redis-filtered-sort');
 const is = require('is');
 const noop = require('lodash/noop');
-const fetchData = require('../utils/fetchData.js');
+const fetchData = require('../utils/fetchData');
 const perf = require('ms-perf');
 const {
   FILES_DATA,
@@ -94,7 +94,7 @@ function isTruthy(file) {
  */
 function fetchFileData(filename) {
   return fetchData
-    .call(this, `${FILES_DATA}:${filename}`)
+    .call(this, `${FILES_DATA}:${filename}`, this.without)
     // catch missing files to avoid collisions after cache busting
     .catch({ statusCode: 404 }, (err) => {
       this.log.fatal('failed to fetch data for %s', filename, err);
@@ -153,8 +153,31 @@ function prepareResponse(data) {
  */
 module.exports = function listFiles({ params }) {
   const timer = perf('list');
-  const { redis, dlock, log, config: { interstoreKeyTTL, interstoreKeyMinTimeleft } } = this;
-  const { owner, filter, public: isPublic, offset, limit, order, criteria, tags, temp, expiration = 30000 } = params;
+
+  const {
+    redis,
+    dlock,
+    log,
+    config: {
+      interstoreKeyTTL,
+      interstoreKeyMinTimeleft,
+    },
+  } = this;
+
+  const {
+    without,
+    owner,
+    filter,
+    public: isPublic,
+    offset,
+    limit,
+    order,
+    criteria,
+    tags,
+    temp,
+    expiration = 30000,
+  } = params;
+
   const strFilter = is.string(filter) ? filter : fsort.filter(filter || {});
 
   const ctx = {
@@ -168,6 +191,7 @@ module.exports = function listFiles({ params }) {
     service: this,
 
     // our params
+    without,
     owner,
     filter,
     isPublic,

@@ -1,36 +1,51 @@
 const { HttpStatusError } = require('common-errors');
-const { FIELDS_TO_STRINGIFY, FILES_TAGS_FIELD } = require('../constant.js');
-const safeParse = require('./safeParse.js');
+const { FIELDS_TO_STRINGIFY, FILES_TAGS_FIELD } = require('../constant');
+const safeParse = require('./safeParse');
+const perf = require('ms-perf');
+const handlePipelineError = require('./pipelineError');
+const zipObject = require('lodash/zipObject');
 
-const JSON_FIELDS = [FILES_TAGS_FIELD, 'files'];
+const STRINGIFY_FIELDS = zipObject(FIELDS_TO_STRINGIFY);
+const JSON_FIELDS = zipObject([FILES_TAGS_FIELD, 'files']);
+const hasOwnProperty = Object.prototype.hasOwnProperty;
 
-module.exports = function exists(key) {
+module.exports = function fetchData(key, omitFields = []) {
   const { redis } = this;
+  const timer = perf('fetchData');
+
   return redis
     .pipeline()
     .exists(key)
     .hgetall(key)
     .exec()
-    .spread((fileExistsResponse, dataResponse) => {
-      const fileExists = fileExistsResponse[1];
-      const data = dataResponse[1];
-      const fields = Object.keys(data);
-
-      fields.forEach((field) => {
-        const value = data[field];
-        if (JSON_FIELDS.indexOf(field) !== -1) {
-          data[field] = safeParse(value, []);
-        } else if (FIELDS_TO_STRINGIFY.indexOf(field) !== -1) {
-          data[field] = safeParse(value);
-        } else {
-          data[field] = value;
-        }
-      });
-
+    .tap(timer('redis'))
+    .then(handlePipelineError)
+    .tap(timer('handleError'))
+    .spread((fileExists, data) => {
       if (!fileExists) {
         throw new HttpStatusError(404, 'could not find associated data');
       }
 
-      return data;
-    });
+      const output = {};
+      const fields = Object.keys(data);
+
+      fields.forEach((field) => {
+        if (omitFields.indexOf(field) >= 0) {
+          return;
+        }
+
+        const value = data[field];
+        if (hasOwnProperty.call(JSON_FIELDS, field)) {
+          output[field] = safeParse(value, []);
+        } else if (hasOwnProperty.call(STRINGIFY_FIELDS, field)) {
+          output[field] = safeParse(value);
+        } else {
+          output[field] = value;
+        }
+      });
+
+      return output;
+    })
+    .tap(timer('remapping'))
+    .finally(timer);
 };

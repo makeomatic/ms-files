@@ -33,6 +33,14 @@
     "expiration": {
       "type": "integer"
     },
+    "without": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
     "filter": {
       "type": "object",
       "additionalProperties": false,
