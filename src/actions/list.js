@@ -14,6 +14,12 @@ const {
 } = require('../constant.js');
 
 /**
+ * Missin file predicate
+ * @type {Object}
+ */
+const missingFile = { statusCode: 404 };
+
+/**
  * Internal functions
  */
 function interstore(username) {
@@ -90,16 +96,22 @@ function isTruthy(file) {
 }
 
 /**
+ * Reports missing file error
+ */
+function reportMissingError(err) {
+  this.log.fatal('failed to fetch data for %s', this.filename, err);
+  return false;
+}
+
+/**
  * Fetches file data
  */
 function fetchFileData(filename) {
-  return fetchData
-    .call(this, `${FILES_DATA}:${filename}`, this.without)
-    // catch missing files to avoid collisions after cache busting
-    .catch({ statusCode: 404 }, (err) => {
-      this.log.fatal('failed to fetch data for %s', filename, err);
-      return false;
-    });
+  return Promise
+    .bind(this.service, [`${FILES_DATA}:${filename}`, this.without])
+    .spread(fetchData)
+    .bind({ log: this.log, filename })
+    .catch(missingFile, reportMissingError);
 }
 
 /**
@@ -116,7 +128,7 @@ function fetchExtraData(filenames) {
   }
 
   const pipeline = Promise
-    .bind(this.service, filenames)
+    .bind(this, filenames)
     .map(fetchFileData)
     .filter(isTruthy);
 
