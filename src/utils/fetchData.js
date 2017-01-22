@@ -2,6 +2,7 @@ const { FIELDS_TO_STRINGIFY, FILES_TAGS_FIELD, FILE_MISSING_ERROR } = require('.
 const safeParse = require('./safeParse');
 const perf = require('ms-perf');
 const zipObject = require('lodash/zipObject');
+const debug = require('debug')('ms-files:fetchData');
 
 /**
  * Helper constants
@@ -14,8 +15,8 @@ const hasOwnProperty = Object.prototype.hasOwnProperty;
 /**
  * Remaps & json-parses some of the fields
  */
-function remapData(field) {
-  const value = this.data[field];
+function remapData(field, index) {
+  const value = this.data[index];
   if (hasOwnProperty.call(JSON_FIELDS, field)) {
     this.output[field] = safeParse(value, []);
   } else if (hasOwnProperty.call(STRINGIFY_FIELDS, field)) {
@@ -29,6 +30,7 @@ function remapData(field) {
  * Checks error & remaps data
  */
 function reserializeData(fields, data) {
+  debug('reserialize', fields, data);
   const output = {};
   fields.forEach(remapData, { output, data });
   return output;
