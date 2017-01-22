@@ -1,3 +1,5 @@
+const { HttpStatusError } = require('common-errors');
+
 module.exports = exports = {
   STATUS_PENDING: '1',
   STATUS_UPLOADED: '2',
@@ -58,6 +60,9 @@ module.exports = exports = {
   FILES_PLAYER_HIDECONTROLS: 'hidecontrols',
   FILES_PLAYER_LOGO: 'logo',
   FILES_PLAYER_HIDEFULLSCREEN: 'hidefullscreen',
+
+  // errors
+  FILE_MISSING_ERROR: new HttpStatusError(404, 'could not find associated data'),
 };
 
 exports.FIELDS_TO_STRINGIFY = [
