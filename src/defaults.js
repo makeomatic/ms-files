@@ -69,6 +69,7 @@ module.exports = {
         dropBufferSupport: true,
       },
     },
+    luaScripts: path.resolve(__dirname, '../lua'),
   },
   // default storage for files
   transport: [{
