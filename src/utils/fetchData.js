@@ -45,8 +45,6 @@ function reserializeData(fields, data) {
  * Queues more requests to pipeline
  */
 function addToPipeline(key) {
-  // NOTE: refers to implementation details of cluster
-  // and manually prefixes the key
   this.pipeline.fetchData(1, key, this.omitFields);
 }
 
