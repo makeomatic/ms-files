@@ -2,7 +2,7 @@ const Promise = require('bluebird');
 const fsort = require('redis-filtered-sort');
 const is = require('is');
 const noop = require('lodash/noop');
-const fetchData = require('../utils/fetchData');
+const fetchData = require('../utils/fetchData').batch;
 const perf = require('ms-perf');
 const {
   FILES_DATA,
@@ -12,12 +12,6 @@ const {
   FILES_INDEX_TEMP,
   FILES_LIST,
 } = require('../constant.js');
-
-/**
- * Missin file predicate
- * @type {Object}
- */
-const missingFile = { statusCode: 404 };
 
 /**
  * Internal functions
@@ -89,29 +83,37 @@ function fetchFromRedis(filesIndex) {
 }
 
 /**
- * Is truthy?
- */
-function isTruthy(file) {
-  return !!file;
-}
-
-/**
  * Reports missing file error
  */
-function reportMissingError(err) {
-  this.log.fatal('failed to fetch data for %s', this.filename, err);
+function reportMissingError(err, filename) {
+  this.log.fatal('failed to fetch data for %s', filename, err);
   return false;
 }
 
+
 /**
- * Fetches file data
+ * Omits errors & reports missing files
  */
-function fetchFileData(filename) {
-  return Promise
-    .bind(this.service, [`${FILES_DATA}:${filename}`, this.without])
-    .spread(fetchData)
-    .bind({ log: this.log, filename })
-    .catch(missingFile, reportMissingError);
+function omitErrors(result, promise, idx) {
+  if (promise.isFulfilled()) {
+    result.push(promise.value());
+  } else {
+    const error = promise.reason();
+    if (error.statusCode === 404) {
+      reportMissingError.call(this, error, this.filenames[idx]);
+    } else {
+      throw error;
+    }
+  }
+
+  return result;
+}
+
+/**
+ * Prepares filenames
+ */
+function prepareFilenames(filename) {
+  return `${FILES_DATA}:${filename}`;
 }
 
 /**
@@ -127,10 +129,12 @@ function fetchExtraData(filenames) {
     };
   }
 
+  const mapped = filenames.map(prepareFilenames);
   const pipeline = Promise
-    .bind(this, filenames)
-    .map(fetchFileData)
-    .filter(isTruthy);
+    .bind(this, [mapped, this.omitFields])
+    .spread(fetchData)
+    .bind({ log: this.log, filenames: mapped })
+    .reduce(omitErrors, []);
 
   return Promise.props({ filenames, props: pipeline, length });
 }
@@ -170,11 +174,13 @@ module.exports = function listFiles({ params }) {
     redis,
     dlock,
     log,
-    config: {
-      interstoreKeyTTL,
-      interstoreKeyMinTimeleft,
-    },
+    config,
   } = this;
+
+  const {
+    interstoreKeyTTL,
+    interstoreKeyMinTimeleft,
+  } = config;
 
   const {
     without,

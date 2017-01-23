@@ -1,12 +1,17 @@
+const Promise = require('bluebird');
 const { FIELDS_TO_STRINGIFY, FILES_TAGS_FIELD, FILE_MISSING_ERROR } = require('../constant');
 const safeParse = require('./safeParse');
 const perf = require('ms-perf');
 const zipObject = require('lodash/zipObject');
 const debug = require('debug')('ms-files:fetchData');
+const calcSlot = require('cluster-key-slot');
+const fs = require('fs');
+const is = require('is');
 
 /**
  * Helper constants
  */
+const fetchDataScript = fs.readFileSync(`${__dirname}/../../lua/fetchData.lua`, 'utf8');
 const missingError = e => /404/.test(e.message);
 const STRINGIFY_FIELDS = zipObject(FIELDS_TO_STRINGIFY);
 const JSON_FIELDS = zipObject([FILES_TAGS_FIELD, 'files']);
@@ -37,6 +42,35 @@ function reserializeData(fields, data) {
 }
 
 /**
+ * Queues more requests to pipeline
+ */
+function addToPipeline(key) {
+  // NOTE: refers to implementation details of cluster
+  // and manually prefixes the key
+  this.pipeline.fetchData(1, key, this.omitFields);
+}
+
+/**
+ * Deserializes redis pipeline into many responses
+ */
+function deserializePipeline(response) {
+  const [error, data] = response;
+
+  // if we have an error - means file is missing, just reject
+  if (error) {
+    if (missingError(error)) {
+      return Promise.reject(error).reflect();
+    }
+
+    throw error;
+  }
+
+  // data[0] -> fields
+  // data[1] -> values
+  return Promise.resolve(reserializeData(data[0], data[1])).reflect();
+}
+
+/**
  * Fetches data
  * @param  {String} key
  * @param  {Array}  [omitFields=[]]
@@ -51,5 +85,36 @@ module.exports = function fetchData(key, omitFields = []) {
     .catchThrow(missingError, FILE_MISSING_ERROR)
     .spread(reserializeData)
     .tap(timer('remapping'))
+    .finally(timer);
+};
+
+module.exports.batch = function fetchDataBatch(keys, omitFields = []) {
+  const timer = perf('fetchData:batch');
+  const redis = this.redis;
+
+  // this must include {}
+  const prefix = redis.options.keyPrefix;
+  const slot = calcSlot(prefix);
+  // they will all refer to the same slot, because we prefix with {}
+  // this has possibility of throwing, but not likely to since previous operations
+  // would've been rejected already, in a promise this will result in a rejection
+  const nodeKeys = redis.slots[slot];
+  const masters = redis.connectionPool.nodes.master;
+  const masterNode = nodeKeys.reduce((node, key) => node || masters[key], null);
+
+  // uses internal implementation details
+  if (is.fn(masterNode.fetchData) !== true) {
+    masterNode.options.keyPrefix = prefix;
+    masterNode.defineCommand('fetchData', { lua: fetchDataScript });
+    masterNode.options.keyPrefix = null;
+  }
+
+  const pipeline = masterNode.pipeline();
+  keys.forEach(addToPipeline, { pipeline, omitFields });
+
+  return pipeline
+    .exec()
+    .tap(timer('pipeline'))
+    .map(deserializePipeline)
     .finally(timer);
 };
