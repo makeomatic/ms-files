@@ -88,7 +88,7 @@
               "minItems": 1,
               "items": {
                 "type": "string",
-                "enum": ["name", "description", "website", "owner"]
+                "enum": ["name", "description", "website", "owner", "alias"]
               }
             },
             "match": {
