@@ -51,6 +51,9 @@
         "name": {
           "$ref": "common#/definitions/filter-props"
         },
+        "alias": {
+          "$ref": "common#/definitions/filter-props"
+        },
         "description": {
           "$ref": "common#/definitions/filter-props"
         },
@@ -88,7 +91,7 @@
               "minItems": 1,
               "items": {
                 "type": "string",
-                "enum": ["name", "description", "website", "owner"]
+                "enum": ["name", "description", "website", "owner", "alias"]
               }
             },
             "match": {
