@@ -51,6 +51,9 @@
         "name": {
           "$ref": "common#/definitions/filter-props"
         },
+        "alias": {
+          "$ref": "common#/definitions/filter-props"
+        },
         "description": {
           "$ref": "common#/definitions/filter-props"
         },
