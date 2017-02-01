@@ -1,5 +1,8 @@
 const {
   STATUS_PROCESSED,
+  STATUS_PROCESSING,
+  STATUS_FAILED,
+
   FILES_PLAYER_AUTORUN,
   FILES_PLAYER_CLOSEBUTTON,
   FILES_PLAYER_HIDECONTROLS,
@@ -77,10 +80,17 @@ function getEmbeddedCode(id, qs) {
   ></iframe>`.replace(/\s+/g, ' ');
 }
 
+// cached allowed statuses
+const GREEN_LIGHT_STATUSES = {
+  [STATUS_PROCESSED]: true,
+  [STATUS_PROCESSING]: true,
+  [STATUS_FAILED]: true,
+};
+
 module.exports = function getEmbeddedInfo(file) {
   const { uploadId: id, status } = file;
 
-  if (status === STATUS_PROCESSED) {
+  if (GREEN_LIGHT_STATUSES[status] === true) {
     const options = getPlayerOpts(file);
     file.embed = {
       code: getEmbeddedCode(id, getQueryString(options)),
