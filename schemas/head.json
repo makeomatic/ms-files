@@ -5,6 +5,7 @@
   "properties": {
     "aliases": {
       "type": "array",
+      "minItems": 1,
       "items": {
         "$ref": "common#/definitions/meta/properties/alias"
       }

@@ -45,9 +45,9 @@ describe('header suite', function suite() {
     return this
       .send({ aliases: [ 'skubidoo', 'yesmomihadeaten' ], username: 'iamnotexist' })
       .reflect()
-      .then(inspectPromise())
-      .then(response => {
-        assert.deepEqual(response, [ null, null ]);
+      .then(inspectPromise(false))
+      .then(error => {
+        assert.equal(error.statusCode, 404);
       });
   });
 });
