@@ -1292,6 +1292,12 @@ eslint-config-airbnb-base@^11.1.0:
   version "11.1.0"
   resolved "https://registry.yarnpkg.com/eslint-config-airbnb-base/-/eslint-config-airbnb-base-11.1.0.tgz#dc9b3ec70b8c74dcbe6d6257c9da3992c39ca2ca"
 
+eslint-config-makeomatic@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/eslint-config-makeomatic/-/eslint-config-makeomatic-1.0.1.tgz#5a0e92552372de4c1806d99838a8f9065b2752b8"
+  dependencies:
+    eslint-config-airbnb-base "^11.1.0"
+
 eslint-import-resolver-node@^0.2.0:
   version "0.2.3"
   resolved "https://registry.yarnpkg.com/eslint-import-resolver-node/-/eslint-import-resolver-node-0.2.3.tgz#5add8106e8c928db2cba232bcd9efa846e3da16c"
