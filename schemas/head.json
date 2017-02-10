@@ -1,0 +1,17 @@
+{
+  "id": "head",
+  "type": "object",
+  "required": ["aliases", "username"],
+  "properties": {
+    "aliases": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "common#/definitions/meta/properties/alias"
+      }
+    },
+    "username": {
+      "$ref": "common#/definitions/owner"
+    }
+  }
+}
