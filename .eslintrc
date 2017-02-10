@@ -20,7 +20,8 @@
     "promise/param-names": 2,
     "promise/always-return": 2,
     "promise/catch-or-return": 2,
-    "promise/no-native": 2
+    "promise/no-native": 2,
+    "no-multi-assign": 0
   },
   "plugins": [
     "mocha",
