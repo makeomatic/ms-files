@@ -1,27 +1,36 @@
 const Errors = require('common-errors');
 const Promise = require('bluebird');
 const assert = require('assert');
+const checkUploadsLimit = require('../utils/checkUploadsLimit');
 const isCappasityUpload = require('../utils/isCappasityUpload');
 const { FILES_PACKED_FIELD } = require('../constant');
 
 const isPack = it => it.type === 'c-pack';
 
-module.exports = function extractMetadata({ files, meta, temp, unlisted, access, uploadType }) {
+module.exports = function extractMetadata(params) {
   let sourceSHA;
-
-  if (uploadType === 'simple' && files.find(isPack)) {
-    meta[FILES_PACKED_FIELD] = '1';
-    return Promise.resolve();
-  }
-
-  // use relevant validation
-  // based on upload type in the json schema
-  if (uploadType) {
-    return Promise.resolve();
-  }
+  const {
+    files,
+    meta,
+    temp,
+    unlisted,
+    access,
+    uploadType,
+  } = params;
 
   return Promise
     .try(function verifyUploadData() {
+      if (uploadType === 'simple' && files.find(isPack)) {
+        meta[FILES_PACKED_FIELD] = '1';
+        return null;
+      }
+
+      // use relevant validation
+      // based on upload type in the json schema
+      if (uploadType) {
+        return null;
+      }
+
       const fileTypes = {};
       let differentFileTypes = 0;
 
@@ -67,5 +76,9 @@ module.exports = function extractMetadata({ files, meta, temp, unlisted, access,
       } else {
         throw new Errors.HttpStatusError(400, 'should be either a cappasity model or a single image');
       }
-    });
+
+      return null;
+    })
+    .bind(this, params)
+    .tap(checkUploadsLimit);
 };
