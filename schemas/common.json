@@ -23,7 +23,7 @@
       }
     },
     "fitToSquare": {
-      "$ref": "common#/definitions/fitToSquare"
+      "type": "boolean"
     },
     "color": {
       "type": "string",
