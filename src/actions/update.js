@@ -31,6 +31,9 @@ function acquireLock(uploadId, alias) {
     .disposer(lock => lock.release());
 }
 
+// cache ref
+const hasOwnProperty = Object.prototype.hasOwnProperty;
+
 function updateMeta(params) {
   const { uploadId, username, meta } = params;
   const { redis } = this;
@@ -75,7 +78,7 @@ function updateMeta(params) {
         delete meta[FILES_ALIAS_FIELD]; // <-- this field is empty at this point
       }
 
-      if (data[FILES_TAGS_FIELD]) {
+      if (hasOwnProperty.call(meta, FILES_TAGS_FIELD) && data[FILES_TAGS_FIELD]) {
         data[FILES_TAGS_FIELD].forEach(tag => pipeline.srem(`${FILES_INDEX_TAGS}:${tag}`, uploadId));
       }
 
