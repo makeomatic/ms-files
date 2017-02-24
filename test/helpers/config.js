@@ -23,11 +23,8 @@ const amqp = {
 };
 
 // redis conf
-const redisHosts = ['1', '2', '3']
-  .map(idx => ({
-    host: `redis-${idx}`,
-    port: 6379,
-  }));
+const redisHosts = [7000, 7001, 7002]
+  .map(port => ({ host: 'redis', port }));
 
 // full configuration
 module.exports = {

@@ -1,29 +1,10 @@
 version: '2'
 
 services:
-  redis-1:
-    container_name: redis-1
-    hostname: redis-1
-    expose:
-      - "6379"
-      - "16379"
-    image: makeomatic/alpine-redis
-
-  redis-2:
-    expose:
-      - "6379"
-      - "16379"
-    container_name: redis-2
-    hostname: redis-2
-    image: makeomatic/alpine-redis
-
-  redis-3:
-    expose:
-      - "6379"
-      - "16379"
-    container_name: redis-3
-    image: makeomatic/alpine-redis
-    hostname: redis-3
+  redis:
+    hostname: redis
+    container_name: redis
+    image: makeomatic/redis-cluster:3.2.8
 
   rabbitmq:
     expose:
@@ -37,27 +18,11 @@ services:
     volumes:
       - ./docker-configs/rabbitmq.config:/usr/lib/rabbitmq/etc/rabbitmq/rabbitmq.config
 
-  redis-client:
-    links:
-      - redis-1
-      - redis-2
-      - redis-3
-    container_name: redis-client
-    hostname: redis-client
-    image: makeomatic/redis-trib
-    environment:
-      - REDIS_1=redis-1
-      - REDIS_2=redis-2
-      - REDIS_3=redis-3
-
   tester:
-    image: makeomatic/node:7.5.0-tester-glibc
+    image: makeomatic/node:7.5.0-tester
     links:
-      - redis-1
-      - redis-2
-      - redis-3
       - rabbitmq
-      - redis-client
+      - redis
     working_dir: /src
     volumes:
       - ${PWD}:/src
@@ -66,5 +31,4 @@ services:
     environment:
       NODE_ENV: "test"
       DEBUG: "${DEBUG}"
-      LD_LIBRARY_PATH: "/usr/glibc-compat/lib/"
     command: tail -f /dev/null

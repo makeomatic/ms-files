@@ -8,8 +8,13 @@ const auditLog = routerExtension('audit/log');
 module.exports = {
   // enable plugins
   plugins: ['validator', 'logger', 'router', 'amqp', 'redisCluster'],
+
   // default logger
-  logger: true,
+  logger: {
+    defaultLogger: true,
+    debug: process.env.NODE_ENV !== 'production',
+  },
+
   // if env isnt production - print debug logs
   debug: process.env.NODE_ENV !== 'production',
   // schemas
