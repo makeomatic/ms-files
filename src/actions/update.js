@@ -111,7 +111,7 @@ module.exports = function initFileUpdate({ params }) {
 
   // ensure there are no race-conditions
   return Promise.using(
-    acquireLock(this, uploadId, meta[FILES_ALIAS_FIELD]),
+    acquireLock.call(this, uploadId, meta[FILES_ALIAS_FIELD]),
     () => updateMeta.call(this, params)
   );
 };
