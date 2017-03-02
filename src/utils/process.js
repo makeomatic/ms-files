@@ -1,15 +1,18 @@
 const Promise = require('bluebird');
 const omit = require('lodash/omit');
 const stringify = require('./stringify.js');
+const acquireLock = require('./acquireLock');
 const { bustCache } = require('./bustCache.js');
-const { HttpStatusError } = require('common-errors');
 const {
   STATUS_PROCESSED,
   STATUS_PROCESSING,
   STATUS_FAILED,
   UPLOAD_DATA,
   FILES_DATA,
+  FILES_EXPORT_FIELD,
   FILES_PROCESS_ERROR_FIELD,
+  FILES_PROCESS_ERROR_COUNT_FIELD,
+  FILE_PROCESS_IN_PROGRESS_ERROR,
   FILES_STATUS_FIELD,
   FIELDS_TO_STRINGIFY,
 } = require('../constant.js');
@@ -25,15 +28,10 @@ const METADATA_BLACKLIST = [
 ];
 
 module.exports = function processFile(key, data) {
-  const { redis, dlock } = this;
-
-  return dlock
-    .once(`postprocess:${key}`)
-    .catch({ name: 'LockAcquisitionError' }, () => {
-      throw new HttpStatusError(409, 'file is being processed');
-    })
-    .then((lock) => {
+  return Promise
+    .using(acquireLock(this, `postprocess:${key}`), (lock) => {
       const { uploadId } = data;
+      const { redis } = this;
 
       return Promise
         .bind(this, ['files:process:pre', data])
@@ -74,7 +72,7 @@ module.exports = function processFile(key, data) {
               ...serialized,
               [FILES_STATUS_FIELD]: STATUS_PROCESSED,
             })
-            .hdel(`${FILES_DATA}:${uploadId}`, 'export')
+            .hdel(`${FILES_DATA}:${uploadId}`, FILES_EXPORT_FIELD, FILES_PROCESS_ERROR_COUNT_FIELD)
             .del(container.keys)
             .exec()
             .return({
@@ -82,15 +80,19 @@ module.exports = function processFile(key, data) {
               [FILES_STATUS_FIELD]: STATUS_PROCESSED,
             });
         })
-        .catch(err => redis
-          .hmset(`${FILES_DATA}:${uploadId}`, {
-            [FILES_STATUS_FIELD]: STATUS_FAILED,
-            [FILES_PROCESS_ERROR_FIELD]: err.message,
-          })
-          .throw(err)
-        )
+        .catch(err => (
+          redis
+            .pipeline()
+            .hmset(`${FILES_DATA}:${uploadId}`, {
+              [FILES_STATUS_FIELD]: STATUS_FAILED,
+              [FILES_PROCESS_ERROR_FIELD]: err.message,
+            })
+            .hincrby(`${FILES_DATA}:${uploadId}`, FILES_PROCESS_ERROR_COUNT_FIELD, 1)
+            .exec()
+            .throw(err)
+        ))
         // await for cache busting since we acquired a lock
-        .tap(bustCache(redis, data, true))
-        .finally(() => lock.release());
-    });
+        .tap(bustCache(redis, data, true));
+    })
+    .catchThrow({ name: 'LockAcquisitionError' }, FILE_PROCESS_IN_PROGRESS_ERROR);
 };

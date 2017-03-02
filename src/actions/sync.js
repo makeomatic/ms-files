@@ -2,6 +2,7 @@ const Promise = require('bluebird');
 const fsort = require('redis-filtered-sort');
 const moment = require('moment');
 const list = require('./list.js');
+const acquireLock = require('../utils/acquireLock');
 const { STATUS_PENDING, FILES_INDEX_TEMP } = require('../constant.js');
 
 // cached filter
@@ -20,6 +21,7 @@ function iterateOverUploadedFiles(lock, opts = {}) {
 
   return Promise
     .bind(this, { params: { offset, limit, filter, temp: true, expiration: 10000 } })
+    .tap(() => lock.extend())
     .then(list)
     .then((data) => {
       // we resolved files, now iterate over them
@@ -64,9 +66,8 @@ function iterateOverUploadedFiles(lock, opts = {}) {
  * Performs sync of state for pending uploads
  */
 module.exports = function sync() {
-  const acquireLock = this.dlock
-    .once('bucket-sync')
-    .disposer(lock => lock.release());
-
-  return Promise.using(acquireLock, lock => iterateOverUploadedFiles.call(this, lock));
+  return Promise.using(
+    acquireLock(this, 'bucket-sync'),
+    lock => iterateOverUploadedFiles.call(this, lock)
+  );
 };

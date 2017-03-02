@@ -38,6 +38,7 @@ describe('process suite', function suite() {
       .then(inspectPromise(false))
       .then((err) => {
         assert.equal(err.statusCode, 404);
+        return null;
       });
   });
 
@@ -49,6 +50,7 @@ describe('process suite', function suite() {
       .then((rsp) => {
         assert.equal(rsp.status, STATUS_PROCESSED);
         assert.ok(rsp.files);
+        return null;
       });
   });
 
@@ -59,6 +61,7 @@ describe('process suite', function suite() {
       .then(inspectPromise(false))
       .then((err) => {
         assert.equal(err.statusCode, 412);
+        return null;
       });
   });
 
@@ -102,6 +105,50 @@ describe('process suite', function suite() {
       .then(inspectPromise(false))
       .then((err) => {
         assert.equal(err.statusCode, 418);
+        return null;
       });
+  });
+
+  describe('internal process failure', function suiteFailure() {
+    before('remap post-processing', function before() {
+      this.files.on('files:process:post', function failure() {
+        return Promise.reject(new Error('internal failure'));
+      });
+    });
+
+    before('pre-upload file', initAndUpload(modelData));
+
+    before('reset onComplete count', function before() {
+      this.files.config.amqp.transport.onComplete.reset();
+    });
+
+    it('fails due to post-processing issue', function test() {
+      return processUpload
+        .call(this, this.response)
+        .reflect()
+        .then(inspectPromise(false))
+        .then((err) => {
+          return assert.equal(err.message, 'Something went wrong: internal failure');
+        });
+    });
+
+    it('wait for 2 seconds to ensure that requeue worked', function test() {
+      const spy = this.files.config.amqp.transport.onComplete;
+      return Promise.delay(2000).then(() => {
+        return assert.ok(spy.calledTwice, 'onComplete was called twice');
+      });
+    });
+
+    it('next time it wont process because it reached max attempts', function test() {
+      return processUpload
+        .call(this, this.response)
+        .reflect()
+        .then(inspectPromise(false))
+        .then((err) => {
+          assert.equal(err.message, 'could not process file');
+          assert.equal(err.statusCode, 422);
+          return null;
+        });
+    });
   });
 });

@@ -1,4 +1,5 @@
 const Promise = require('bluebird');
+const getLock = require('../utils/acquireLock');
 const fetchData = require('../utils/fetchData');
 const isProcessed = require('../utils/isProcessed');
 const isUnlisted = require('../utils/isUnlisted');
@@ -25,10 +26,7 @@ function acquireLock(uploadId, alias) {
     keys.push(`file:update:alias:${alias}`);
   }
 
-  return this
-    .dlock
-    .multi(keys)
-    .disposer(lock => lock.release());
+  return getLock(this, ...keys);
 }
 
 // cache ref
