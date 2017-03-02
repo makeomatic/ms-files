@@ -27,6 +27,7 @@ module.exports = exports = {
   FILES_ALIAS_FIELD: 'alias',
   FILES_BUCKET_FIELD: 'bucket',
   FILES_PROCESS_ERROR_FIELD: 'error',
+  FILES_PROCESS_ERROR_COUNT_FIELD: 'error-count',
   FILES_OWNER_FIELD: 'owner',
   FILES_PUBLIC_FIELD: 'public',
   FILES_TAGS_FIELD: 'tags',
@@ -63,6 +64,7 @@ module.exports = exports = {
 
   // errors
   FILE_MISSING_ERROR: new HttpStatusError(404, 'could not find associated data'),
+  FILE_PROCESS_IN_PROGRESS_ERROR: new HttpStatusError(409, 'file is being processed'),
 };
 
 exports.FIELDS_TO_STRINGIFY = [

@@ -3,6 +3,7 @@ const env = process.env;
 const path = require('path');
 const sinon = require('sinon');
 const Promise = require('bluebird');
+const onComplete = require('../../src/messageResolver');
 
 try {
   env.DOTENV_FILE_PATH = env.DOTENV_FILE_PATH || path.resolve(__dirname, '../.env');
@@ -19,6 +20,7 @@ const amqp = {
       host: 'rabbitmq',
       port: 5672,
     },
+    onComplete: sinon.spy(onComplete),
   },
 };
 
@@ -75,4 +77,6 @@ module.exports = {
     'files:download:alias': username => username,
     'files:info:post': require('../../src/custom/cappasity-info-post'),
   },
+
+  maxTries: 1,
 };

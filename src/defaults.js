@@ -103,4 +103,6 @@ module.exports = {
   interstoreKeyMinTimeleft: 2000,
   // upload expiration time ~ 24 hours
   uploadTTL: 60 * 60 * 24,
+  // max tries for post-processing
+  maxTries: Infinity,
 };
