@@ -23,6 +23,7 @@
   "dependencies": {
     "bluebird": "^3.4.7",
     "bunyan": "^1.8.5",
+    "bunyan-sentry-stream": "^1.1.0",
     "common-errors": "^1.0.0",
     "dlock": "^6.3.0",
     "ioredis": "^2.4.3",
