@@ -8,6 +8,7 @@
 
 const argv = require('yargs')
   .describe('user', 'user to scan')
+  .describe('filter', 'regexp to filter names')
   .describe('confirm', 'whether to perform update or not, defaults to dry run')
   .boolean(['confirm'])
   .demand(['user'])
@@ -26,6 +27,7 @@ const configOverride = require('ms-conf').get('/');
 const config = merge({}, Files.defaultOpts, configOverride);
 const amqpConfig = omit(config.amqp.transport, ['queue', 'listen', 'neck', 'onComplete']);
 const prefix = config.router.routes.prefix;
+const filter = argv.filter && new RegExp(argv.filter);
 const iterator = {
   offset: 0,
   limit: 20,
@@ -50,6 +52,11 @@ const performUpdate = (amqp, file) => {
 
   if (argv.confirm !== true) {
     console.info('[dry-run] set alias for %s to %s', uploadId, name);
+    return null;
+  }
+
+  if (filter && filter.test(name) !== true) {
+    console.warn('[skip] %s -> %s because of %s', uploadId, name, argv.filter);
     return null;
   }
 
