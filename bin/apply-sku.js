@@ -30,7 +30,7 @@ const iterator = {
   offset: 0,
   limit: 20,
   owner: argv.user,
-  fitler: {
+  filter: {
     alias: {
       isempty: true,
     },
