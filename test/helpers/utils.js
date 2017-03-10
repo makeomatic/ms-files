@@ -6,7 +6,6 @@
 const Promise = require('bluebird');
 const fs = require('fs');
 const path = require('path');
-const faker = require('faker');
 const md5 = require('md5');
 const request = require('request-promise');
 const assert = require('assert');
@@ -16,6 +15,7 @@ const partial = require('lodash/partial');
 const values = require('lodash/values');
 const zlib = require('zlib');
 const url = require('url');
+const is = require('is');
 
 // helpers
 const cache = {};
@@ -61,7 +61,7 @@ readFile('brulux01', 'simple');
 // generate metadata for uploading
 //
 function modelMessage(model, textures, preview, owner) {
-  const name = faker.commerce.productName();
+  const name = 'sku12312131';
 
   // generate model metadata
   const binaryMessage = {
@@ -280,7 +280,13 @@ function initAndUpload(data, skipProcessing = true) {
 //
 // Processes file set that finished uploading
 //
-function processUpload(rsp) {
+function processUpload() {
+  // eslint-disable-next-line
+  let rsp = arguments[0];
+
+  // this is because mocha will inject cb if it sees function.length > 0
+  rsp = is.fn(rsp) || is.undef(rsp) ? this.response : rsp;
+
   return this.amqp
     .publishAndWait('files.process', { uploadId: rsp.uploadId });
 }

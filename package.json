@@ -5,6 +5,7 @@
   "scripts": {
     "compile": "babel -d ./lib --copy-files ./src",
     "prepublish": "npm run compile",
+    "pretest": "npm run compile",
     "test": "rimraf ./coverage && npm run lint && ./test/docker.sh",
     "start": "node ./bin/mservice.js | bunyan -o short",
     "lint": "eslint ./src",
