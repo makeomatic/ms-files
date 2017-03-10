@@ -43,7 +43,8 @@
     "raven": "^1.1.4",
     "redis-filtered-sort": "^2.0.6",
     "stdout-stream": "^1.4.0",
-    "uuid": "^3.0.1"
+    "uuid": "^3.0.1",
+    "yargs": "^7.0.1"
   },
   "devDependencies": {
     "babel-cli": "^6.23.0",
@@ -70,8 +71,7 @@
     "request-promise": "^4.1.1",
     "rimraf": "^2.6.1",
     "semantic-release": "^6.3.2",
-    "sinon": "^1.17.6",
-    "yargs": "^7.0.1"
+    "sinon": "^1.17.6"
   },
   "release": {
     "verifyConditions": []
