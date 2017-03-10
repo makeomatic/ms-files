@@ -32,4 +32,5 @@ node_modules
 lib
 .env
 .babel
+.nyc_output
 pk.json

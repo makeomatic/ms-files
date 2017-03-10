@@ -48,4 +48,5 @@ docker-release.sh
 .eslintrc
 .gitignore
 .npmignore
+.nyc_output
 pk.json
