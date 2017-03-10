@@ -39,12 +39,12 @@
     "ms-files-providers": "^2.0.2",
     "ms-perf": "^1.0.1",
     "ms-validation": "^3.0.0",
-    "mservice": "^6.0.0",
+    "mservice": "^6.0.1",
     "raven": "^1.1.4",
     "redis-filtered-sort": "^2.0.6",
     "stdout-stream": "^1.4.0",
     "uuid": "^3.0.1",
-    "yargs": "^7.0.1"
+    "yargs": "^7.0.2"
   },
   "devDependencies": {
     "babel-cli": "^6.23.0",
