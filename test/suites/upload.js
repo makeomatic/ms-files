@@ -256,8 +256,8 @@ describe('upload suite', function suite() {
         .reflect()
         .then(inspectPromise())
         .then((rsp) => {
-          assert.equal(rsp.status, STATUS_PROCESSED);
-          assert.equal(rsp[FILES_PACKED_FIELD], '1');
+          assert.equal(rsp.file.status, STATUS_PROCESSED);
+          assert.equal(rsp.file[FILES_PACKED_FIELD], '1');
           return null;
         });
     });

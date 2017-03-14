@@ -408,7 +408,7 @@ const background = readFile('background');
 const backgroundData = modelBackgroundImageMessage(background, owner);
 const simple = readFile('simple');
 const simpleData = modelSimpleUpload({ simple, preview, owner });
-const simplePackedData = modelSimpleUpload({ simple, preview, owner, 'content-type': 'image/vnd.cappasity', type: 'c-pack' });
+const simplePackedData = modelSimpleUpload({ simple, preview, owner, contentType: 'image/vnd.cappasity', type: 'c-pack' });
 
 // Public API
 module.exports = exports = {
