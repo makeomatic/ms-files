@@ -57,7 +57,15 @@ module.exports = {
   }],
   hooks: {
     // return input, assume there are models
-    'files:upload:pre': files => files,
+    'files:upload:pre': ({ files, uploadType, meta }) => {
+      // specifies type packed
+      if (uploadType === 'simple' && files.find(it => it.type === 'c-pack')) {
+        meta.packed = '1';
+        return Promise.resolve();
+      }
+
+      return null;
+    },
     // process files hook -> noop
     'files:process:pre': [],
     'files:process:post': sinon.spy((fileData) => {
