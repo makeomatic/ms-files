@@ -4,8 +4,7 @@ PKG_NAME = $(shell cat package.json | ./node_modules/.bin/json name)
 PKG_VERSION = $(shell ./node_modules/.bin/latest-version $(PKG_NAME))
 DOCKER_USER := makeomatic
 DIST := $(DOCKER_USER)/$(PKG_NAME)
-NODE_VERSIONS := 7.6.0
-GLIBC_VERSION := 2.23-r2
+NODE_VERSIONS := 7.7.2
 ENVS := production
 TASK_LIST := $(foreach env,$(ENVS),$(addsuffix .$(env), $(NODE_VERSIONS)))
 WORKDIR := /src
@@ -19,7 +18,7 @@ build: docker tag
 %.docker:
 	@echo "building $@"
 	npm run compile
-	GLIBC_VERSION=$(GLIBC_VERSION) NODE_ENV=$(NODE_ENV) NODE_VERSION=$(NODE_VERSION) envsubst < "./Dockerfile" > $(DOCKERFILE)
+	NODE_ENV=$(NODE_ENV) NODE_VERSION=$(NODE_VERSION) envsubst < "./Dockerfile" > $(DOCKERFILE)
 	docker build -t $(PKG_PREFIX_ENV) -f $(DOCKERFILE) .
 	rm $(DOCKERFILE)
 

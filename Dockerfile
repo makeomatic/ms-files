@@ -8,8 +8,7 @@ WORKDIR /src
 COPY package.json .
 RUN \
   apk --update add git ca-certificates openssl g++ make python linux-headers \
-  && npm dedupe \
-  && npm install --production \
+  && yarn --production \
   && apk del \
     g++ \
     make \

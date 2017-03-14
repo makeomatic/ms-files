@@ -3,25 +3,25 @@ const md5 = require('md5');
 const url = require('url');
 const request = require('request-promise');
 
-// helpers
-const {
-  startService,
-  stopService,
-  inspectPromise,
-  config,
-  bindSend,
-  uploadFiles,
-  modelData,
-  simpleData,
-  owner,
-} = require('../helpers/utils.js');
-
-// data
-const route = 'files.upload';
-const bucketName = config.transport[0].options.bucket.name;
-const { STATUS_PENDING } = require('../../src/constant.js');
-
 describe('upload suite', function suite() {
+  // helpers
+  const {
+    startService,
+    stopService,
+    inspectPromise,
+    config,
+    bindSend,
+    uploadFiles,
+    modelData,
+    simpleData,
+    owner,
+  } = require('../helpers/utils.js');
+
+  // data
+  const route = 'files.upload';
+  const bucketName = config.transport[0].options.bucket.name;
+  const { STATUS_PENDING } = require('../../src/constant.js');
+
   // setup functions
   before('start service', startService);
   after('stop service', stopService);
@@ -88,6 +88,7 @@ describe('upload suite', function suite() {
 
           // save for the next
           this.response = rsp;
+          return null;
         });
     });
 
@@ -145,6 +146,7 @@ describe('upload suite', function suite() {
 
           // save for the next
           this.response = rsp;
+          return null;
         });
     });
 
@@ -213,6 +215,7 @@ describe('upload suite', function suite() {
 
           // save for the next
           response = rsp;
+          return null;
         });
     });
 

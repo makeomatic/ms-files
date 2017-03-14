@@ -14,6 +14,7 @@ module.exports = exports = {
 
   FILES_LIST: 'files-list',
   FILES_DATA: 'files-data',
+  FILES_POST_ACTION: 'files-post',
   UPLOAD_DATA: 'upload-data',
 
   PREVIEW_PREFIX: 'preview:',
@@ -30,6 +31,7 @@ module.exports = exports = {
   FILES_PROCESS_ERROR_COUNT_FIELD: 'error-count',
   FILES_OWNER_FIELD: 'owner',
   FILES_PUBLIC_FIELD: 'public',
+  FILES_PACKED_FIELD: 'packed',
   FILES_TAGS_FIELD: 'tags',
   FILES_TEMP_FIELD: 'temporary',
   FILES_STATUS_FIELD: 'status',
@@ -54,6 +56,7 @@ module.exports = exports = {
     'c-texture': '.jpeg',
     'c-preview': '.jpeg',
     'c-archive': '.zip',
+    'c-pack': '.pack',
   },
 
   FILES_PLAYER_AUTORUN: 'autorun',
@@ -80,4 +83,5 @@ exports.CAPPASITY_TYPE_MAP = {
   'c-texture': 'texture',
   'c-archive': 'archive',
   'c-simple': exports.CAPPASITY_IMAGE_MODEL,
+  'c-pack': exports.CAPPASITY_IMAGE_MODEL,
 };
