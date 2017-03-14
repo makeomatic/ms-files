@@ -127,7 +127,7 @@ describe('cappasity-upload-pre hook test suite', function suite() {
         ...data,
         meta: {},
         files: [{
-          type: 'c-simple',
+          type: 'c-pack',
         }],
         resumable: false,
         uploadType: 'simple',
