@@ -2,26 +2,31 @@ const assert = require('assert');
 const md5 = require('md5');
 const url = require('url');
 const request = require('request-promise');
-
-// helpers
-const {
-  startService,
-  stopService,
-  inspectPromise,
-  config,
-  bindSend,
-  uploadFiles,
-  modelData,
-  simpleData,
-  owner,
-} = require('../helpers/utils.js');
-
-// data
-const route = 'files.upload';
-const bucketName = config.transport[0].options.bucket.name;
-const { STATUS_PENDING } = require('../../src/constant.js');
+const clone = require('lodash/cloneDeep');
 
 describe('upload suite', function suite() {
+  // helpers
+  const {
+    startService,
+    stopService,
+    inspectPromise,
+    config,
+    bindSend,
+    uploadFiles,
+    modelData,
+    simpleData,
+    simplePackedData,
+    owner,
+    finishUpload,
+    processUpload,
+    getInfo,
+  } = require('../helpers/utils.js');
+
+  // data
+  const route = 'files.upload';
+  const bucketName = config.transport[0].options.bucket.name;
+  const { STATUS_PENDING, STATUS_PROCESSED, FILES_PACKED_FIELD } = require('../../src/constant.js');
+
   // setup functions
   before('start service', startService);
   after('stop service', stopService);
@@ -88,6 +93,7 @@ describe('upload suite', function suite() {
 
           // save for the next
           this.response = rsp;
+          return null;
         });
     });
 
@@ -145,6 +151,7 @@ describe('upload suite', function suite() {
 
           // save for the next
           this.response = rsp;
+          return null;
         });
     });
 
@@ -161,6 +168,98 @@ describe('upload suite', function suite() {
     it('able to download public files right away', function test() {
       const file = this.response.files[0];
       return request.get(`https://storage.googleapis.com/${bucketName}/${file.filename}`);
+    });
+  });
+
+  describe('packed upload with post-action', function suitePacked() {
+    const data = clone(simplePackedData);
+    const message = data.message;
+    let response;
+
+    it('rejects packed upload with invalid postAction', function test() {
+      return this
+        .send({
+          ...message,
+          access: { setPublic: true },
+          uploadType: 'simple',
+          postAction: {},
+        })
+        .reflect()
+        .then(inspectPromise(false))
+        .then((err) => {
+          assert.equal(err.code, 400);
+          assert.equal(err.name, 'ValidationError');
+          return null;
+        });
+    });
+
+    it('rejects packed upload with no properties in update postAction', function test() {
+      return this
+        .send({
+          ...message,
+          access: { setPublic: true },
+          uploadType: 'simple',
+          postAction: {
+            update: {},
+          },
+        })
+        .reflect()
+        .then(inspectPromise(false))
+        .then((err) => {
+          assert.equal(err.code, 400);
+          assert.equal(err.name, 'ValidationError');
+          return null;
+        });
+    });
+
+    it('creates upload with valid post-action', function test() {
+      return this
+        .send({
+          ...message,
+          access: { setPublic: true },
+          uploadType: 'simple',
+          postAction: {
+            update: {
+              alias: 'bananza',
+            },
+          },
+        })
+        .reflect()
+        .then(inspectPromise())
+        .then((rsp) => {
+          response = rsp;
+          return null;
+        });
+    });
+
+    it('uploads data', function test() {
+      return uploadFiles(data, response)
+        .reflect()
+        .then(inspectPromise())
+        .map((resp) => {
+          assert.equal(resp.statusCode, 200);
+          return null;
+        });
+    });
+
+    it('finishes upload', function test() {
+      return finishUpload.call(this, response);
+    });
+
+    it('processes upload and invokes post-action', function test() {
+      return processUpload.call(this, response, { awaitPostActions: true });
+    });
+
+    it('info returns data based on alias', function test() {
+      return getInfo
+        .call(this, { filename: 'bananza', username: message.username })
+        .reflect()
+        .then(inspectPromise())
+        .then((rsp) => {
+          assert.equal(rsp.file.status, STATUS_PROCESSED);
+          assert.equal(rsp.file[FILES_PACKED_FIELD], '1');
+          return null;
+        });
     });
   });
 
@@ -213,6 +312,7 @@ describe('upload suite', function suite() {
 
           // save for the next
           response = rsp;
+          return null;
         });
     });
 

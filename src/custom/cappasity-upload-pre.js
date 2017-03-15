@@ -2,13 +2,22 @@ const Errors = require('common-errors');
 const Promise = require('bluebird');
 const assert = require('assert');
 const isCappasityUpload = require('../utils/isCappasityUpload');
+const { FILES_PACKED_FIELD } = require('../constant');
+
+const isPack = it => it.type === 'c-pack';
 
 module.exports = function extractMetadata({ files, meta, temp, unlisted, access, uploadType }) {
   let sourceSHA;
 
+  if (uploadType === 'simple' && files.find(isPack)) {
+    meta[FILES_PACKED_FIELD] = '1';
+    return Promise.resolve();
+  }
+
   // use relevant validation
+  // based on upload type in the json schema
   if (uploadType) {
-    return Promise.resolve(null);
+    return Promise.resolve();
   }
 
   return Promise

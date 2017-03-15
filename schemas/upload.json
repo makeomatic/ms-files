@@ -51,6 +51,15 @@
           }
         }
       }
+    },
+    {
+      "if": {
+        "anyOf": [
+          { "properties": { "unlisted": { "constant": true } } },
+          { "properties": { "temp": { "constant": true } } }
+        ]
+      },
+      "then": { "not": { "required": ["postAction"] } }
     }
   ],
   "properties": {
@@ -87,6 +96,19 @@
           }
         }
       ]
+    },
+    "postAction": {
+      "type": "object",
+      "additionalProperties": false,
+      "minProperties": 1,
+      "properties": {
+        "update": {
+          "allOf": [
+            { "$ref": "common#/definitions/meta" },
+            { "minProperties": 1 }
+          ]
+        }
+      }
     },
     "username": {
       "$ref": "common#/definitions/owner"

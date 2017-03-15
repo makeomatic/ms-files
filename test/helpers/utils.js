@@ -143,7 +143,7 @@ function modelBackgroundImageMessage(background, owner) {
   };
 }
 
-function modelSimpleUpload(simple, preview, owner) {
+function modelSimpleUpload({ simple, preview, owner, ...overwrite }) {
   const files = values(simple);
 
   return {
@@ -157,6 +157,7 @@ function modelSimpleUpload(simple, preview, owner) {
         .map(file => ({
           type: 'c-simple',
           contentType: 'image/jpeg',
+          ...overwrite,
           contentLength: file.length,
           md5Hash: md5(file).toString('hex'),
         }))
@@ -281,14 +282,16 @@ function initAndUpload(data, skipProcessing = true) {
 // Processes file set that finished uploading
 //
 function processUpload() {
-  // eslint-disable-next-line
+  /* eslint-disable prefer-rest-params */
   let rsp = arguments[0];
+  const extra = arguments[1] || {};
+  /* eslint-enable prefer-rest-params */
 
   // this is because mocha will inject cb if it sees function.length > 0
   rsp = is.fn(rsp) || is.undef(rsp) ? this.response : rsp;
 
   return this.amqp
-    .publishAndWait('files.process', { uploadId: rsp.uploadId });
+    .publishAndWait('files.process', { uploadId: rsp.uploadId, ...extra });
 }
 
 //
@@ -404,7 +407,8 @@ const meta = {
 const background = readFile('background');
 const backgroundData = modelBackgroundImageMessage(background, owner);
 const simple = readFile('simple');
-const simpleData = modelSimpleUpload(simple, preview, owner);
+const simpleData = modelSimpleUpload({ simple, preview, owner });
+const simplePackedData = modelSimpleUpload({ simple, preview, owner, contentType: 'image/vnd.cappasity', type: 'c-pack' });
 
 // Public API
 module.exports = exports = {
@@ -417,6 +421,7 @@ module.exports = exports = {
   modelData,
   backgroundData,
   simpleData,
+  simplePackedData,
   config,
   upload,
   readFile,

@@ -1,8 +1,10 @@
-const hook = require('../../../src/custom/cappasity-upload-pre');
 const reject = require('lodash/reject');
+const assert = require('assert');
 const { inspectPromise } = require('../../helpers/utils');
 
 describe('cappasity-upload-pre hook test suite', function suite() {
+  const hook = require('../../../src/custom/cappasity-upload-pre');
+
   describe('validate model files', function modelSuite() {
     const data = {
       files: [{
@@ -118,6 +120,26 @@ describe('cappasity-upload-pre hook test suite', function suite() {
       return hook(payload)
         .reflect()
         .then(inspectPromise());
+    });
+
+    it('should pass for packed model and set packed = 1', function test() {
+      const payload = {
+        ...data,
+        meta: {},
+        files: [{
+          type: 'c-pack',
+        }],
+        resumable: false,
+        uploadType: 'simple',
+      };
+
+      return hook(payload)
+        .reflect()
+        .then(inspectPromise())
+        .then(() => {
+          assert.equal(payload.meta.packed, '1');
+          return null;
+        });
     });
 
     it('should fail when passed a simpe model, but uploadType is not defined', function test() {

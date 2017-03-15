@@ -8,6 +8,8 @@ const {
   FILES_DATA,
   FILES_PROCESS_ERROR_COUNT_FIELD,
   FILES_PROCESS_ERROR_FIELD,
+  FILES_POST_ACTION,
+  FILES_OWNER_FIELD,
 } = require('../constant.js');
 
 const postProcess = require('../utils/process');
@@ -16,14 +18,15 @@ const hasAccess = require('../utils/hasAccess');
 
 /**
  * Post process file
- * @param  {Object} opts
- * @param  {Object} opts.params
- * @param  {Object} opts.params.filename
- * @param  {Object} opts.params.username
+ * @param  {Object}  request
+ * @param  {Object}  request.params
+ * @param  {Object}  request.params.filename
+ * @param  {Object}  request.params.username
+ * @param  {Boolean} request.params.awaitPostActions
  * @return {Promise}
  */
 module.exports = function postProcessFile({ params }) {
-  const { uploadId, username } = params;
+  const { uploadId, username, awaitPostActions } = params;
   const key = `${FILES_DATA}:${uploadId}`;
   const maxTries = this.config.maxTries;
 
@@ -56,5 +59,34 @@ module.exports = function postProcessFile({ params }) {
 
       return [key, data];
     })
-    .spread(postProcess);
+    .spread(postProcess)
+    .tap((data) => {
+      const prefix = this.config.router.routes.prefix;
+      const postActionKey = `${FILES_POST_ACTION}:${uploadId}`;
+
+      // check if we have post actions and perform them
+      return this.redis.get(postActionKey).then((postAction) => {
+        if (!postAction) return null;
+
+        // parse and fetch update
+        const actions = [];
+        const { update } = JSON.parse(postAction);
+
+        // if we have update
+        if (update) {
+          const message = {
+            uploadId,
+            meta: update,
+            username: data[FILES_OWNER_FIELD],
+          };
+
+          // publish, but don't wait for result
+          actions.push(this.amqp.publish(`${prefix}.update`, message).catch((e) => {
+            this.log.warn({ params, tag: 'post-update' }, 'failed to perform post-update', e);
+          }));
+        }
+
+        return awaitPostActions ? Promise.all(actions) : null;
+      });
+    });
 };

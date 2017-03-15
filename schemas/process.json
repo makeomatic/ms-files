@@ -11,6 +11,10 @@
     },
     "username": {
       "$ref": "common#/definitions/owner"
+    },
+    "awaitPostActions": {
+      "type": "boolean",
+      "default": false
     }
   }
 }

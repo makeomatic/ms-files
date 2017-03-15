@@ -110,11 +110,11 @@
       "properties": {
         "type": {
           "type": "string",
-          "enum": ["c-texture", "c-preview", "c-simple"]
+          "enum": ["c-texture", "c-preview", "c-simple", "c-pack"]
         },
         "contentType": {
           "type": "string",
-          "enum": ["image/jpeg", "image/png"]
+          "enum": ["image/jpeg", "image/png", "image/vnd.cappasity"]
         },
         "contentLength": {
           "type": "integer",

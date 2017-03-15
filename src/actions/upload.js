@@ -18,6 +18,7 @@ const {
   FILES_STATUS_FIELD,
   FIELDS_TO_STRINGIFY,
   FILES_INDEX_TEMP,
+  FILES_POST_ACTION,
 } = require('../constant.js');
 
 /**
@@ -40,7 +41,9 @@ module.exports = function initFileUpload({ params }) {
     resumable,
     expires,
     uploadType,
+    postAction,
   } = params;
+
   const { redis, config: { uploadTTL } } = this;
 
   const provider = this.provider('upload', params);
@@ -168,6 +171,12 @@ module.exports = function initFileUpload({ params }) {
           .hmset(partKey, { [FILES_STATUS_FIELD]: STATUS_PENDING, uploadId })
           .expire(partKey, uploadTTL);
       });
+
+      // in case we have post action provided - save it for when we complete "finish" action
+      if (postAction) {
+        const postActionKey = `${FILES_POST_ACTION}:${uploadId}`;
+        pipeline.set(postActionKey, JSON.stringify(postAction), 'EX', uploadTTL);
+      }
 
       return pipeline
         .exec()

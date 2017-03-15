@@ -42,18 +42,19 @@
     "mservice": "^6.0.1",
     "raven": "^1.1.4",
     "redis-filtered-sort": "^2.0.6",
+    "spm-agent-nodejs": "^1.30.7",
     "stdout-stream": "^1.4.0",
     "uuid": "^3.0.1",
     "yargs": "^7.0.2"
   },
   "devDependencies": {
-    "babel-cli": "^6.23.0",
+    "babel-cli": "^6.24.0",
     "babel-eslint": "^7.1.1",
     "babel-plugin-istanbul": "^4.0.0",
     "babel-plugin-transform-class-properties": "^6.23.0",
     "babel-plugin-transform-object-rest-spread": "^6.23.0",
     "babel-plugin-transform-strict-mode": "^6.22.0",
-    "babel-register": "^6.23.0",
+    "babel-register": "^6.24.0",
     "chai": "^3.5.0",
     "codecov": "^1.0.1",
     "cross-env": "^3.2.3",
@@ -70,7 +71,7 @@
     "request": "^2.81.0",
     "request-promise": "^4.1.1",
     "rimraf": "^2.6.1",
-    "semantic-release": "^6.3.2",
+    "semantic-release": "6.3.6",
     "sinon": "^1.17.6"
   },
   "release": {

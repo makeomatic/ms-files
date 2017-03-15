@@ -50,13 +50,13 @@ const getTransport = () => {
 const performUpdate = (amqp, file) => {
   const { name, uploadId } = file;
 
-  if (argv.confirm !== true) {
-    console.info('[dry-run] set alias for %s to %s', uploadId, name);
+  if (filter && filter.test(name) !== true) {
+    console.warn('[skip] %s -> %s because of %s', uploadId, name, argv.filter);
     return null;
   }
 
-  if (filter && filter.test(name) !== true) {
-    console.warn('[skip] %s -> %s because of %s', uploadId, name, argv.filter);
+  if (argv.confirm !== true) {
+    console.info('[dry-run] set alias for %s to %s', uploadId, name);
     return null;
   }
 
