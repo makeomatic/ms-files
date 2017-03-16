@@ -5,7 +5,7 @@ ENV NCONF_NAMESPACE=MS_FILES \
 
 WORKDIR /src
 
-COPY package.json .
+COPY yarn.lock package.json ./
 RUN \
   apk --update add git ca-certificates openssl g++ make python linux-headers \
   && yarn --production \
