@@ -23,10 +23,12 @@ const {
 
 // cached vars
 const fields = [
-  FILES_STATUS_FIELD, FILES_PARTS_FIELD, FILES_TAGS_FIELD,
+  FILES_PARTS_FIELD, FILES_TAGS_FIELD,
   FILES_OWNER_FIELD, FILES_PUBLIC_FIELD, FILES_TEMP_FIELD,
   FILES_UNLISTED_FIELD,
 ];
+
+const jsonFields = JSON.stringify(fields);
 
 const MissingError = new HttpStatusError(200, '404: could not find upload');
 const AlreadyProcessedError = new HttpStatusError(200, '412: upload was already processed');
@@ -43,11 +45,11 @@ const AlreadyProcessedError = new HttpStatusError(200, '412: upload was already 
 module.exports = function completeFileUpload({ params }) {
   const { filename } = params;
   const { redis, config, amqp } = this;
-  const key = `${UPLOAD_DATA}:${filename}`;
+  const uploadPartKey = `${UPLOAD_DATA}:${filename}`;
   const prefix = config.router.routes.prefix;
 
   return Promise
-    .bind(this, key)
+    .bind(this, uploadPartKey)
     .then(fetchData)
     .catchThrow({ statusCode: 404 }, MissingError)
     .then((data) => {
@@ -59,32 +61,25 @@ module.exports = function completeFileUpload({ params }) {
       const { uploadId } = data;
       const uploadKey = `${FILES_DATA}:${uploadId}`;
       const postActionKey = `${FILES_POST_ACTION}:${uploadId}`;
+      const updateKeys = [uploadKey, postActionKey, uploadPartKey];
+      const updateArgs = [Date.now(), FILES_STATUS_FIELD, STATUS_UPLOADED, STATUS_PENDING, 'uploaded', jsonFields];
 
       // set to uploaded
       return Promise.props({
+        uploadKey,
         uploadId,
         postActionKey,
-        update: redis
-          .pipeline()
-          .hmget(uploadKey, fields)
-          .hincrby(uploadKey, 'uploaded', 1)
-          .exists(postActionKey)
-          .hmset(key, {
-            status: STATUS_UPLOADED,
-            uploadedAt: Date.now(),
-          })
-          .exec()
-          .then(handlePipeline),
+        update: redis.markAsUploaded(3, updateKeys, updateArgs),
       });
     })
+    .catchThrow({ message: '409' }, AlreadyProcessedError)
     .then((data) => {
-      const { uploadId, update, postActionKey } = data;
+      const { uploadId, uploadKey, update, postActionKey } = data;
       const [parts, currentParts, postAction] = update;
 
       // destructure array
       // annoying redis format :(
       const [
-        currentStatus,
         totalParts,
         tags,
         username,
@@ -95,20 +90,6 @@ module.exports = function completeFileUpload({ params }) {
 
       if (currentParts < totalParts) {
         throw new HttpStatusError(202, `${currentParts}/${totalParts} uploaded`);
-      }
-
-      // define upload key
-      const uploadKey = `${FILES_DATA}:${uploadId}`;
-
-      // if not pending
-      if (currentStatus !== STATUS_PENDING) {
-        this.log.error({ params, username }, 'Upload %s already has %s status', filename, currentStatus);
-
-        // we do not send 412, because google might decide to delay notifications
-        // also, we've increased the counter of uploaded files, but it was already counted
-        return redis
-          .hincrby(uploadKey, 'uploaded', -1)
-          .throw(AlreadyProcessedError);
       }
 
       const pipeline = redis.pipeline();
