@@ -30,7 +30,7 @@ redis.call('hmset', partOfUploadFileKey, 'uploadedAt', uploadedAt, statusField, 
 local fieldCount = redis.call('hincrby', uploadKey, uploadedField, 1)
 
 -- now retrieve information we need
-local returnFields = redis.call('hget', uploadKey, unpack(fields))
+local returnFields = redis.call('hmget', uploadKey, unpack(fields))
 
 -- deterimine if we have post actions
 local hasPostActions = redis.call('exists', postActionKey)
