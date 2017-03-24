@@ -12,7 +12,7 @@ local statusField = ARGV[2]
 local statusUploaded = ARGV[3]
 local statusPending = ARGV[4]
 local uploadedField = ARGV[5]
-local fields = cjson.parse(ARGV[6])
+local fields = cjson.decode(ARGV[6])
 
 -- retrieve current status
 local currentStatus = redis.call('hget', partOfUploadFileKey, statusField)
