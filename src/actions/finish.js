@@ -72,10 +72,7 @@ module.exports = function completeFileUpload({ params }) {
         update: redis.markAsUploaded(3, updateKeys, updateArgs),
       });
     })
-    .catch({ message: '409' }, () => {
-      // verify we throw correctly
-      throw AlreadyProcessedError;
-    })
+    .catchThrow({ message: '409' }, AlreadyProcessedError)
     .then((data) => {
       const { uploadId, uploadKey, update, postActionKey } = data;
       const [parts, currentParts, postAction] = update;
