@@ -55,7 +55,7 @@ module.exports = function completeFileUpload({ params }) {
     .then((data) => {
       if (data[FILES_STATUS_FIELD] !== STATUS_PENDING) {
         // we do not send 412, because google might decide to delay notifications
-        throw new HttpStatusError(200, '412: upload has already been marked as finished');
+        throw AlreadyProcessedError;
       }
 
       const { uploadId } = data;
