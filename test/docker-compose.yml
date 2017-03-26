@@ -19,7 +19,7 @@ services:
       - ./docker-configs/rabbitmq.config:/usr/lib/rabbitmq/etc/rabbitmq/rabbitmq.config
 
   tester:
-    image: makeomatic/node:7.7.2-tester
+    image: makeomatic/node:7.7.4-tester
     links:
       - rabbitmq
       - redis

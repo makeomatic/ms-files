@@ -7,7 +7,7 @@ const onComplete = require('../../src/messageResolver');
 
 try {
   env.DOTENV_FILE_PATH = env.DOTENV_FILE_PATH || path.resolve(__dirname, '../.env');
-  require('ms-conf');
+  require('ms-conf').reload();
 } catch (e) {
   // fails on CI
   console.warn(e); // eslint-disable-line no-console

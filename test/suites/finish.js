@@ -34,6 +34,7 @@ describe('finish upload suite', function suite() {
       .then(inspectPromise(false))
       .then((err) => {
         assert.equal(err.name, 'ValidationError');
+        return null;
       });
   });
 
@@ -45,11 +46,34 @@ describe('finish upload suite', function suite() {
       .then((err) => {
         assert.equal(err.statusCode, 200);
         assert.ok(/^404: /.test(err.message));
+        return null;
       });
   });
 
+  it('returns progress and 409 on repeated notification', function test() {
+    const [file] = this.response.files;
+    return Promise
+      .resolve([file, file])
+      .map((_, idx) => (
+        this.send({ filename: file.filename })
+          .reflect()
+          .then(inspectPromise(false))
+          .then((err) => {
+            if (idx === 0) {
+              assert.equal(err.statusCode, 202);
+              assert.equal(err.message, `1/${this.response.files.length} uploaded`);
+            } else {
+              assert.equal(err.statusCode, 200);
+              assert.equal(err.message, '412: upload was already processed');
+            }
+
+            return null;
+          })
+      ));
+  });
+
   it('returns progress until all files have uploaded', function test() {
-    const files = this.response.files.slice(0, 3);
+    const files = this.response.files.slice(1, 3);
     return Promise
       .resolve(files)
       .mapSeries((file, idx) => {
@@ -59,7 +83,8 @@ describe('finish upload suite', function suite() {
           .then(inspectPromise(false))
           .then((err) => {
             assert.equal(err.statusCode, 202);
-            assert.equal(err.message, `${idx + 1}/${this.response.files.length} uploaded`);
+            assert.equal(err.message, `${idx + 2}/${this.response.files.length} uploaded`);
+            return null;
           });
       });
   });
@@ -76,6 +101,7 @@ describe('finish upload suite', function suite() {
           .then((err) => {
             assert.equal(err.statusCode, 200);
             assert.ok(/^412: /.test(err.message));
+            return null;
           });
       });
   });
@@ -88,6 +114,7 @@ describe('finish upload suite', function suite() {
       .then(inspectPromise())
       .then((response) => {
         assert.equal(response, 'upload completed, processing skipped');
+        return null;
       });
   });
 });
