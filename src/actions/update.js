@@ -39,6 +39,16 @@ function acquireLock(uploadId, alias) {
 // cache ref
 const hasOwnProperty = Object.prototype.hasOwnProperty;
 
+function hasProperties(obj) {
+  let k;
+  // eslint-disable-next-line
+  for (k in obj) {
+    if (hasOwnProperty.call(obj, k)) return true;
+  }
+
+  return false;
+}
+
 function updateMeta(params) {
   const { uploadId, username, directOnly, meta } = params;
   const { redis } = this;
@@ -117,8 +127,12 @@ function updateMeta(params) {
         stringify(meta, field);
       });
 
+      // make sure it's not an empty object
+      if (hasProperties(meta)) {
+        pipeline.hmset(key, meta);
+      }
+
       return pipeline
-        .hmset(key, meta)
         .exec()
         .then(handlePipeline)
         .tap(directOnly !== undefined ? bustCache(redis, data, true) : noop)
