@@ -1,4 +1,6 @@
 const Promise = require('bluebird');
+const noop = require('lodash/noop');
+const handlePipeline = require('../utils/pipelineError');
 const getLock = require('../utils/acquireLock');
 const fetchData = require('../utils/fetchData');
 const isProcessed = require('../utils/isProcessed');
@@ -7,6 +9,7 @@ const hasAccess = require('../utils/hasAccess');
 const isAliasTaken = require('../utils/isAliasTaken');
 const stringify = require('../utils/stringify');
 const isValidBackgroundOrigin = require('../utils/isValidBackgroundOrigin');
+const { bustCache } = require('../utils/bustCache.js');
 const {
   FILES_DATA,
   FILES_INDEX_TAGS,
@@ -15,6 +18,10 @@ const {
   FILES_USR_ALIAS_PTR,
   FILES_ALIAS_FIELD,
   FILES_OWNER_FIELD,
+  FILES_DIRECT_ONLY_FIELD,
+  FILES_INDEX,
+  FILES_INDEX_PUBLIC,
+  FILES_PUBLIC_FIELD,
 } = require('../constant.js');
 
 // init disposer
@@ -33,7 +40,7 @@ function acquireLock(uploadId, alias) {
 const hasOwnProperty = Object.prototype.hasOwnProperty;
 
 function updateMeta(params) {
-  const { uploadId, username, meta } = params;
+  const { uploadId, username, isDirect, meta } = params;
   const { redis } = this;
   const key = `${FILES_DATA}:${uploadId}`;
   const alias = meta[FILES_ALIAS_FIELD];
@@ -58,7 +65,10 @@ function updateMeta(params) {
 
       // insert reference to current alias for fast lookup within that user
       const existingAlias = data[FILES_ALIAS_FIELD];
-      const aliasPTRs = `${FILES_USR_ALIAS_PTR}:${data[FILES_OWNER_FIELD]}`;
+      const owner = data[FILES_OWNER_FIELD];
+      const aliasPTRs = `${FILES_USR_ALIAS_PTR}:${owner}`;
+      const userPublicIndex = `${FILES_INDEX}:${owner}:pub`;
+      const isPublic = data[FILES_PUBLIC_FIELD];
 
       if (alias) {
         pipeline.hset(aliasPTRs, alias, uploadId);
@@ -87,6 +97,22 @@ function updateMeta(params) {
         });
       }
 
+      if (isDirect === true) {
+        pipeline.hdel(key, FILES_DIRECT_ONLY_FIELD);
+        // remove from public indices if it is public
+        if (isPublic) {
+          pipeline.srem(FILES_INDEX_PUBLIC, uploadId);
+          pipeline.srem(userPublicIndex, uploadId);
+        }
+      } else if (isDirect === false) {
+        pipeline.hset(key, FILES_DIRECT_ONLY_FIELD, '1');
+        // add back to public indices if this file is public
+        if (isPublic) {
+          pipeline.sadd(FILES_INDEX_PUBLIC, uploadId);
+          pipeline.sadd(userPublicIndex, uploadId);
+        }
+      }
+
       FIELDS_TO_STRINGIFY.forEach((field) => {
         stringify(meta, field);
       });
@@ -94,6 +120,8 @@ function updateMeta(params) {
       return pipeline
         .hmset(key, meta)
         .exec()
+        .then(handlePipeline)
+        .tap(isDirect !== undefined ? bustCache(redis, data, true) : noop)
         .return(true);
     });
 }

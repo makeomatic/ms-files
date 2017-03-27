@@ -19,13 +19,14 @@ const {
   FILES_PARTS_FIELD,
   FILES_UNLISTED_FIELD,
   FILES_POST_ACTION,
+  FILES_DIRECT_ONLY_FIELD,
 } = require('../constant.js');
 
 // cached vars
 const fields = [
   FILES_PARTS_FIELD, FILES_TAGS_FIELD,
   FILES_OWNER_FIELD, FILES_PUBLIC_FIELD, FILES_TEMP_FIELD,
-  FILES_UNLISTED_FIELD,
+  FILES_UNLISTED_FIELD, FILES_DIRECT_ONLY_FIELD,
 ];
 
 const jsonFields = JSON.stringify(fields);
@@ -86,6 +87,7 @@ module.exports = function completeFileUpload({ params }) {
         isPublic,
         isTemporary,
         isUnlisted,
+        isDirectOnly,
       ] = parts;
 
       if (currentParts < totalParts) {
@@ -112,7 +114,8 @@ module.exports = function completeFileUpload({ params }) {
           pipeline.sadd(`${FILES_INDEX}:${username}`, uploadId);
 
           // convert 1 or undef to Boolean
-          if (isPublic) {
+          // if `isDirectOnly` is truthy, we won't publish this in the public index
+          if (isPublic && !isDirectOnly) {
             pipeline.sadd(FILES_INDEX_PUBLIC, uploadId);
             pipeline.sadd(`${FILES_INDEX}:${username}:pub`, uploadId);
           }

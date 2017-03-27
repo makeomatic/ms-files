@@ -9,6 +9,9 @@
     "username": {
       "$ref": "common#/definitions/owner"
     },
+    "isDirect": {
+      "type": "boolean"
+    },
     "meta": {
       "allOf": [
         {

@@ -146,6 +146,10 @@
     "uploadType": {
       "type": "string",
       "enum": [ "simple", "image", "background", "model" ]
+    },
+    "directOnly": {
+      "type": "boolean",
+      "default": false
     }
   }
 }
