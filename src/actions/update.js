@@ -40,7 +40,7 @@ function acquireLock(uploadId, alias) {
 const hasOwnProperty = Object.prototype.hasOwnProperty;
 
 function updateMeta(params) {
-  const { uploadId, username, isDirect, meta } = params;
+  const { uploadId, username, directOnly, meta } = params;
   const { redis } = this;
   const key = `${FILES_DATA}:${uploadId}`;
   const alias = meta[FILES_ALIAS_FIELD];
@@ -97,14 +97,14 @@ function updateMeta(params) {
         });
       }
 
-      if (isDirect === true) {
+      if (directOnly === true) {
         pipeline.hdel(key, FILES_DIRECT_ONLY_FIELD);
         // remove from public indices if it is public
         if (isPublic) {
           pipeline.srem(FILES_INDEX_PUBLIC, uploadId);
           pipeline.srem(userPublicIndex, uploadId);
         }
-      } else if (isDirect === false) {
+      } else if (directOnly === false) {
         pipeline.hset(key, FILES_DIRECT_ONLY_FIELD, '1');
         // add back to public indices if this file is public
         if (isPublic) {
@@ -121,7 +121,7 @@ function updateMeta(params) {
         .hmset(key, meta)
         .exec()
         .then(handlePipeline)
-        .tap(isDirect !== undefined ? bustCache(redis, data, true) : noop)
+        .tap(directOnly !== undefined ? bustCache(redis, data, true) : noop)
         .return(true);
     });
 }

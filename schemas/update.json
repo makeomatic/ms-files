@@ -9,7 +9,7 @@
     "username": {
       "$ref": "common#/definitions/owner"
     },
-    "isDirect": {
+    "directOnly": {
       "type": "boolean"
     },
     "meta": {
