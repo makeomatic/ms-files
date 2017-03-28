@@ -154,7 +154,7 @@ describe('finish upload suite', function suite() {
       });
     });
 
-    it('list does not return this file for private list', function test() {
+    it('list returns this file for private list', function test() {
       return this.amqp.publishAndWait('files.list', {
         public: false,
         username: modelData.message.username,
