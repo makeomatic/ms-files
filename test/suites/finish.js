@@ -141,7 +141,7 @@ describe('finish upload suite', function suite() {
 
     it('list does not return this file from public list', function test() {
       return this.amqp.publishAndWait('files.list', {
-        isPublic: true,
+        public: true,
         username: modelData.message.username,
       })
       .reflect()
@@ -156,7 +156,7 @@ describe('finish upload suite', function suite() {
 
     it('list does not return this file for private list', function test() {
       return this.amqp.publishAndWait('files.list', {
-        isPublic: false,
+        public: false,
         username: modelData.message.username,
       })
       .reflect()
