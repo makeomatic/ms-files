@@ -117,4 +117,53 @@ describe('finish upload suite', function suite() {
         return null;
       });
   });
+
+  describe('directOnly upload public model', function directOnlySuite() {
+    before('prepare upload of directOnly file', initUpload({
+      ...modelData,
+      directOnly: true,
+    }));
+
+    it('finishes upload', function test() {
+      const total = this.response.files.length;
+      return Promise
+        .resolve(this.response.files)
+        .mapSeries((file, idx) => (
+          this
+            .send({ filename: file.filename, await: true })
+            .reflect()
+            .then(inspectPromise(idx === total - 1))
+        ));
+    });
+
+    it('list does not return this file from public list', function test() {
+      return this.amqp.publishAndWait('files.list', {
+        isPublic: true,
+        username: modelData.username,
+      })
+      .reflect()
+      .then(inspectPromise())
+      .get('files')
+      .then((response) => {
+        const directUpload = response.find(it => it.id === this.response.uploadId);
+        assert.ifError(directUpload, 'direct upload was returned from public list');
+        return null;
+      });
+    });
+
+    it('list does not return this file for private list', function test() {
+      return this.amqp.publishAndWait('files.list', {
+        isPublic: false,
+        username: modelData.username,
+      })
+      .reflect()
+      .then(inspectPromise())
+      .get('files')
+      .then((response) => {
+        const directUpload = response.find(it => it.id === this.response.uploadId);
+        assert.ok(directUpload, 'direct upload was correctly returned');
+        return null;
+      });
+    });
+  });
 });
