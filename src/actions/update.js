@@ -50,7 +50,7 @@ function hasProperties(obj) {
 }
 
 function updateMeta(params) {
-  const { uploadId, username, directOnly, meta = {} } = params;
+  const { uploadId, username, directOnly, meta } = params;
   const { redis } = this;
   const key = `${FILES_DATA}:${uploadId}`;
   const alias = meta[FILES_ALIAS_FIELD];
