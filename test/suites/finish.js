@@ -121,7 +121,10 @@ describe('finish upload suite', function suite() {
   describe('directOnly upload public model', function directOnlySuite() {
     before('prepare upload of directOnly file', initUpload({
       ...modelData,
-      directOnly: true,
+      message: {
+        ...modelData.message,
+        directOnly: true,
+      },
     }));
 
     it('finishes upload', function test() {
@@ -139,7 +142,7 @@ describe('finish upload suite', function suite() {
     it('list does not return this file from public list', function test() {
       return this.amqp.publishAndWait('files.list', {
         isPublic: true,
-        username: modelData.username,
+        username: modelData.message.username,
       })
       .reflect()
       .then(inspectPromise())
@@ -154,7 +157,7 @@ describe('finish upload suite', function suite() {
     it('list does not return this file for private list', function test() {
       return this.amqp.publishAndWait('files.list', {
         isPublic: false,
-        username: modelData.username,
+        username: modelData.message.username,
       })
       .reflect()
       .then(inspectPromise())
