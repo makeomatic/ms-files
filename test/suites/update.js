@@ -22,7 +22,15 @@ const username = owner;
 
 describe('update suite', function suite() {
   before('start service', startService);
-  before('pre-upload file', initAndUpload(modelData));
+  before('pre-upload file', initAndUpload({
+    ...modelData,
+    message: {
+      ...modelData.message,
+      access: {
+        setPublic: true,
+      },
+    },
+  }));
   before('helpers', bindSend(route));
   after('stop service', stopService);
 
@@ -229,7 +237,7 @@ describe('update suite', function suite() {
     it('returns public from a list', function test() {
       return this.amqp.publishAndWait('files.list', {
         public: true,
-        username: modelData.message.username,
+        username,
       })
       .reflect()
       .then(inspectPromise())
@@ -254,7 +262,7 @@ describe('update suite', function suite() {
     it('does not return direct from a public list', function test() {
       return this.amqp.publishAndWait('files.list', {
         public: true,
-        username: modelData.message.username,
+        username,
       })
       .reflect()
       .then(inspectPromise())
@@ -279,7 +287,7 @@ describe('update suite', function suite() {
     it('returns public from a list once again', function test() {
       return this.amqp.publishAndWait('files.list', {
         public: true,
-        username: modelData.message.username,
+        username,
       })
       .reflect()
       .then(inspectPromise())
