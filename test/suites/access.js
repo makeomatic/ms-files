@@ -12,6 +12,7 @@ const {
   initAndUpload,
   processUpload,
   updateAccess,
+  getInfo,
 } = require('../helpers/utils.js');
 
 const route = 'files.access';
@@ -38,6 +39,7 @@ describe('access suite', function suite() {
       .then(inspectPromise(false))
       .then((err) => {
         assert(err.statusCode, 404);
+        return null;
       });
   });
 
@@ -48,6 +50,7 @@ describe('access suite', function suite() {
       .then(inspectPromise(false))
       .then((err) => {
         assert(err.statusCode, 403);
+        return null;
       });
   });
 
@@ -63,5 +66,37 @@ describe('access suite', function suite() {
       .call(this, this.response.uploadId, owner, false)
       .reflect()
       .then(inspectPromise());
+  });
+
+  describe('direct upload', function directUploadSuite() {
+    before('pre-upload file', initAndUpload({
+      ...modelData,
+      message: {
+        ...modelData.message,
+        directOnly: true,
+        access: {
+          setPublic: false,
+        },
+      },
+    }));
+
+    it('rejects to show direct only file without proper username', function test() {
+      return getInfo
+        .call(this, { filename: this.response.uploadId })
+        .reflect()
+        .then(inspectPromise(false));
+    });
+
+    it('set to public', function test() {
+
+    });
+
+    it('allows to show direct only file without proper username', function test() {
+
+    });
+
+    it('public list does not return direct only file', function test() {
+
+    });
   });
 });

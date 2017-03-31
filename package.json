@@ -6,10 +6,11 @@
     "compile": "babel -d ./lib --copy-files ./src",
     "prepublish": "npm run compile",
     "pretest": "npm run compile",
-    "test": "rimraf ./coverage && npm run lint && ./test/docker.sh",
+    "test": "rimraf ./coverage && npm run lint && mdep test run",
     "start": "node ./bin/mservice.js | bunyan -o short",
     "lint": "eslint ./src",
-    "semantic-release": "semantic-release pre && npm publish && semantic-release post"
+    "semantic-release": "semantic-release pre && npm publish && semantic-release post",
+    "docker-release": "mdep docker release"
   },
   "repository": {
     "type": "git",
@@ -48,6 +49,7 @@
     "yargs": "^7.0.2"
   },
   "devDependencies": {
+    "@makeomatic/deploy": "^1.0.1",
     "babel-cli": "^6.24.0",
     "babel-eslint": "^7.2.1",
     "babel-plugin-istanbul": "^4.1.1",
@@ -57,9 +59,9 @@
     "babel-register": "^6.24.0",
     "chai": "^3.5.0",
     "codecov": "^2.1.0",
-    "cross-env": "^3.2.4",
+    "cross-env": "^4.0.0",
     "cz-conventional-changelog": "^2.0.0",
-    "eslint": "^3.18.0",
+    "eslint": "^3.19.0",
     "eslint-config-makeomatic": "^1.0.1",
     "eslint-plugin-import": "^2.2.0",
     "eslint-plugin-promise": "^3.5.0",
@@ -67,7 +69,7 @@
     "json": "^9.0.6",
     "latest-version-cli": "^1.1.0",
     "mocha": "^3.2.0",
-    "nyc": "^10.1.2",
+    "nyc": "^10.2.0",
     "request": "^2.81.0",
     "request-promise": "^4.2.0",
     "rimraf": "^2.6.1",
@@ -85,24 +87,5 @@
   "engines": {
     "node": ">= 7.6.0",
     "npm": ">= 3.0.0"
-  },
-  "nyc": {
-    "include": [
-      "src/**/*.js"
-    ],
-    "exclude": [
-      "src/**/*.spec.js"
-    ],
-    "require": [
-      "babel-register"
-    ],
-    "sourceMap": false,
-    "instrument": false,
-    "cache": true,
-    "reporter": [
-      "lcov",
-      "json",
-      "text-summary"
-    ]
   }
 }
