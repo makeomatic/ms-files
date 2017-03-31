@@ -48,9 +48,9 @@
     string-format-obj "^1.0.0"
     through2 "^2.0.0"
 
-"@makeomatic/deploy@^1.0.6":
-  version "1.0.6"
-  resolved "https://registry.yarnpkg.com/@makeomatic/deploy/-/deploy-1.0.6.tgz#9048b5f0382c0633e19dab41cb89ae9afcbf8219"
+"@makeomatic/deploy@^1.0.7":
+  version "1.0.7"
+  resolved "https://registry.yarnpkg.com/@makeomatic/deploy/-/deploy-1.0.7.tgz#29a2af086b00c84fb05d78436274ea06ebff88a1"
   dependencies:
     glob "^7.1.1"
     latest-version "^3.1.0"
