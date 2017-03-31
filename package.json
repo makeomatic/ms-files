@@ -10,7 +10,8 @@
     "start": "node ./bin/mservice.js | bunyan -o short",
     "lint": "eslint ./src",
     "semantic-release": "semantic-release pre && npm publish && semantic-release post",
-    "docker-release": "mdep docker release"
+    "docker-release": "mdep docker release",
+    "release": "yarn; npm run semantic-release; npm run docker-release"
   },
   "repository": {
     "type": "git",
@@ -49,7 +50,7 @@
     "yargs": "^7.0.2"
   },
   "devDependencies": {
-    "@makeomatic/deploy": "^1.0.1",
+    "@makeomatic/deploy": "^1.0.6",
     "babel-cli": "^6.24.0",
     "babel-eslint": "^7.2.1",
     "babel-plugin-istanbul": "^4.1.1",
