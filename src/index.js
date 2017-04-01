@@ -7,6 +7,7 @@ const RedisCluster = require('ioredis').Cluster;
 const StorageProviders = require('./providers');
 
 // constants
+const { HttpStatusError } = require('common-errors');
 const { WEBHOOK_RESOURCE_ID } = require('./constant.js');
 
 /**
@@ -123,7 +124,13 @@ class Files extends Mservice {
         transport: 'amqp',
         method: 'amqp',
       })
+      .catch(HttpStatusError, this.logWarn.bind(this, `${prefix}.finish`, message))
       .then(() => Promise.fromCallback(message.ack));
+  }
+
+  // log failed notification
+  logWarn(route, args, e) {
+    this.log.warn({ route, args }, e);
   }
 
   /**
