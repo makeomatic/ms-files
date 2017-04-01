@@ -6,7 +6,7 @@
     "compile": "babel -d ./lib --copy-files ./src",
     "prepublish": "npm run compile",
     "pretest": "npm run compile",
-    "test": "rimraf ./coverage && npm run lint && mdep test run",
+    "test": "rimraf ./coverage && npm run lint && mdep test run -r 'grpc --update-binary'",
     "start": "node ./bin/mservice.js | bunyan -o short",
     "lint": "eslint ./src",
     "semantic-release": "semantic-release pre && npm publish && semantic-release post",
@@ -54,7 +54,7 @@
     "yargs": "^7.0.2"
   },
   "devDependencies": {
-    "@makeomatic/deploy": "^1.0.7",
+    "@makeomatic/deploy": "^1.0.8",
     "babel-cli": "^6.24.0",
     "babel-eslint": "^7.2.1",
     "babel-plugin-istanbul": "^4.1.1",
