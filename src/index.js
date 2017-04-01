@@ -4,7 +4,7 @@ const ld = require('lodash');
 const fsort = require('redis-filtered-sort');
 const LockManager = require('dlock');
 const RedisCluster = require('ioredis').Cluster;
-const StorageProviders = require('ms-files-providers');
+const StorageProviders = require('./providers');
 
 // constants
 const { WEBHOOK_RESOURCE_ID } = require('./constant.js');
@@ -100,6 +100,33 @@ class Files extends Mservice {
   }
 
   /**
+   * Handles upload notification
+   * https://github.com/GoogleCloudPlatform/google-cloud-node/blob/pubsub-0.9.0/packages/pubsub/src/subscription.js#L344
+   * @param {String} ackId
+   * @param {String} id
+   * @param {Mixed} data
+   * @param {Mixed} attributes
+   * @return {Promise}
+   */
+  handleUploadNotification(message) {
+    const prefix = this.config.router.routes.prefix;
+    return this.router
+      .dispatch(`${prefix}.finish`, {
+        headers: {},
+        query: {},
+        // payload
+        params: {
+          filename: message.attributes.objectId,
+          resourceId: message.attributes.resource,
+          action: message.attributes.eventType,
+        },
+        transport: 'amqp',
+        method: 'amqp',
+      })
+      .then(() => Promise.fromCallback(message.ack));
+  }
+
+  /**
    * Overload connect and make sure we have access to bucket
    * @return {Promise}
    */
@@ -107,7 +134,13 @@ class Files extends Mservice {
     this.log.debug('started connecting');
     return super
       .connect()
-      .then(() => this.initWebhook()); // will be a noop when configuration for it is missing
+      // will be a noop when configuration for it is missing
+      .then(() => this.initWebhook())
+      // init pubsub if it is present
+      .then(() => Promise.map(this.providers, (provider) => {
+        if (!provider.config.bucket.channel.pubsub) return null;
+        return provider.subscribe(this.handleUploadNotification.bind(this));
+      }));
   }
 
 }
