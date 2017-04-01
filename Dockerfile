@@ -2,7 +2,8 @@ FROM makeomatic/node:$NODE_VERSION
 
 ENV NCONF_NAMESPACE=MS_FILES \
     NODE_ENV=$NODE_ENV \
-    GLIBC_VER 2.25-r1
+    GLIBC_VER=2.25-r1 \
+    LD_LIBRARY_PATH=/usr/glibc-compat/lib/
 
 WORKDIR /src
 
