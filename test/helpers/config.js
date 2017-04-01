@@ -45,6 +45,9 @@ module.exports = {
       },
       bucket: {
         name: env.GCLOUD_PROJECT_BUCKET,
+        channel: {
+          pubsub: 'gcs-object-create',
+        },
         metadata: {
           location: env.GCLOUD_BUCKET_LOCATION || 'EUROPE-WEST1',
           dra: true,
