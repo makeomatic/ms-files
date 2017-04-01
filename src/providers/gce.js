@@ -138,7 +138,7 @@ module.exports = class GCETransport extends AbstractFileTransfer {
     assert(pubsub, 'to subscribe must specify pubsub topic via `pubsub.topic`');
     assert(pubsub.topic, 'to subscribe must specify pubsub topic via `pubsub.topic`');
 
-    const config = ld.defaults(pubsub.config, {
+    const config = ld.defaults(pubsub.config || {}, {
       autoAck: false,
       timeout: 5000,
     });
