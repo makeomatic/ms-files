@@ -78,7 +78,14 @@ describe('access suite', function suite() {
           setPublic: false,
         },
       },
-    }, false));
+    }));
+
+    it('post-processes files', function test() {
+      return this.files
+        .postProcess()
+        .reflect()
+        .then(inspectPromise());
+    });
 
     it('rejects to show direct only file without proper username', function test() {
       return downloadFile
