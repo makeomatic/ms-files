@@ -143,7 +143,9 @@ module.exports = class GCETransport extends AbstractFileTransfer {
       timeout: 5000,
     });
 
-    return this._pubsub.subscribe(pubsub.topic, os.hostname(), config).then((data) => {
+    this.log.info('subscribing to %s on %s', pubsub.topic, os.hostname());
+
+    return this._pubsub.subscribe(pubsub.topic, encodeURI(os.hostname()), config).then((data) => {
       const [subscription] = data;
       subscription.on('message', handler);
       this._pubsub._subscriptions.push(subscription);
