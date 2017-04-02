@@ -169,31 +169,25 @@ module.exports = class GCETransport extends AbstractFileTransfer {
    * @param  {Object} [query]
    * @return {Promise}
    */
-  createBucket(query) {
+  createBucket() {
     const gcs = this._gcs;
     const needle = this._config.bucket.name;
 
-    this.log.debug('initiating createBucket: %s', needle);
+    const gceBucket = gcs.bucket(needle);
+    return gceBucket
+      .exists()
+      .then((data) => {
+        const [exists] = data;
 
-    return gcs
-      .getBucketsAsync(query)
-      .spread((buckets, nextQuery) => {
-        const bucket = ld.find(buckets, { name: needle });
-        if (bucket) {
-          this.log.debug('found existing bucket');
-          return bucket;
+        // retrieves bucket gce metadata
+        if (exists) {
+          return gceBucket.get();
         }
 
-        if (nextQuery) {
-          this.log.debug('not found, next query:', nextQuery);
-          return this.createBucket(nextQuery);
-        }
-
-        this.log.debug('creating bucket', needle, this._config.bucket.metadata);
-        return gcs
-          .createBucketAsync(needle, this._config.bucket.metadata)
-          .get(0);
-      });
+        this.log.debug('initiating createBucket: %s', needle);
+        return gcs.createBucket(needle, this._config.bucket.metadata);
+      })
+      .then(resp => resp[0]);
   }
 
   /**
