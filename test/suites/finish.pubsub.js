@@ -45,15 +45,23 @@ describe('finish upload suite with pubsub for hooks', function suite() {
     });
   });
 
-  it('wait for 5 seconds', () => Promise.delay(5000));
-
   it('verify that upload was processed', function test() {
+    // eslint-disable-next-line
+    const attempt = arguments[0];
+
     return getInfo
       .call(this, { filename: this.response.uploadId, username: owner })
       .reflect()
       .then(inspectPromise())
       .then((rsp) => {
-        assert.equal(rsp.file.status, STATUS_PROCESSED);
+        try {
+          assert.equal(rsp.file.status, STATUS_PROCESSED);
+        } catch (e) {
+          // 20 * 500 = 10s to make sure it is processed
+          if (attempt > 20) throw e;
+          return Promise.resolve(attempt + 1).delay(500).then(test);
+        }
+
         return null;
       });
   });
