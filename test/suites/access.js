@@ -56,7 +56,7 @@ describe('access suite', function suite() {
 
   it('sets file to public', function test() {
     return updateAccess
-      .call(this, this.response.uploadId, owner, false)
+      .call(this, this.response.uploadId, owner, true)
       .reflect()
       .then(inspectPromise());
   });
@@ -88,15 +88,32 @@ describe('access suite', function suite() {
     });
 
     it('set to public', function test() {
-
+      return updateAccess
+        .call(this, this.response.uploadId, owner, true)
+        .reflect()
+        .then(inspectPromise());
     });
 
     it('allows to show direct only file without proper username', function test() {
-
+      return getInfo
+        .call(this, { filename: this.response.uploadId })
+        .reflect()
+        .then(inspectPromise());
     });
 
     it('public list does not return direct only file', function test() {
-
+      return this.amqp.publishAndWait('files.list', {
+        public: true,
+        username: owner,
+      })
+      .reflect()
+      .then(inspectPromise())
+      .get('files')
+      .then((response) => {
+        const directUpload = response.find(it => it.id === this.response.uploadId);
+        assert.ifError(directUpload, 'direct upload was returned from public list');
+        return null;
+      });
     });
   });
 });
