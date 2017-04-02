@@ -59,7 +59,7 @@ describe('finish upload suite with pubsub for hooks', function suite() {
         } catch (e) {
           // 20 * 500 = 10s to make sure it is processed
           if (attempt > 20) throw e;
-          return Promise.resolve(attempt + 1).delay(500).then(test);
+          return Promise.bind(this, attempt + 1).delay(500).then(test);
         }
 
         return null;
