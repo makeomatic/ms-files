@@ -82,7 +82,7 @@ describe('access suite', function suite() {
 
     it('post-processes files', function test() {
       return this.files
-        .postProcess()
+        .postProcess(0, Date.now())
         .reflect()
         .then(inspectPromise());
     });
