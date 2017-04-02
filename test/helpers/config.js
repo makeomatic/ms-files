@@ -45,11 +45,6 @@ module.exports = {
       },
       bucket: {
         name: env.GCLOUD_PROJECT_BUCKET,
-        channel: {
-          pubsub: {
-            topic: 'gcs-object-create',
-          },
-        },
         metadata: {
           location: env.GCLOUD_BUCKET_LOCATION || 'EUROPE-WEST1',
           dra: true,
@@ -92,4 +87,16 @@ module.exports = {
   },
 
   maxTries: 1,
+};
+
+module.exports.enablePubsub = function enablePubsub() {
+  module.exports.transport[0].options.bucket.channel = {
+    pubsub: {
+      topic: 'gcs-object-create',
+    },
+  };
+};
+
+module.exports.disablePubsub = function disablePubsub() {
+  module.exports.transport[0].options.bucket.channel = null;
 };

@@ -125,7 +125,8 @@ class Files extends Mservice {
         method: 'amqp',
       })
       .catch(HttpStatusError, this.logWarn.bind(this, `${prefix}.finish`, message))
-      .then(() => Promise.fromCallback(message.ack));
+      .then(() => Promise.fromCallback(message.ack))
+      .catch(() => Promise.fromCallback(message.skip));
   }
 
   // log failed notification
