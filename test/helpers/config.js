@@ -93,6 +93,7 @@ module.exports.enablePubsub = function enablePubsub() {
   module.exports.transport[0].options.bucket.channel = {
     pubsub: {
       topic: 'gcs-object-create',
+      name: 'test-runner',
     },
   };
 };

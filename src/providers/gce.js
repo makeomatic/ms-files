@@ -137,18 +137,28 @@ module.exports = class GCETransport extends AbstractFileTransfer {
     const pubsub = this._config.bucket.channel.pubsub;
     assert(pubsub, 'to subscribe must specify pubsub topic via `pubsub.topic`');
     assert(pubsub.topic, 'to subscribe must specify pubsub topic via `pubsub.topic`');
+    assert(pubsub.name, 'must contain a name for proper round-robin distribution');
 
+    const Pubsub = this._pubsub;
+    const name = pubsub.name;
     const config = ld.defaults(pubsub.config || {}, {
       autoAck: false,
       timeout: 5000,
+      terminate: false,
     });
 
     this.log.info('subscribing to %s on %s', pubsub.topic, os.hostname());
 
-    return this._pubsub.subscribe(pubsub.topic, encodeURI(os.hostname()), config).then((data) => {
+    // first find if we have an existing subscription
+    const topic = Pubsub.topic(pubsub.topic);
+    return topic.subscription(name, config).get({ autoCreate: true }).then((data) => {
       const [subscription] = data;
       subscription.on('message', handler);
       this._pubsub._subscriptions.push(subscription);
+
+      // for internal cleanup
+      if (config.terminate) subscription._terminate = true;
+
       return subscription;
     });
   }
@@ -206,11 +216,19 @@ module.exports = class GCETransport extends AbstractFileTransfer {
    * @type {Promise}
    */
   close() {
-    if (this._pubsub._subscriptions.length > 0) {
-      this._pubsub._subscriptions.forEach((subscription) => {
+    const subscriptions = this._pubsub._subscriptions;
+    if (subscriptions.length > 0) {
+      return Promise.map(subscriptions, (subscription) => {
+        // remove message listener
         subscription.removeAllListeners('message');
+        // terminate if needed
+        if (subscription._terminate) return subscription.delete();
+        // done
+        return null;
       });
     }
+
+    return Promise.resolve();
   }
 
   /**
