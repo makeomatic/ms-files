@@ -59,7 +59,7 @@ describe('finish upload suite with pubsub for hooks', function suite() {
   });
 
   it('verify service.postProcess is still on', function test() {
-    return this.service
+    return this.files
       .postProcess()
       .reflect()
       .then(inspectPromise());
