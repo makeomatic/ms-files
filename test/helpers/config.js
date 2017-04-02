@@ -94,6 +94,9 @@ module.exports.enablePubsub = function enablePubsub() {
     pubsub: {
       topic: 'gcs-object-create',
       name: 'test-runner',
+      config: {
+        terminate: true,
+      },
     },
   };
 };
