@@ -1,6 +1,7 @@
 const Promise = require('bluebird');
 const moment = require('moment');
 const listFiles = require('./actions/list.js');
+const postProcessAction = require('./utils/process');
 const { STATUS_UPLOADED, FILES_DATA } = require('./constant.js');
 
 /**
@@ -26,7 +27,7 @@ module.exports = function postProcess(offset = 0, uploadedAt) {
         .resolve(files)
         .mapSeries((file) => {
           // make sure to call reflect so that we do not interrupt the procedure
-          return postProcess
+          return postProcessAction
             .call(this, `${FILES_DATA}:${file.id}`, file)
             .reflect()
             .tap((result) => {
@@ -35,7 +36,7 @@ module.exports = function postProcess(offset = 0, uploadedAt) {
         })
         .then(() => {
           if (page < pages) {
-            return this.postProcess(cursor, filter.uploadedAt.lte);
+            return postProcess.call(this, cursor, filter.uploadedAt.lte);
           }
 
           return null;
