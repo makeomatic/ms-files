@@ -12,7 +12,7 @@ const {
   initAndUpload,
   processUpload,
   updateAccess,
-  getInfo,
+  downloadFile,
 } = require('../helpers/utils.js');
 
 const route = 'files.access';
@@ -78,11 +78,11 @@ describe('access suite', function suite() {
           setPublic: false,
         },
       },
-    }));
+    }, false));
 
     it('rejects to show direct only file without proper username', function test() {
-      return getInfo
-        .call(this, { filename: this.response.uploadId })
+      return downloadFile
+        .call(this, { uploadId: this.response.uploadId })
         .reflect()
         .then(inspectPromise(false));
     });
@@ -95,8 +95,8 @@ describe('access suite', function suite() {
     });
 
     it('allows to show direct only file without proper username', function test() {
-      return getInfo
-        .call(this, { filename: this.response.uploadId })
+      return downloadFile
+        .call(this, { uploadId: this.response.uploadId })
         .reflect()
         .then(inspectPromise());
     });
