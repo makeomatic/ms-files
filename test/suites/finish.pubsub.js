@@ -45,7 +45,7 @@ describe('finish upload suite with pubsub for hooks', function suite() {
     });
   });
 
-  it('wait for 2 seconds', () => Promise.delay(2000));
+  it('wait for 5 seconds', () => Promise.delay(5000));
 
   it('verify that upload was processed', function test() {
     return getInfo
