@@ -54,7 +54,7 @@
     "yargs": "^7.0.2"
   },
   "devDependencies": {
-    "@makeomatic/deploy": "^1.0.8",
+    "@makeomatic/deploy": "^1.0.9",
     "babel-cli": "^6.24.0",
     "babel-eslint": "^7.2.1",
     "babel-plugin-istanbul": "^4.1.1",
