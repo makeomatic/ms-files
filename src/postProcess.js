@@ -1,7 +1,6 @@
 const Promise = require('bluebird');
 const moment = require('moment');
-const postProcessAction = require('./utils/process');
-const { STATUS_UPLOADED, FILES_DATA } = require('./constant.js');
+const { STATUS_UPLOADED, FILES_OWNER_FIELD } = require('./constant.js');
 
 /**
  * Invoke this method to start post-processing of all pending files
@@ -31,15 +30,24 @@ module.exports = function postProcess(offset = 0, uploadedAt) {
 
     return Promise
       .resolve(files)
-      .mapSeries((file) => {
+      .mapSeries(file => (
         // make sure to call reflect so that we do not interrupt the procedure
-        return postProcessAction
-          .call(this, `${FILES_DATA}:${file.id}`, file)
-          .reflect()
-          .tap((result) => {
-            this.log.info({ owner: file.owner }, '%s |', file.id, result.isFulfilled() ? 'processed' : result.reason());
-          });
-      })
+        this.router.dispatch(`${prefix}.process`, {
+          headers: {},
+          query: {},
+          // payload
+          params: {
+            uploadId: file.id,
+            username: file[FILES_OWNER_FIELD],
+          },
+          transport: 'amqp',
+          method: 'amqp',
+        })
+        .reflect()
+        .tap((result) => {
+          this.log.info({ owner: file[FILES_OWNER_FIELD] }, '%s |', file.id, result.isFulfilled() ? 'processed' : result.reason());
+        })
+      ))
       .then(() => {
         if (page < pages) {
           return postProcess.call(this, cursor, filter.uploadedAt.lte);
