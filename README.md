@@ -17,3 +17,11 @@ Handles metadata processing, as well as various post-processing of files
 4. Send completed file upload to a post-processing queue
 5. Cleanup after abrupt file uploads
 6. Provides file access control
+
+## Notes
+
+To enable GCS pubsub notifications one must create a topic for it first:
+
+```sh
+gsutil notification create -t projects/<PROJECT_NAME>/topics/<TOPIC_NAME> -f json -e OBJECT_FINALIZE gs://<BUCKET_NAME>
+```

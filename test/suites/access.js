@@ -12,6 +12,7 @@ const {
   initAndUpload,
   processUpload,
   updateAccess,
+  downloadFile,
 } = require('../helpers/utils.js');
 
 const route = 'files.access';
@@ -38,6 +39,7 @@ describe('access suite', function suite() {
       .then(inspectPromise(false))
       .then((err) => {
         assert(err.statusCode, 404);
+        return null;
       });
   });
 
@@ -48,12 +50,13 @@ describe('access suite', function suite() {
       .then(inspectPromise(false))
       .then((err) => {
         assert(err.statusCode, 403);
+        return null;
       });
   });
 
   it('sets file to public', function test() {
     return updateAccess
-      .call(this, this.response.uploadId, owner, false)
+      .call(this, this.response.uploadId, owner, true)
       .reflect()
       .then(inspectPromise());
   });
@@ -63,5 +66,61 @@ describe('access suite', function suite() {
       .call(this, this.response.uploadId, owner, false)
       .reflect()
       .then(inspectPromise());
+  });
+
+  describe('direct upload', function directUploadSuite() {
+    before('pre-upload file', initAndUpload({
+      ...modelData,
+      message: {
+        ...modelData.message,
+        directOnly: true,
+        access: {
+          setPublic: false,
+        },
+      },
+    }));
+
+    it('post-processes files', function test() {
+      return this.files
+        .postProcess(0, Date.now())
+        .reflect()
+        .then(inspectPromise());
+    });
+
+    it('rejects to show direct only file without proper username', function test() {
+      return downloadFile
+        .call(this, { uploadId: this.response.uploadId })
+        .reflect()
+        .then(inspectPromise(false));
+    });
+
+    it('set to public', function test() {
+      return updateAccess
+        .call(this, this.response.uploadId, owner, true)
+        .reflect()
+        .then(inspectPromise());
+    });
+
+    it('allows to show direct only file without proper username', function test() {
+      return downloadFile
+        .call(this, { uploadId: this.response.uploadId })
+        .reflect()
+        .then(inspectPromise());
+    });
+
+    it('public list does not return direct only file', function test() {
+      return this.amqp.publishAndWait('files.list', {
+        public: true,
+        username: owner,
+      })
+      .reflect()
+      .then(inspectPromise())
+      .get('files')
+      .then((response) => {
+        const directUpload = response.find(it => it.id === this.response.uploadId);
+        assert.ifError(directUpload, 'direct upload was returned from public list');
+        return null;
+      });
+    });
   });
 });

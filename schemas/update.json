@@ -1,7 +1,8 @@
 {
   "id": "update",
   "type": "object",
-  "required": [ "uploadId", "username", "meta" ],
+  "required": [ "uploadId", "username" ],
+  "minProperties": 3,
   "properties": {
     "uploadId": {
       "$ref": "common#/definitions/uuid-v4"
@@ -9,7 +10,11 @@
     "username": {
       "$ref": "common#/definitions/owner"
     },
+    "directOnly": {
+      "type": "boolean"
+    },
     "meta": {
+      "default": {},
       "allOf": [
         {
           "not": { "required": ["export"] }

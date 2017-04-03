@@ -86,7 +86,11 @@ module.exports = function postProcessFile({ params }) {
           }));
         }
 
-        return awaitPostActions ? Promise.all(actions) : null;
+        // either wait for action to complete or not
+        const promise = awaitPostActions ? Promise.all(actions) : Promise.resolve();
+
+        // cleanup postAction key
+        return promise.tap(() => this.redis.del(postActionKey));
       });
     });
 };

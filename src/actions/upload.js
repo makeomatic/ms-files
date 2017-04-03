@@ -19,6 +19,7 @@ const {
   FIELDS_TO_STRINGIFY,
   FILES_INDEX_TEMP,
   FILES_POST_ACTION,
+  FILES_DIRECT_ONLY_FIELD,
 } = require('../constant.js');
 
 /**
@@ -28,6 +29,9 @@ const {
  * @param  {String} [opts.params.origin]
  * @param  {Array}  opts.params.files
  * @param  {Object} opts.params.meta
+ * @param  {Boolean} [opts.params.directOnly=false]
+ * @param  {Boolean} [opts.params.unlisted=false]
+ * @param  {Boolean} [opts.params.temp=false]
  * @return {Promise}
  */
 module.exports = function initFileUpload({ params }) {
@@ -42,6 +46,7 @@ module.exports = function initFileUpload({ params }) {
     expires,
     uploadType,
     postAction,
+    directOnly,
   } = params;
 
   const { redis, config: { uploadTTL } } = this;
@@ -155,6 +160,10 @@ module.exports = function initFileUpload({ params }) {
 
       if (unlisted) {
         fileData[FILES_UNLISTED_FIELD] = 1;
+      }
+
+      if (directOnly) {
+        fileData[FILES_DIRECT_ONLY_FIELD] = 1;
       }
 
       const pipeline = redis.pipeline();

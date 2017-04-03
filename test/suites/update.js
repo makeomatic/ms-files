@@ -22,7 +22,15 @@ const username = owner;
 
 describe('update suite', function suite() {
   before('start service', startService);
-  before('pre-upload file', initAndUpload(modelData));
+  before('pre-upload file', initAndUpload({
+    ...modelData,
+    message: {
+      ...modelData.message,
+      access: {
+        setPublic: true,
+      },
+    },
+  }));
   before('helpers', bindSend(route));
   after('stop service', stopService);
 
@@ -33,6 +41,7 @@ describe('update suite', function suite() {
       .then(inspectPromise(false))
       .then((err) => {
         assert.equal(err.statusCode, 404);
+        return null;
       });
   });
 
@@ -43,6 +52,7 @@ describe('update suite', function suite() {
       .then(inspectPromise(false))
       .then((err) => {
         assert.equal(err.statusCode, 412);
+        return null;
       });
   });
 
@@ -58,13 +68,14 @@ describe('update suite', function suite() {
         .then(inspectPromise())
         .then((result) => {
           assert.equal(result, true);
+          return null;
         });
     });
   });
 
   describe('process info', function afterUpdateSuite() {
     it('returns file info', function test() {
-      getInfo.call(this, {
+      return getInfo.call(this, {
         filename: this.response.uploadId,
         username,
       })
@@ -77,6 +88,7 @@ describe('update suite', function suite() {
         assert.equal(result.file.description, meta.description);
         assert.equal(result.file.website, meta.website);
         assert.deepEqual(result.file.tags, meta.tags);
+        return null;
       });
     });
   });
@@ -110,6 +122,7 @@ describe('update suite', function suite() {
         .then(inspectPromise(false))
         .then((error) => {
           assert.equal(error.statusCode, 409);
+          return null;
         });
     });
 
@@ -220,12 +233,80 @@ describe('update suite', function suite() {
     });
   });
 
+  describe('directOnly update', function directOnlySuite() {
+    it('returns public from a list', function test() {
+      return this.amqp.publishAndWait('files.list', {
+        public: true,
+        username,
+      })
+      .reflect()
+      .then(inspectPromise())
+      .get('files')
+      .then((response) => {
+        const directUpload = response.find(it => it.id === this.response.uploadId);
+        assert.ok(directUpload, 'upload was not found');
+        return null;
+      });
+    });
+
+    it('update and set it to directOnly', function test() {
+      return this.send({
+        username,
+        uploadId: this.response.uploadId,
+        directOnly: true,
+      })
+      .reflect()
+      .then(inspectPromise());
+    });
+
+    it('does not return direct from a public list', function test() {
+      return this.amqp.publishAndWait('files.list', {
+        public: true,
+        username,
+      })
+      .reflect()
+      .then(inspectPromise())
+      .get('files')
+      .then((response) => {
+        const directUpload = response.find(it => it.id === this.response.uploadId);
+        assert.ifError(directUpload, 'direct upload was returned from public list');
+        return null;
+      });
+    });
+
+    it('update and set it back to default', function test() {
+      return this.send({
+        username,
+        uploadId: this.response.uploadId,
+        directOnly: false,
+      })
+      .reflect()
+      .then(inspectPromise());
+    });
+
+    it('returns public from a list once again', function test() {
+      return this.amqp.publishAndWait('files.list', {
+        public: true,
+        username,
+      })
+      .reflect()
+      .then(inspectPromise())
+      .get('files')
+      .then((response) => {
+        const directUpload = response.find(it => it.id === this.response.uploadId);
+        assert.ok(directUpload, 'upload was not found');
+        return null;
+      });
+    });
+  });
+
   describe('update background image', function afterUpdateSuite() {
     before('upload background image', function upload() {
       return initAndUpload(backgroundData, false).call(this)
         .then(downloadFile.bind(this))
         .then(({ urls }) => {
           meta.backgroundImage = urls[0];
+          return null;
         });
     });
 
@@ -274,6 +355,7 @@ describe('update suite', function suite() {
         .then(inspectPromise(false))
         .then((err) => {
           assert.equal(err.statusCode, 412);
+          return null;
         });
     });
   });

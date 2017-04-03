@@ -97,6 +97,19 @@ describe('upload suite', function suite() {
         });
     });
 
+    it('possible to initial directOnly upload', function test() {
+      const message = modelData.message;
+
+      return this
+        .send({ ...message, directOnly: true }, 45000)
+        .reflect()
+        .then(inspectPromise())
+        .then((data) => {
+          assert.ok(data.direct, 'field direct is not set');
+          return null;
+        });
+    });
+
     it('upload is possible based on the returned data', function test() {
       return uploadFiles(modelData, this.response)
         .reflect()

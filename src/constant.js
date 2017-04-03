@@ -39,6 +39,7 @@ module.exports = exports = {
   FILES_UNLISTED_FIELD: 'unlisted',
   FILES_CONTROLS_FIELD: 'controlsData',
   FILES_EXPORT_FIELD: 'export',
+  FILES_DIRECT_ONLY_FIELD: 'direct',
   FILES_BACKGROUND_IMAGE_FIELD: 'backgroundImage',
   FILES_BACKGROUND_COLOR_FIELD: 'backgroundColor',
 
