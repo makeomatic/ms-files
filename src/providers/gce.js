@@ -146,7 +146,7 @@ module.exports = class GCETransport extends AbstractFileTransfer {
       timeout: 5000,
       terminate: false,
       maxInProgress: 100,
-      interval: 250,
+      interval: 10,
     });
 
     this.log.info('subscribing to %s on %s', pubsub.topic, os.hostname());
