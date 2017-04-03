@@ -47,7 +47,7 @@ describe('finish upload suite with pubsub for hooks', function suite() {
 
   it('verify that upload was processed', function test() {
     // eslint-disable-next-line
-    const attempt = arguments[0];
+    const attempt = arguments[0] || 0;
 
     return getInfo
       .call(this, { filename: this.response.uploadId, username: owner })
