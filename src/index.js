@@ -148,7 +148,7 @@ class Files extends Mservice {
       .then(() => Promise.map(this.providers, (provider) => {
         if (!provider.config.bucket.channel.pubsub) return null;
         return provider.subscribe(this.handleUploadNotification.bind(this));
-      }));
+      }, { concurrency: 1 }));
   }
 
 }
