@@ -253,7 +253,7 @@ describe('update suite', function suite() {
       return this.send({
         username,
         uploadId: this.response.uploadId,
-        directOnly: false,
+        directOnly: true,
       })
       .reflect()
       .then(inspectPromise());
@@ -278,7 +278,7 @@ describe('update suite', function suite() {
       return this.send({
         username,
         uploadId: this.response.uploadId,
-        directOnly: true,
+        directOnly: false,
       })
       .reflect()
       .then(inspectPromise());
