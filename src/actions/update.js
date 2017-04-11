@@ -111,15 +111,15 @@ function updateMeta(params) {
         pipeline.hdel(key, FILES_DIRECT_ONLY_FIELD);
         // remove from public indices if it is public
         if (isPublic) {
-          pipeline.srem(FILES_INDEX_PUBLIC, uploadId);
-          pipeline.srem(userPublicIndex, uploadId);
+          pipeline.sadd(FILES_INDEX_PUBLIC, uploadId);
+          pipeline.sadd(userPublicIndex, uploadId);
         }
       } else if (directOnly === true) {
         pipeline.hset(key, FILES_DIRECT_ONLY_FIELD, '1');
         // add back to public indices if this file is public
         if (isPublic) {
-          pipeline.sadd(FILES_INDEX_PUBLIC, uploadId);
-          pipeline.sadd(userPublicIndex, uploadId);
+          pipeline.srem(FILES_INDEX_PUBLIC, uploadId);
+          pipeline.srem(userPublicIndex, uploadId);
         }
       }
 
