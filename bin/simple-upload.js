@@ -161,6 +161,8 @@ const uploadFiles = (jwt) => {
 };
 
 // authenticate & upload
-authenticate().then(uploadFiles).then((id) => {
-  console.info(`Finished uploading id: ${id}`);
-});
+authenticate()
+  .then(uploadFiles).then((id) => {
+    return console.info(`Finished uploading id: ${id}`);
+  })
+  .catch(e => setImmediate(() => { throw e; }));
