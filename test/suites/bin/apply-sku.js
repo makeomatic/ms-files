@@ -2,7 +2,7 @@
 
 const assert = require('assert');
 const path = require('path');
-const spawn = require('child_process').spawn;
+const spawn = require('child_process').execFile;
 
 // helpers
 const {
@@ -27,50 +27,33 @@ describe('binary: apply-sku', function suite() {
   after('stop service', stopService);
 
   function exec(next, args = []) {
-    const child = spawn('node', [binaryPath, '--user', owner, ...args], {
-      shell: true,
+    spawn(binaryPath, ['--user', owner, ...args], {
+      timeout: 20000,
       env: Object.assign({
+        NCONF_NAMESPACE: 'MS_FILES',
         MS_FILES__AMQP__TRANSPORT__CONNECTION__HOST: transport.host,
         MS_FILES__AMQP__TRANSPORT__CONNECTION__PORT: transport.port,
       }, process.env),
       cwd: process.cwd(),
-    });
-
-    const stdoutBuffer = [];
-    const stderrBuffer = [];
-    let timeout;
-
-    function done(code) {
-      if (timeout) clearTimeout(timeout);
-
-      const stdout = stdoutBuffer.join('');
-      const stderr = stderrBuffer.join('');
-
-      if (code !== 0) {
-        console.log(stdout);
-        return next(new Error(stderr));
+    }, (err, stdout, stderr) => {
+      if (err) {
+        return next(err);
       }
 
       assert.equal(stderr, '');
       const lines = stdout.split('\n');
       return next(null, lines.slice(0, -1));
-    }
-
-    child.stdout.on('data', data => stdoutBuffer.push(data));
-    child.stderr.on('data', data => stderrBuffer.push(data));
-    child.on('error', done);
-    child.on('close', done);
-    timeout = setTimeout(done, 10000, 128);
+    });
   }
 
   it('dry run: lists files without changing them', function test(next) {
-    const proc = (err, stdout) => {
+    const proc = (err, lines) => {
       if (err) return next(err);
 
       // ensure there are 4 lines
-      assert.equal(stdout.length, 4);
-      assert.equal(stdout[2], 'pages found: 1');
-      assert.ok(/^\[dry-run\]/.test(stdout[3]), stdout[3]);
+      assert.equal(lines.length, 4);
+      assert.equal(lines[2], 'pages found: 1');
+      assert.ok(/^\[dry-run\]/.test(lines[3]), lines[3]);
 
       return next();
     };
@@ -79,13 +62,13 @@ describe('binary: apply-sku', function suite() {
   });
 
   it('confirm: sets alias', function test(next) {
-    const proc = (err, stdout) => {
+    const proc = (err, lines) => {
       if (err) return next(err);
 
       // ensure there are 4 lines
-      assert.equal(stdout.length, 4);
-      assert.equal(stdout[2], 'pages found: 1');
-      assert.ok(/^set alias for/.test(stdout[3]), stdout[3]);
+      assert.equal(lines.length, 4);
+      assert.equal(lines[2], 'pages found: 1');
+      assert.ok(/^set alias for/.test(lines[3]), lines[3]);
 
       return next();
     };
