@@ -25,3 +25,7 @@ To enable GCS pubsub notifications one must create a topic for it first:
 ```sh
 gsutil notification create -t projects/<PROJECT_NAME>/topics/<TOPIC_NAME> -f json -e OBJECT_FINALIZE gs://<BUCKET_NAME>
 ```
+
+## Roadmap
+
+- [ ] document how it interacts with other services
