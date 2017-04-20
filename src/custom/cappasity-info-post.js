@@ -12,6 +12,13 @@ const {
   CAPPASITY_IMAGE_MODEL,
 } = require('../constant.js');
 
+/*
+  reqPlanLevel: integer. minimum required user plan level
+             forbids changing option value
+             for users with plan lvl less than given
+             0 : free, 10 : lite, 20: basic, 30 : pro
+ */
+
 function getPlayerOpts({ uploadType }) {
   const isImageModel = uploadType === CAPPASITY_IMAGE_MODEL;
   const defaultPlayerOpts = {
@@ -25,18 +32,21 @@ function getPlayerOpts({ uploadType }) {
       default: 1,
       description: 'Show close button',
       paid: true,
+      reqPlanLevel: 30,
     },
     [FILES_PLAYER_HIDECONTROLS]: {
       type: 'boolean',
       description: 'Hide player controls',
       default: 0,
       paid: true,
+      reqPlanLevel: 30,
     },
     [FILES_PLAYER_LOGO]: {
       type: 'boolean',
       default: 1,
       description: 'Show logo',
       paid: true,
+      reqPlanLevel: 20,
     },
     [FILES_PLAYER_HIDEFULLSCREEN]: {
       type: 'boolean',
