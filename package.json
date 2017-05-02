@@ -45,7 +45,7 @@
     "ms-files-transport": "^1.0.2",
     "ms-perf": "^1.0.1",
     "ms-validation": "^3.0.0",
-    "mservice": "^6.1.1",
+    "mservice": "^7.0.0",
     "raven": "^1.2.1",
     "redis-filtered-sort": "^2.0.6",
     "spm-agent-nodejs": "^1.30.8",
