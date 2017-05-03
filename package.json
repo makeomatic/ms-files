@@ -51,7 +51,7 @@
     "spm-agent-nodejs": "^1.30.8",
     "stdout-stream": "^1.4.0",
     "uuid": "^3.0.1",
-    "yargs": "^7.1.0"
+    "yargs": "^8.0.1"
   },
   "devDependencies": {
     "@makeomatic/deploy": "^1.4.0",
