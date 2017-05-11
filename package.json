@@ -46,7 +46,7 @@
     "ms-perf": "^1.0.1",
     "ms-validation": "^3.0.0",
     "mservice": "^6.1.1",
-    "raven": "^1.2.1",
+    "raven": "^2.0.0",
     "redis-filtered-sort": "^2.0.6",
     "spm-agent-nodejs": "^1.30.8",
     "stdout-stream": "^1.4.0",
