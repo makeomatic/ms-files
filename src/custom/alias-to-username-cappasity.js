@@ -8,6 +8,6 @@ module.exports = function extractMetadata(alias) {
   }
 
   return amqp
-    .publishAndWait(route, { username: alias, fields: ['username'] }, { timeout: 3500 })
-    .get('username');
+    .publishAndWait(route, { username: alias, fields: ['id'] }, { timeout: 3500 })
+    .get('id');
 };
