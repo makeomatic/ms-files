@@ -5,6 +5,12 @@ services:
     hostname: redis
     container_name: redis
     image: makeomatic/redis-cluster:3.2.8
+    # @TODO remove
+    # volumes:
+      # - ./backup/7000/dump.rdb:/redis-data/7010/dump.rdb
+      # - ./backup/7000/redis.conf:/redis-data/7010/redis.conf
+      # - ./backup/7001/dump.rdb:/redis-data/7011/dump.rdb
+      # - ./backup/7001/redis.conf:/redis-data/7011/redis.conf
 
   rabbitmq:
     expose:
@@ -17,6 +23,24 @@ services:
     hostname: rabbitmq
     volumes:
       - ./docker-configs/rabbitmq.config:/usr/lib/rabbitmq/etc/rabbitmq/rabbitmq.config
+
+  # @TODO remove
+  # ms-users:
+  #   links:
+  #     - redis
+  #     - rabbitmq
+  #   image: makeomatic/ms-users:7.10.0-7.0.0-rc.0
+  #   hostname: ms-users
+  #   container_name: ms-users
+  #   volumes:
+  #     - ./backup/configs:/configs:ro
+  #   environment:
+  #     NCONF_FILE_PATH: '["/configs/amqp-new.js","/configs/redis.js","/configs/users.js","/configs/users-hooks.js"]'
+  #     MS_USERS__LOGGER__DEFAULT_LOGGER: 'true'
+  #     # @TODO remove
+  #     MS_USERS__DEBUG: 'true'
+  #     NODE_ENV: production
+  #   command: node ./bin/mservice.js
 
   tester:
     image: makeomatic/node:7.9.0-tester-glibc

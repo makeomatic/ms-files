@@ -46,7 +46,9 @@ class Files extends Mservice {
         log: this.log,
       });
 
-      this.migrate('redis', `${__dirname}/migrations`);
+      if (this.config.migrations.enabled === true) {
+        this.migrate('redis', `${__dirname}/migrations`);
+      }
     });
   }
 

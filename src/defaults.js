@@ -97,6 +97,9 @@ module.exports = {
     getMetadata: 'users.getMetadata',
     updateMetadata: 'users.updateMetadata',
   },
+  migrations: {
+    enabled: false,
+  },
   // TTL of key for action list in seconds
   interstoreKeyTTL: 15,
   // minimum remaining time(ms) to a previously saved key for action list
