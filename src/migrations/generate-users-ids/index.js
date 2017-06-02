@@ -33,13 +33,16 @@ function generateUsersIds({ amqp, config, redis, log }) {
                   resolvedUsers.set(owner, id);
                 }
               })
-              .catch(e => log.error(e))
+              .catch({ statusCode: 404 }, (e) => {
+                log.error(e);
+                return null;
+              })
         );
       },
       { concurrency: 20 }
     )
     .each(([fileName, owner, user]) => {
-      if (user === undefined) {
+      if (user === null) {
         log.info('user not found for', fileName, 'owner', owner);
         return;
       }

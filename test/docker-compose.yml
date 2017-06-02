@@ -7,10 +7,10 @@ services:
     image: makeomatic/redis-cluster:3.2.8
     # @TODO remove
     # volumes:
-      # - ./backup/7000/dump.rdb:/redis-data/7010/dump.rdb
-      # - ./backup/7000/redis.conf:/redis-data/7010/redis.conf
-      # - ./backup/7001/dump.rdb:/redis-data/7011/dump.rdb
-      # - ./backup/7001/redis.conf:/redis-data/7011/redis.conf
+    #   - ./backup/7000/dump.rdb:/redis-data/7010/dump.rdb
+    #   - ./backup/7000/redis.conf:/redis-data/7010/redis.conf
+    #   - ./backup/7001/dump.rdb:/redis-data/7011/dump.rdb
+    #   - ./backup/7001/redis.conf:/redis-data/7011/redis.conf
 
   rabbitmq:
     expose:

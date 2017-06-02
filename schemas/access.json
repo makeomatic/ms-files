@@ -1,17 +1,20 @@
 {
-  "id": "access",
-  "type": "object",
-  "required": ["uploadId", "setPublic"],
-  "properties": {
-    "uploadId": {
-      "type": "string",
-      "minLength": 1
-    },
-    "username": {
-      "$ref": "common#/definitions/owner"
-    },
-    "setPublic": {
-      "type": "boolean"
+    "$id": "access",
+    "type": "object",
+    "required": [
+        "uploadId",
+        "setPublic"
+    ],
+    "properties": {
+        "uploadId": {
+            "type": "string",
+            "minLength": 1
+        },
+        "username": {
+            "$ref": "common#/definitions/owner"
+        },
+        "setPublic": {
+            "type": "boolean"
+        }
     }
-  }
 }

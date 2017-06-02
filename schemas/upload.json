@@ -1,155 +1,196 @@
 {
-  "id": "upload",
-  "type": "object",
-  "required": ["files", "meta", "username"],
-  "switch": [
-    {
-      "if": {
-        "required": ["resumable"],
-        "properties": {
-          "resumable": {
-            "constant": false
-          }
-        }
-      },
-      "then": {
-        "not": {
-          "properties": {
-            "unlisted": {
-              "constant": true
-            },
-            "temp": {
-              "constant": true
-            }
-          }
-        }
-      }
-    },
-    {
-      "if": {
-        "required": ["uploadType"],
-        "properties": {
-          "uploadType": {
-            "constant": "simple"
-          }
-        }
-      },
-      "then": {
-        "properties": {
-          "files": {
-            "items": {
-              "$ref": "common#/definitions/cappasity-image"
-            },
-            "contains": {
-              "type": "object",
-              "properties": {
-                "type": {
-                  "constant": "c-preview"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    {
-      "if": {
-        "anyOf": [
-          { "properties": { "unlisted": { "constant": true } } },
-          { "properties": { "temp": { "constant": true } } }
-        ]
-      },
-      "then": { "not": { "required": ["postAction"] } }
-    }
-  ],
-  "properties": {
-    "files": {
-      "type": "array",
-      "minItems": 1,
-      "items": {
-        "anyOf": [
-          {
-            "$ref": "common#/definitions/cappasity-binary"
-          },
-          {
-            "$ref": "common#/definitions/cappasity-image"
-          },
-          {
-            "$ref": "common#/definitions/image"
-          },
-          {
-            "$ref": "common#/definitions/background-image"
-          }
-        ]
-      }
-    },
-    "meta": {
-      "allOf": [
+    "$id": "upload",
+    "type": "object",
+    "required": [
+        "files",
+        "meta",
+        "username"
+    ],
+    "switch": [
         {
-          "$ref": "common#/definitions/meta"
+            "if": {
+                "required": [
+                    "resumable"
+                ],
+                "properties": {
+                    "resumable": {
+                        "const": false
+                    }
+                }
+            },
+            "then": {
+                "not": {
+                    "properties": {
+                        "unlisted": {
+                            "const": true
+                        },
+                        "temp": {
+                            "const": true
+                        }
+                    }
+                }
+            }
         },
         {
-          "type": "object",
-          "required": ["name"],
-          "not": {
-            "required": ["alias"]
-          }
+            "if": {
+                "required": [
+                    "uploadType"
+                ],
+                "properties": {
+                    "uploadType": {
+                        "const": "simple"
+                    }
+                }
+            },
+            "then": {
+                "properties": {
+                    "files": {
+                        "items": {
+                            "$ref": "common#/definitions/cappasity-image"
+                        },
+                        "contains": {
+                            "type": "object",
+                            "properties": {
+                                "type": {
+                                    "const": "c-preview"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "if": {
+                "anyOf": [
+                    {
+                        "properties": {
+                            "unlisted": {
+                                "const": true
+                            }
+                        }
+                    },
+                    {
+                        "properties": {
+                            "temp": {
+                                "const": true
+                            }
+                        }
+                    }
+                ]
+            },
+            "then": {
+                "not": {
+                    "required": [
+                        "postAction"
+                    ]
+                }
+            }
         }
-      ]
-    },
-    "postAction": {
-      "type": "object",
-      "additionalProperties": false,
-      "minProperties": 1,
-      "properties": {
-        "update": {
-          "allOf": [
-            { "$ref": "common#/definitions/meta" },
-            { "minProperties": 1 }
-          ]
+    ],
+    "properties": {
+        "files": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+                "anyOf": [
+                    {
+                        "$ref": "common#/definitions/cappasity-binary"
+                    },
+                    {
+                        "$ref": "common#/definitions/cappasity-image"
+                    },
+                    {
+                        "$ref": "common#/definitions/image"
+                    },
+                    {
+                        "$ref": "common#/definitions/background-image"
+                    }
+                ]
+            }
+        },
+        "meta": {
+            "allOf": [
+                {
+                    "$ref": "common#/definitions/meta"
+                },
+                {
+                    "type": "object",
+                    "required": [
+                        "name"
+                    ],
+                    "not": {
+                        "required": [
+                            "alias"
+                        ]
+                    }
+                }
+            ]
+        },
+        "postAction": {
+            "type": "object",
+            "additionalProperties": false,
+            "minProperties": 1,
+            "properties": {
+                "update": {
+                    "allOf": [
+                        {
+                            "$ref": "common#/definitions/meta"
+                        },
+                        {
+                            "minProperties": 1
+                        }
+                    ]
+                }
+            }
+        },
+        "username": {
+            "$ref": "common#/definitions/owner"
+        },
+        "access": {
+            "type": "object",
+            "required": [
+                "setPublic"
+            ],
+            "properties": {
+                "setPublic": {
+                    "type": "boolean",
+                    "default": false
+                }
+            }
+        },
+        "origin": {
+            "type": "string",
+            "format": "uri"
+        },
+        "resumable": {
+            "type": "boolean",
+            "default": true
+        },
+        "expires": {
+            "type": "integer",
+            "default": 900
+        },
+        "temp": {
+            "type": "boolean",
+            "default": false
+        },
+        "unlisted": {
+            "type": "boolean",
+            "default": false
+        },
+        "uploadType": {
+            "type": "string",
+            "enum": [
+                "simple",
+                "image",
+                "background",
+                "model"
+            ]
+        },
+        "directOnly": {
+            "type": "boolean",
+            "default": false
         }
-      }
-    },
-    "username": {
-      "$ref": "common#/definitions/owner"
-    },
-    "access": {
-      "type": "object",
-      "required": ["setPublic"],
-      "properties": {
-        "setPublic": {
-          "type": "boolean",
-          "default": false
-        }
-      }
-    },
-    "origin": {
-      "type": "string",
-      "format": "uri"
-    },
-    "resumable": {
-      "type": "boolean",
-      "default": true
-    },
-    "expires": {
-      "type": "integer",
-      "default": 900
-    },
-    "temp": {
-      "type": "boolean",
-      "default": false
-    },
-    "unlisted": {
-      "type": "boolean",
-      "default": false
-    },
-    "uploadType": {
-      "type": "string",
-      "enum": [ "simple", "image", "background", "model" ]
-    },
-    "directOnly": {
-      "type": "boolean",
-      "default": false
     }
-  }
 }
