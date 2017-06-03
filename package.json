@@ -40,7 +40,7 @@
     "md5": "^2.2.1",
     "mime-types": "^2.1.15",
     "moment": "^2.18.1",
-    "ms-amqp-transport": "^7.1.0",
+    "ms-amqp-transport": "^9.0.0",
     "ms-conf": "^3.1.2",
     "ms-files-transport": "^1.0.2",
     "ms-perf": "^1.0.1",
