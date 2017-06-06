@@ -10,21 +10,22 @@
     {
       "if": {
         "required": ["resumable"],
-        "properties": { "resumable": { "constant": false } }
+        "properties": { "resumable": { "const": false } }
       },
       "then": {
         "not": {
           "properties": {
-            "unlisted": { "constant": true },
-            "temp": { "constant": true }
+            "unlisted": { "const": true },
+            "temp": { "const": true }
           }
         }
-      }
+      },
+      "continue": true
     },
     {
       "if": {
         "required": ["uploadType"],
-        "properties": { "uploadType": { "constant": "simple" } }
+        "properties": { "uploadType": { "const": "simple" } }
       },
       "then": {
         "properties": {
@@ -36,40 +37,23 @@
               "type": "object",
               "properties": {
                 "type": {
-                  "constant": "c-preview"
+                  "const": "c-preview"
                 }
               }
             }
           }
         }
-      }
+      },
+      "continue": true
     },
     {
       "if": {
         "anyOf": [
-          {
-            "properties": {
-              "unlisted": {
-                "constant": true
-              }
-            }
-          },
-          {
-            "properties": {
-              "temp": {
-                "constant": true
-              }
-            }
-          }
+          { "properties": { "unlisted": { "const": true } } },
+          { "properties": { "temp": { "const": true } } }
         ]
       },
-      "then": {
-        "not": {
-          "required": [
-            "postAction"
-          ]
-        }
-      }
+      "then": { "not": { "required": ["postAction"] } }
     }
   ],
   "properties": {
