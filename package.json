@@ -52,7 +52,7 @@
     "uuid": "^3.0.1",
     "yargs": "^8.0.1"
   },
-  "optional": {
+  "optionalDependencies": {
     "@google-cloud/pubsub": "^0.13.0"
   },
   "devDependencies": {
