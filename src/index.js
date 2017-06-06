@@ -1,5 +1,5 @@
 const Promise = require('bluebird');
-const Mservice = require('mservice');
+const Mservice = require('@microfleet/core');
 const ld = require('lodash');
 const fsort = require('redis-filtered-sort');
 const LockManager = require('dlock');

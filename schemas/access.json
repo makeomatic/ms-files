@@ -1,7 +1,10 @@
 {
-  "id": "access",
+  "$id": "access",
   "type": "object",
-  "required": ["uploadId", "setPublic"],
+  "required": [
+    "uploadId",
+    "setPublic"
+  ],
   "properties": {
     "uploadId": {
       "type": "string",

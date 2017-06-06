@@ -7,19 +7,12 @@ services:
     image: makeomatic/redis-cluster:3.2.8
 
   rabbitmq:
-    expose:
-      - "4369"
-      - "5672"
-      - "15672"
-      - "25672"
     image: makeomatic/rabbitmq:3.6.9
     container_name: rabbitmq
     hostname: rabbitmq
-    volumes:
-      - ./docker-configs/rabbitmq.config:/usr/lib/rabbitmq/etc/rabbitmq/rabbitmq.config
 
   tester:
-    image: makeomatic/node:7.9.0-tester-glibc
+    image: makeomatic/node:7.10.0-tester-glibc
     links:
       - rabbitmq
       - redis

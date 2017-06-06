@@ -1,93 +1,73 @@
 {
-  "id": "upload",
+  "$id": "upload",
   "type": "object",
-  "required": ["files", "meta", "username"],
-  "switch": [
-    {
-      "if": {
-        "required": ["resumable"],
+  "required": [
+    "files",
+    "meta",
+    "username"
+  ],
+  "switch": [{
+    "if": {
+      "required": ["resumable"],
+      "properties": { "resumable": { "const": false } }
+    },
+    "then": {
+      "not": {
         "properties": {
-          "resumable": {
-            "constant": false
-          }
-        }
-      },
-      "then": {
-        "not": {
-          "properties": {
-            "unlisted": {
-              "constant": true
-            },
-            "temp": {
-              "constant": true
-            }
-          }
+          "unlisted": { "const": true },
+          "temp": { "const": true }
         }
       }
     },
-    {
-      "if": {
-        "required": ["uploadType"],
-        "properties": {
-          "uploadType": {
-            "constant": "simple"
-          }
-        }
-      },
-      "then": {
-        "properties": {
-          "files": {
-            "items": {
-              "$ref": "common#/definitions/cappasity-image"
-            },
-            "contains": {
-              "type": "object",
-              "properties": {
-                "type": {
-                  "constant": "c-preview"
-                }
+    "continue": true
+  }, {
+    "if": {
+      "required": ["uploadType"],
+      "properties": { "uploadType": { "const": "simple" } }
+    },
+    "then": {
+      "properties": {
+        "files": {
+          "items": {
+            "$ref": "common#/definitions/cappasity-image"
+          },
+          "contains": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "const": "c-preview"
               }
             }
           }
         }
       }
     },
-    {
-      "if": {
-        "anyOf": [
-          { "properties": { "unlisted": { "constant": true } } },
-          { "properties": { "temp": { "constant": true } } }
-        ]
-      },
-      "then": { "not": { "required": ["postAction"] } }
-    }
-  ],
+    "continue": true
+  }, {
+    "if": {
+      "anyOf": [
+        { "properties": { "unlisted": { "const": true } } },
+        { "properties": { "temp": { "const": true } } }
+      ]
+    },
+    "then": { "not": { "required": ["postAction"] } }
+  }],
   "properties": {
     "files": {
       "type": "array",
       "minItems": 1,
       "items": {
         "anyOf": [
-          {
-            "$ref": "common#/definitions/cappasity-binary"
-          },
-          {
-            "$ref": "common#/definitions/cappasity-image"
-          },
-          {
-            "$ref": "common#/definitions/image"
-          },
-          {
-            "$ref": "common#/definitions/background-image"
-          }
+          { "$ref": "common#/definitions/cappasity-binary" },
+          { "$ref": "common#/definitions/cappasity-image" },
+          { "$ref": "common#/definitions/image" },
+          { "$ref": "common#/definitions/background-image" }
         ]
       }
     },
     "meta": {
       "allOf": [
-        {
-          "$ref": "common#/definitions/meta"
-        },
+        { "$ref": "common#/definitions/meta" },
         {
           "type": "object",
           "required": ["name"],
@@ -115,7 +95,9 @@
     },
     "access": {
       "type": "object",
-      "required": ["setPublic"],
+      "required": [
+        "setPublic"
+      ],
       "properties": {
         "setPublic": {
           "type": "boolean",
@@ -145,7 +127,12 @@
     },
     "uploadType": {
       "type": "string",
-      "enum": [ "simple", "image", "background", "model" ]
+      "enum": [
+        "simple",
+        "image",
+        "background",
+        "model"
+      ]
     },
     "directOnly": {
       "type": "boolean",

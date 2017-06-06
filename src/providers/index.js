@@ -1,5 +1,5 @@
 const Promise = require('bluebird');
-const Mservice = require('mservice');
+const Mservice = require('@microfleet/core');
 const assert = require('assert');
 const debug = require('debug')('ms-files-providers');
 

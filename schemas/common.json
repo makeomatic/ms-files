@@ -1,5 +1,5 @@
 {
-  "id": "common",
+  "$id": "common",
   "definitions": {
     "owner": {
       "type": "string",
@@ -71,11 +71,11 @@
       "properties": {
         "type": {
           "type": "string",
-          "constant": "c-bin"
+          "const": "c-bin"
         },
         "contentType": {
           "type": "string",
-          "constant": "application/octet-stream"
+          "const": "application/octet-stream"
         },
         "contentLength": {
           "type": "integer",
@@ -91,7 +91,7 @@
         },
         "contentEncoding": {
           "type": "string",
-          "constant": "gzip"
+          "const": "gzip"
         },
         "md5Hash": {
           "type": "string",
@@ -134,7 +134,7 @@
       "properties": {
         "type": {
           "type": "string",
-          "constant": "background"
+          "const": "background"
         },
         "contentType": {
           "type": "string",
@@ -226,7 +226,7 @@
             "format": "uri"
           }, {
             "type": "string",
-            "constant": ""
+            "const": ""
           }]
         },
         "type": {

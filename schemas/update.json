@@ -1,28 +1,35 @@
 {
-  "id": "update",
-  "type": "object",
-  "required": [ "uploadId", "username" ],
-  "minProperties": 3,
-  "properties": {
-    "uploadId": {
-      "$ref": "common#/definitions/uuid-v4"
-    },
-    "username": {
-      "$ref": "common#/definitions/owner"
-    },
-    "directOnly": {
-      "type": "boolean"
-    },
-    "meta": {
-      "default": {},
-      "allOf": [
-        {
-          "not": { "required": ["export"] }
+    "$id": "update",
+    "type": "object",
+    "required": [
+        "uploadId",
+        "username"
+    ],
+    "minProperties": 3,
+    "properties": {
+        "uploadId": {
+            "$ref": "common#/definitions/uuid-v4"
         },
-        {
-          "$ref": "common#/definitions/meta"
+        "username": {
+            "$ref": "common#/definitions/owner"
+        },
+        "directOnly": {
+            "type": "boolean"
+        },
+        "meta": {
+            "default": {},
+            "allOf": [
+                {
+                    "not": {
+                        "required": [
+                            "export"
+                        ]
+                    }
+                },
+                {
+                    "$ref": "common#/definitions/meta"
+                }
+            ]
         }
-      ]
     }
-  }
 }
