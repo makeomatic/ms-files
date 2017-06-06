@@ -1,26 +1,22 @@
 {
-  "id": "upload",
+  "$id": "upload",
   "type": "object",
-  "required": ["files", "meta", "username"],
+  "required": [
+    "files",
+    "meta",
+    "username"
+  ],
   "switch": [
     {
       "if": {
         "required": ["resumable"],
-        "properties": {
-          "resumable": {
-            "constant": false
-          }
-        }
+        "properties": { "resumable": { "constant": false } }
       },
       "then": {
         "not": {
           "properties": {
-            "unlisted": {
-              "constant": true
-            },
-            "temp": {
-              "constant": true
-            }
+            "unlisted": { "constant": true },
+            "temp": { "constant": true }
           }
         }
       }
@@ -28,11 +24,7 @@
     {
       "if": {
         "required": ["uploadType"],
-        "properties": {
-          "uploadType": {
-            "constant": "simple"
-          }
-        }
+        "properties": { "uploadType": { "constant": "simple" } }
       },
       "then": {
         "properties": {
@@ -55,11 +47,29 @@
     {
       "if": {
         "anyOf": [
-          { "properties": { "unlisted": { "constant": true } } },
-          { "properties": { "temp": { "constant": true } } }
+          {
+            "properties": {
+              "unlisted": {
+                "constant": true
+              }
+            }
+          },
+          {
+            "properties": {
+              "temp": {
+                "constant": true
+              }
+            }
+          }
         ]
       },
-      "then": { "not": { "required": ["postAction"] } }
+      "then": {
+        "not": {
+          "required": [
+            "postAction"
+          ]
+        }
+      }
     }
   ],
   "properties": {
@@ -90,9 +100,13 @@
         },
         {
           "type": "object",
-          "required": ["name"],
+          "required": [
+            "name"
+          ],
           "not": {
-            "required": ["alias"]
+            "required": [
+              "alias"
+            ]
           }
         }
       ]
@@ -104,8 +118,12 @@
       "properties": {
         "update": {
           "allOf": [
-            { "$ref": "common#/definitions/meta" },
-            { "minProperties": 1 }
+            {
+              "$ref": "common#/definitions/meta"
+            },
+            {
+              "minProperties": 1
+            }
           ]
         }
       }
@@ -115,7 +133,9 @@
     },
     "access": {
       "type": "object",
-      "required": ["setPublic"],
+      "required": [
+        "setPublic"
+      ],
       "properties": {
         "setPublic": {
           "type": "boolean",
@@ -145,7 +165,12 @@
     },
     "uploadType": {
       "type": "string",
-      "enum": [ "simple", "image", "background", "model" ]
+      "enum": [
+        "simple",
+        "image",
+        "background",
+        "model"
+      ]
     },
     "directOnly": {
       "type": "boolean",

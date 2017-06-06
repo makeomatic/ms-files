@@ -20,7 +20,6 @@ Promise.promisifyAll(require('@google-cloud/storage').prototype, { multiArgs: tr
 
 // include gcloud
 const GStorage = require('@google-cloud/storage');
-const PubSub = require('@google-cloud/pubsub');
 
 /**
  * Main transport class
@@ -79,8 +78,15 @@ module.exports = class GCETransport extends AbstractFileTransfer {
    */
   setupGCE() {
     this._gcs = new GStorage(this._config.gce);
-    this._pubsub = new PubSub(this._config.gce);
-    this._pubsub._subscriptions = [];
+
+    try {
+      const PubSub = require('@google-cloud/pubsub');
+
+      this._pubsub = new PubSub(this._config.gce);
+      this._pubsub._subscriptions = [];
+    } catch (e) {
+      this._logger.warn('failed to load @google-cloud/pubsub', e);
+    }
   }
 
   /**
@@ -134,7 +140,11 @@ module.exports = class GCETransport extends AbstractFileTransfer {
    * @return {Subscription}
    */
   subscribe(handler) {
+    assert(this._pubsub, '@google-cloud/pubsub not initialized');
+
+    // extract config
     const pubsub = this._config.bucket.channel.pubsub;
+
     assert(pubsub, 'to subscribe must specify pubsub topic via `pubsub.topic`');
     assert(pubsub.topic, 'to subscribe must specify pubsub topic via `pubsub.topic`');
     assert(pubsub.name, 'must contain a name for proper round-robin distribution');

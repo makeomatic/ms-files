@@ -1,23 +1,25 @@
 {
-  "id": "finish",
-  "type": "object",
-  "required": ["filename"],
-  "properties": {
-    "filename": {
-      "$ref": "common#/definitions/filename"
-    },
-    "resourceId": {
-      "type": "string"
-    },
-    "action": {
-      "type": "string"
-    },
-    "skipProcessing": {
-      "type": "boolean"
-    },
-    "await": {
-      "type": "boolean",
-      "default": false
+    "$id": "finish",
+    "type": "object",
+    "required": [
+        "filename"
+    ],
+    "properties": {
+        "filename": {
+            "$ref": "common#/definitions/filename"
+        },
+        "resourceId": {
+            "type": "string"
+        },
+        "action": {
+            "type": "string"
+        },
+        "skipProcessing": {
+            "type": "boolean"
+        },
+        "await": {
+            "type": "boolean",
+            "default": false
+        }
     }
-  }
 }

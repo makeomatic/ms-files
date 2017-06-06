@@ -1,13 +1,15 @@
 {
-  "id": "remove",
-  "type": "object",
-  "required": ["filename"],
-  "properties": {
-    "filename": {
-      "$ref": "common#/definitions/uuid-v4"
-    },
-    "username": {
-      "$ref": "common#/definitions/owner"
+    "$id": "remove",
+    "type": "object",
+    "required": [
+        "filename"
+    ],
+    "properties": {
+        "filename": {
+            "$ref": "common#/definitions/uuid-v4"
+        },
+        "username": {
+            "$ref": "common#/definitions/owner"
+        }
     }
-  }
 }

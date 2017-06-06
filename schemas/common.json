@@ -1,5 +1,5 @@
 {
-  "id": "common",
+  "$id": "common",
   "definitions": {
     "owner": {
       "type": "string",

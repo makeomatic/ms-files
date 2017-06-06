@@ -1,17 +1,23 @@
 {
-  "id": "info",
-  "type": "object",
-  "required": ["filename", "username"],
-  "properties": {
-    "filename": {
-      "anyOf": [{
-        "$ref": "common#/definitions/uuid-v4"
-      }, {
-        "$ref": "common#/definitions/meta/properties/alias"
-      }]
-    },
-    "username": {
-      "$ref": "common#/definitions/owner"
+    "$id": "info",
+    "type": "object",
+    "required": [
+        "filename",
+        "username"
+    ],
+    "properties": {
+        "filename": {
+            "anyOf": [
+                {
+                    "$ref": "common#/definitions/uuid-v4"
+                },
+                {
+                    "$ref": "common#/definitions/meta/properties/alias"
+                }
+            ]
+        },
+        "username": {
+            "$ref": "common#/definitions/owner"
+        }
     }
-  }
 }
