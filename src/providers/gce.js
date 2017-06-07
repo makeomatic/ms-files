@@ -205,7 +205,7 @@ module.exports = class GCETransport extends AbstractFileTransfer {
   /**
    * Ensures that we have rights to write to the
    * specified bucket
-   * @return {Promise}
+   * @returns {Promise<Void>}
    */
   connect() {
     return Promise
@@ -219,11 +219,11 @@ module.exports = class GCETransport extends AbstractFileTransfer {
 
   /**
    * Disconnects pubsub handlers if they are alive
-   * @type {Promise}
+   * @returns {Promise<Void>}
    */
   close() {
-    const subscriptions = this._pubsub._subscriptions;
-    if (subscriptions.length > 0) {
+    const subscriptions = this._pubsub && this._pubsub._subscriptions;
+    if (subscriptions && subscriptions.length > 0) {
       return Promise.map(subscriptions, (subscription) => {
         // remove message listener
         subscription.removeAllListeners('message');
@@ -286,7 +286,7 @@ module.exports = class GCETransport extends AbstractFileTransfer {
    *                           portion of the query string. Be sure to remove any whitespace around the colon that separates the header name and
    *                           value. For example, using the custom header x-goog-acl: private without removing the space after the colon will
    *                           return a 403 Forbidden because the request signature you calculate will not match the signature Google calculates.
-   * @return {Promise}
+   * @returns {Promise}
    */
   createSignedURL(opts) {
     this.log.debug('initiating signing of URL for %s', opts.resource);
