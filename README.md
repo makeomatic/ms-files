@@ -1,5 +1,7 @@
 # ms-files
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/makeomatic/ms-files.svg)](https://greenkeeper.io/)
+
 [![codecov.io](https://codecov.io/github/makeomatic/ms-files/coverage.svg?branch=master)](https://codecov.io/github/makeomatic/ms-files?branch=master)
 [![npm version](https://badge.fury.io/js/ms-files.svg)](https://badge.fury.io/js/ms-files)
 [![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg)](http://commitizen.github.io/cz-cli/)
