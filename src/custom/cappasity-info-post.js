@@ -98,7 +98,7 @@ const GREEN_LIGHT_STATUSES = {
 };
 
 module.exports = function getEmbeddedInfo(file) {
-  const { uploadId: id, status } = file;
+  const { uploadId: id, status, uploadType } = file;
 
   if (GREEN_LIGHT_STATUSES[status] === true) {
     const options = getPlayerOpts(file);
@@ -107,6 +107,10 @@ module.exports = function getEmbeddedInfo(file) {
       params: {
         ...options,
         ...defaultWindowOptions,
+        [FILES_PLAYER_HIDEFULLSCREEN]: {
+          ...defaultPlayerOpts[FILES_PLAYER_HIDEFULLSCREEN],
+          default: uploadType === 'simple' ? 1 : 0,
+        },
       },
     };
   }
