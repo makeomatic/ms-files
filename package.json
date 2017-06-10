@@ -9,7 +9,7 @@
     "start": "node ./bin/mservice.js | bunyan -o short",
     "lint": "eslint ./src",
     "semantic-release": "semantic-release pre && npm run compile && npm publish && semantic-release post",
-    "docker-release": "mdep docker release --8.1.0",
+    "docker-release": "mdep docker release --node 8.1.0",
     "release": "yarn; npm run semantic-release; npm run docker-release"
   },
   "repository": {
