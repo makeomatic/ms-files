@@ -12,7 +12,7 @@ services:
     hostname: rabbitmq
 
   tester:
-    image: makeomatic/node:7.10.0-tester-glibc
+    image: makeomatic/node:8.1.0-tester-glibc
     links:
       - rabbitmq
       - redis
