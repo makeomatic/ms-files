@@ -25,4 +25,5 @@ services:
       NODE_ENV: "test"
       DEBUG: "${DEBUG}"
       LD_LIBRARY_PATH: "/usr/glibc-compat/lib/"
+      DOTENV_FILE_PATH: "/src/test/.env"
     command: tail -f /dev/null
