@@ -356,4 +356,60 @@ describe('upload suite', function suite() {
         .then(inspectPromise(false));
     });
   });
+
+  describe('upload limits', function limitSuite() {
+    it('uploading more than 20MB is not allowed if not image/vnd.cappasity', function test() {
+      const obj = {
+        username: 'any',
+        resumable: false,
+        files: [{
+          type: 'c-simple',
+          contentType: 'image/png',
+          contentLength: 1024 * 1024 * 21, // 21 MB
+          md5Hash: '00000000000000000000000000000000',
+        }],
+        meta: {
+          name: 'test',
+        },
+      };
+
+      assert.ok(this.files.validateSync('upload', obj).error, 'error not thrown!');
+    });
+
+    it('allows to upload > 20MB & < 50MB for image/vnd.cappasity', function test() {
+      const obj = {
+        username: 'any',
+        resumable: false,
+        files: [{
+          type: 'c-simple',
+          contentType: 'image/vnd.cappasity',
+          contentLength: 1024 * 1024 * 21, // 21 MB
+          md5Hash: '00000000000000000000000000000000',
+        }],
+        meta: {
+          name: 'test',
+        },
+      };
+
+      assert.ifError(this.files.validateSync('upload', obj).error);
+    });
+
+    it('rejects uploading > 50MB for image/vnd.cappasity', function test() {
+      const obj = {
+        username: 'any',
+        resumable: false,
+        files: [{
+          type: 'c-simple',
+          contentType: 'image/vnd.cappasity',
+          contentLength: 1024 * 1024 * 51, // 51 MB
+          md5Hash: '00000000000000000000000000000000',
+        }],
+        meta: {
+          name: 'test',
+        },
+      };
+
+      assert.ok(this.files.validateSync('upload', obj).error, 'error not thrown!');
+    });
+  });
 });
