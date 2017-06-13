@@ -24,7 +24,7 @@
   "homepage": "https://github.com/makeomatic/ms-files#readme",
   "dependencies": {
     "@google-cloud/storage": "^1.1.1",
-    "@microfleet/core": "^8.0.4",
+    "@microfleet/core": "^8.1.1",
     "bl": "^1.2.1",
     "bluebird": "^3.5.0",
     "bunyan": "^1.8.10",
@@ -49,13 +49,13 @@
     "spm-agent-nodejs": "^1.30.8",
     "stdout-stream": "^1.4.0",
     "uuid": "^3.0.1",
-    "yargs": "^8.0.1"
+    "yargs": "^8.0.2"
   },
   "optionalDependencies": {
     "@google-cloud/pubsub": "^0.13.0"
   },
   "devDependencies": {
-    "@makeomatic/deploy": "^1.8.5",
+    "@makeomatic/deploy": "^1.9.6",
     "babel-cli": "^6.24.1",
     "babel-eslint": "^7.2.3",
     "babel-plugin-istanbul": "^4.1.4",
@@ -80,7 +80,7 @@
     "request-promise": "^4.2.1",
     "rimraf": "^2.6.1",
     "semantic-release": "6.3.6",
-    "sinon": "^2.3.2"
+    "sinon": "^2.3.4"
   },
   "release": {
     "verifyConditions": []
