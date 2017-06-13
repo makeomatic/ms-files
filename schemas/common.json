@@ -119,7 +119,17 @@
         "contentLength": {
           "type": "integer",
           "minimum": 1,
-          "maximum": 20000000
+          "select": {
+            "$data": "1/contentType"
+          },
+          "selectCases": {
+            "image/vnd.cappasity": {
+              "maximum": 52428800
+            }
+          },
+          "selectDefault": {
+            "maximum": 20971520
+          }
         },
         "md5Hash": {
           "type": "string",

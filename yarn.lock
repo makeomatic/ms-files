@@ -76,9 +76,9 @@
     string-format-obj "^1.0.0"
     through2 "^2.0.0"
 
-"@makeomatic/deploy@^1.8.5":
-  version "1.8.5"
-  resolved "https://registry.yarnpkg.com/@makeomatic/deploy/-/deploy-1.8.5.tgz#2b10f0882a02446bb53b25f896ee3cba16d37a8e"
+"@makeomatic/deploy@^1.9.6":
+  version "1.9.6"
+  resolved "https://registry.yarnpkg.com/@makeomatic/deploy/-/deploy-1.9.6.tgz#497c004f6c144723151b8faf37eed5968de826f6"
   dependencies:
     bluebird "^3.5.0"
     death "^1.1.0"
@@ -89,9 +89,9 @@
     shelljs "^0.7.8"
     yargs "^8.0.1"
 
-"@microfleet/core@^8.0.4":
-  version "8.0.4"
-  resolved "https://registry.yarnpkg.com/@microfleet/core/-/core-8.0.4.tgz#3e51a78974c79b8fcb7428d214779de4808d1655"
+"@microfleet/core@^8.1.1":
+  version "8.1.1"
+  resolved "https://registry.yarnpkg.com/@microfleet/core/-/core-8.1.1.tgz#d5487731b66ee4f22fe28afa93fa111ab2600400"
   dependencies:
     bluebird "^3.5.0"
     callsite "^1.0.0"
@@ -4098,9 +4098,9 @@ signal-exit@^3.0.0, signal-exit@^3.0.1, signal-exit@^3.0.2:
   version "3.0.2"
   resolved "https://registry.yarnpkg.com/signal-exit/-/signal-exit-3.0.2.tgz#b5fdc08f1287ea1178628e415e25132b73646c6d"
 
-sinon@^2.3.2:
-  version "2.3.2"
-  resolved "https://registry.yarnpkg.com/sinon/-/sinon-2.3.2.tgz#c43a9c570f32baac1159505cfeed19108855df89"
+sinon@^2.3.4:
+  version "2.3.4"
+  resolved "https://registry.yarnpkg.com/sinon/-/sinon-2.3.4.tgz#466ad8d1bae86d6db51aa218b92e997bc3e5db88"
   dependencies:
     diff "^3.1.0"
     formatio "1.2.0"
@@ -4786,9 +4786,9 @@ yargs@^3.10.0, yargs@^3.19.0:
     window-size "^0.1.4"
     y18n "^3.2.0"
 
-yargs@^8.0.1:
-  version "8.0.1"
-  resolved "https://registry.yarnpkg.com/yargs/-/yargs-8.0.1.tgz#420ef75e840c1457a80adcca9bc6fa3849de51aa"
+yargs@^8.0.1, yargs@^8.0.2:
+  version "8.0.2"
+  resolved "https://registry.yarnpkg.com/yargs/-/yargs-8.0.2.tgz#6299a9055b1cefc969ff7e79c1d918dceb22c360"
   dependencies:
     camelcase "^4.1.0"
     cliui "^3.2.0"
