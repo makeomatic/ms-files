@@ -24,7 +24,7 @@
   "homepage": "https://github.com/makeomatic/ms-files#readme",
   "dependencies": {
     "@google-cloud/storage": "^1.1.1",
-    "@microfleet/core": "^8.1.1",
+    "@microfleet/core": "^9.0.0",
     "bl": "^1.2.1",
     "bluebird": "^3.5.0",
     "bunyan": "^1.8.10",
