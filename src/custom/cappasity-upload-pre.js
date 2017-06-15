@@ -15,7 +15,7 @@ const {
 const isPack = it => it.type === 'c-pack';
 
 // resolve real username and fetch plan data
-function getUserData(username) {
+function getUserData(alias) {
   const { amqp, config } = this;
   const { planGet } = config.payments;
   const { getInternalData, getMetadata, audience } = config.users;
@@ -23,13 +23,13 @@ function getUserData(username) {
   const promises = [
     // get real username
     amqp.publishAndWait(getInternalData, {
-      username,
+      username: alias,
       fields: ['username'],
     }),
 
     // fetch current user's plan and roles
     amqp.publishAndWait(getMetadata, {
-      username,
+      username: alias,
       audience: [audience],
       fields: {
         [audience]: ['roles', 'plan'],
@@ -44,24 +44,22 @@ function getUserData(username) {
     // fetch plan data
     return amqp
       .publishAndWait(planGet.route, { id: plan }, planGet.options)
-      .then(plan => ({
+      .then(planData => ({
         username,
         roles,
-        plan,
+        plan: planData,
       }));
   });
 }
 
 // check limit of uploadings by username
 function checkUploadsLimit(params) {
-  const { redis, amqp, config } = this;
-  const { getMetadata, audience } = config.users;
+  const { redis } = this;
 
   // get user's roles and limit of embeddings according his plan
-  const username = params[FILES_OWNER_FIELD];
-  return Promise.bind(this, username)
+  return Promise.bind(this, params[FILES_OWNER_FIELD])
     .then(getUserData)
-    .then(data => {
+    .then((data) => {
       const { username, roles, plan } = data;
       const isAdmin = includes(roles, 'admin');
 
@@ -73,7 +71,7 @@ function checkUploadsLimit(params) {
       const FILES_PER_USER_SET = `${FILES_INDEX}:${username}`;
       const embeddings = get(plan, 'meta.embeddings.value', 0);
 
-      return redis.scard(FILES_PER_USER_SET).then(uploadedFiles => {
+      return redis.scard(FILES_PER_USER_SET).then((uploadedFiles) => {
         const isOutOfLimit = uploadedFiles >= embeddings;
 
         if (isOutOfLimit) {
@@ -83,7 +81,7 @@ function checkUploadsLimit(params) {
         return null;
       });
     });
-};
+}
 
 module.exports = function extractMetadata(params) {
   let sourceSHA;

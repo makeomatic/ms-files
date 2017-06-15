@@ -1,6 +1,6 @@
 const path = require('path');
 const resolveMessage = require('./messageResolver.js');
-const routerExtension = require('mservice').routerExtension;
+const routerExtension = require('@microfleet/core').routerExtension;
 
 const autoSchema = routerExtension('validate/schemaLessAction');
 const auditLog = routerExtension('audit/log');
