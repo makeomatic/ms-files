@@ -1,9 +1,104 @@
-const reject = require('lodash/reject');
 const assert = require('assert');
+const Promise = require('bluebird');
+const sinon = require('sinon');
+const set = require('lodash/set');
+const noop = require('lodash/noop');
+const reject = require('lodash/reject');
+
+const config = require('../../../src/defaults');
+const hook = require('../../../src/custom/cappasity-upload-pre');
 const { inspectPromise } = require('../../helpers/utils');
+const { FILES_INDEX } = require('../../../src/constant.js');
+
+const audience = config.users.audience;
+
+const usernames = [
+  'admin',
+  'free',
+  'professional',
+];
+
+const mockPlan = (value) => set({}, 'meta.embeddings.value', value);
+const mockMetadata = (username, attributes) => ({
+  username,
+  [audience]: attributes
+});
+const mockInternalData = (username) => ({
+  username,
+});
+
+const plans = {
+  free: mockPlan(1),
+  professional: mockPlan(10),
+};
+
+const metadata = {
+  free: mockMetadata('free', { plan: 'free', roles: [] }),
+  professional: mockMetadata('professional', { plan: 'professional', roles: [] }),
+  admin: mockMetadata('admin', { plan: 'professional', roles: ['admin'] }),
+  adminLimit: mockMetadata('adminLimit', { plan: 'free', roles: ['admin'] }),
+};
+
+const internals = {
+  free: mockInternalData('free'),
+  professional: mockInternalData('professional'),
+  admin: mockInternalData('admin'),
+  adminLimit: mockMetadata('adminLimit'),
+};
+
+const uploadedFiles = {
+  free: 10,
+  professional: 1,
+  admin: 1,
+  adminLimit: 10,
+};
 
 describe('cappasity-upload-pre hook test suite', function suite() {
-  const hook = require('../../../src/custom/cappasity-upload-pre');
+  before('add stubs', function stubs() {
+    const amqp = this.amqp = {
+      publishAndWait: (router, message) => {}
+    };
+    const redis = this.redis = {
+      scard: noop,
+    };
+
+    const amqpStub = sinon.stub(this.amqp, 'publishAndWait');
+    const redisStub = sinon.stub(this.redis, 'scard');
+
+    const { planGet } = config.payments
+    const {
+      getMetadata,
+      getInternalData,
+    } = config.users;
+
+    this.config = config;
+    this.boundHook = hook.bind(this);
+
+    const plansList = [
+      'free',
+      'professional',
+    ];
+
+    plansList.forEach((id) => {
+      amqpStub
+        .withArgs(planGet.route, { id })
+        .resolves(plans[id]);
+    });
+
+    usernames.forEach((username) => {
+      amqpStub
+        .withArgs(getMetadata, sinon.match({ username }))
+        .resolves(metadata[username]);
+
+      amqpStub
+        .withArgs(getInternalData, sinon.match({ username }))
+        .resolves(internals[username]);
+
+      redisStub
+        .withArgs(`${FILES_INDEX}:${username}`)
+        .resolves(uploadedFiles[username]);
+    });
+  });
 
   describe('validate model files', function modelSuite() {
     const data = {
@@ -15,11 +110,30 @@ describe('cappasity-upload-pre hook test suite', function suite() {
         type: 'c-archive',
       }],
       meta: {},
+      owner: 'professional',
       resumable: true,
     };
 
-    it('should pass', function test() {
-      return hook(data)
+    it('should pass - regular user, limit has not been reached', function test() {
+      return this.boundHook(data)
+        .reflect()
+        .then(inspectPromise());
+    });
+
+    it('should fail - regular user, limit has been reached', function test() {
+      return this.boundHook({ ...data, owner: 'free' })
+        .reflect()
+        .then(inspectPromise(false));
+    });
+
+    it('should pass - admin user, limit has not been reached', function test() {
+      return this.boundHook({ ...data, owner: 'admin' })
+        .reflect()
+        .then(inspectPromise());
+    });
+
+    it('should pass - admin user, limit has been reached', function test() {
+      return this.boundHook({ ...data, owner: 'admin' })
         .reflect()
         .then(inspectPromise());
     });
@@ -70,7 +184,7 @@ describe('cappasity-upload-pre hook test suite', function suite() {
         temp: true,
       };
 
-      return hook(payload)
+      return this.boundHook(payload)
         .reflect()
         .then(inspectPromise());
     });
@@ -84,6 +198,7 @@ describe('cappasity-upload-pre hook test suite', function suite() {
       access: {
         setPublic: true,
       },
+      owner: 'free',
       unlisted: true,
       resumable: true, // backward compability
     };
