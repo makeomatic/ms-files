@@ -1,10 +1,11 @@
 const Promise = require('bluebird');
-const Mservice = require('mservice');
+const Mservice = require('@microfleet/core');
 const ld = require('lodash');
 const fsort = require('redis-filtered-sort');
 const LockManager = require('dlock');
 const RedisCluster = require('ioredis').Cluster;
 const StorageProviders = require('./providers');
+const conf = require('./config');
 
 // constants
 const { HttpStatusError } = require('common-errors');
@@ -19,7 +20,7 @@ class Files extends Mservice {
    * Default options for the service
    * @type {Object}
    */
-  static defaultOpts = require('./defaults.js');
+  static defaultOpts = conf.get('/', { env: process.env.NODE_ENV });
 
   /**
    * class Constructor, initializes configuration
@@ -27,6 +28,7 @@ class Files extends Mservice {
    */
   constructor(opts = {}) {
     super(ld.merge({}, Files.defaultOpts, opts));
+
     const config = this._config;
 
     // extend with storage providers
@@ -45,11 +47,14 @@ class Files extends Mservice {
         pubsub: new RedisCluster(config.redis.hosts, config.redis.options),
         log: this.log,
       });
-
-      if (this.config.migrations.enabled === true) {
-        this.migrate('redis', `${__dirname}/migrations`);
-      }
     });
+
+    // add migration connector
+    if (config.migrations.enabled === true) {
+      this.addConnector(Mservice.ConnectorsTypes.migration, () => (
+        this.migrate('redis', `${__dirname}/migrations`)
+      ));
+    }
   }
 
   /**

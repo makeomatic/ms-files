@@ -1,4 +1,4 @@
-# ms-files
+# @microfleet/files
 
 [![codecov.io](https://codecov.io/github/makeomatic/ms-files/coverage.svg?branch=master)](https://codecov.io/github/makeomatic/ms-files?branch=master)
 [![npm version](https://badge.fury.io/js/ms-files.svg)](https://badge.fury.io/js/ms-files)
@@ -9,14 +9,9 @@
 
 Handles metadata processing, as well as various post-processing of files
 
-## Plan
+## Usage
 
-1. Provide access-control for read & writes on a per user basis
-2. Initiate file upload for a given user
-3. Complete file upload for a given user
-4. Send completed file upload to a post-processing queue
-5. Cleanup after abrupt file uploads
-6. Provides file access control
+TODO:
 
 ## Notes
 

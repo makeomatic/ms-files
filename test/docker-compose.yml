@@ -13,16 +13,9 @@ services:
     #   - ./backup/7001/redis.conf:/redis-data/7011/redis.conf
 
   rabbitmq:
-    expose:
-      - "4369"
-      - "5672"
-      - "15672"
-      - "25672"
     image: makeomatic/rabbitmq:3.6.9
     container_name: rabbitmq
     hostname: rabbitmq
-    volumes:
-      - ./docker-configs/rabbitmq.config:/usr/lib/rabbitmq/etc/rabbitmq/rabbitmq.config
 
   # @TODO remove
   # ms-users:
@@ -43,7 +36,7 @@ services:
   #   command: node ./bin/mservice.js
 
   tester:
-    image: makeomatic/node:7.9.0-tester-glibc
+    image: makeomatic/node:8.1.0-tester-glibc
     links:
       - rabbitmq
       - redis
@@ -56,4 +49,5 @@ services:
       NODE_ENV: "test"
       DEBUG: "${DEBUG}"
       LD_LIBRARY_PATH: "/usr/glibc-compat/lib/"
+      DOTENV_FILE_PATH: "/src/test/.env"
     command: tail -f /dev/null

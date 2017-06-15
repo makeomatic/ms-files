@@ -17,14 +17,11 @@ const argv = require('yargs')
 
 // Deps
 const Promise = require('bluebird');
-const Files = require('../lib/index');
 const AMQPTransport = require('ms-amqp-transport');
 const omit = require('lodash/omit');
-const merge = require('lodash/merge');
-const configOverride = require('ms-conf').get('/');
+const config = require('../lib/config').get('/', { env: process.env.NODE_ENV });
 
 // Configuration
-const config = merge({}, Files.defaultOpts, configOverride);
 const amqpConfig = omit(config.amqp.transport, ['queue', 'listen', 'neck', 'onComplete']);
 const prefix = config.router.routes.prefix;
 const filter = argv.filter && new RegExp(argv.filter);
