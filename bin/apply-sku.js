@@ -17,7 +17,7 @@ const argv = require('yargs')
 
 // Deps
 const Promise = require('bluebird');
-const AMQPTransport = require('ms-amqp-transport');
+const AMQPTransport = require('@microfleet/transport-amqp');
 const omit = require('lodash/omit');
 const config = require('../lib/config').get('/', { env: process.env.NODE_ENV });
 

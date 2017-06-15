@@ -24,7 +24,8 @@
   "homepage": "https://github.com/makeomatic/ms-files#readme",
   "dependencies": {
     "@google-cloud/storage": "^1.1.1",
-    "@microfleet/core": "^8.1.1",
+    "@microfleet/core": "^9.0.0",
+    "@microfleet/transport-amqp": "^9.0.1",
     "bl": "^1.2.1",
     "bluebird": "^3.5.0",
     "bunyan": "^1.8.10",
@@ -39,7 +40,6 @@
     "md5": "^2.2.1",
     "mime-types": "^2.1.15",
     "moment": "^2.18.1",
-    "ms-amqp-transport": "^9.0.0",
     "ms-conf": "^3.1.2",
     "ms-files-transport": "^1.0.2",
     "ms-perf": "^1.0.1",
