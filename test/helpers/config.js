@@ -102,3 +102,7 @@ module.exports.enablePubsub = function enablePubsub() {
 module.exports.disablePubsub = function disablePubsub() {
   module.exports.transport[0].options.bucket.channel = null;
 };
+
+module.exports.migrations = {
+  enabled: false,
+}

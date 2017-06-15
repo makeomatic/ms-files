@@ -128,11 +128,3 @@ exports.uploadTTL = 60 * 60 * 24;
  * @type {Number}
  */
 exports.maxTries = Infinity;
-
-/**
- * Migration settings
- * @type {Object}
- */
-exports.migrations = {
-  enabled: true,
-};

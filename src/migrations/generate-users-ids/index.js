@@ -1,4 +1,4 @@
-const AMQPTransport = require('ms-amqp-transport');
+const AMQPTransport = require('@microfleet/transport-amqp');
 const omit = require('lodash/omit');
 const Promise = require('bluebird');
 const { FILES_INDEX, FILES_DATA } = require('../../constant');
