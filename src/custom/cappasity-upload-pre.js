@@ -99,6 +99,7 @@ module.exports = function extractMetadata(params) {
   return Promise
     .try(function verifyUploadData() {
       if (uploadType === 'simple' && files.find(isPack)) {
+        cappasityModel = true;
         meta[FILES_PACKED_FIELD] = '1';
         return null;
       }

@@ -144,7 +144,7 @@ describe('cappasity-upload-pre hook test suite', function suite() {
         files: reject(data.files, { type: 'c-bin' }),
       };
 
-      return hook(payload)
+      return this.boundHook(payload)
         .reflect()
         .then(inspectPromise(false));
     });
@@ -157,7 +157,7 @@ describe('cappasity-upload-pre hook test suite', function suite() {
         },
       };
 
-      return hook(payload)
+      return this.boundHook(payload)
         .reflect()
         .then(inspectPromise(false));
     });
@@ -172,7 +172,7 @@ describe('cappasity-upload-pre hook test suite', function suite() {
         }],
       };
 
-      return hook(payload)
+      return this.boundHook(payload)
         .reflect()
         .then(inspectPromise(false));
     });
@@ -188,6 +188,21 @@ describe('cappasity-upload-pre hook test suite', function suite() {
         .reflect()
         .then(inspectPromise());
     });
+
+    it('should fail when several non-model files are passed', function test() {
+      const payload = {
+        ...data,
+        files: [{
+          type: 'background',
+        }, {
+          type: 'background',
+        }],
+      };
+
+      return this.boundHook(payload)
+        .reflect()
+        .then(inspectPromise(false));
+    });
   });
 
   describe('validate non-model files', function nonModelSuite() {
@@ -198,13 +213,13 @@ describe('cappasity-upload-pre hook test suite', function suite() {
       access: {
         setPublic: true,
       },
-      owner: 'free',
+      owner: 'professional',
       unlisted: true,
       resumable: true, // backward compability
     };
 
     it('should pass for cappasity preview', function test() {
-      return hook(data)
+      return this.boundHook(data)
         .reflect()
         .then(inspectPromise());
     });
@@ -217,7 +232,7 @@ describe('cappasity-upload-pre hook test suite', function suite() {
         }],
       };
 
-      return hook(payload)
+      return this.boundHook(payload)
         .reflect()
         .then(inspectPromise());
     });
@@ -232,7 +247,7 @@ describe('cappasity-upload-pre hook test suite', function suite() {
         uploadType: 'simple',
       };
 
-      return hook(payload)
+      return this.boundHook(payload)
         .reflect()
         .then(inspectPromise());
     });
@@ -248,7 +263,7 @@ describe('cappasity-upload-pre hook test suite', function suite() {
         uploadType: 'simple',
       };
 
-      return hook(payload)
+      return this.boundHook(payload)
         .reflect()
         .then(inspectPromise())
         .then(() => {
@@ -266,7 +281,7 @@ describe('cappasity-upload-pre hook test suite', function suite() {
         resumable: false,
       };
 
-      return hook(payload)
+      return this.boundHook(payload)
         .reflect()
         .then(inspectPromise(false));
     });
@@ -279,7 +294,7 @@ describe('cappasity-upload-pre hook test suite', function suite() {
         }],
       };
 
-      return hook(payload)
+      return this.boundHook(payload)
         .reflect()
         .then(inspectPromise(false));
     });
@@ -292,7 +307,7 @@ describe('cappasity-upload-pre hook test suite', function suite() {
         },
       };
 
-      return hook(payload)
+      return this.boundHook(payload)
         .reflect()
         .then(inspectPromise(false));
     });
@@ -303,12 +318,12 @@ describe('cappasity-upload-pre hook test suite', function suite() {
         unlisted: false,
       };
 
-      return hook(payload)
+      return this.boundHook(payload)
         .reflect()
         .then(inspectPromise(false));
     });
 
-    it('should fail when several non-model files are passed', function test() {
+    it('should fail when mixed content are passed', function test() {
       const payload = {
         ...data,
         files: [{
@@ -318,7 +333,7 @@ describe('cappasity-upload-pre hook test suite', function suite() {
         }],
       };
 
-      return hook(payload)
+      return this.boundHook(payload)
         .reflect()
         .then(inspectPromise(false));
     });
