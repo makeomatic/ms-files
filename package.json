@@ -33,7 +33,7 @@
     "bunyan-sentry-stream": "^1.1.0",
     "common-errors": "^1.0.2",
     "dlock": "^6.4.0",
-    "gcs-resumable-upload": "^0.7.7",
+    "gcs-resumable-upload": "^0.8.0",
     "ioredis": "^3.1.1",
     "is": "^3.2.1",
     "lodash": "^4.17.3",
