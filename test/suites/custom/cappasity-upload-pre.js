@@ -213,7 +213,7 @@ describe('cappasity-upload-pre hook test suite', function suite() {
       access: {
         setPublic: true,
       },
-      owner: 'professional',
+      owner: 'free',
       unlisted: true,
       resumable: true, // backward compability
     };

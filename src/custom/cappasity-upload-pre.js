@@ -97,7 +97,7 @@ module.exports = function extractMetadata(params) {
 
   // treat all indexed uploads as cappasity models
   // https://github.com/makeomatic/ms-files/blob/master/src/actions/finish.js#L112
-  const cappasityModel = !(temp && unlisted);
+  const cappasityModel = !(unlisted || temp);
 
   return Promise
     .try(function verifyUploadData() {
