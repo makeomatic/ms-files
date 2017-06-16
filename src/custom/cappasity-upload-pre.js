@@ -85,7 +85,6 @@ function checkUploadsLimit(params) {
 
 module.exports = function extractMetadata(params) {
   let sourceSHA;
-  let cappasityModel = false;
 
   const {
     files,
@@ -96,10 +95,13 @@ module.exports = function extractMetadata(params) {
     uploadType,
   } = params;
 
+  // treat all indexed uploads as cappasity models
+  // https://github.com/makeomatic/ms-files/blob/master/src/actions/finish.js#L112
+  const cappasityModel = !(temp && unlisted);
+
   return Promise
     .try(function verifyUploadData() {
       if (uploadType === 'simple' && files.find(isPack)) {
-        cappasityModel = true;
         meta[FILES_PACKED_FIELD] = '1';
         return null;
       }
@@ -154,8 +156,6 @@ module.exports = function extractMetadata(params) {
       } else {
         throw new HttpStatusError(400, 'should be either a cappasity model or a single image');
       }
-
-      cappasityModel = cappasityUpload && differentFileTypes > 1;
 
       return null;
     })

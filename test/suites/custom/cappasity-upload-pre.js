@@ -5,12 +5,12 @@ const set = require('lodash/set');
 const noop = require('lodash/noop');
 const reject = require('lodash/reject');
 
-const config = require('../../../src/defaults');
+const config = require('../../../src/config').get('/');
 const hook = require('../../../src/custom/cappasity-upload-pre');
 const { inspectPromise } = require('../../helpers/utils');
-const { FILES_INDEX } = require('../../../src/constant.js');
+const { FILES_INDEX } = require('../../../src/constant');
 
-const audience = config.users.audience;
+const { audience } = config.users;
 
 const usernames = [
   'admin',
@@ -65,7 +65,7 @@ describe('cappasity-upload-pre hook test suite', function suite() {
     const amqpStub = sinon.stub(this.amqp, 'publishAndWait');
     const redisStub = sinon.stub(this.redis, 'scard');
 
-    const { planGet } = config.payments
+    const { planGet } = config.payments;
     const {
       getMetadata,
       getInternalData,

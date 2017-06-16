@@ -106,6 +106,19 @@ exports.users = {
 };
 
 /**
+ * Payments service configuration
+ * @type {Object}
+ */
+exports.payments = {
+  planGet: {
+    route: 'payments.plan.get',
+    options: {
+      cache: 5 * 60 * 1000,
+    },
+  },
+};
+
+/**
  * TTL of key for action list in seconds
  * @type {Number}
  */
