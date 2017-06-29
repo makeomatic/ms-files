@@ -24,10 +24,6 @@ const mockMetadata = (username, attributes) => ({
   [audience]: attributes,
 });
 
-const mockInternalData = username => ({
-  username,
-});
-
 const plans = {
   free: mockPlan(1),
   professional: mockPlan(10),
@@ -40,13 +36,6 @@ const metadata = {
   adminLimit: mockMetadata('adminLimit', { plan: 'free', roles: ['admin'] }),
 };
 
-const internals = {
-  free: mockInternalData('free'),
-  professional: mockInternalData('professional'),
-  admin: mockInternalData('admin'),
-  adminLimit: mockMetadata('adminLimit'),
-};
-
 const uploadedFiles = {
   free: 10,
   professional: 1,
@@ -57,21 +46,26 @@ const uploadedFiles = {
 describe('cappasity-upload-pre hook test suite', function suite() {
   before('add stubs', function stubs() {
     this.amqp = {
-      publishAndWait: () => {},
+      publishAndWait: noop,
     };
 
     this.redis = {
       scard: noop,
     };
 
+    this.hook = (name, ...args) => {
+      if (name === 'files:info:pre') {
+        return require('../../../src/custom/alias-to-username-cappasity')(...args);
+      }
+
+      throw new Error('unexpected hook');
+    };
+
     const amqpStub = sinon.stub(this.amqp, 'publishAndWait');
     const redisStub = sinon.stub(this.redis, 'scard');
 
     const { planGet } = config.payments;
-    const {
-      getMetadata,
-      getInternalData,
-    } = config.users;
+    const { getMetadata } = config.users;
 
     this.config = config;
     this.boundHook = hook.bind(this);
@@ -91,10 +85,6 @@ describe('cappasity-upload-pre hook test suite', function suite() {
       amqpStub
         .withArgs(getMetadata, sinon.match({ username }))
         .resolves(metadata[username]);
-
-      amqpStub
-        .withArgs(getInternalData, sinon.match({ username }))
-        .resolves(internals[username]);
 
       redisStub
         .withArgs(`${FILES_INDEX}:${username}`)
