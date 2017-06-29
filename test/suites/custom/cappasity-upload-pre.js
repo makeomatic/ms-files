@@ -1,3 +1,4 @@
+const Promise = require('bluebird');
 const assert = require('assert');
 const sinon = require('sinon');
 const set = require('lodash/set');
@@ -95,15 +96,15 @@ describe('cappasity-upload-pre hook test suite', function suite() {
     usernames.forEach((username) => {
       amqpStub
         .withArgs(getMetadata, sinon.match({ username }))
-        .resolves(metadata[username]);
+        .returns(Promise.resolve(metadata[username]));
 
       amqpStub
         .withArgs(getInternalData, sinon.match({ username }))
-        .resolves(internals[username]);
+        .returns(Promise.resolve(internals[username]));
 
       redisStub
         .withArgs(`${FILES_INDEX}:${username}`)
-        .resolves(uploadedFiles[username]);
+        .returns(Promise.resolve(uploadedFiles[username]));
     });
   });
 
