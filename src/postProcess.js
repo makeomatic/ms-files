@@ -25,39 +25,39 @@ module.exports = function postProcess(offset = 0, uploadedAt) {
     transport: 'amqp',
     method: 'amqp',
   })
-  .then((data) => {
-    const { files, cursor, page, pages } = data;
+    .then((data) => {
+      const { files, cursor, page, pages } = data;
 
-    return Promise
-      .resolve(files)
-      .mapSeries(file => (
+      return Promise
+        .resolve(files)
+        .mapSeries(file => (
         // make sure to call reflect so that we do not interrupt the procedure
-        this.router.dispatch(`${prefix}.process`, {
-          headers: {},
-          query: {},
-          // payload
-          params: {
-            uploadId: file.id,
-            username: file[FILES_OWNER_FIELD],
-          },
-          transport: 'amqp',
-          method: 'amqp',
-        })
-        .reflect()
-        .tap((result) => {
-          this.log.info({ owner: file[FILES_OWNER_FIELD] }, '%s |', file.id, result.isFulfilled() ? 'processed' : result.reason());
-        })
-      ))
-      .then(() => {
-        if (page < pages) {
-          return postProcess.call(this, cursor, filter.uploadedAt.lte);
-        }
+          this.router.dispatch(`${prefix}.process`, {
+            headers: {},
+            query: {},
+            // payload
+            params: {
+              uploadId: file.id,
+              username: file[FILES_OWNER_FIELD],
+            },
+            transport: 'amqp',
+            method: 'amqp',
+          })
+            .reflect()
+            .tap((result) => {
+              this.log.info({ owner: file[FILES_OWNER_FIELD] }, '%s |', file.id, result.isFulfilled() ? 'processed' : result.reason());
+            })
+        ))
+        .then(() => {
+          if (page < pages) {
+            return postProcess.call(this, cursor, filter.uploadedAt.lte);
+          }
 
-        return null;
-      });
-  })
-  .then(() => {
-    this.log.info('completed files post-processing');
-    return null;
-  });
+          return null;
+        });
+    })
+    .then(() => {
+      this.log.info('completed files post-processing');
+      return null;
+    });
 };
