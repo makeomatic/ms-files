@@ -81,7 +81,7 @@ module.exports = function postProcessFile({ params }) {
           };
 
           // publish, but don't wait for result
-          actions.push(this.amqp.publish(`${prefix}.update`, message).catch((e) => {
+          actions.push(this.amqp.publishAndWait(`${prefix}.update`, message).catch((e) => {
             this.log.warn({ params, tag: 'post-update' }, 'failed to perform post-update', e);
           }));
         }
