@@ -45,6 +45,7 @@
     "ms-files-transport": "^1.0.2",
     "ms-perf": "^1.0.1",
     "ms-validation": "^5.0.1",
+    "opentracing-js-ioredis": "^1.0.0",
     "raven": "^2.1.0",
     "redis-filtered-sort": "^2.2.1",
     "spm-agent-nodejs": "^1.30.8",

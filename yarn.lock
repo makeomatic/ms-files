@@ -3326,6 +3326,13 @@ onetime@^2.0.0:
   dependencies:
     mimic-fn "^1.0.0"
 
+opentracing-js-ioredis@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/opentracing-js-ioredis/-/opentracing-js-ioredis-1.0.0.tgz#058bb666669bb7097aa171cad0652f186d887877"
+  dependencies:
+    lodash.defaults "^4.2.0"
+    opentracing "^0.14.1"
+
 opentracing@^0.13.0:
   version "0.13.0"
   resolved "https://registry.yarnpkg.com/opentracing/-/opentracing-0.13.0.tgz#6a341442f09d7d866bc11ed03de1e3828e3d6aab"
