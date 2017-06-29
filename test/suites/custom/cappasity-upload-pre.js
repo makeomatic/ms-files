@@ -55,7 +55,7 @@ describe('cappasity-upload-pre hook test suite', function suite() {
 
     this.hook = (name, ...args) => {
       if (name === 'files:info:pre') {
-        return require('../../../src/custom/alias-to-username-cappasity')(...args);
+        return require('../../../src/custom/alias-to-username-cappasity').apply(this, args);
       }
 
       throw new Error('unexpected hook');
