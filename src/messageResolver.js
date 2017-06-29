@@ -17,7 +17,8 @@ module.exports = function resolveMessage(err, data, actionName, actions) {
   const { name } = err;
   if (isProcess.test(actionName) !== true || name === 'ValidationError' || name === 'HttpStatusError') {
     debug('reject %s after ', actionName, err);
-    actions.reject();
+    // NOTE: we ack the message so that it is not delivered into the dead-letter-exchange
+    actions.ack();
     return Promise.reject(err);
   }
 

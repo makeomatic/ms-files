@@ -187,6 +187,30 @@
         }
       }
     },
+    "arbitrary": {
+      "type": "object",
+      "required": ["type", "contentType", "contentLength", "md5Hash"],
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "type": "string",
+          "const": "arbitrary"
+        },
+        "contentType": {
+          "type": "string",
+          "pattern": "^(application/.+|text)$"
+        },
+        "contentLength": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 20971520
+        },
+        "md5Hash": {
+          "type": "string",
+          "pattern": "^[0-9A-Fa-f]{32}$"
+        }
+      }
+    },
     "meta": {
       "type": "object",
       "additionalProperties": false,

@@ -77,17 +77,18 @@ describe('process suite', function suite() {
       },
     };
 
-    return Promise.all([
-      this.send(message).reflect().then(inspectPromise()),
-      this.send(message).reflect().then(inspectPromise(false)),
-    ])
-    .spread((res, err) => {
-      assert.ok(this.files.config.hooks['files:process:post'].calledOnce);
-      assert.ok(res.export);
-      assert.ok(res.obj);
+    return Promise
+      .all([
+        this.send(message).reflect().then(inspectPromise()),
+        this.send(message).reflect().then(inspectPromise(false)),
+      ])
+      .spread((res, err) => {
+        assert.ok(this.files.config.hooks['files:process:post'].calledOnce);
+        assert.ok(res.export);
+        assert.ok(res.obj);
 
-      assert.equal(err.statusCode, 409);
-    });
+        assert.equal(err.statusCode, 409);
+      });
   });
 
   it('denies to export processed file with same format, but diff compression', function test() {

@@ -13,6 +13,7 @@ exports.name = 'ms-files';
 exports.plugins = [
   'validator',
   'logger',
+  'opentracing',
   'router',
   'amqp',
   'redisCluster',
@@ -103,6 +104,19 @@ exports.users = {
   getInternalData: 'users.getInternalData',
   getMetadata: 'users.getMetadata',
   updateMetadata: 'users.updateMetadata',
+};
+
+/**
+ * Payments service configuration
+ * @type {Object}
+ */
+exports.payments = {
+  planGet: {
+    route: 'payments.plan.get',
+    options: {
+      cache: 5 * 60 * 1000,
+    },
+  },
 };
 
 /**

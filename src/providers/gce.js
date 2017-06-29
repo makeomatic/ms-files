@@ -25,7 +25,6 @@ const GStorage = require('@google-cloud/storage');
  * Main transport class
  */
 module.exports = class GCETransport extends AbstractFileTransfer {
-
   static defaultOpts = {
     gce: {
       // specify authentication options
@@ -434,5 +433,4 @@ module.exports = class GCETransport extends AbstractFileTransfer {
     const file = this.bucket.file(filename);
     return file.deleteAsync();
   }
-
 };

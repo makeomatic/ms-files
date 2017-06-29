@@ -96,7 +96,7 @@ module.exports = function initFileUpload({ params }) {
 
       let location;
       if (resumable) {
-          // resumable-upload
+        // resumable-upload
         const acl = extensionHeaders['x-goog-acl'];
         const predefinedAcl = acl ? acl.replace(/-/g, '') : '';
 
