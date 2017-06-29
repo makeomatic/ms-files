@@ -17,37 +17,36 @@ module.exports = function postProcess(offset = 0, uploadedAt) {
     },
   };
 
-  return this.router.dispatch(`${prefix}.list`, {
-    headers: {},
-    query: {},
-    // payload
-    params: { filter, limit: 20, offset },
-    transport: 'amqp',
-    method: 'amqp',
-  })
+  return this.router
+    .dispatch(`${prefix}.list`, {
+      headers: {},
+      query: {},
+      // payload
+      params: { filter, limit: 20, offset },
+      transport: 'amqp',
+      method: 'amqp',
+    })
     .then((data) => {
       const { files, cursor, page, pages } = data;
 
-      return Promise
-        .resolve(files)
-        .mapSeries(file => (
+      return Promise.resolve(files).mapSeries(file => (
         // make sure to call reflect so that we do not interrupt the procedure
-          this.router.dispatch(`${prefix}.process`, {
-            headers: {},
-            query: {},
-            // payload
-            params: {
-              uploadId: file.id,
-              username: file[FILES_OWNER_FIELD],
-            },
-            transport: 'amqp',
-            method: 'amqp',
+        this.router.dispatch(`${prefix}.process`, {
+          headers: {},
+          query: {},
+          // payload
+          params: {
+            uploadId: file.id,
+            username: file[FILES_OWNER_FIELD],
+          },
+          transport: 'amqp',
+          method: 'amqp',
+        })
+          .reflect()
+          .tap((result) => {
+            this.log.info({ owner: file[FILES_OWNER_FIELD] }, '%s |', file.id, result.isFulfilled() ? 'processed' : result.reason());
           })
-            .reflect()
-            .tap((result) => {
-              this.log.info({ owner: file[FILES_OWNER_FIELD] }, '%s |', file.id, result.isFulfilled() ? 'processed' : result.reason());
-            })
-        ))
+      ))
         .then(() => {
           if (page < pages) {
             return postProcess.call(this, cursor, filter.uploadedAt.lte);
