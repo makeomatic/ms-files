@@ -24,6 +24,10 @@ const mockMetadata = (username, attributes) => ({
   [audience]: attributes,
 });
 
+const mockInternalData = username => ({
+  username,
+});
+
 const plans = {
   free: mockPlan(1),
   professional: mockPlan(10),
@@ -34,6 +38,13 @@ const metadata = {
   professional: mockMetadata('professional', { plan: 'professional', roles: [] }),
   admin: mockMetadata('admin', { plan: 'professional', roles: ['admin'] }),
   adminLimit: mockMetadata('adminLimit', { plan: 'free', roles: ['admin'] }),
+};
+
+const internals = {
+  free: mockInternalData('free'),
+  professional: mockInternalData('professional'),
+  admin: mockInternalData('admin'),
+  adminLimit: mockMetadata('adminLimit'),
 };
 
 const uploadedFiles = {
@@ -65,7 +76,7 @@ describe('cappasity-upload-pre hook test suite', function suite() {
     const redisStub = sinon.stub(this.redis, 'scard');
 
     const { planGet } = config.payments;
-    const { getMetadata } = config.users;
+    const { getMetadata, getInternalData } = config.users;
 
     this.config = config;
     this.boundHook = hook.bind(this);
@@ -85,6 +96,10 @@ describe('cappasity-upload-pre hook test suite', function suite() {
       amqpStub
         .withArgs(getMetadata, sinon.match({ username }))
         .resolves(metadata[username]);
+
+      amqpStub
+        .withArgs(getInternalData, sinon.match({ username }))
+        .resolves(internals[username]);
 
       redisStub
         .withArgs(`${FILES_INDEX}:${username}`)
