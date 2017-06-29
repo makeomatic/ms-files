@@ -61,7 +61,8 @@
           { "$ref": "common#/definitions/cappasity-binary" },
           { "$ref": "common#/definitions/cappasity-image" },
           { "$ref": "common#/definitions/image" },
-          { "$ref": "common#/definitions/background-image" }
+          { "$ref": "common#/definitions/background-image" },
+          { "$ref": "common#/definitions/arbitrary" }
         ]
       }
     },

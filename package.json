@@ -24,8 +24,8 @@
   "homepage": "https://github.com/makeomatic/ms-files#readme",
   "dependencies": {
     "@google-cloud/storage": "^1.1.1",
-    "@microfleet/core": "^9.0.0",
-    "@microfleet/transport-amqp": "^9.0.1",
+    "@microfleet/core": "^9.2.0",
+    "@microfleet/transport-amqp": "^10.1.0",
     "bl": "^1.2.1",
     "bluebird": "^3.5.0",
     "bunyan": "^1.8.10",
@@ -33,7 +33,7 @@
     "bunyan-sentry-stream": "^1.1.0",
     "common-errors": "^1.0.2",
     "dlock": "^6.4.0",
-    "gcs-resumable-upload": "^0.7.7",
+    "gcs-resumable-upload": "^0.8.0",
     "ioredis": "^3.1.1",
     "is": "^3.2.1",
     "lodash": "^4.17.3",
@@ -44,11 +44,11 @@
     "ms-files-transport": "^1.0.2",
     "ms-perf": "^1.0.1",
     "ms-validation": "^5.0.1",
-    "raven": "^2.0.2",
+    "raven": "^2.1.0",
     "redis-filtered-sort": "^2.2.1",
     "spm-agent-nodejs": "^1.30.8",
     "stdout-stream": "^1.4.0",
-    "uuid": "^3.0.1",
+    "uuid": "^3.1.0",
     "yargs": "^8.0.2"
   },
   "optionalDependencies": {
@@ -69,18 +69,18 @@
     "cz-conventional-changelog": "^2.0.0",
     "eslint": "^3.19.0",
     "eslint-config-makeomatic": "^1.0.1",
-    "eslint-plugin-import": "^2.3.0",
+    "eslint-plugin-import": "^2.6.0",
     "eslint-plugin-promise": "^3.5.0",
     "faker": "^4.1.0",
     "json": "^9.0.6",
     "latest-version-cli": "^1.1.0",
     "mocha": "^3.4.2",
-    "nyc": "^11.0.2",
+    "nyc": "^11.0.3",
     "request": "^2.81.0",
     "request-promise": "^4.2.1",
     "rimraf": "^2.6.1",
     "semantic-release": "6.3.6",
-    "sinon": "^2.3.4"
+    "sinon": "^2.3.6"
   },
   "release": {
     "verifyConditions": []
