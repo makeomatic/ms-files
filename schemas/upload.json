@@ -45,6 +45,21 @@
     "continue": true
   }, {
     "if": {
+      "required": ["uploadType"],
+      "properties": { "uploadType": { "const": "text" } }
+    },
+    "then": {
+      "properties": {
+        "files": {
+          "items": {
+            "$ref": "common#/definitions/arbitrary"
+          }
+        }
+      }
+    },
+    "continue": true
+  }, {
+    "if": {
       "anyOf": [
         { "properties": { "unlisted": { "const": true } } },
         { "properties": { "temp": { "const": true } } }
@@ -132,7 +147,8 @@
         "simple",
         "image",
         "background",
-        "model"
+        "model",
+        "text"
       ]
     },
     "directOnly": {
