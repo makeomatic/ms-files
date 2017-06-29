@@ -364,10 +364,10 @@ function stopService() {
   const service = this.files;
   return Promise
     .map(service.redis.nodes('master'), node => node.flushdb())
-    .finally(() => Promise
-      .map(service.providers, transport => Promise.fromNode(next => (
+    .finally(() => (
+      Promise.map(service.providers, transport => Promise.fromNode(next => (
         transport._bucket.deleteFiles({ force: true }, next)
-      ))
+      )))
     ))
     .finally(() => service.close().reflect())
     .finally(() => {
