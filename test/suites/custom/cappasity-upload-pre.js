@@ -1,9 +1,112 @@
-const reject = require('lodash/reject');
+const Promise = require('bluebird');
 const assert = require('assert');
+const sinon = require('sinon');
+const set = require('lodash/set');
+const noop = require('lodash/noop');
+const reject = require('lodash/reject');
+
+const config = require('../../../src/config').get('/');
+const hook = require('../../../src/custom/cappasity-upload-pre');
 const { inspectPromise } = require('../../helpers/utils');
+const { FILES_INDEX } = require('../../../src/constant');
+
+const { audience } = config.users;
+
+const usernames = [
+  'admin',
+  'free',
+  'professional',
+];
+
+const mockPlan = value => set({}, 'meta.embeddings.value', value);
+
+const mockMetadata = (username, attributes) => ({
+  username,
+  [audience]: attributes,
+});
+
+const mockInternalData = username => ({
+  username,
+});
+
+const plans = {
+  free: mockPlan(1),
+  professional: mockPlan(10),
+};
+
+const metadata = {
+  free: mockMetadata('free', { plan: 'free', roles: [] }),
+  professional: mockMetadata('professional', { plan: 'professional', roles: [] }),
+  admin: mockMetadata('admin', { plan: 'professional', roles: ['admin'] }),
+  adminLimit: mockMetadata('adminLimit', { plan: 'free', roles: ['admin'] }),
+};
+
+const internals = {
+  free: mockInternalData('free'),
+  professional: mockInternalData('professional'),
+  admin: mockInternalData('admin'),
+  adminLimit: mockMetadata('adminLimit'),
+};
+
+const uploadedFiles = {
+  free: 10,
+  professional: 1,
+  admin: 1,
+  adminLimit: 10,
+};
 
 describe('cappasity-upload-pre hook test suite', function suite() {
-  const hook = require('../../../src/custom/cappasity-upload-pre');
+  before('add stubs', function stubs() {
+    this.amqp = {
+      publishAndWait: noop,
+    };
+
+    this.redis = {
+      scard: noop,
+    };
+
+    this.hook = (name, ...args) => {
+      if (name === 'files:info:pre') {
+        return require('../../../src/custom/alias-to-username-cappasity').apply(this, args);
+      }
+
+      throw new Error('unexpected hook');
+    };
+
+    const amqpStub = sinon.stub(this.amqp, 'publishAndWait');
+    const redisStub = sinon.stub(this.redis, 'scard');
+
+    const { planGet } = config.payments;
+    const { getMetadata, getInternalData } = config.users;
+
+    this.config = config;
+    this.boundHook = hook.bind(this);
+
+    const plansList = [
+      'free',
+      'professional',
+    ];
+
+    plansList.forEach((id) => {
+      amqpStub
+        .withArgs(planGet.route, id)
+        .resolves(plans[id]);
+    });
+
+    usernames.forEach((username) => {
+      amqpStub
+        .withArgs(getMetadata, sinon.match({ username }))
+        .returns(Promise.resolve(metadata[username]));
+
+      amqpStub
+        .withArgs(getInternalData, sinon.match({ username }))
+        .returns(Promise.resolve(internals[username]));
+
+      redisStub
+        .withArgs(`${FILES_INDEX}:${username}`)
+        .returns(Promise.resolve(uploadedFiles[username]));
+    });
+  });
 
   describe('validate model files', function modelSuite() {
     const data = {
@@ -15,11 +118,30 @@ describe('cappasity-upload-pre hook test suite', function suite() {
         type: 'c-archive',
       }],
       meta: {},
+      username: 'professional',
       resumable: true,
     };
 
-    it('should pass', function test() {
-      return hook(data)
+    it('should pass - regular user, limit has not been reached', function test() {
+      return this.boundHook(data)
+        .reflect()
+        .then(inspectPromise());
+    });
+
+    it('should fail - regular user, limit has been reached', function test() {
+      return this.boundHook({ ...data, username: 'free' })
+        .reflect()
+        .then(inspectPromise(false));
+    });
+
+    it('should pass - admin user, limit has not been reached', function test() {
+      return this.boundHook({ ...data, username: 'admin' })
+        .reflect()
+        .then(inspectPromise());
+    });
+
+    it('should pass - admin user, limit has been reached', function test() {
+      return this.boundHook({ ...data, username: 'admin' })
         .reflect()
         .then(inspectPromise());
     });
@@ -30,7 +152,7 @@ describe('cappasity-upload-pre hook test suite', function suite() {
         files: reject(data.files, { type: 'c-bin' }),
       };
 
-      return hook(payload)
+      return this.boundHook(payload)
         .reflect()
         .then(inspectPromise(false));
     });
@@ -43,7 +165,7 @@ describe('cappasity-upload-pre hook test suite', function suite() {
         },
       };
 
-      return hook(payload)
+      return this.boundHook(payload)
         .reflect()
         .then(inspectPromise(false));
     });
@@ -58,7 +180,7 @@ describe('cappasity-upload-pre hook test suite', function suite() {
         }],
       };
 
-      return hook(payload)
+      return this.boundHook(payload)
         .reflect()
         .then(inspectPromise(false));
     });
@@ -70,9 +192,24 @@ describe('cappasity-upload-pre hook test suite', function suite() {
         temp: true,
       };
 
-      return hook(payload)
+      return this.boundHook(payload)
         .reflect()
         .then(inspectPromise());
+    });
+
+    it('should fail when several non-model files are passed', function test() {
+      const payload = {
+        ...data,
+        files: [{
+          type: 'background',
+        }, {
+          type: 'background',
+        }],
+      };
+
+      return this.boundHook(payload)
+        .reflect()
+        .then(inspectPromise(false));
     });
   });
 
@@ -84,12 +221,13 @@ describe('cappasity-upload-pre hook test suite', function suite() {
       access: {
         setPublic: true,
       },
+      username: 'free',
       unlisted: true,
       resumable: true, // backward compability
     };
 
     it('should pass for cappasity preview', function test() {
-      return hook(data)
+      return this.boundHook(data)
         .reflect()
         .then(inspectPromise());
     });
@@ -102,7 +240,7 @@ describe('cappasity-upload-pre hook test suite', function suite() {
         }],
       };
 
-      return hook(payload)
+      return this.boundHook(payload)
         .reflect()
         .then(inspectPromise());
     });
@@ -117,7 +255,7 @@ describe('cappasity-upload-pre hook test suite', function suite() {
         uploadType: 'simple',
       };
 
-      return hook(payload)
+      return this.boundHook(payload)
         .reflect()
         .then(inspectPromise());
     });
@@ -133,7 +271,7 @@ describe('cappasity-upload-pre hook test suite', function suite() {
         uploadType: 'simple',
       };
 
-      return hook(payload)
+      return this.boundHook(payload)
         .reflect()
         .then(inspectPromise())
         .then(() => {
@@ -151,7 +289,7 @@ describe('cappasity-upload-pre hook test suite', function suite() {
         resumable: false,
       };
 
-      return hook(payload)
+      return this.boundHook(payload)
         .reflect()
         .then(inspectPromise(false));
     });
@@ -164,7 +302,7 @@ describe('cappasity-upload-pre hook test suite', function suite() {
         }],
       };
 
-      return hook(payload)
+      return this.boundHook(payload)
         .reflect()
         .then(inspectPromise(false));
     });
@@ -177,7 +315,7 @@ describe('cappasity-upload-pre hook test suite', function suite() {
         },
       };
 
-      return hook(payload)
+      return this.boundHook(payload)
         .reflect()
         .then(inspectPromise(false));
     });
@@ -188,12 +326,12 @@ describe('cappasity-upload-pre hook test suite', function suite() {
         unlisted: false,
       };
 
-      return hook(payload)
+      return this.boundHook(payload)
         .reflect()
         .then(inspectPromise(false));
     });
 
-    it('should fail when several non-model files are passed', function test() {
+    it('should fail when mixed content are passed', function test() {
       const payload = {
         ...data,
         files: [{
@@ -203,7 +341,7 @@ describe('cappasity-upload-pre hook test suite', function suite() {
         }],
       };
 
-      return hook(payload)
+      return this.boundHook(payload)
         .reflect()
         .then(inspectPromise(false));
     });

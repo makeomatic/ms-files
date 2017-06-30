@@ -1,8 +1,8 @@
 const Promise = require('bluebird');
-const fetchData = require('../utils/fetchData.js');
-const hasAccess = require('../utils/hasAccess.js');
-const isProcessed = require('../utils/isProcessed.js');
-const { bustCache } = require('../utils/bustCache.js');
+const fetchData = require('../utils/fetchData');
+const hasAccess = require('../utils/hasAccess');
+const isProcessed = require('../utils/isProcessed');
+const { bustCache } = require('../utils/bustCache');
 const {
   FILES_INDEX, FILES_INDEX_PUBLIC,
   FILES_DATA, FILES_OWNER_FIELD, FILES_PUBLIC_FIELD,
@@ -74,9 +74,9 @@ module.exports = function adjustAccess({ params }) {
     .then(fetchData)
     .then(hasAccess(username))
     .then(isProcessed)
-    .then(data =>
+    .then(data => (
       Promise.bind(this, [uploadId, data])
         .spread(setPublic ? addToPublic : removeFromPublic)
         .tap(bustCache(redis, data, true))
-    );
+    ));
 };

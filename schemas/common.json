@@ -187,6 +187,34 @@
         }
       }
     },
+    "arbitrary": {
+      "type": "object",
+      "required": ["type", "contentType", "contentLength", "md5Hash"],
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "type": "string",
+          "const": "arbitrary"
+        },
+        "contentType": {
+          "type": "string",
+          "const": "text/plain"
+        },
+        "contentLength": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 20971520
+        },
+        "md5Hash": {
+          "type": "string",
+          "pattern": "^[0-9A-Fa-f]{32}$"
+        },
+        "contentEncoding": {
+          "type": "string",
+          "enum": ["gzip"]
+        }
+      }
+    },
     "meta": {
       "type": "object",
       "additionalProperties": false,

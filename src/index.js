@@ -15,7 +15,6 @@ const { WEBHOOK_RESOURCE_ID } = require('./constant.js');
  * @class Files
  */
 class Files extends Mservice {
-
   /**
    * Default options for the service
    * @type {Object}
@@ -157,7 +156,6 @@ class Files extends Mservice {
         return provider.subscribe(this.handleUploadNotification.bind(this));
       }, { concurrency: 1 }));
   }
-
 }
 
 module.exports = Files;
