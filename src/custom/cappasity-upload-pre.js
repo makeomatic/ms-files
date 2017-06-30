@@ -8,7 +8,6 @@ const { HttpStatusError } = require('common-errors');
 const isCappasityUpload = require('../utils/isCappasityUpload');
 const {
   FILES_INDEX,
-  FILES_OWNER_FIELD,
   FILES_PACKED_FIELD,
 } = require('../constant');
 
@@ -54,7 +53,7 @@ function checkUploadsLimit(params) {
 
   // get user's roles and limit of embeddings according his plan
   return Promise
-    .bind(this, params[FILES_OWNER_FIELD])
+    .bind(this, params.username)
     .then(getUserData)
     .then((data) => {
       const { username, roles, plan } = data;

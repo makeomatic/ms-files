@@ -118,7 +118,7 @@ describe('cappasity-upload-pre hook test suite', function suite() {
         type: 'c-archive',
       }],
       meta: {},
-      owner: 'professional',
+      username: 'professional',
       resumable: true,
     };
 
@@ -129,19 +129,19 @@ describe('cappasity-upload-pre hook test suite', function suite() {
     });
 
     it('should fail - regular user, limit has been reached', function test() {
-      return this.boundHook({ ...data, owner: 'free' })
+      return this.boundHook({ ...data, username: 'free' })
         .reflect()
         .then(inspectPromise(false));
     });
 
     it('should pass - admin user, limit has not been reached', function test() {
-      return this.boundHook({ ...data, owner: 'admin' })
+      return this.boundHook({ ...data, username: 'admin' })
         .reflect()
         .then(inspectPromise());
     });
 
     it('should pass - admin user, limit has been reached', function test() {
-      return this.boundHook({ ...data, owner: 'admin' })
+      return this.boundHook({ ...data, username: 'admin' })
         .reflect()
         .then(inspectPromise());
     });
@@ -221,7 +221,7 @@ describe('cappasity-upload-pre hook test suite', function suite() {
       access: {
         setPublic: true,
       },
-      owner: 'free',
+      username: 'free',
       unlisted: true,
       resumable: true, // backward compability
     };
