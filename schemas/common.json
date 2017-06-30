@@ -198,7 +198,7 @@
         },
         "contentType": {
           "type": "string",
-          "pattern": "^(application/.+|text)$"
+          "const": "text/plain"
         },
         "contentLength": {
           "type": "integer",
@@ -208,6 +208,10 @@
         "md5Hash": {
           "type": "string",
           "pattern": "^[0-9A-Fa-f]{32}$"
+        },
+        "contentEncoding": {
+          "type": "string",
+          "enum": ["gzip"]
         }
       }
     },
