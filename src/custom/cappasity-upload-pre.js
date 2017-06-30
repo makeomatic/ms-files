@@ -16,13 +16,13 @@ const isPack = it => it.type === 'c-pack';
 
 // resolve real username and fetch plan data
 function getUserData(alias) {
-  const { amqp, config, hook } = this;
+  const { amqp, config } = this;
   const { planGet } = config.payments;
   const { getMetadata, audience } = config.users;
 
   const promises = [
     // get real username
-    hook('files:info:pre', alias),
+    this.hook('files:info:pre', alias),
 
     // fetch current user's plan and roles
     amqp.publishAndWait(getMetadata, {
