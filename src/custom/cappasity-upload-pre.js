@@ -38,7 +38,7 @@ function getUserData(alias) {
 
     // fetch plan data
     return amqp
-      .publishAndWait(planGet.route, { id: plan }, planGet.options)
+      .publishAndWait(planGet.route, plan, planGet.options)
       .then(planData => ({
         username,
         roles,

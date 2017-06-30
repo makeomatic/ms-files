@@ -89,7 +89,7 @@ describe('cappasity-upload-pre hook test suite', function suite() {
 
     plansList.forEach((id) => {
       amqpStub
-        .withArgs(planGet.route, { id })
+        .withArgs(planGet.route, id)
         .resolves(plans[id]);
     });
 
