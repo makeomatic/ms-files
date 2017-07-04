@@ -20,7 +20,7 @@ function getUserData(alias) {
   const { getMetadata, audience } = config.users;
 
   const promises = [
-    // get real username
+    // get user id
     this.hook('files:info:pre', alias),
 
     // fetch current user's plan and roles
@@ -33,14 +33,14 @@ function getUserData(alias) {
     }),
   ];
 
-  return Promise.all(promises).spread((username, attributes) => {
+  return Promise.all(promises).spread((userId, attributes) => {
     const { roles, plan } = attributes[audience];
 
     // fetch plan data
     return amqp
       .publishAndWait(planGet.route, plan, planGet.options)
       .then(planData => ({
-        username,
+        userId,
         roles,
         plan: planData,
       }));
@@ -56,7 +56,7 @@ function checkUploadsLimit(params) {
     .bind(this, params.username)
     .then(getUserData)
     .then((data) => {
-      const { username, roles, plan } = data;
+      const { userId, roles, plan } = data;
       const isAdmin = includes(roles, 'admin');
 
       // skip next checks if user is admin
@@ -64,7 +64,7 @@ function checkUploadsLimit(params) {
         return null;
       }
 
-      const FILES_PER_USER_SET = `${FILES_INDEX}:${username}`;
+      const FILES_PER_USER_SET = `${FILES_INDEX}:${userId}`;
       const embeddings = get(plan, 'meta.embeddings.value', 0);
 
       return redis.scard(FILES_PER_USER_SET).then((uploadedFiles) => {

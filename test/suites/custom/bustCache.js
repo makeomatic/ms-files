@@ -1,5 +1,4 @@
 const assert = require('assert');
-const difference = require('lodash/difference');
 const mod = require('../../../src/utils/bustCache');
 const {
   FILES_INDEX,
@@ -58,4 +57,3 @@ describe('bustCache utils suite', function suite() {
     ]));
   });
 });
-

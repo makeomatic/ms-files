@@ -24,7 +24,7 @@ describe('header suite', function suite() {
         username: owner,
         meta: { alias: 'skubidoo' },
       },
-      15000,
+      15000
     );
   });
   before('helpers', bindSend('files.head'));
@@ -33,20 +33,20 @@ describe('header suite', function suite() {
 
   it('should be able to return files ids', function test() {
     return this
-      .send({ aliases: [ 'skubidoo', 'yesmomihadeaten' ], username: owner })
+      .send({ aliases: ['skubidoo', 'yesmomihadeaten'], username: owner })
       .reflect()
       .then(inspectPromise())
-      .then(response => {
-        assert.deepEqual(response, [ this.response.uploadId, null ]);
+      .then((response) => {
+        assert.deepEqual(response, [this.response.uploadId, null]);
       });
   });
 
   it('should be able to return array of nulls if user does not exists', function test() {
     return this
-      .send({ aliases: [ 'skubidoo', 'yesmomihadeaten' ], username: 'iamnotexist' })
+      .send({ aliases: ['skubidoo', 'yesmomihadeaten'], username: 'iamnotexist' })
       .reflect()
       .then(inspectPromise(false))
-      .then(error => {
+      .then((error) => {
         assert.equal(error.statusCode, 404);
       });
   });

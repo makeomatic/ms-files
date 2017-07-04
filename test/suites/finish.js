@@ -144,14 +144,14 @@ describe('finish upload suite', function suite() {
         public: true,
         username: modelData.message.username,
       })
-      .reflect()
-      .then(inspectPromise())
-      .get('files')
-      .then((response) => {
-        const directUpload = response.find(it => it.id === this.response.uploadId);
-        assert.ifError(directUpload, 'direct upload was returned from public list');
-        return null;
-      });
+        .reflect()
+        .then(inspectPromise())
+        .get('files')
+        .then((response) => {
+          const directUpload = response.find(it => it.id === this.response.uploadId);
+          assert.ifError(directUpload, 'direct upload was returned from public list');
+          return null;
+        });
     });
 
     it('list returns this file for private list', function test() {
@@ -159,14 +159,14 @@ describe('finish upload suite', function suite() {
         public: false,
         username: modelData.message.username,
       })
-      .reflect()
-      .then(inspectPromise())
-      .get('files')
-      .then((response) => {
-        const directUpload = response.find(it => it.id === this.response.uploadId);
-        assert.ok(directUpload, 'direct upload was correctly returned');
-        return null;
-      });
+        .reflect()
+        .then(inspectPromise())
+        .get('files')
+        .then((response) => {
+          const directUpload = response.find(it => it.id === this.response.uploadId);
+          assert.ok(directUpload, 'direct upload was correctly returned');
+          return null;
+        });
     });
   });
 });

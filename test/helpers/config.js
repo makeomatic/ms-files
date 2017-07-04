@@ -105,4 +105,4 @@ module.exports.disablePubsub = function disablePubsub() {
 
 module.exports.migrations = {
   enabled: false,
-}
+};

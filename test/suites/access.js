@@ -113,14 +113,14 @@ describe('access suite', function suite() {
         public: true,
         username: owner,
       })
-      .reflect()
-      .then(inspectPromise())
-      .get('files')
-      .then((response) => {
-        const directUpload = response.find(it => it.id === this.response.uploadId);
-        assert.ifError(directUpload, 'direct upload was returned from public list');
-        return null;
-      });
+        .reflect()
+        .then(inspectPromise())
+        .get('files')
+        .then((response) => {
+          const directUpload = response.find(it => it.id === this.response.uploadId);
+          assert.ifError(directUpload, 'direct upload was returned from public list');
+          return null;
+        });
     });
   });
 });
