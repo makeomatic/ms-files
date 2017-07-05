@@ -376,14 +376,14 @@ describe('upload suite', function suite() {
       assert.ok(this.files.validateSync('upload', obj).error, 'error not thrown!');
     });
 
-    it('allows to upload > 20MB & < 50MB for image/vnd.cappasity', function test() {
+    it('allows to upload > 20MB & < 100MB for image/vnd.cappasity', function test() {
       const obj = {
         username: 'any',
         resumable: false,
         files: [{
           type: 'c-simple',
           contentType: 'image/vnd.cappasity',
-          contentLength: 1024 * 1024 * 21, // 21 MB
+          contentLength: 1024 * 1024 * 99, // 99 MB
           md5Hash: '00000000000000000000000000000000',
         }],
         meta: {
@@ -394,14 +394,14 @@ describe('upload suite', function suite() {
       assert.ifError(this.files.validateSync('upload', obj).error);
     });
 
-    it('rejects uploading > 50MB for image/vnd.cappasity', function test() {
+    it('rejects uploading > 100MB for image/vnd.cappasity', function test() {
       const obj = {
         username: 'any',
         resumable: false,
         files: [{
           type: 'c-simple',
           contentType: 'image/vnd.cappasity',
-          contentLength: 1024 * 1024 * 51, // 51 MB
+          contentLength: 1024 * 1024 * 101, // 51 MB
           md5Hash: '00000000000000000000000000000000',
         }],
         meta: {

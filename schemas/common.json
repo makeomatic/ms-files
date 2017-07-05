@@ -124,7 +124,7 @@
           },
           "selectCases": {
             "image/vnd.cappasity": {
-              "maximum": 52428800
+              "maximum": 104857600
             }
           },
           "selectDefault": {
