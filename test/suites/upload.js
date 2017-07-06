@@ -461,7 +461,7 @@ describe('upload suite', function suite() {
         },
       };
 
-      assert.ifError(this.files.validateSync('upload', obj).error);
+      assert.ok(this.files.validateSync('upload', obj).error);
     });
   });
 });
