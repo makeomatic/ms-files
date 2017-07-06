@@ -43,23 +43,21 @@
         },
         "meta": {
           "type": "object",
-          "patternProperties": {
-            "^.+$": {
-              "anyOf": [{
-                "type": "string"
-              }, {
-                "type": "number"
-              }, {
-                "type": "array",
-                "items": {
-                  "oneOf": [{
-                    "type": "string"
-                  }, {
-                    "type": "number"
-                  }]
-                }
-              }]
-            }
+          "additionalProperties": {
+            "anyOf": [{
+              "type": "string"
+            }, {
+              "type": "number"
+            }, {
+              "type": "array",
+              "items": {
+                "oneOf": [{
+                  "type": "string"
+                }, {
+                  "type": "number"
+                }]
+              }
+            }]
           }
         }
       }
@@ -218,6 +216,14 @@
     "meta": {
       "type": "object",
       "additionalProperties": false,
+      "patternProperties": {
+        "^c_[a-z]+$": {
+          "anyOf": [
+            { "type": "string" },
+            { "type": "number" }
+          ]
+        }
+      },
       "properties": {
         "alias": {
           "type": "string",
