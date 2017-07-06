@@ -6,67 +6,6 @@
     "meta",
     "username"
   ],
-  "switch": [{
-    "if": {
-      "required": ["resumable"],
-      "properties": { "resumable": { "const": false } }
-    },
-    "then": {
-      "not": {
-        "properties": {
-          "unlisted": { "const": true },
-          "temp": { "const": true }
-        }
-      }
-    },
-    "continue": true
-  }, {
-    "if": {
-      "required": ["uploadType"],
-      "properties": { "uploadType": { "const": "simple" } }
-    },
-    "then": {
-      "properties": {
-        "files": {
-          "items": {
-            "$ref": "common#/definitions/cappasity-image"
-          },
-          "contains": {
-            "type": "object",
-            "properties": {
-              "type": {
-                "const": "c-preview"
-              }
-            }
-          }
-        }
-      }
-    },
-    "continue": true
-  }, {
-    "if": {
-      "required": ["uploadType"],
-      "properties": { "uploadType": { "const": "text" } }
-    },
-    "then": {
-      "properties": {
-        "files": {
-          "items": {
-            "$ref": "common#/definitions/arbitrary"
-          }
-        }
-      }
-    },
-    "continue": true
-  }, {
-    "if": {
-      "anyOf": [
-        { "properties": { "unlisted": { "const": true } } },
-        { "properties": { "temp": { "const": true } } }
-      ]
-    },
-    "then": { "not": { "required": ["postAction"] } }
-  }],
   "properties": {
     "files": {
       "type": "array",
@@ -155,5 +94,66 @@
       "type": "boolean",
       "default": false
     }
-  }
+  },
+  "switch": [{
+    "if": {
+      "required": ["resumable"],
+      "properties": { "resumable": { "const": false } }
+    },
+    "then": {
+      "not": {
+        "properties": {
+          "unlisted": { "const": true },
+          "temp": { "const": true }
+        }
+      }
+    },
+    "continue": true
+  }, {
+    "if": {
+      "required": ["uploadType"],
+      "properties": { "uploadType": { "const": "simple" } }
+    },
+    "then": {
+      "properties": {
+        "files": {
+          "items": {
+            "$ref": "common#/definitions/cappasity-image"
+          },
+          "contains": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "const": "c-preview"
+              }
+            }
+          }
+        }
+      }
+    },
+    "continue": true
+  }, {
+    "if": {
+      "required": ["uploadType"],
+      "properties": { "uploadType": { "const": "text" } }
+    },
+    "then": {
+      "properties": {
+        "files": {
+          "items": {
+            "$ref": "common#/definitions/arbitrary"
+          }
+        }
+      }
+    },
+    "continue": true
+  }, {
+    "if": {
+      "anyOf": [
+        { "properties": { "unlisted": { "const": true } } },
+        { "properties": { "temp": { "const": true } } }
+      ]
+    },
+    "then": { "not": { "required": ["postAction"] } }
+  }]
 }
