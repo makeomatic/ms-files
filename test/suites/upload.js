@@ -376,14 +376,14 @@ describe('upload suite', function suite() {
       assert.ok(this.files.validateSync('upload', obj).error, 'error not thrown!');
     });
 
-    it('allows to upload > 20MB & < 50MB for image/vnd.cappasity', function test() {
+    it('allows to upload > 20MB & < 100MB for image/vnd.cappasity', function test() {
       const obj = {
         username: 'any',
         resumable: false,
         files: [{
           type: 'c-simple',
           contentType: 'image/vnd.cappasity',
-          contentLength: 1024 * 1024 * 21, // 21 MB
+          contentLength: 1024 * 1024 * 99, // 99 MB
           md5Hash: '00000000000000000000000000000000',
         }],
         meta: {
@@ -394,14 +394,14 @@ describe('upload suite', function suite() {
       assert.ifError(this.files.validateSync('upload', obj).error);
     });
 
-    it('rejects uploading > 50MB for image/vnd.cappasity', function test() {
+    it('rejects uploading > 100MB for image/vnd.cappasity', function test() {
       const obj = {
         username: 'any',
         resumable: false,
         files: [{
           type: 'c-simple',
           contentType: 'image/vnd.cappasity',
-          contentLength: 1024 * 1024 * 51, // 51 MB
+          contentLength: 1024 * 1024 * 101, // 51 MB
           md5Hash: '00000000000000000000000000000000',
         }],
         meta: {
@@ -410,6 +410,58 @@ describe('upload suite', function suite() {
       };
 
       assert.ok(this.files.validateSync('upload', obj).error, 'error not thrown!');
+    });
+  });
+
+  describe('custom fields for metadata', function customMetaSuite() {
+    const valid = {
+      username: 'any',
+      resumable: false,
+      files: [{
+        type: 'c-simple',
+        contentType: 'image/vnd.cappasity',
+        contentLength: 1024 * 1024 * 99, // 99 MB
+        md5Hash: '00000000000000000000000000000000',
+      }],
+    };
+
+    it('allows custom fields of type string & number', function test() {
+      const obj = {
+        ...valid,
+        meta: {
+          name: 'test',
+          c_ver: '1.0.0',
+          c_type: 10,
+        },
+      };
+
+      assert.ifError(this.files.validateSync('upload', obj).error);
+    });
+
+    it('rejects types other than string or number', function test() {
+      const obj = {
+        ...valid,
+        meta: {
+          name: 'test',
+          c_ver: [],
+          c_type: false,
+          c_dart: {},
+        },
+      };
+
+      assert.ok(this.files.validateSync('upload', obj).error);
+    });
+
+    it('doesnt allow for custom names other than prefixed with c_', function test() {
+      const obj = {
+        ...valid,
+        meta: {
+          name: 'test',
+          random: '1.0.0',
+        },
+      };
+
+      assert.ok(this.files.validateSync('upload', obj).error);
     });
   });
 });

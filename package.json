@@ -23,7 +23,7 @@
   },
   "homepage": "https://github.com/makeomatic/ms-files#readme",
   "dependencies": {
-    "@google-cloud/storage": "^1.1.1",
+    "@google-cloud/storage": "^1.2.0",
     "@microfleet/core": "^9.2.0",
     "@microfleet/transport-amqp": "^10.1.0",
     "bl": "^1.2.1",
@@ -54,10 +54,10 @@
     "yargs": "^8.0.2"
   },
   "optionalDependencies": {
-    "@google-cloud/pubsub": "^0.13.0"
+    "@google-cloud/pubsub": "^0.13.1"
   },
   "devDependencies": {
-    "@makeomatic/deploy": "^1.9.6",
+    "@makeomatic/deploy": "^1.11.0",
     "babel-cli": "^6.24.1",
     "babel-eslint": "^7.2.3",
     "babel-plugin-istanbul": "^4.1.4",
