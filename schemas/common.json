@@ -196,12 +196,12 @@
         },
         "contentType": {
           "type": "string",
-          "const": "text/plain"
+          "enum": ["text/plain", "application/pdf"]
         },
         "contentLength": {
           "type": "integer",
           "minimum": 1,
-          "maximum": 20971520
+          "maximum": 104857600
         },
         "md5Hash": {
           "type": "string",
