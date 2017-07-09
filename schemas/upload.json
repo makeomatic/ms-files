@@ -87,7 +87,8 @@
         "image",
         "background",
         "model",
-        "text"
+        "text",
+        "pdf"
       ]
     },
     "directOnly": {
