@@ -37,12 +37,12 @@ describe('finish upload suite with pubsub for hooks', function suite() {
 
   it('completes file upload', function test() {
     return uploadFiles(modelData, this.response)
-    .reflect()
-    .then(inspectPromise())
-    .map((resp) => {
-      assert.equal(resp.statusCode, 200);
-      return null;
-    });
+      .reflect()
+      .then(inspectPromise())
+      .map((resp) => {
+        assert.equal(resp.statusCode, 200);
+        return null;
+      });
   });
 
   it('verify that upload was processed', function test() {

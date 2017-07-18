@@ -1,22 +1,22 @@
 {
   "name": "ms-files",
-  "description": "Core of microservice",
+  "description": "Opinionated solution for managing files with GCS and other cloud storage providers",
   "main": "./lib/index.js",
   "scripts": {
     "compile": "babel -d ./lib --copy-files ./src",
     "pretest": "npm run compile",
     "test": "rimraf ./coverage && npm run lint && mdep test run -r 'grpc --update-binary'",
-    "start": "node ./bin/mservice.js | bunyan -o short",
+    "start": "mfleet",
     "lint": "eslint ./src",
     "semantic-release": "semantic-release pre && npm run compile && npm publish && semantic-release post",
-    "docker-release": "mdep docker release --node 8.1.3",
+    "docker-release": "mdep docker release",
     "release": "yarn; npm run semantic-release; npm run docker-release"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/makeomatic/ms-files.git"
   },
-  "author": "Vitaly Aminev <v@makeomatic.ru>",
+  "author": "Vitaly Aminev <v@makeomatic.ca>",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/makeomatic/ms-files/issues"
@@ -24,7 +24,7 @@
   "homepage": "https://github.com/makeomatic/ms-files#readme",
   "dependencies": {
     "@google-cloud/storage": "^1.2.0",
-    "@microfleet/core": "^9.2.0",
+    "@microfleet/core": "^9.3.0",
     "@microfleet/transport-amqp": "^10.1.0",
     "bl": "^1.2.1",
     "bluebird": "^3.5.0",
@@ -48,7 +48,7 @@
     "opentracing-js-ioredis": "^1.0.0",
     "raven": "^2.1.0",
     "redis-filtered-sort": "^2.2.1",
-    "spm-agent-nodejs": "^1.30.8",
+    "spm-agent-nodejs": "^1.30.9",
     "stdout-stream": "^1.4.0",
     "uuid": "^3.1.0",
     "yargs": "^8.0.2"
@@ -57,7 +57,7 @@
     "@google-cloud/pubsub": "^0.13.1"
   },
   "devDependencies": {
-    "@makeomatic/deploy": "^1.11.0",
+    "@makeomatic/deploy": "^1.12.2",
     "babel-cli": "^6.24.1",
     "babel-eslint": "^7.2.3",
     "babel-plugin-istanbul": "^4.1.4",
@@ -65,24 +65,23 @@
     "babel-plugin-transform-object-rest-spread": "^6.23.0",
     "babel-plugin-transform-strict-mode": "^6.24.1",
     "babel-register": "^6.24.1",
-    "chai": "^4.0.2",
+    "chai": "^4.1.0",
     "codecov": "^2.2.0",
     "cross-env": "^5.0.1",
     "cz-conventional-changelog": "^2.0.0",
-    "eslint": "^4.1.1",
+    "eslint": "^4.2.0",
     "eslint-config-makeomatic": "^1.0.1",
-    "eslint-plugin-import": "^2.6.0",
+    "eslint-plugin-import": "^2.7.0",
     "eslint-plugin-promise": "^3.5.0",
     "faker": "^4.1.0",
     "json": "^9.0.6",
-    "latest-version-cli": "^1.1.0",
     "mocha": "^3.4.2",
     "nyc": "^11.0.3",
     "request": "^2.81.0",
     "request-promise": "^4.2.1",
     "rimraf": "^2.6.1",
     "semantic-release": "6.3.6",
-    "sinon": "^2.3.6"
+    "sinon": "^2.3.8"
   },
   "release": {
     "verifyConditions": []

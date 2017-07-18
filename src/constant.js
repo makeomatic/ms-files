@@ -42,6 +42,7 @@ module.exports = exports = {
   FILES_DIRECT_ONLY_FIELD: 'direct',
   FILES_BACKGROUND_IMAGE_FIELD: 'backgroundImage',
   FILES_BACKGROUND_COLOR_FIELD: 'backgroundColor',
+  FILES_CONTENT_LENGTH_FIELD: 'contentLength',
 
   // metatype of file
   FILES_TYPE_FIELD: 'type',

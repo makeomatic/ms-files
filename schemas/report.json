@@ -1,0 +1,16 @@
+{
+  "$id": "report",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["username"],
+  "properties": {
+    "username": {
+      "type": "string",
+      "minLength": 1
+    },
+    "includeStorage": {
+      "type": "boolean",
+      "default": false
+    }
+  }
+}

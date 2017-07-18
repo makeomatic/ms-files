@@ -109,18 +109,20 @@ describe('access suite', function suite() {
     });
 
     it('public list does not return direct only file', function test() {
-      return this.amqp.publishAndWait('files.list', {
-        public: true,
-        username: owner,
-      })
-      .reflect()
-      .then(inspectPromise())
-      .get('files')
-      .then((response) => {
-        const directUpload = response.find(it => it.id === this.response.uploadId);
-        assert.ifError(directUpload, 'direct upload was returned from public list');
-        return null;
-      });
+      return this
+        .amqp
+        .publishAndWait('files.list', {
+          public: true,
+          username: owner,
+        })
+        .reflect()
+        .then(inspectPromise())
+        .get('files')
+        .then((response) => {
+          const directUpload = response.find(it => it.id === this.response.uploadId);
+          assert.ifError(directUpload, 'direct upload was returned from public list');
+          return null;
+        });
     });
   });
 });
