@@ -183,9 +183,10 @@ describe('finish upload suite', function suite() {
         .reflect()
         .then(inspectPromise())
         .then((response) => {
-          console.log(response);
-          assert.equal(response.total, 1);
+          assert.equal(response.total, 2);
           assert.equal(response.public, 0);
+          assert.equal(response.totalContentLength, 3802306);
+          assert.equal(response.publicContentLength, 0);
           return null;
         });
     });

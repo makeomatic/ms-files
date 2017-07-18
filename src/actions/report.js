@@ -11,47 +11,59 @@ const aggregateFilter = fsort.filter({
 });
 
 /**
+ * Sorts index keys and creates linked list.
+ * @param  {Redis} redis
+ * @param  {string} index
+ * @returns {Promise<string>}
+ */
+const sortIndexKeys = (redis, index) => (
+  redis.fsort(index, '', '', 'DESC', '{}', Date.now(), 0, 1, 5000, true)
+);
+
+/**
  * Retrieves contentLength aggregate on a given index.
  * @param  {Redis} redis
  * @param  {string} index
  * @returns {number} Bytes.
  */
-const retrieveContentLength = (redis, index) => {
-  return redis
-    .fsortAggregate(index, fileDataPattern, aggregateFilter)
+const retrieveContentLength = (redis, index, prefixLength) => (
+  sortIndexKeys(redis, index)
+    .then(ids => (
+      redis.fsortAggregate(ids.slice(prefixLength), fileDataPattern, aggregateFilter)
+    ))
     .then(JSON.parse)
-    .get(FILES_CONTENT_LENGTH_FIELD);
-};
+    .get(FILES_CONTENT_LENGTH_FIELD)
+);
 
 /**
  * Calculates Storage of Files per username and returns data in bytes.
  * @returns {Promise<[totalStorage: number, publicStorage: number]>}
  */
-function calculateStorage() {
-  const { redis, allFiles, publicFiles } = this;
+const calculateStorage = (ctx) => {
+  const { redis, allFiles, publicFiles, prefixLength } = ctx;
   return Promise.props({
-    totalContentLength: retrieveContentLength(redis, allFiles),
-    publicContentLength: retrieveContentLength(redis, publicFiles),
+    totalContentLength: retrieveContentLength(redis, allFiles, prefixLength),
+    publicContentLength: retrieveContentLength(redis, publicFiles, prefixLength),
   });
-}
+};
 
 /**
  * Retrieves Amount of Public and Private files.
  * @returns {Promise<{ total: number, public: number }>}
  */
-function retrieveAmountOfFiles() {
-  return this
+const retrieveAmountOfFiles = ctx => (
+  ctx
     .redis
     .pipeline()
-    .scard(this.allFiles)
-    .scard(this.publicFiles)
+    .scard(ctx.allFiles)
+    .scard(ctx.publicFiles)
     .exec()
     .then(handlePipeline)
     .then(data => ({
       total: data[0],
       public: data[1],
-    }));
-}
+    }))
+);
 
 /**
  * Simply copy props over to accumulator obj
@@ -77,8 +89,6 @@ function merge(args) {
  * @returns {Promise<{ total: number, public: number }>}
  */
 module.exports = function listFiles({ params }) {
-  const { redis } = this;
-
   return Promise
     .bind(this, ['files:info:pre', params.username])
     .spread(this.hook)
@@ -87,15 +97,20 @@ module.exports = function listFiles({ params }) {
         throw new NotImplementedError('files:info:pre hook must be specified to use this endpoint');
       }
 
+      // redis
+      const { redis, config } = this;
+
       const allFiles = `${FILES_INDEX}:${username}`;
       const publicFiles = `${FILES_INDEX}:${username}:pub`;
       const includeStorage = params.includeStorage;
+      const prefixLength = config.redis.options.keyPrefix.length;
 
       const ctx = {
         redis,
 
         allFiles,
         publicFiles,
+        prefixLength,
 
         username,
         includeStorage,
@@ -103,12 +118,11 @@ module.exports = function listFiles({ params }) {
 
       // include storage is somewhat costly, so we want
       // to hide it behind query
-      const work = [retrieveAmountOfFiles];
-      if (includeStorage) work.push(calculateStorage);
+      const work = [retrieveAmountOfFiles(ctx)];
+      if (includeStorage) work.push(calculateStorage(ctx));
 
       return Promise
-        .bind(ctx, work)
-        .all()
+        .all(work)
         .then(merge);
     });
 };
