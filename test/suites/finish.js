@@ -183,6 +183,7 @@ describe('finish upload suite', function suite() {
         .reflect()
         .then(inspectPromise())
         .then((response) => {
+          console.log(response);
           assert.equal(response.total, 1);
           assert.equal(response.public, 0);
           return null;
