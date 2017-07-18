@@ -3,8 +3,6 @@ const Mservice = require('@microfleet/core');
 const assert = require('assert');
 const debug = require('debug')('ms-files-providers');
 
-const PluginType = Mservice.PluginsTypes.database;
-
 /**
  * Initializes provider based on the configuration
  * @param  {Bunyan} bunyan instance
@@ -93,9 +91,18 @@ function initProviders(service) {
     .config
     .transport.map(initProvider(service.log));
 
+  // create providerByBucket map for fast access
+  const providersByBucket = service.providers.reduce((map, provider) => {
+    map[provider._config.bucket.name] = provider;
+    return map;
+  }, {});
+
+  // store references
+  service.providersByBucket = Object.setPrototypeOf(providersByBucket, null);
+
   // internal plugin API
-  service._connectors[PluginType].push(connectProviders(service.providers));
-  service._destructors[PluginType].push(closeProviders(service.providers));
+  service.addConnector(Mservice.PluginsTypes.database, connectProviders(service.providers));
+  service.addDestructor(Mservice.PluginsTypes.database, closeProviders(service.providers));
 }
 
 // Public API

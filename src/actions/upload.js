@@ -20,6 +20,7 @@ const {
   FILES_INDEX_TEMP,
   FILES_POST_ACTION,
   FILES_DIRECT_ONLY_FIELD,
+  FILES_CONTENT_LENGTH_FIELD,
 } = require('../constant.js');
 
 /**
@@ -139,8 +140,8 @@ module.exports = function initFileUpload({ params }) {
         uploadId,
         startedAt: Date.now(),
         files: JSON.stringify(parts),
-        contentLength: sumBy(parts, 'contentLength'),
         parts: files.length,
+        [FILES_CONTENT_LENGTH_FIELD]: sumBy(parts, 'contentLength'),
         [FILES_STATUS_FIELD]: STATUS_PENDING,
         [FILES_OWNER_FIELD]: username,
         [FILES_BUCKET_FIELD]: bucketName,

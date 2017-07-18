@@ -38,6 +38,7 @@ describe('download suite', function suite() {
       .then(inspectPromise(false))
       .then((err) => {
         assert.equal(err.statusCode, 404);
+        return null;
       });
   });
 
@@ -48,6 +49,7 @@ describe('download suite', function suite() {
       .then(inspectPromise(false))
       .then((err) => {
         assert.equal(err.statusCode, 412);
+        return null;
       });
   });
 
@@ -63,6 +65,7 @@ describe('download suite', function suite() {
         .then(inspectPromise(false))
         .then((err) => {
           assert.equal(err.statusCode, 403);
+          return null;
         });
     });
 
@@ -85,6 +88,8 @@ describe('download suite', function suite() {
             assert.ok(parsedLink.query.Expires, link);
             assert.ok(parsedLink.query.Signature, link);
           });
+
+          return null;
         });
     });
 
@@ -116,6 +121,8 @@ describe('download suite', function suite() {
             assert.ok(parsedLink.query.Signature, link);
             assert.ok(parsedLink.query['response-content-disposition'], link);
           });
+
+          return null;
         });
     });
 
@@ -147,6 +154,8 @@ describe('download suite', function suite() {
               assert.ifError(parsedLink.query.Expires, link);
               assert.ifError(parsedLink.query.Signature, link);
             });
+
+            return null;
           });
       });
 
@@ -177,6 +186,8 @@ describe('download suite', function suite() {
               assert.ok(parsedLink.query.Signature, link);
               assert.ok(parsedLink.query['response-content-disposition'], link);
             });
+
+            return null;
           });
       });
     });

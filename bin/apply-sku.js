@@ -5,7 +5,6 @@
  */
 
 /* eslint-disable no-console */
-
 const argv = require('yargs')
   .describe('user', 'user to scan')
   .describe('filter', 'regexp to filter names')
