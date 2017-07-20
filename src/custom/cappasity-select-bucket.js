@@ -1,19 +1,13 @@
 // this file contains logic for selecting transport for uploading
 // input is upload opts
 const is = require('is');
-const findIndex = require('lodash/findIndex');
-const { FILES_BUCKET_FIELD, FILES_TEMP_FIELD } = require('../constant.js');
+const { FILES_BUCKET_FIELD, FILES_TEMP_FIELD } = require('../constant');
 
 // action handler
 // if file is temporary, use provider index `1`
 // if it's permanent - use index 0
 function uploadSelector({ temp }) {
-  return temp ? 1 : 0;
-}
-
-// access changes are only available on the persistent store
-function accessSelector(opts) {
-  return opts[FILES_TEMP_FIELD] ? 1 : 0;
+  return this.providers[temp ? 1 : 0];
 }
 
 // downloads can be performed from both public and temp store
@@ -22,27 +16,40 @@ function accessSelector(opts) {
 // Used in the following actions:
 //  * download
 //  * remove
-function downloadSelector(opts, config) {
-  const transports = config.transport;
+//  * access
+function downloadSelector(opts) {
   const bucket = opts[FILES_BUCKET_FIELD];
 
   // backwards-compatibility
   if (!bucket) {
-    return 0;
+    // if temp - bucket for temp files, else - default bucket
+    // operates under assumption that 0 index is always permanent
+    // and 1 is always temporary
+    return this.providers[opts[FILES_TEMP_FIELD] ? 1 : 0];
   }
 
-  // new uploads
-  return findIndex(transports, transport => transport.options.bucket.name === bucket);
+  // find the bucket amongst what we have
+  const provider = this.providersByBucket[bucket];
+
+  // return provider right away
+  if (provider !== undefined) {
+    return provider;
+  }
+
+  throw new Error(`${bucket} is not defined`);
 }
 
 // type map
-const ACTION_TO_SELECTOR = {
+const ACTION_TO_SELECTOR = Object.setPrototypeOf({
+  // upload action is different
   upload: uploadSelector,
-  access: accessSelector,
+
+  // these are all the same
+  access: downloadSelector,
   download: downloadSelector,
   remove: downloadSelector,
   sync: downloadSelector,
-};
+}, null);
 
 // fn for selection
 function selectTransport(action, opts) {
@@ -51,7 +58,7 @@ function selectTransport(action, opts) {
     throw new Error(`${action} selector not defined`);
   }
 
-  return this.providers[thunk(opts, this.config)];
+  return thunk.call(this, opts);
 }
 
 // public API

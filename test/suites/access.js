@@ -109,10 +109,12 @@ describe('access suite', function suite() {
     });
 
     it('public list does not return direct only file', function test() {
-      return this.amqp.publishAndWait('files.list', {
-        public: true,
-        username: owner,
-      })
+      return this
+        .amqp
+        .publishAndWait('files.list', {
+          public: true,
+          username: owner,
+        })
         .reflect()
         .then(inspectPromise())
         .get('files')

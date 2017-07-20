@@ -140,10 +140,12 @@ describe('finish upload suite', function suite() {
     });
 
     it('list does not return this file from public list', function test() {
-      return this.amqp.publishAndWait('files.list', {
-        public: true,
-        username: modelData.message.username,
-      })
+      return this
+        .amqp
+        .publishAndWait('files.list', {
+          public: true,
+          username: modelData.message.username,
+        })
         .reflect()
         .then(inspectPromise())
         .get('files')
@@ -155,16 +157,36 @@ describe('finish upload suite', function suite() {
     });
 
     it('list returns this file for private list', function test() {
-      return this.amqp.publishAndWait('files.list', {
-        public: false,
-        username: modelData.message.username,
-      })
+      return this
+        .amqp
+        .publishAndWait('files.list', {
+          public: false,
+          username: modelData.message.username,
+        })
         .reflect()
         .then(inspectPromise())
         .get('files')
         .then((response) => {
           const directUpload = response.find(it => it.id === this.response.uploadId);
           assert.ok(directUpload, 'direct upload was correctly returned');
+          return null;
+        });
+    });
+
+    it('report endpoint returns stats for public & private models', function test() {
+      return this
+        .amqp
+        .publishAndWait('files.report', {
+          username: modelData.message.username,
+          includeStorage: true,
+        })
+        .reflect()
+        .then(inspectPromise())
+        .then((response) => {
+          assert.equal(response.total, 2);
+          assert.equal(response.public, 0);
+          assert.equal(response.totalContentLength, 3802306);
+          assert.equal(response.publicContentLength, 0);
           return null;
         });
     });
