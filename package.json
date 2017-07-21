@@ -27,7 +27,7 @@
   "dependencies": {
     "@google-cloud/storage": "^1.2.0",
     "@microfleet/core": "^9.3.0",
-    "@microfleet/transport-amqp": "^10.1.0",
+    "@microfleet/transport-amqp": "^11.0.0",
     "bl": "^1.2.1",
     "bluebird": "^3.5.0",
     "bunyan": "^1.8.10",
