@@ -36,7 +36,7 @@ services:
   #   command: node ./bin/mservice.js
 
   tester:
-    image: makeomatic/node:8.1.4-tester-glibc
+    image: makeomatic/node:8.2.1-tester-glibc
     links:
       - rabbitmq
       - redis

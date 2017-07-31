@@ -10,9 +10,11 @@
     "test:e2e": "mdep test run",
     "start": "mfleet",
     "lint": "eslint .",
-    "semantic-release": "semantic-release pre && npm run compile && npm publish && semantic-release post",
+    "prepublishOnly": "npm run compile",
+    "semantic-release": "semantic-release pre && npm publish && semantic-release post",
     "docker-release": "mdep docker release",
-    "release": "yarn; npm run semantic-release; npm run docker-release"
+    "release": "yarn && npm run semantic-release && npm run docker-release",
+    "commit": "simple-commit-message"
   },
   "repository": {
     "type": "git",
@@ -25,9 +27,9 @@
   },
   "homepage": "https://github.com/makeomatic/ms-files#readme",
   "dependencies": {
-    "@google-cloud/storage": "^1.2.0",
-    "@microfleet/core": "^9.3.0",
-    "@microfleet/transport-amqp": "^10.1.0",
+    "@google-cloud/storage": "^1.2.1",
+    "@microfleet/core": "^9.4.0",
+    "@microfleet/transport-amqp": "^12.1.0",
     "bl": "^1.2.1",
     "bluebird": "^3.5.0",
     "bunyan": "^1.8.10",
@@ -36,19 +38,19 @@
     "common-errors": "^1.0.2",
     "dlock": "^6.4.0",
     "gcs-resumable-upload": "^0.8.0",
-    "ioredis": "^3.1.1",
+    "ioredis": "^3.1.2",
     "is": "^3.2.1",
     "jaeger-client": "^3.5.3",
     "lodash": "^4.17.3",
     "md5": "^2.2.1",
-    "mime-types": "^2.1.15",
+    "mime-types": "^2.1.16",
     "moment": "^2.18.1",
     "ms-conf": "^3.1.2",
     "ms-files-transport": "^1.0.2",
     "ms-perf": "^1.0.1",
     "ms-validation": "^5.0.1",
     "opentracing-js-ioredis": "^1.0.0",
-    "raven": "^2.1.0",
+    "raven": "^2.1.1",
     "redis-filtered-sort": "^2.2.1",
     "spm-agent-nodejs": "^1.30.9",
     "stdout-stream": "^1.4.0",
@@ -56,10 +58,10 @@
     "yargs": "^8.0.2"
   },
   "optionalDependencies": {
-    "@google-cloud/pubsub": "^0.13.1"
+    "@google-cloud/pubsub": "^0.13.2"
   },
   "devDependencies": {
-    "@makeomatic/deploy": "^1.12.2",
+    "@makeomatic/deploy": "^3.0.2",
     "babel-cli": "^6.24.1",
     "babel-eslint": "^7.2.3",
     "babel-plugin-istanbul": "^4.1.4",
@@ -71,7 +73,7 @@
     "codecov": "^2.2.0",
     "cross-env": "^5.0.1",
     "cz-conventional-changelog": "^2.0.0",
-    "eslint": "^4.2.0",
+    "eslint": "^4.3.0",
     "eslint-config-makeomatic": "^1.0.1",
     "eslint-plugin-import": "^2.7.0",
     "eslint-plugin-promise": "^3.5.0",
@@ -83,14 +85,22 @@
     "request-promise": "^4.2.1",
     "rimraf": "^2.6.1",
     "semantic-release": "6.3.6",
-    "sinon": "^2.3.8"
+    "sinon": "^2.4.1"
   },
   "release": {
-    "verifyConditions": []
+    "verifyConditions": "@makeomatic/condition-semaphore",
+    "generateNotes": "github-post-release",
+    "analyzeCommits": "simple-commit-message",
+    "branch": "master"
   },
   "config": {
-    "commitizen": {
-      "path": "./node_modules/cz-conventional-changelog"
+    "pre-git": {
+      "commit-msg": "simple",
+      "pre-commit": [],
+      "pre-push": [],
+      "post-commit": [],
+      "post-checkout": [],
+      "post-merge": []
     }
   },
   "engines": {
