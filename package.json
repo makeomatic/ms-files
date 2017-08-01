@@ -28,8 +28,8 @@
   "homepage": "https://github.com/makeomatic/ms-files#readme",
   "dependencies": {
     "@google-cloud/storage": "^1.2.1",
-    "@microfleet/core": "^9.4.0",
-    "@microfleet/transport-amqp": "^12.1.0",
+    "@microfleet/core": "^9.5.0",
+    "@microfleet/transport-amqp": "^12.1.2",
     "bl": "^1.2.1",
     "bluebird": "^3.5.0",
     "bunyan": "^1.8.10",
@@ -61,7 +61,7 @@
     "@google-cloud/pubsub": "^0.13.2"
   },
   "devDependencies": {
-    "@makeomatic/deploy": "^3.0.2",
+    "@makeomatic/deploy": "^4.1.2",
     "babel-cli": "^6.24.1",
     "babel-eslint": "^7.2.3",
     "babel-plugin-istanbul": "^4.1.4",
@@ -71,7 +71,7 @@
     "babel-register": "^6.24.1",
     "chai": "^4.1.0",
     "codecov": "^2.2.0",
-    "cross-env": "^5.0.1",
+    "cross-env": "^5.0.2",
     "cz-conventional-changelog": "^2.0.0",
     "eslint": "^4.3.0",
     "eslint-config-makeomatic": "^1.0.1",
@@ -79,7 +79,7 @@
     "eslint-plugin-promise": "^3.5.0",
     "faker": "^4.1.0",
     "json": "^9.0.6",
-    "mocha": "^3.4.2",
+    "mocha": "^3.5.0",
     "nyc": "^11.0.3",
     "request": "^2.81.0",
     "request-promise": "^4.2.1",
@@ -91,7 +91,8 @@
     "verifyConditions": "@makeomatic/condition-semaphore",
     "generateNotes": "github-post-release",
     "analyzeCommits": "simple-commit-message",
-    "branch": "master"
+    "branch": "master",
+    "getLastRelease": "@makeomatic/last-release-npm"
   },
   "config": {
     "pre-git": {
