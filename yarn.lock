@@ -82,17 +82,18 @@
     "@semantic-release/error" "^1.0.0"
     semver "^5.1.0"
 
-"@makeomatic/deploy@^3.0.2":
-  version "3.0.2"
-  resolved "https://registry.yarnpkg.com/@makeomatic/deploy/-/deploy-3.0.2.tgz#9a5a599570bb3b3da4701336c6016af90b21931e"
+"@makeomatic/deploy@^4.1.2":
+  version "4.1.2"
+  resolved "https://registry.yarnpkg.com/@makeomatic/deploy/-/deploy-4.1.2.tgz#e5a2d36fe13b82e3673a625a7cef34162bc8d0b4"
   dependencies:
     "@makeomatic/condition-semaphore" "^1.0.2"
+    "@makeomatic/last-release-npm" "^1.0.1"
     bluebird "^3.5.0"
     chrome-launcher "^0.3.2"
-    chrome-remote-interface "^0.24.2"
+    chrome-remote-interface "^0.24.3"
     death "^1.1.0"
     find-up "^2.1.0"
-    github-post-release "^1.12.1"
+    github-post-release "^1.12.2"
     glob "^7.1.2"
     is "^3.2.1"
     lighthouse-logger "^1.0.0"
@@ -105,6 +106,14 @@
     simple-commit-message "^3.3.1"
     yargs "^8.0.2"
 
+"@makeomatic/last-release-npm@^1.0.1":
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/@makeomatic/last-release-npm/-/last-release-npm-1.0.1.tgz#40b4b8fbad6eb89433d3d36e13a11b48735ad59c"
+  dependencies:
+    "@semantic-release/error" "^1.0.0"
+    npm-registry-client "^8.4.0"
+    npmlog "^4.0.0"
+
 "@microfleet/amqp-coffee@^1.0.1":
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/@microfleet/amqp-coffee/-/amqp-coffee-1.0.1.tgz#b158c182345393cbd0217390d7e21d4cbfd26613"
@@ -114,9 +123,9 @@
     debug "^2.6.8"
     lodash "^4.17.4"
 
-"@microfleet/core@^9.4.0":
-  version "9.4.0"
-  resolved "https://registry.yarnpkg.com/@microfleet/core/-/core-9.4.0.tgz#9315e05efb867a91d083ccb823c79bd1492be896"
+"@microfleet/core@^9.5.0":
+  version "9.5.0"
+  resolved "https://registry.yarnpkg.com/@microfleet/core/-/core-9.5.0.tgz#b3912abb511f20e69d55119c9f8cf422163335f1"
   dependencies:
     bluebird "^3.5.0"
     callsite "^1.0.0"
@@ -127,13 +136,13 @@
     is "^3.2.1"
     lodash "^4.17.4"
     opentracing "^0.14.1"
-    semver "^5.3.0"
+    semver "^5.4.1"
     sort-by "^1.1.1"
     stdout-stream "^1.4.0"
 
-"@microfleet/transport-amqp@^12.1.0":
-  version "12.1.0"
-  resolved "https://registry.yarnpkg.com/@microfleet/transport-amqp/-/transport-amqp-12.1.0.tgz#f9a6ed00ee1b5b52696aa75a601dfc204683e1f1"
+"@microfleet/transport-amqp@^12.1.2":
+  version "12.1.2"
+  resolved "https://registry.yarnpkg.com/@microfleet/transport-amqp/-/transport-amqp-12.1.2.tgz#31d22e5cc7450eb183eba7b178cef372d5c50381"
   dependencies:
     "@microfleet/amqp-coffee" "^1.0.1"
     bluebird "^3.5.0"
@@ -270,6 +279,10 @@ always-error@1.0.0:
 am-i-a-dependency@1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/am-i-a-dependency/-/am-i-a-dependency-1.0.0.tgz#7c0e2eb126045350852e26e44f6781b3ed387919"
+
+am-i-a-dependency@1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/am-i-a-dependency/-/am-i-a-dependency-1.1.0.tgz#a76a5a82a1f397282edaba5a102bd842a48526bc"
 
 amdefine@>=0.0.4:
   version "1.0.1"
@@ -787,6 +800,10 @@ builtin-modules@^1.0.0, builtin-modules@^1.1.1:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/builtin-modules/-/builtin-modules-1.1.1.tgz#270f076c5a72c02f5b65a47df94c5fe3a278892f"
 
+builtins@^1.0.3:
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/builtins/-/builtins-1.0.3.tgz#cb94faeb61c8696451db36534e1422f94f0aee88"
+
 bunyan-noop@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/bunyan-noop/-/bunyan-noop-2.0.0.tgz#06e870b6a228e8912506777d17b0094fcfe6b174"
@@ -1001,9 +1018,9 @@ chrome-launcher@^0.3.2:
     mkdirp "0.5.1"
     rimraf "^2.6.1"
 
-chrome-remote-interface@^0.24.2:
-  version "0.24.2"
-  resolved "https://registry.yarnpkg.com/chrome-remote-interface/-/chrome-remote-interface-0.24.2.tgz#43a05440a1fa60b73769e72f3e7892ac11d66eba"
+chrome-remote-interface@^0.24.3:
+  version "0.24.3"
+  resolved "https://registry.yarnpkg.com/chrome-remote-interface/-/chrome-remote-interface-0.24.3.tgz#ee38252fd43bea435dd1dbb74f4b90d179186bc9"
   dependencies:
     commander "2.1.x"
     ws "2.0.x"
@@ -1237,9 +1254,9 @@ create-error-class@^3.0.2:
   dependencies:
     capture-stack-trace "^1.0.0"
 
-cross-env@^5.0.1:
-  version "5.0.1"
-  resolved "https://registry.yarnpkg.com/cross-env/-/cross-env-5.0.1.tgz#ff4e72ea43b47da2486b43a7f2043b2609e44913"
+cross-env@^5.0.2:
+  version "5.0.2"
+  resolved "https://registry.yarnpkg.com/cross-env/-/cross-env-5.0.2.tgz#d39fd2fa28c1b5cfb91e7058d1efe8b4fcb01334"
   dependencies:
     cross-spawn "^5.1.0"
     is-windows "^1.0.0"
@@ -1345,12 +1362,6 @@ debug@2, debug@2.6.8, debug@^2.1.1, debug@^2.2.0, debug@^2.3.3, debug@^2.6.0, de
 debug@2.3.3:
   version "2.3.3"
   resolved "https://registry.yarnpkg.com/debug/-/debug-2.3.3.tgz#40c453e67e6e13c901ddec317af8986cda9eff8c"
-  dependencies:
-    ms "0.7.2"
-
-debug@2.6.0:
-  version "2.6.0"
-  resolved "https://registry.yarnpkg.com/debug/-/debug-2.6.0.tgz#bc596bcabe7617f11d9fa15361eded5608b8499b"
   dependencies:
     ms "0.7.2"
 
@@ -2125,34 +2136,13 @@ ggit@1.15.1:
     quote "0.4.0"
     ramda "0.9.1"
 
-ggit@1.16.0:
-  version "1.16.0"
-  resolved "https://registry.yarnpkg.com/ggit/-/ggit-1.16.0.tgz#58ac6f27482c69adf2be77f5aaa5c3783b369635"
-  dependencies:
-    bluebird "3.5.0"
-    chdir-promise "0.4.0"
-    check-more-types "2.24.0"
-    cli-table "0.3.1"
-    colors "1.1.2"
-    commander "2.9.0"
-    d3-helpers "0.3.0"
-    debug "2.6.3"
-    glob "7.1.1"
-    lazy-ass "1.6.0"
-    lodash "3.10.1"
-    moment "2.18.1"
-    optimist "0.6.1"
-    q "2.0.3"
-    quote "0.4.0"
-    ramda "0.9.1"
-
-ggit@1.17.2:
-  version "1.17.2"
-  resolved "https://registry.yarnpkg.com/ggit/-/ggit-1.17.2.tgz#620e02475df400cfd8bd26d10f097a421f23d678"
+ggit@1.22.1:
+  version "1.22.1"
+  resolved "https://registry.yarnpkg.com/ggit/-/ggit-1.22.1.tgz#ed6d6f4e6bf03e1007ac072e2b600597b410c77d"
   dependencies:
     always-error "1.0.0"
     bluebird "3.5.0"
-    chdir-promise "0.4.0"
+    chdir-promise "0.4.1"
     check-more-types "2.24.0"
     cli-table "0.3.1"
     colors "1.1.2"
@@ -2165,18 +2155,19 @@ ggit@1.17.2:
     lodash "3.10.1"
     moment "2.18.1"
     optimist "0.6.1"
+    pluralize "5.0.0"
     q "2.0.3"
     quote "0.4.0"
     ramda "0.24.1"
     semver "5.3.0"
 
-ggit@1.20.0:
-  version "1.20.0"
-  resolved "https://registry.yarnpkg.com/ggit/-/ggit-1.20.0.tgz#4dc4cb9fc41506fd08953fa881f346985a931647"
+ggit@1.23.0:
+  version "1.23.0"
+  resolved "https://registry.yarnpkg.com/ggit/-/ggit-1.23.0.tgz#ecc4c8d9701a940872f7396aee2500550784fff2"
   dependencies:
     always-error "1.0.0"
     bluebird "3.5.0"
-    chdir-promise "0.4.0"
+    chdir-promise "0.4.1"
     check-more-types "2.24.0"
     cli-table "0.3.1"
     colors "1.1.2"
@@ -2189,6 +2180,7 @@ ggit@1.20.0:
     lodash "3.10.1"
     moment "2.18.1"
     optimist "0.6.1"
+    pluralize "5.0.0"
     q "2.0.3"
     quote "0.4.0"
     ramda "0.24.1"
@@ -2233,11 +2225,11 @@ git-refs@^1.1.3:
     slash "^1.0.0"
     walk "^2.3.9"
 
-github-post-release@^1.12.1:
-  version "1.12.1"
-  resolved "https://registry.yarnpkg.com/github-post-release/-/github-post-release-1.12.1.tgz#c4e0e649d7577aa8cde1c59ef2b6f1c4144d57bb"
+github-post-release@^1.12.2:
+  version "1.12.2"
+  resolved "https://registry.yarnpkg.com/github-post-release/-/github-post-release-1.12.2.tgz#79fd0dfd31bd0a296230c693bbf132078306d2a9"
   dependencies:
-    am-i-a-dependency "1.0.0"
+    am-i-a-dependency "1.1.0"
     bluebird "3.5.0"
     check-more-types "2.24.0"
     commit-closes "1.0.1"
@@ -2246,12 +2238,12 @@ github-post-release@^1.12.1:
     github "9.2.0"
     github-url-from-git "1.5.0"
     lazy-ass "1.6.0"
-    new-public-commits "1.1.2"
+    new-public-commits "1.3.0"
     parse-github-repo-url "1.4.0"
-    pluralize "5.0.0"
+    pluralize "6.0.0"
     ramda "0.24.1"
-    simple-changelog "1.0.0"
-    simple-commit-message "3.2.0"
+    simple-changelog "1.0.1"
+    simple-commit-message "3.3.1"
 
 github-url-from-git@1.5.0, github-url-from-git@^1.3.0, github-url-from-git@^1.4.0:
   version "1.5.0"
@@ -2533,7 +2525,7 @@ home-or-tmp@^2.0.0:
     os-homedir "^1.0.0"
     os-tmpdir "^1.0.1"
 
-hosted-git-info@^2.1.4, hosted-git-info@^2.1.5:
+hosted-git-info@^2.1.4, hosted-git-info@^2.1.5, hosted-git-info@^2.4.2:
   version "2.5.0"
   resolved "https://registry.yarnpkg.com/hosted-git-info/-/hosted-git-info-2.5.0.tgz#6d60e34b3abbc8313062c3b798ef8d901a07af3c"
 
@@ -3489,13 +3481,13 @@ mkdirp@0.5.1, "mkdirp@>=0.5 0", mkdirp@^0.5.0, mkdirp@^0.5.1, mkdirp@~0.5.1:
   dependencies:
     minimist "0.0.8"
 
-mocha@^3.4.2:
-  version "3.4.2"
-  resolved "https://registry.yarnpkg.com/mocha/-/mocha-3.4.2.tgz#d0ef4d332126dbf18d0d640c9b382dd48be97594"
+mocha@^3.5.0:
+  version "3.5.0"
+  resolved "https://registry.yarnpkg.com/mocha/-/mocha-3.5.0.tgz#1328567d2717f997030f8006234bce9b8cd72465"
   dependencies:
     browser-stdout "1.3.0"
     commander "2.9.0"
-    debug "2.6.0"
+    debug "2.6.8"
     diff "3.2.0"
     escape-string-regexp "1.0.5"
     glob "7.1.1"
@@ -3622,25 +3614,16 @@ netrc@^0.1.4:
   version "0.1.4"
   resolved "https://registry.yarnpkg.com/netrc/-/netrc-0.1.4.tgz#6be94fcaca8d77ade0a9670dc460914c94472444"
 
-new-public-commits@1.1.2:
-  version "1.1.2"
-  resolved "https://registry.yarnpkg.com/new-public-commits/-/new-public-commits-1.1.2.tgz#45dcd1b63777f31be2de2c77500c2798b94a7929"
-  dependencies:
-    check-more-types "2.24.0"
-    ggit "1.17.2"
-    lazy-ass "1.6.0"
-    simple-commit-message "3.1.0"
-
-new-public-commits@1.2.0:
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/new-public-commits/-/new-public-commits-1.2.0.tgz#cedbc9ba31eb2b025f3de1e7617fe098bcc43429"
+new-public-commits@1.3.0:
+  version "1.3.0"
+  resolved "https://registry.yarnpkg.com/new-public-commits/-/new-public-commits-1.3.0.tgz#8bcddbc0df47b93bb333c5ede6a624a5c303c686"
   dependencies:
     check-more-types "2.24.0"
     debug "2.6.8"
-    ggit "1.20.0"
+    ggit "1.23.0"
     lazy-ass "1.6.0"
-    pluralize "5.0.0"
-    simple-commit-message "3.1.0"
+    pluralize "6.0.0"
+    simple-commit-message "3.3.0"
 
 node-df@^0.1.1:
   version "0.1.1"
@@ -3717,6 +3700,15 @@ normalize-path@^2.0.1:
     hosted-git-info "^2.1.5"
     semver "^5.1.0"
 
+"npm-package-arg@^3.0.0 || ^4.0.0 || ^5.0.0":
+  version "5.1.2"
+  resolved "https://registry.yarnpkg.com/npm-package-arg/-/npm-package-arg-5.1.2.tgz#fb18d17bb61e60900d6312619919bd753755ab37"
+  dependencies:
+    hosted-git-info "^2.4.2"
+    osenv "^0.1.4"
+    semver "^5.1.0"
+    validate-npm-package-name "^3.0.0"
+
 npm-path@^2.0.3:
   version "2.0.3"
   resolved "https://registry.yarnpkg.com/npm-path/-/npm-path-2.0.3.tgz#15cff4e1c89a38da77f56f6055b24f975dfb2bbe"
@@ -3736,6 +3728,23 @@ npm-registry-client@^7.0.1:
     retry "^0.10.0"
     semver "2 >=2.2.1 || 3.x || 4 || 5"
     slide "^1.1.3"
+  optionalDependencies:
+    npmlog "2 || ^3.1.0 || ^4.0.0"
+
+npm-registry-client@^8.4.0:
+  version "8.4.0"
+  resolved "https://registry.yarnpkg.com/npm-registry-client/-/npm-registry-client-8.4.0.tgz#d52b901685647fc62a4c03eafecb6ceaa5018d4c"
+  dependencies:
+    concat-stream "^1.5.2"
+    graceful-fs "^4.1.6"
+    normalize-package-data "~1.0.1 || ^2.0.0"
+    npm-package-arg "^3.0.0 || ^4.0.0 || ^5.0.0"
+    once "^1.3.3"
+    request "^2.74.0"
+    retry "^0.10.0"
+    semver "2 >=2.2.1 || 3.x || 4 || 5"
+    slide "^1.1.3"
+    ssri "^4.1.2"
   optionalDependencies:
     npmlog "2 || ^3.1.0 || ^4.0.0"
 
@@ -4666,7 +4675,7 @@ rx@^2.4.3:
   version "2.5.3"
   resolved "https://registry.yarnpkg.com/rx/-/rx-2.5.3.tgz#21adc7d80f02002af50dae97fd9dbf248755f566"
 
-safe-buffer@^5.0.1, safe-buffer@~5.1.0, safe-buffer@~5.1.1:
+safe-buffer@^5.0.1, safe-buffer@^5.1.0, safe-buffer@~5.1.0, safe-buffer@~5.1.1:
   version "5.1.1"
   resolved "https://registry.yarnpkg.com/safe-buffer/-/safe-buffer-5.1.1.tgz#893312af69b2123def71f57889001671eeb2c853"
 
@@ -4721,7 +4730,7 @@ semver@5.1.0:
   version "5.1.0"
   resolved "https://registry.yarnpkg.com/semver/-/semver-5.1.0.tgz#85f2cf8550465c4df000cf7d86f6b054106ab9e5"
 
-semver@5.4.1:
+semver@5.4.1, semver@^5.4.1:
   version "5.4.1"
   resolved "https://registry.yarnpkg.com/semver/-/semver-5.4.1.tgz#e059c09d8571f0540823733433505d3a2f00b18e"
 
@@ -4767,16 +4776,16 @@ signal-exit@^3.0.0, signal-exit@^3.0.1, signal-exit@^3.0.2:
   version "3.0.2"
   resolved "https://registry.yarnpkg.com/signal-exit/-/signal-exit-3.0.2.tgz#b5fdc08f1287ea1178628e415e25132b73646c6d"
 
-simple-changelog@1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/simple-changelog/-/simple-changelog-1.0.0.tgz#1f395857734ad1aa8f1abc6adf637efc0a3bbd7d"
+simple-changelog@1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/simple-changelog/-/simple-changelog-1.0.1.tgz#2724ebd5bc67b65e66dc175c7ea624c2419a6f74"
   dependencies:
     check-more-types "2.24.0"
     common-tags "1.4.0"
     lazy-ass "1.6.0"
-    new-public-commits "1.2.0"
+    new-public-commits "1.3.0"
     ramda "0.24.1"
-    simple-commit-message "3.2.0"
+    simple-commit-message "3.3.1"
 
 simple-commit-message@2.2.1:
   version "2.2.1"
@@ -4791,13 +4800,14 @@ simple-commit-message@2.2.1:
     semver "5.1.0"
     word-wrap "1.1.0"
 
-simple-commit-message@3.1.0:
-  version "3.1.0"
-  resolved "https://registry.yarnpkg.com/simple-commit-message/-/simple-commit-message-3.1.0.tgz#b08206d4c3d305d52341fb44db5a6e6924c3b75b"
+simple-commit-message@3.3.0:
+  version "3.3.0"
+  resolved "https://registry.yarnpkg.com/simple-commit-message/-/simple-commit-message-3.3.0.tgz#fd8c0a6ceb1d43b7098f827d6ce26169c95b003b"
   dependencies:
+    am-i-a-dependency "1.0.0"
     check-more-types "2.24.0"
     debug "2.6.8"
-    ggit "1.16.0"
+    ggit "1.22.1"
     hr "0.1.3"
     inquirer "0.12.0"
     inquirer-confirm "0.2.2"
@@ -4806,22 +4816,7 @@ simple-commit-message@3.1.0:
     semver "5.3.0"
     word-wrap "1.2.3"
 
-simple-commit-message@3.2.0:
-  version "3.2.0"
-  resolved "https://registry.yarnpkg.com/simple-commit-message/-/simple-commit-message-3.2.0.tgz#c56144f981d9c43dfd09f7ddcd8bb09f1ee54f16"
-  dependencies:
-    check-more-types "2.24.0"
-    debug "2.6.8"
-    ggit "1.20.0"
-    hr "0.1.3"
-    inquirer "0.12.0"
-    inquirer-confirm "0.2.2"
-    largest-semantic-change "1.0.0"
-    lazy-ass "1.6.0"
-    semver "5.3.0"
-    word-wrap "1.2.3"
-
-simple-commit-message@^3.3.1:
+simple-commit-message@3.3.1, simple-commit-message@^3.3.1:
   version "3.3.1"
   resolved "https://registry.yarnpkg.com/simple-commit-message/-/simple-commit-message-3.3.1.tgz#b69026a9692e0f470233a4c5c1df3432cdb50560"
   dependencies:
@@ -5005,6 +5000,12 @@ sshpk@^1.7.0:
     ecc-jsbn "~0.1.1"
     jsbn "~0.1.0"
     tweetnacl "~0.14.0"
+
+ssri@^4.1.2:
+  version "4.1.6"
+  resolved "https://registry.yarnpkg.com/ssri/-/ssri-4.1.6.tgz#0cb49b6ac84457e7bdd466cb730c3cb623e9a25b"
+  dependencies:
+    safe-buffer "^5.1.0"
 
 stack-trace@0.0.9:
   version "0.0.9"
@@ -5420,6 +5421,12 @@ validate-npm-package-license@^3.0.1:
   dependencies:
     spdx-correct "~1.0.0"
     spdx-expression-parse "~1.0.0"
+
+validate-npm-package-name@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/validate-npm-package-name/-/validate-npm-package-name-3.0.0.tgz#5fa912d81eb7d0c74afc140de7317f0ca7df437e"
+  dependencies:
+    builtins "^1.0.3"
 
 verror@1.3.6:
   version "1.3.6"
