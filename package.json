@@ -85,7 +85,7 @@
     "request-promise": "^4.2.1",
     "rimraf": "^2.6.1",
     "semantic-release": "6.3.6",
-    "sinon": "^2.4.1"
+    "sinon": "^3.0.0"
   },
   "release": {
     "verifyConditions": "@makeomatic/condition-semaphore",
