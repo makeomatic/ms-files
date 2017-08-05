@@ -120,7 +120,7 @@ describe('process suite', function suite() {
     before('pre-upload file', initAndUpload(modelData));
 
     before('reset onComplete count', function before() {
-      this.files.config.amqp.transport.onComplete.reset();
+      this.files.config.amqp.retry.predicate.reset();
     });
 
     it('fails due to post-processing issue', function test() {
@@ -134,7 +134,7 @@ describe('process suite', function suite() {
     });
 
     it('wait for 2 seconds to ensure that requeue worked', function test() {
-      const spy = this.files.config.amqp.transport.onComplete;
+      const spy = this.files.config.amqp.retry.predicate;
       return Promise.delay(2000).then(() => {
         return assert.ok(spy.calledTwice, 'onComplete was called twice');
       });
