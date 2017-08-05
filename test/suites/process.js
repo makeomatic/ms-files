@@ -129,7 +129,7 @@ describe('process suite', function suite() {
         .reflect()
         .then(inspectPromise(false))
         .then((err) => {
-          return assert.equal(err.message, 'Something went wrong: internal failure');
+          return assert.equal(err.message, 'could not process file');
         });
     });
 
