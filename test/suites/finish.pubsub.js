@@ -12,7 +12,7 @@ const {
   bindSend,
   initUpload,
   uploadFiles,
-} = require('../helpers/utils.js');
+} = require('../helpers/utils');
 
 const {
   enablePubsub,

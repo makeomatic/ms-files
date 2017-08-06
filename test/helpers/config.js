@@ -2,7 +2,7 @@
 const env = process.env;
 const sinon = require('sinon');
 const Promise = require('bluebird');
-const onComplete = require('../../src/messageResolver');
+const originalPredicate = require('../../src/configs/amqp').amqp.retry.predicate;
 
 try {
   require('ms-conf').reload();
@@ -18,7 +18,9 @@ const amqp = {
       host: 'rabbitmq',
       port: 5672,
     },
-    onComplete: sinon.spy(onComplete),
+  },
+  retry: {
+    predicate: sinon.spy(originalPredicate),
   },
 };
 
