@@ -79,6 +79,7 @@ const defaultPlayerOpts = Object.setPrototypeOf({
   autorotatetime: {
     type: 'float',
     default: 10,
+    description: 'Full Rotation Time',
     min: 0.1,
     paid: true,
     reqPlanLevel: 30,
@@ -87,6 +88,7 @@ const defaultPlayerOpts = Object.setPrototypeOf({
   autorotatedelay: {
     type: 'float',
     default: 2,
+    description: 'Automatically Resume Rotation',
     min: 0.1,
     paid: true,
     reqPlanLevel: 30,
@@ -95,6 +97,7 @@ const defaultPlayerOpts = Object.setPrototypeOf({
   autorotatedir: {
     type: 'integer',
     default: 1,
+    description: 'Rotation Direction',
     enum: {
       clockwise: 1,
       'counter-clockwise': -1,

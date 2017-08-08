@@ -40,6 +40,7 @@ describe('info suite', function suite() {
       .then(inspectPromise(false))
       .then((err) => {
         assert.equal(err.statusCode, 404);
+        return null;
       });
   });
 
@@ -50,6 +51,7 @@ describe('info suite', function suite() {
       .then(inspectPromise(false))
       .then((err) => {
         assert.equal(err.statusCode, 401);
+        return null;
       });
   });
 
@@ -63,6 +65,7 @@ describe('info suite', function suite() {
         assert.deepEqual(rsp.file, this.response);
         assert.equal(rsp.file.embed, undefined);
         assert.equal(rsp.file.status, STATUS_PENDING);
+        return null;
       });
   });
 
@@ -78,6 +81,7 @@ describe('info suite', function suite() {
         .then(inspectPromise(false))
         .then((err) => {
           assert.equal(err.statusCode, 401);
+          return null;
         });
     });
 
@@ -89,6 +93,7 @@ describe('info suite', function suite() {
         .then((rsp) => {
           assert.equal(rsp.username, owner);
           assert.equal(rsp.file.status, STATUS_UPLOADED);
+          return null;
         });
     });
 
@@ -104,6 +109,7 @@ describe('info suite', function suite() {
           .then(inspectPromise(false))
           .then((err) => {
             assert.equal(err.statusCode, 401);
+            return null;
           });
       });
 
@@ -145,6 +151,8 @@ describe('info suite', function suite() {
               assert.notStrictEqual(param.default, undefined);
               assert.ok(param.description);
             });
+
+            return null;
           });
       });
 
@@ -172,6 +180,8 @@ describe('info suite', function suite() {
                   assert.ok(file.decompressedLength > file.contentLength);
                 }
               });
+
+              return null;
             });
         });
       });
