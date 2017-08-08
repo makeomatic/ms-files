@@ -65,7 +65,7 @@ describe('binary: simple-upload', function suite() {
         return this.send({ username: owner, filename: uploadId });
       })
       .then((response) => {
-        assert.equal(response.status, '3');
+        assert.equal(response.file.status, '3');
         return null;
       });
   });
