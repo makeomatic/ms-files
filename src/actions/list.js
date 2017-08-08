@@ -90,7 +90,6 @@ function reportMissingError(err, filename) {
   return false;
 }
 
-
 /**
  * Omits errors & reports missing files
  */
@@ -112,9 +111,7 @@ function omitErrors(result, promise, idx) {
 /**
  * Prepares filenames
  */
-function prepareFilenames(filename) {
-  return `${FILES_DATA}:${filename}`;
-}
+const prepareFilenames = filename => `${FILES_DATA}:${filename}`;
 
 /**
  * Fetch extra data from redis based on IDS
@@ -140,12 +137,19 @@ function fetchExtraData(filenames) {
 }
 
 /**
+ * Filters out non-truthy array elements
+ */
+function truthy(_, idx) {
+  return !!this[idx];
+}
+
+/**
  * Prepares response
  */
 function prepareResponse(data) {
   const { service, timer, offset, limit } = this;
   const { filenames, props, length } = data;
-  const filteredFilenames = filenames.filter((name, idx) => !!props[idx]);
+  const filteredFilenames = filenames.filter(truthy, props);
 
   return Promise
     .map(filteredFilenames, (filename, idx) => {
