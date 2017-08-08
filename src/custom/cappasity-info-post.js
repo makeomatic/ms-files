@@ -1,3 +1,4 @@
+const flatstr = require('flatstr');
 const {
   STATUS_PROCESSED,
   STATUS_PROCESSING,
@@ -9,7 +10,7 @@ const {
   FILES_PLAYER_LOGO,
 
   CAPPASITY_IMAGE_MODEL,
-} = require('../constant.js');
+} = require('../constant');
 
 /*
   reqPlanLevel: integer. minimum required user plan level
@@ -147,7 +148,7 @@ const defaultWindowOptions = Object.setPrototypeOf({
 
 const defaultQS = getQueryString(defaultPlayerOpts);
 
-const defaultIframe = `<iframe
+const defaultIframe = flatstr(`<iframe
   allowfullscreen
   mozallowfullscreen="true"
   webkitallowfullscreen="true"
@@ -157,7 +158,7 @@ const defaultIframe = `<iframe
   style="border:0;"
   onmousewheel=""
   src="https://api.cappasity.com/api/player/{{ id }}/embedded?${defaultQS}&{{ extraQS }}"
-></iframe>`.replace(/\s+/g, ' ');
+></iframe>`.replace(/\s+/g, ' '));
 
 const getPlayerOpts = ({ uploadType }) => {
   const isImageModel = uploadType === CAPPASITY_IMAGE_MODEL;

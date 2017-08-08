@@ -1831,7 +1831,7 @@ flat@^2.0.1:
   dependencies:
     is-buffer "~1.1.2"
 
-flatstr@^1.0.4:
+flatstr@^1.0.4, flatstr@^1.0.5:
   version "1.0.5"
   resolved "https://registry.yarnpkg.com/flatstr/-/flatstr-1.0.5.tgz#5b451b08cbd48e2eac54a2bbe0bf46165aa14be3"
 
