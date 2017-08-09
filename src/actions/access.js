@@ -7,7 +7,7 @@ const {
   FILES_INDEX, FILES_INDEX_PUBLIC,
   FILES_DATA, FILES_OWNER_FIELD, FILES_PUBLIC_FIELD,
   FILES_DIRECT_ONLY_FIELD,
-} = require('../constant.js');
+} = require('../constant');
 
 function addToPublic(filename, data) {
   const { provider, redis } = this;

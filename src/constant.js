@@ -1,6 +1,6 @@
 const { HttpStatusError } = require('common-errors');
 
-module.exports = exports = {
+module.exports = exports = Object.setPrototypeOf({
   STATUS_PENDING: '1',
   STATUS_UPLOADED: '2',
   STATUS_PROCESSED: '3',
@@ -53,24 +53,23 @@ module.exports = exports = {
   FILES_TYPE_USER: 'user',
 
   // type map
-  TYPE_MAP: {
+  TYPE_MAP: Object.setPrototypeOf({
     'c-bin': '.bin.gz',
     'c-texture': '.jpeg',
     'c-preview': '.jpeg',
     'c-archive': '.zip',
     'c-pack': '.pack',
-  },
+  }, null),
 
   FILES_PLAYER_AUTORUN: 'autorun',
   FILES_PLAYER_CLOSEBUTTON: 'closebutton',
-  FILES_PLAYER_HIDECONTROLS: 'hidecontrols',
   FILES_PLAYER_LOGO: 'logo',
   FILES_PLAYER_HIDEFULLSCREEN: 'hidefullscreen',
 
   // errors
   FILE_MISSING_ERROR: new HttpStatusError(404, 'could not find associated data'),
   FILE_PROCESS_IN_PROGRESS_ERROR: new HttpStatusError(409, 'file is being processed'),
-};
+}, null);
 
 exports.FIELDS_TO_STRINGIFY = [
   exports.FILES_TAGS_FIELD,
@@ -80,11 +79,11 @@ exports.FIELDS_TO_STRINGIFY = [
 
 exports.CAPPASITY_3D_MODEL = 'model';
 exports.CAPPASITY_IMAGE_MODEL = 'simple';
-exports.CAPPASITY_TYPE_MAP = {
+exports.CAPPASITY_TYPE_MAP = Object.setPrototypeOf({
   'c-preview': 'preview',
   'c-texture': 'texture',
   'c-archive': 'archive',
   'c-bin': exports.CAPPASITY_3D_MODEL,
   'c-simple': exports.CAPPASITY_IMAGE_MODEL,
   'c-pack': exports.CAPPASITY_IMAGE_MODEL,
-};
+}, null);

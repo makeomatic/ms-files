@@ -4,26 +4,64 @@
 
 // example usage
 /*
-./bin/simple-upload.js --host="https://some.api.com" \
+./bin/simple-upload.js \
    -f ./test/fixtures/brulux01 \
    -p ./test/fixtures/brulux01/001.jpg \
    -n Brulux \
    -d "Brulux is the best ring for your future wife" \
-   -u "email@example.com" \
-   -x "somepassword"
+   -u "email@example.com"
 */
 const argv = require('yargs')
-  .describe('host', 'api host')
-  .describe('f', 'path to folder with models')
-  .describe('p', 'preview to this model')
-  .describe('n', 'model name')
-  .describe('d', 'model description')
-  .describe('u', 'username')
-  .describe('x', 'password')
-  .describe('reverse')
-  .boolean(['reverse'])
-  .demand(['host', 'f', 'p', 'n', 'd', 'u', 'x'])
-  .help('h')
+  .option('folder', {
+    alias: 'f',
+    description: 'path to folder with models',
+    demandOption: true,
+  })
+  .option('username', {
+    alias: 'u',
+    description: 'owner/username',
+    demandOption: true,
+  })
+  .option('preview', {
+    alias: 'p',
+    description: 'preview to this model',
+    demandOption: true,
+  })
+  .option('name', {
+    alias: 'n',
+    description: 'model name',
+    demandOption: true,
+  })
+  .option('description', {
+    alias: 'd',
+    description: 'model description',
+  })
+  .option('public', {
+    boolean: true,
+    default: false,
+    description: 'set upload to public',
+  })
+  .option('reverse', {
+    boolean: true,
+    default: false,
+    description: 'reverse order of images',
+  })
+  .option('exclude-preview', {
+    boolean: true,
+    default: false,
+    description: 'exclude preview if it is located in folder',
+  })
+  .option('report-finish', {
+    boolean: true,
+    default: true,
+    description: 'reports finish of uploading',
+  })
+  .option('confirm', {
+    boolean: true,
+    default: false,
+    description: 'confirm upload',
+  })
+  .help('help')
   .argv;
 
 // deps
@@ -33,18 +71,28 @@ const request = require('request-promise');
 const glob = require('glob');
 const md5 = require('md5');
 const path = require('path');
+const omit = require('lodash/omit');
+const AMQPTransport = require('@microfleet/transport-amqp');
+const config = require('../lib/config').get('/', { env: process.env.NODE_ENV });
 
-// JSON utility
-const parse = JSON.parse.bind(JSON);
+// AMQP adapter
+const amqpConfig = omit(config.amqp.transport, ['queue', 'listen', 'neck', 'onComplete']);
+const prefix = config.router.routes.prefix;
+const getTransport = () => {
+  console.info('establishing connection to amqp with %j', amqpConfig);
+  return AMQPTransport.connect(amqpConfig).disposer(amqp => amqp.close());
+};
 
 // prepare upload
-const readFile = type => (filepath) => {
+const readFile = _type => (filepath) => {
   const file = fs.readFileSync(filepath);
+  const ext = path.extname(filepath);
+  const type = _type || (ext === '.pack' ? 'c-pack' : 'c-simple');
 
   // meta data
   const meta = {
     type,
-    contentType: 'image/jpeg',
+    contentType: `image/${ext === '.pack' ? 'vnd.cappasity' : 'jpeg'}`,
     contentLength: file.length,
     md5Hash: md5(file).toString('hex'),
   };
@@ -58,111 +106,100 @@ const readFile = type => (filepath) => {
 };
 
 // paths
-const modelFiles = glob.sync(`${argv.f}/*.jpg`, { realpath: true });
 const previewFile = path.resolve(__dirname, '..', argv.p);
-
-console.info('resolved %d files', modelFiles.length);
+let modelFiles = glob.sync(`${argv.f}/*.{jpg,jpeg,pack}`, { realpath: true });
 
 if (argv.reverse) {
   console.info('reversing the array...');
   modelFiles.reverse();
 }
 
+if (argv.excludePreview) {
+  modelFiles = modelFiles.filter(it => (it !== previewFile));
+}
+
+console.info('resolved %d file(s)', modelFiles.length);
+
 // models
 const preview = readFile('c-preview')(previewFile);
-const images = modelFiles.map(readFile('c-simple'));
+const images = modelFiles.map(readFile());
 
 // message
 const uploadMessage = {
-  data: {
-    type: 'upload',
-    attributes: {
-      meta: {
-        name: argv.n,
-        description: argv.d,
-      },
-      access: {
-        setPublic: false,
-      },
-      uploadType: 'simple',
-      resumable: false,
-      temp: false,
-      unlisted: false,
-      files: [preview].concat(images),
-    },
+  username: argv.u,
+  meta: {
+    name: argv.n,
   },
+  access: {
+    setPublic: argv.public,
+  },
+  uploadType: 'simple',
+  resumable: false,
+  temp: false,
+  unlisted: false,
+  files: [preview].concat(images),
 };
 
-// perform requests
-const authenticate = () => {
-  const auth = {
-    method: 'post',
-    uri: `${argv.host}/api/users/login`,
-    headers: {
-      'content-type': 'application/vnd.api+json',
-    },
-    body: JSON.stringify({
-      data: {
-        id: argv.u,
-        type: 'user',
-        attributes: {
-          password: String(argv.x),
-        },
-      },
-    }),
-    gzip: true,
-  };
+// add description if needed
+if (argv.d) {
+  uploadMessage.meta.description = argv.d;
+}
 
-  return request(auth)
-    .then(parse)
-    .then(body => body.meta.jwt)
-    .tap(() => console.info('authenticated...'));
-};
-
-const uploadFile = (meta, idx) => {
-  process.stdout.write('.');
-
+/**
+ * Uploads File to GCS
+ */
+function uploadFile(meta, idx) {
   // upload file
-  const fileBuffer = uploadMessage.data.attributes.files[idx].file;
+  const fileBuffer = uploadMessage.files[idx].file;
   const headers = {
     'Content-MD5': meta.md5Hash,
     'Content-Type': meta.contentType,
   };
+
+  if (argv.public) {
+    headers['x-goog-acl'] = 'public-read';
+  }
 
   return request.put({
     uri: meta.location,
     body: fileBuffer,
     headers,
   });
-};
+}
 
-const uploadFiles = (jwt) => {
-  const upload = {
-    method: 'post',
-    uri: `${argv.host}/api/files`,
-    body: JSON.stringify(uploadMessage),
-    headers: {
-      authorization: `JWT ${jwt}`,
-      'content-type': 'application/vnd.api+json',
-    },
-    gzip: true,
-  };
+/**
+ * Reports success of upload
+ */
+function reportSuccess(meta) {
+  process.stdout.write('.');
+  return this
+    .publishAndWait(`${prefix}.finish`, { filename: meta.filename })
+    .catchReturn(e => [200, 202].indexOf(e.statusCode) >= 0, 'ok');
+}
 
-  return request(upload)
-    .then(parse)
-    .then((body) => {
-      console.info('prepared upload %s', body.data.id);
+/**
+ * Inits upload, sends stuff to GCS, reports finish
+ */
+const uploadFiles = amqp => (
+  amqp
+    .publishAndWait(`${prefix}.upload`, uploadMessage)
+    .then(data => Promise.props({
+      data,
+      uploadFiles: Promise
+        .bind(amqp, data.files)
+        .map(uploadFile, { concurrency: 20 })
+        .return(data.files)
+        .map(reportSuccess),
+    }))
+    .get('data')
+    .get('uploadId')
+    .then(id => console.info(`\n${id}`))
+);
 
-      const files = body.data.attributes.files;
-      return Promise
-        .map(files, uploadFile, { concurrency: 20 })
-        .return(body.data.id);
-    });
-};
-
-// authenticate & upload
-authenticate()
-  .then(uploadFiles).then((id) => {
-    return console.info(`Finished uploading id: ${id}`);
-  })
-  .catch(e => setImmediate(() => { throw e; }));
+if (argv.confirm) {
+  Promise.using(getTransport(), uploadFiles);
+} else {
+  // print upload message
+  console.info('Dry run, printing prepared message:\n\n');
+  console.info(require('util').inspect(uploadMessage, { depth: 5 }));
+}
