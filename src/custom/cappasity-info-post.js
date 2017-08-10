@@ -1,13 +1,13 @@
+// 1. для мешей старый вариант
+// 2. для всех 3д вью - ротэйт опции
+// 3. если 3двью имеет версию 4+ - добавляются зум опции
+
 const flatstr = require('flatstr');
+
 const {
   STATUS_PROCESSED,
   STATUS_PROCESSING,
   STATUS_FAILED,
-
-  FILES_PLAYER_AUTORUN,
-  FILES_PLAYER_CLOSEBUTTON,
-  FILES_PLAYER_HIDEFULLSCREEN,
-  FILES_PLAYER_LOGO,
 
   CAPPASITY_IMAGE_MODEL,
 } = require('../constant');
@@ -25,15 +25,37 @@ const getQueryString = params => (
   Object.keys(params).map(prepareTemplate).join('&')
 );
 
+// 1.x.x defaults to on
+const fullscreenControlOn = Object.setPrototypeOf({
+  hidefullscreen: {
+    type: 'boolean',
+    description: 'Hide fullscreen button',
+    default: 0,
+    disabled: false,
+    section: 'generic',
+  },
+}, null);
+
+// rest defaults to off
+const fullscreenControlOff = Object.setPrototypeOf({
+  hidefullscreen: {
+    type: 'boolean',
+    description: 'Hide fullscreen button',
+    default: 1,
+    disabled: true,
+    section: 'generic',
+  },
+}, null);
+
 // default options
-const defaultPlayerOpts = Object.setPrototypeOf({
-  [FILES_PLAYER_AUTORUN]: {
+const corePlayerOpts = Object.setPrototypeOf({
+  autorun: {
     type: 'boolean',
     default: 0,
     description: 'Auto-start player',
     section: 'generic',
   },
-  [FILES_PLAYER_CLOSEBUTTON]: {
+  closebutton: {
     type: 'boolean',
     default: 1,
     description: 'Show close button',
@@ -41,7 +63,7 @@ const defaultPlayerOpts = Object.setPrototypeOf({
     reqPlanLevel: 30,
     section: 'pro',
   },
-  [FILES_PLAYER_LOGO]: {
+  logo: {
     type: 'boolean',
     default: 1,
     description: 'Show logo',
@@ -49,26 +71,21 @@ const defaultPlayerOpts = Object.setPrototypeOf({
     reqPlanLevel: 20,
     section: 'generic',
   },
-  enableimagezoom: {
+}, null);
+
+// version 1.x.x - mesh
+const meshPlayerOpts = Object.setPrototypeOf({
+  hidecontrols: {
     type: 'boolean',
-    default: 1,
-    description: 'Enable Image Zoom',
+    description: 'Hide player controls',
+    default: 0,
     paid: true,
     reqPlanLevel: 30,
-    section: 'pro',
   },
-  zoomquality: {
-    type: 'integer',
-    default: 1,
-    enum: {
-      SD: 1,
-      HD: 2,
-    },
-    description: 'Force Quality Settings',
-    paid: true,
-    reqPlanLevel: 30,
-    section: 'pro',
-  },
+}, null);
+
+// version 2.x.x+ - rotation features
+const rotatePlayerOpts = Object.setPrototypeOf({
   autorotate: {
     type: 'boolean',
     default: 0,
@@ -107,14 +124,6 @@ const defaultPlayerOpts = Object.setPrototypeOf({
     reqPlanLevel: 30,
     section: 'pro',
   },
-  hidezoomopt: {
-    type: 'boolean',
-    default: 0,
-    description: 'Hide Zoom Option',
-    paid: true,
-    reqPlanLevel: 30,
-    section: 'pro',
-  },
   hideautorotateopt: {
     type: 'boolean',
     default: 0,
@@ -133,22 +142,61 @@ const defaultPlayerOpts = Object.setPrototypeOf({
   },
 }, null);
 
+// 4.x.x+ now
+const zoomPlayerOpts = Object.setPrototypeOf({
+  enableimagezoom: {
+    type: 'boolean',
+    default: 1,
+    description: 'Enable Image Zoom',
+    paid: true,
+    reqPlanLevel: 30,
+    section: 'pro',
+  },
+  zoomquality: {
+    type: 'integer',
+    default: 1,
+    enum: {
+      SD: 1,
+      HD: 2,
+    },
+    description: 'Force Quality Settings',
+    paid: true,
+    reqPlanLevel: 30,
+    section: 'pro',
+  },
+  hidezoomopt: {
+    type: 'boolean',
+    default: 0,
+    description: 'Hide Zoom Option',
+    paid: true,
+    reqPlanLevel: 30,
+    section: 'pro',
+  },
+}, null);
+
 const defaultWindowOptions = Object.setPrototypeOf({
   width: {
     type: 'string',
     default: '100%',
     description: 'Width of embedded window (px or %)',
+    section: 'size',
   },
   height: {
     type: 'string',
     default: '600px',
     description: 'Height of embedded window (px or %)',
+    section: 'size',
   },
 }, null);
 
-const defaultQS = getQueryString(defaultPlayerOpts);
+// prepare QS options
+const coreQS = getQueryString(corePlayerOpts);
+const meshQS = getQueryString(meshPlayerOpts);
+const rotateQS = getQueryString(rotatePlayerOpts);
+const zoomQS = getQueryString(zoomPlayerOpts);
 
-const defaultIframe = flatstr(`<iframe
+// common iframe code, lacks <id>
+const iframePre = flatstr(`<iframe
   allowfullscreen
   mozallowfullscreen="true"
   webkitallowfullscreen="true"
@@ -157,26 +205,82 @@ const defaultIframe = flatstr(`<iframe
   frameborder="0"
   style="border:0;"
   onmousewheel=""
-  src="https://api.cappasity.com/api/player/{{ id }}/embedded?${defaultQS}&{{ extraQS }}"
-></iframe>`.replace(/\s+/g, ' '));
+  src="https://api.cappasity.com/api/player/
+`.replace(/\s+/g, ' '));
 
-const getPlayerOpts = ({ uploadType }) => {
-  const isImageModel = uploadType === CAPPASITY_IMAGE_MODEL;
+// prepare options for 3 types of model - inserted after id
+const iframeMesh = flatstr(`/embedded?${coreQS}&${meshQS}"></iframe>`);
+const iframeRotate = flatstr(`/embedded?${coreQS}&${rotateQS}"></iframe>`);
+const iframeZoom = flatstr(`/embedded?${coreQS}&${rotateQS}&${zoomQS}"></iframe>`);
+
+// pregenerate option objects - 1.x.x
+const paramsMesh = Object.setPrototypeOf({
+  ...corePlayerOpts,
+  ...fullscreenControlOn,
+  ...meshPlayerOpts,
+  ...defaultWindowOptions,
+}, null);
+
+// >= 2.x.x
+const paramsRotate = Object.setPrototypeOf({
+  ...corePlayerOpts,
+  ...fullscreenControlOff,
+  ...rotatePlayerOpts,
+  ...defaultWindowOptions,
+}, null);
+
+// >= 4.x.x
+const paramsZoom = Object.setPrototypeOf({
+  ...corePlayerOpts,
+  ...fullscreenControlOff,
+  ...rotatePlayerOpts,
+  ...zoomPlayerOpts,
+  ...defaultWindowOptions,
+}, null);
+
+// quick-access selector
+const MESH_TYPE = Symbol('mesh');
+const ROTATE_TYPE = Symbol('rotate');
+const ZOOM_TYPE = Symbol('zoom');
+
+const selector = Object.setPrototypeOf({
+  [MESH_TYPE]: Object.setPrototypeOf({
+    qs: iframeMesh,
+    params: paramsMesh,
+  }, null),
+
+  [ROTATE_TYPE]: Object.setPrototypeOf({
+    qs: iframeRotate,
+    params: paramsRotate,
+  }, null),
+
+  [ZOOM_TYPE]: Object.setPrototypeOf({
+    qs: iframeZoom,
+    params: paramsZoom,
+  }, null),
+}, null);
+
+const is4 = version => /^4\./.test(version);
+const getPlayerOpts = (id, { uploadType, c_ver: modelVersion, packed }) => {
+  // if upload type isn't simple - means we have old mesh upload
+  // generally c_ver -> 1.x.x
+  // eslint-disable-next-line no-nested-ternary
+  const version = uploadType !== CAPPASITY_IMAGE_MODEL
+    ? MESH_TYPE
+    // if it's not a new .pack format -> it would be old images in 2.x.x format
+    // next one is 3.x.x with old packs, doesn't have zoom either
+    // and then 4.x.x is advanced packs, we don't want semver checks here for purpose of
+    : modelVersion === undefined || !packed || is4(modelVersion)
+      ? ROTATE_TYPE
+      : ZOOM_TYPE;
+
+  const data = selector[version];
+
   return {
-    [FILES_PLAYER_HIDEFULLSCREEN]: {
-      type: 'boolean',
-      description: 'Hide fullscreen button',
-      default: isImageModel ? 1 : 0,
-      disabled: isImageModel,
-    },
+    code: `${iframePre}${id}${data.qs}`,
+    params: data.params,
   };
 };
-
-const getEmbeddedCode = (id, qs) => (
-  defaultIframe
-    .replace('{{ id }}', id)
-    .replace('{{ extraQS }}', qs)
-);
 
 // cached allowed statuses
 const GREEN_LIGHT_STATUSES = Object.setPrototypeOf({
@@ -185,19 +289,14 @@ const GREEN_LIGHT_STATUSES = Object.setPrototypeOf({
   [STATUS_FAILED]: true,
 }, null);
 
+// Actual code that populates .embed from predefined data
 module.exports = function getEmbeddedInfo(file) {
-  const { uploadId: id, status } = file;
-
-  if (GREEN_LIGHT_STATUSES[status] === true) {
-    const dynamicOptions = getPlayerOpts(file);
+  if (GREEN_LIGHT_STATUSES[file.status] === true) {
+    const dynamicOptions = getPlayerOpts(file.uploadId, file);
 
     file.embed = {
-      code: getEmbeddedCode(id, getQueryString(dynamicOptions)),
-      params: {
-        ...defaultPlayerOpts,
-        ...dynamicOptions,
-        ...defaultWindowOptions,
-      },
+      code: dynamicOptions.code,
+      params: dynamicOptions.params,
     };
   }
 
