@@ -97,8 +97,9 @@ const rotatePlayerOpts = Object.setPrototypeOf({
   autorotatetime: {
     type: 'float',
     default: 10,
-    description: 'Full Rotation Time',
-    min: 0.1,
+    description: 'Full Rotation Time, seconds',
+    min: 2,
+    max: 60,
     paid: true,
     reqPlanLevel: 30,
     section: 'pro',
@@ -106,8 +107,9 @@ const rotatePlayerOpts = Object.setPrototypeOf({
   autorotatedelay: {
     type: 'float',
     default: 2,
-    description: 'Automatically Resume Rotation',
-    min: 0.1,
+    description: 'Automatically Resume Rotation, seconds',
+    min: 1,
+    max: 10,
     paid: true,
     reqPlanLevel: 30,
     section: 'pro',
