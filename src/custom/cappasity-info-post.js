@@ -25,35 +25,12 @@ const getQueryString = params => (
   Object.keys(params).map(prepareTemplate).join('&')
 );
 
-// 1.x.x defaults to on
-const fullscreenControlOn = Object.setPrototypeOf({
-  hidefullscreen: {
-    type: 'boolean',
-    description: 'Hide fullscreen button',
-    default: 0,
-    disabled: false,
-    section: 'generic',
-  },
-}, null);
-
-// rest defaults to off
-const fullscreenControlOff = Object.setPrototypeOf({
-  hidefullscreen: {
-    type: 'boolean',
-    description: 'Hide fullscreen button',
-    default: 1,
-    disabled: true,
-    section: 'generic',
-  },
-}, null);
-
 // default options
 const corePlayerOpts = Object.setPrototypeOf({
   autorun: {
     type: 'boolean',
     default: 0,
     description: 'Auto-start player',
-    section: 'generic',
   },
   closebutton: {
     type: 'boolean',
@@ -61,20 +38,24 @@ const corePlayerOpts = Object.setPrototypeOf({
     description: 'Show close button',
     paid: true,
     reqPlanLevel: 30,
-    section: 'pro',
   },
   logo: {
     type: 'boolean',
+    own: 0,
     default: 1,
     description: 'Show logo',
     paid: true,
     reqPlanLevel: 20,
-    section: 'generic',
   },
 }, null);
 
 // version 1.x.x - mesh
 const meshPlayerOpts = Object.setPrototypeOf({
+  hidefullscreen: {
+    type: 'boolean',
+    description: 'Hide fullscreen button',
+    default: 0,
+  },
   hidecontrols: {
     type: 'boolean',
     description: 'Hide player controls',
@@ -92,7 +73,6 @@ const rotatePlayerOpts = Object.setPrototypeOf({
     description: 'Autorotate 3D View',
     paid: true,
     reqPlanLevel: 30,
-    section: 'pro',
   },
   autorotatetime: {
     type: 'float',
@@ -102,7 +82,6 @@ const rotatePlayerOpts = Object.setPrototypeOf({
     max: 60,
     paid: true,
     reqPlanLevel: 30,
-    section: 'pro',
   },
   autorotatedelay: {
     type: 'float',
@@ -112,7 +91,6 @@ const rotatePlayerOpts = Object.setPrototypeOf({
     max: 10,
     paid: true,
     reqPlanLevel: 30,
-    section: 'pro',
   },
   autorotatedir: {
     type: 'integer',
@@ -124,23 +102,22 @@ const rotatePlayerOpts = Object.setPrototypeOf({
     },
     paid: true,
     reqPlanLevel: 30,
-    section: 'pro',
   },
   hideautorotateopt: {
     type: 'boolean',
-    default: 0,
+    own: 0,
+    default: 1,
     description: 'Hide Autorotate Option',
     paid: true,
     reqPlanLevel: 30,
-    section: 'pro',
   },
   hidesettingsbtn: {
     type: 'boolean',
-    default: 0,
+    own: 0,
+    default: 1,
     description: 'Hide Settings Button',
     paid: true,
     reqPlanLevel: 30,
-    section: 'pro',
   },
 }, null);
 
@@ -152,7 +129,6 @@ const zoomPlayerOpts = Object.setPrototypeOf({
     description: 'Enable Image Zoom',
     paid: true,
     reqPlanLevel: 30,
-    section: 'pro',
   },
   zoomquality: {
     type: 'integer',
@@ -164,15 +140,14 @@ const zoomPlayerOpts = Object.setPrototypeOf({
     description: 'Force Quality Settings',
     paid: true,
     reqPlanLevel: 30,
-    section: 'pro',
   },
   hidezoomopt: {
     type: 'boolean',
-    default: 0,
+    own: 0,
+    default: 1,
     description: 'Hide Zoom Option',
     paid: true,
     reqPlanLevel: 30,
-    section: 'pro',
   },
 }, null);
 
@@ -181,13 +156,11 @@ const defaultWindowOptions = Object.setPrototypeOf({
     type: 'string',
     default: '100%',
     description: 'Width of embedded window (px or %)',
-    section: 'size',
   },
   height: {
     type: 'string',
     default: '600px',
     description: 'Height of embedded window (px or %)',
-    section: 'size',
   },
 }, null);
 
@@ -218,7 +191,6 @@ const iframeZoom = flatstr(`/embedded?${coreQS}&${rotateQS}&${zoomQS}"></iframe>
 // pregenerate option objects - 1.x.x
 const paramsMesh = Object.setPrototypeOf({
   ...corePlayerOpts,
-  ...fullscreenControlOn,
   ...meshPlayerOpts,
   ...defaultWindowOptions,
 }, null);
@@ -226,7 +198,6 @@ const paramsMesh = Object.setPrototypeOf({
 // >= 2.x.x
 const paramsRotate = Object.setPrototypeOf({
   ...corePlayerOpts,
-  ...fullscreenControlOff,
   ...rotatePlayerOpts,
   ...defaultWindowOptions,
 }, null);
@@ -234,7 +205,6 @@ const paramsRotate = Object.setPrototypeOf({
 // >= 4.x.x
 const paramsZoom = Object.setPrototypeOf({
   ...corePlayerOpts,
-  ...fullscreenControlOff,
   ...rotatePlayerOpts,
   ...zoomPlayerOpts,
   ...defaultWindowOptions,
@@ -272,7 +242,7 @@ const getPlayerOpts = (id, { uploadType, c_ver: modelVersion, packed }) => {
     // if it's not a new .pack format -> it would be old images in 2.x.x format
     // next one is 3.x.x with old packs, doesn't have zoom either
     // and then 4.x.x is advanced packs, we don't want semver checks here for purpose of
-    : modelVersion === undefined || !packed || is4(modelVersion)
+    : modelVersion === undefined || !packed || is4(modelVersion) === false
       ? ROTATE_TYPE
       : ZOOM_TYPE;
 
