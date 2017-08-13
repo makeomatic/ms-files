@@ -39,7 +39,7 @@
     "dlock": "^6.4.0",
     "flatstr": "^1.0.5",
     "gcs-resumable-upload": "^0.8.1",
-    "ioredis": "^3.1.2",
+    "ioredis": "^3.1.4",
     "is": "^3.2.1",
     "jaeger-client": "^3.5.3",
     "lodash": "^4.17.3",
@@ -86,7 +86,7 @@
     "nyc": "^11.0.3",
     "rimraf": "^2.6.1",
     "semantic-release": "6.3.6",
-    "sinon": "^3.1.0"
+    "sinon": "^3.2.0"
   },
   "release": {
     "verifyConditions": "@makeomatic/condition-semaphore",
