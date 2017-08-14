@@ -103,6 +103,11 @@ const rotatePlayerOpts = Object.setPrototypeOf({
     paid: true,
     reqPlanLevel: 30,
   },
+  hidefullscreen: {
+    type: 'boolean',
+    description: 'Hide fullscreen button',
+    default: 1,
+  },
   hideautorotateopt: {
     type: 'boolean',
     own: 0,
