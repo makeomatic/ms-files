@@ -3774,9 +3774,9 @@ ms-perf@^1.0.1:
   dependencies:
     debug "^2.6.0"
 
-ms-validation@^6.0.0:
-  version "6.0.0"
-  resolved "https://registry.yarnpkg.com/ms-validation/-/ms-validation-6.0.0.tgz#c16e2325371d0d401b4ac6e10c36422745f671c8"
+ms-validation@^6.0.2:
+  version "6.0.2"
+  resolved "https://registry.yarnpkg.com/ms-validation/-/ms-validation-6.0.2.tgz#929e22901b3bc996660fb4a240423291560caa40"
   dependencies:
     ajv "^5.2.2"
     ajv-keywords "^2.1.0"
