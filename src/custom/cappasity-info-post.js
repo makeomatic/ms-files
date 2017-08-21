@@ -53,15 +53,8 @@ const corePlayerOpts = Object.setPrototypeOf({
 const meshPlayerOpts = Object.setPrototypeOf({
   hidefullscreen: {
     type: 'boolean',
-    description: 'Hide fullscreen button',
+    description: 'Hide fullscreen',
     default: 0,
-  },
-  hidecontrols: {
-    type: 'boolean',
-    description: 'Hide player controls',
-    default: 0,
-    paid: true,
-    reqPlanLevel: 30,
   },
 }, null);
 
@@ -77,7 +70,7 @@ const rotatePlayerOpts = Object.setPrototypeOf({
   autorotatetime: {
     type: 'float',
     default: 10,
-    description: 'Autorotate Time, seconds',
+    description: 'Autorotate time, seconds',
     min: 2,
     max: 60,
     paid: true,
@@ -86,7 +79,7 @@ const rotatePlayerOpts = Object.setPrototypeOf({
   autorotatedelay: {
     type: 'float',
     default: 2,
-    description: 'Autorotate Delay, seconds',
+    description: 'Autorotate delay, seconds',
     min: 1,
     max: 10,
     paid: true,
@@ -95,7 +88,7 @@ const rotatePlayerOpts = Object.setPrototypeOf({
   autorotatedir: {
     type: 'integer',
     default: 1,
-    description: 'Autorotate Direction',
+    description: 'Autorotate direction',
     enum: {
       clockwise: 1,
       'counter-clockwise': -1,
@@ -113,7 +106,7 @@ const rotatePlayerOpts = Object.setPrototypeOf({
     own: 0,
     default: 1,
     invert: true,
-    description: 'Autorotate Button',
+    description: 'Autorotate button',
     paid: true,
     reqPlanLevel: 30,
   },
@@ -121,7 +114,7 @@ const rotatePlayerOpts = Object.setPrototypeOf({
     type: 'boolean',
     own: 0,
     default: 1,
-    description: 'Settings Button',
+    description: 'Settings button',
     invert: true,
     paid: true,
     reqPlanLevel: 30,
@@ -133,7 +126,7 @@ const zoomPlayerOpts = Object.setPrototypeOf({
   enableimagezoom: {
     type: 'boolean',
     default: 1,
-    description: 'Enable Zoom',
+    description: 'Enable zoom',
     paid: true,
     reqPlanLevel: 30,
   },
@@ -144,7 +137,7 @@ const zoomPlayerOpts = Object.setPrototypeOf({
       SD: 1,
       HD: 2,
     },
-    description: 'Zoom Quality',
+    description: 'Zoom quality',
     paid: true,
     reqPlanLevel: 30,
   },
@@ -152,7 +145,7 @@ const zoomPlayerOpts = Object.setPrototypeOf({
     type: 'boolean',
     own: 0,
     default: 1,
-    description: 'Zoom Button',
+    description: 'Zoom button',
     paid: true,
     invert: true,
     reqPlanLevel: 30,
