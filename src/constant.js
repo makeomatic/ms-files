@@ -61,11 +61,6 @@ module.exports = exports = Object.setPrototypeOf({
     'c-pack': '.pack',
   }, null),
 
-  FILES_PLAYER_AUTORUN: 'autorun',
-  FILES_PLAYER_CLOSEBUTTON: 'closebutton',
-  FILES_PLAYER_LOGO: 'logo',
-  FILES_PLAYER_HIDEFULLSCREEN: 'hidefullscreen',
-
   // errors
   FILE_MISSING_ERROR: new HttpStatusError(404, 'could not find associated data'),
   FILE_PROCESS_IN_PROGRESS_ERROR: new HttpStatusError(409, 'file is being processed'),
