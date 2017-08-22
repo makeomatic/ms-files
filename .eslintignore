@@ -1,5 +1,3 @@
 lib/
 coverage/
 *.md
-# remove it
-test/backup
