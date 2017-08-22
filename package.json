@@ -4,7 +4,7 @@
   "main": "./lib/index.js",
   "version": "0.0.0-development",
   "scripts": {
-    "compile": "babel -d ./lib --copy-files ./src",
+    "compile": "rimraf ./lib && babel -d ./lib --copy-files ./src",
     "pretest": "npm run compile",
     "test": "rimraf ./coverage && npm run lint && npm run test:e2e -- -r 'grpc --update-binary'",
     "test:e2e": "mdep test run",
