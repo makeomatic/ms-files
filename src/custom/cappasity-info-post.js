@@ -3,7 +3,6 @@
 // 3. если 3двью имеет версию 4+ - добавляются зум опции
 
 const flatstr = require('flatstr');
-const conf = require('../config');
 
 const {
   STATUS_PROCESSED,
@@ -169,7 +168,6 @@ const coreQS = getQueryString(corePlayerOpts);
 const meshQS = getQueryString(meshPlayerOpts);
 const rotateQS = getQueryString(rotatePlayerOpts);
 const zoomQS = getQueryString(zoomPlayerOpts);
-const host = conf.get('/cpst-host') || 'cappasity.com';
 
 // common iframe code, lacks <id>
 const iframePre = flatstr(`<iframe
@@ -181,7 +179,7 @@ const iframePre = flatstr(`<iframe
   frameborder="0"
   style="border:0;"
   onmousewheel=""
-  src="https://api.${host}/api/player/`.replace(/\s+/g, ' ')
+  src="https://api`.replace(/\s+/g, ' ')
 );
 
 // prepare options for 3 types of model - inserted after id
@@ -234,7 +232,7 @@ const selector = Object.setPrototypeOf({
 }, null);
 
 const is4 = version => /^4\./.test(version);
-const getPlayerOpts = (id, { uploadType, c_ver: modelVersion, packed }) => {
+const getPlayerOpts = (host, id, { uploadType, c_ver: modelVersion, packed }) => {
   // if upload type isn't simple - means we have old mesh upload
   // generally c_ver -> 1.x.x
   // eslint-disable-next-line no-nested-ternary
@@ -250,7 +248,7 @@ const getPlayerOpts = (id, { uploadType, c_ver: modelVersion, packed }) => {
   const data = selector[version];
 
   return {
-    code: `${iframePre}${id}${data.qs}`,
+    code: `${iframePre}.${host}/api/player/${id}${data.qs}`,
     params: data.params,
   };
 };
@@ -265,7 +263,8 @@ const GREEN_LIGHT_STATUSES = Object.setPrototypeOf({
 // Actual code that populates .embed from predefined data
 module.exports = function getEmbeddedInfo(file) {
   if (GREEN_LIGHT_STATUSES[file.status] === true) {
-    const dynamicOptions = getPlayerOpts(file.uploadId, file);
+    const host = this._config['cpst-host'] || 'cappasity.com';
+    const dynamicOptions = getPlayerOpts(host, file.uploadId, file);
 
     file.embed = {
       code: dynamicOptions.code,
