@@ -3764,6 +3764,20 @@ ms-conf@^3.1.2:
     lodash.uniq "^4.5.0"
     nconf "^0.8.4"
 
+ms-conf@^3.2.0:
+  version "3.2.0"
+  resolved "https://registry.yarnpkg.com/ms-conf/-/ms-conf-3.2.0.tgz#54dedbeb64be32fe258bc9f97aaed98966a246c9"
+  dependencies:
+    camelcase "^4.1.0"
+    confidence "^3.0.2"
+    debug "^3.0.0"
+    dotenv "^4.0.0"
+    glob "^7.1.2"
+    lodash.merge "^4.6.0"
+    lodash.reduce "^4.6.0"
+    lodash.uniq "^4.5.0"
+    nconf "^0.8.4"
+
 ms-files-transport@^1.0.2:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/ms-files-transport/-/ms-files-transport-1.0.2.tgz#d827891e0bb6625822cf9f0b325acd80b4b18929"

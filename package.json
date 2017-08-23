@@ -46,7 +46,7 @@
     "md5": "^2.2.1",
     "mime-types": "^2.1.16",
     "moment": "^2.18.1",
-    "ms-conf": "^3.1.2",
+    "ms-conf": "^3.2.0",
     "ms-files-transport": "^1.0.2",
     "ms-perf": "^1.0.1",
     "ms-validation": "^6.0.2",
