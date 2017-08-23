@@ -112,8 +112,7 @@ const rotatePlayerOpts = Object.setPrototypeOf({
   },
   hidesettingsbtn: {
     type: 'boolean',
-    own: 0,
-    default: 1,
+    default: 0,
     description: 'Settings button',
     invert: true,
     paid: true,
@@ -143,8 +142,7 @@ const zoomPlayerOpts = Object.setPrototypeOf({
   },
   hidezoomopt: {
     type: 'boolean',
-    own: 0,
-    default: 1,
+    default: 0,
     description: 'Zoom button',
     paid: true,
     invert: true,
