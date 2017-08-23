@@ -3,6 +3,7 @@
 // 3. если 3двью имеет версию 4+ - добавляются зум опции
 
 const flatstr = require('flatstr');
+const conf = require('../config');
 
 const {
   STATUS_PROCESSED,
@@ -168,6 +169,7 @@ const coreQS = getQueryString(corePlayerOpts);
 const meshQS = getQueryString(meshPlayerOpts);
 const rotateQS = getQueryString(rotatePlayerOpts);
 const zoomQS = getQueryString(zoomPlayerOpts);
+const host = conf.get('/cpst-host') || 'cappasity.com';
 
 // common iframe code, lacks <id>
 const iframePre = flatstr(`<iframe
@@ -179,7 +181,7 @@ const iframePre = flatstr(`<iframe
   frameborder="0"
   style="border:0;"
   onmousewheel=""
-  src="https://api.cappasity.com/api/player/`.replace(/\s+/g, ' ')
+  src="https://api.${host}/api/player/`.replace(/\s+/g, ' ')
 );
 
 // prepare options for 3 types of model - inserted after id
