@@ -29,7 +29,7 @@
   "dependencies": {
     "@google-cloud/storage": "^1.2.1",
     "@microfleet/core": "^9.7.2",
-    "@microfleet/transport-amqp": "^12.2.1",
+    "@microfleet/transport-amqp": "^12.3.0",
     "bl": "^1.2.1",
     "bluebird": "^3.5.0",
     "bunyan": "^1.8.12",
@@ -44,9 +44,9 @@
     "jaeger-client": "^3.5.3",
     "lodash": "^4.17.3",
     "md5": "^2.2.1",
-    "mime-types": "^2.1.16",
+    "mime-types": "^2.1.17",
     "moment": "^2.18.1",
-    "ms-conf": "^3.1.2",
+    "ms-conf": "^3.2.0",
     "ms-files-transport": "^1.0.2",
     "ms-perf": "^1.0.1",
     "ms-validation": "^6.0.2",
@@ -61,10 +61,10 @@
     "yargs": "^8.0.2"
   },
   "optionalDependencies": {
-    "@google-cloud/pubsub": "^0.13.2"
+    "@google-cloud/pubsub": "^0.14.0"
   },
   "devDependencies": {
-    "@makeomatic/deploy": "^4.1.4",
+    "@makeomatic/deploy": "^4.1.5",
     "babel-cli": "^6.26.0",
     "babel-eslint": "^7.2.3",
     "babel-plugin-istanbul": "^4.1.4",
@@ -72,18 +72,18 @@
     "babel-plugin-transform-object-rest-spread": "^6.26.0",
     "babel-plugin-transform-strict-mode": "^6.24.1",
     "babel-register": "^6.26.0",
-    "chai": "^4.1.1",
+    "chai": "^4.1.2",
     "codecov": "^2.3.0",
     "cross-env": "^5.0.5",
     "cz-conventional-changelog": "^2.0.0",
-    "eslint": "^4.5.0",
+    "eslint": "^4.6.1",
     "eslint-config-makeomatic": "^1.1.0",
     "eslint-plugin-import": "^2.7.0",
     "eslint-plugin-promise": "^3.5.0",
     "faker": "^4.1.0",
     "json": "^9.0.6",
     "mocha": "^3.5.0",
-    "nyc": "^11.0.3",
+    "nyc": "^11.2.1",
     "rimraf": "^2.6.1",
     "semantic-release": "^7.0.2",
     "sinon": "^3.2.1"

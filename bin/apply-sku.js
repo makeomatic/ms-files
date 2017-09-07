@@ -9,6 +9,7 @@ const argv = require('yargs')
   .describe('user', 'user to scan')
   .describe('filter', 'regexp to filter names')
   .describe('confirm', 'whether to perform update or not, defaults to dry run')
+  .describe('overwrite', 'whether to overwrite SKU from older models or not')
   .boolean(['confirm'])
   .demand(['user'])
   .help('h')
@@ -42,6 +43,25 @@ const getTransport = () => {
   return AMQPTransport.connect(amqpConfig).disposer(amqp => amqp.close());
 };
 
+const removeSKU = (amqp, uploadId) => (
+  amqp.publishAndWait(`${prefix}.update`, { uploadId, username: argv.user, meta: { alias: '' } })
+);
+
+const getInfo = (amqp, filename) => (
+  amqp.publishAndWait(`${prefix}.info`, { filename, username: argv.user })
+);
+
+const isNewer = (amqp, newUploadId, existingUploadId) => (
+  Promise
+    .props({
+      newData: getInfo(newUploadId).get('file').get('startedAt'),
+      data: getInfo(existingUploadId).get('file').get('startedAt'),
+    })
+    .then(({ newData, data }) => (
+      newData - data > 0
+    ))
+);
+
 // perform update
 const performUpdate = (amqp, file) => {
   const { name, uploadId } = file;
@@ -61,6 +81,18 @@ const performUpdate = (amqp, file) => {
     .then(() => {
       console.log('set alias for %s to %s', uploadId, name);
       return null;
+    })
+    .catch({ statusCode: 409 }, (e) => {
+      if (argv.overwrite !== true) throw e;
+
+      console.warn('[warn] checking for overwrite %s for %s on %s', name, uploadId, e.data.uploadId);
+      return isNewer(uploadId, e.data.uploadId).then((yes) => {
+        // it's not newer, sorry
+        if (yes === false) throw e;
+
+        return removeSKU(amqp, e.data.uploadId)
+          .then(() => performUpdate(amqp, file));
+      });
     })
     .catch((e) => {
       console.warn('[warn] failed to set alias to %s for %s: %s', name, uploadId, e.message);
