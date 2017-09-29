@@ -1,3 +1,4 @@
+const Promise = require('bluebird');
 const { HttpStatusError } = require('common-errors');
 const { FILES_USR_ALIAS_PTR, FILES_OWNER_FIELD } = require('../constant.js');
 const identity = require('lodash/identity');
@@ -19,7 +20,9 @@ module.exports = function isAliasTaken(alias, customError) {
           if (customError) throw customError;
 
           // throw conflict error
-          throw new HttpStatusError(409, `Alias already taken by ${uploadId} on user ${owner}`);
+          const err = new HttpStatusError(409, `Alias already taken by ${uploadId} on user ${owner}`);
+          err.data = { uploadId, owner };
+          return Promise.reject(err);
         }
 
         return data;

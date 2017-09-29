@@ -18,7 +18,12 @@ module.exports = (binaryPath, extraArgs = []) => function exec(args = []) {
         return next(err);
       }
 
-      assert.equal(stderr, '');
+      try {
+        assert.equal(stderr, '');
+      } catch (e) {
+        return next(e);
+      }
+
       const lines = stdout.split('\n');
       return next(null, lines.slice(0, -1));
     })
