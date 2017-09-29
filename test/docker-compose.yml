@@ -7,12 +7,12 @@ services:
     image: makeomatic/redis-cluster:3.2.9
 
   rabbitmq:
-    image: makeomatic/rabbitmq:3.6.9
+    image: makeomatic/rabbitmq:3.6.12
     container_name: rabbitmq
     hostname: rabbitmq
 
   tester:
-    image: makeomatic/node:8.4.0-tester-glibc
+    image: makeomatic/node:8.5.0-tester-glibc
     links:
       - rabbitmq
       - redis
