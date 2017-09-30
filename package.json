@@ -64,7 +64,7 @@
     "@google-cloud/pubsub": "^0.14.0"
   },
   "devDependencies": {
-    "@makeomatic/deploy": "^4.1.6",
+    "@makeomatic/deploy": "^4.1.7",
     "babel-cli": "^6.26.0",
     "babel-eslint": "^8.0.1",
     "babel-plugin-istanbul": "^4.1.4",
