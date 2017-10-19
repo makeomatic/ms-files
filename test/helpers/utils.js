@@ -366,7 +366,7 @@ function stopService() {
     .map(service.redis.nodes('master'), node => node.flushdb())
     .finally(() => (
       Promise.map(service.providers, transport => Promise.fromNode(next => (
-        transport._bucket.deleteFiles({ force: true }, next)
+        transport._bucket ? transport._bucket.deleteFiles({ force: true }, next) : next()
       )))
     ))
     .finally(() => service.close().reflect())
