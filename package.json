@@ -58,7 +58,7 @@
     "spm-agent-nodejs": "^1.30.9",
     "stdout-stream": "^1.4.0",
     "uuid": "^3.1.0",
-    "yargs": "^9.0.1"
+    "yargs": "^10.0.3"
   },
   "optionalDependencies": {
     "@google-cloud/pubsub": "^0.14.5"
