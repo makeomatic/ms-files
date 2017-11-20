@@ -10,6 +10,7 @@ RUN \
   apk --update upgrade \
   && apk --update add git ca-certificates openssl g++ make python linux-headers \
   && yarn --production \
+  && npm rebuild grpc --build-from-source \
   && apk del \
     g++ \
     make \
