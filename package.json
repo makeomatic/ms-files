@@ -61,7 +61,7 @@
     "yargs": "^9.0.1"
   },
   "optionalDependencies": {
-    "@google-cloud/pubsub": "^0.14.5"
+    "@google-cloud/pubsub": "^0.15.0"
   },
   "devDependencies": {
     "@makeomatic/deploy": "^4.1.7",
