@@ -36,8 +36,8 @@ const corePlayerOpts = Object.setPrototypeOf({
     type: 'boolean',
     default: 1,
     description: 'Close button',
-    paid: true,
-    reqPlanLevel: 30,
+    // paid: false, <-- disabled as paid feature
+    // reqPlanLevel: 30,
   },
   logo: {
     type: 'boolean',
