@@ -1,8 +1,14 @@
 {
   "plugins": [
-    "transform-strict-mode",
-    "transform-class-properties",
+    ["transform-class-properties"],
     ["transform-object-rest-spread", { "useBuiltIns": true }]
+  ],
+  "presets": [
+    ["env", {
+      "targets": {
+        "node": "7.6.0"
+      }
+    }]
   ],
   "env": {
     "test": {

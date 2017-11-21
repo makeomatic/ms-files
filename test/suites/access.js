@@ -1,23 +1,23 @@
 const assert = require('assert');
 const uuid = require('uuid');
 
-// helpers
-const {
-  startService,
-  stopService,
-  inspectPromise,
-  owner,
-  modelData,
-  bindSend,
-  initAndUpload,
-  processUpload,
-  updateAccess,
-  downloadFile,
-} = require('../helpers/utils.js');
-
-const route = 'files.access';
-
 describe('access suite', function suite() {
+  // helpers
+  const {
+    startService,
+    stopService,
+    inspectPromise,
+    owner,
+    modelData,
+    bindSend,
+    initAndUpload,
+    processUpload,
+    updateAccess,
+    downloadFile,
+  } = require('../helpers/utils');
+
+  const route = 'files.access';
+
   // setup functions
   before('start service', startService);
 

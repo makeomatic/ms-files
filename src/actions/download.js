@@ -13,7 +13,14 @@ const THREE_HOURS = 1000 * 60 * 60 * 3;
 const extReplacer = /^[^.]+\.(.*)$/;
 const Extension = name => path.basename(name).replace(extReplacer, '$1');
 const PromptToSave = (counter, file, name) => {
-  const ext = Extension(file);
+  const originalExt = Extension(file);
+
+  // NOTE: safari filename fix for ignoring content-type
+  // when content-disposition is set
+  const ext = originalExt === 'bin.gz'
+    ? 'txt'
+    : originalExt;
+
   const val = (counter[ext] || 0) + 1;
   counter[ext] = val;
   return `${name}_${val}.${ext}`;
