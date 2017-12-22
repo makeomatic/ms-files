@@ -113,7 +113,7 @@ module.exports = function extractMetadata(params) {
 
       // calculate file types
       files.forEach((props) => {
-        const type = props.type;
+        const { type } = props;
 
         if (fileTypes[type] !== undefined) {
           fileTypes[type] += 1;

@@ -52,9 +52,7 @@ module.exports = function removeFile({ params }) {
     .then((data) => {
       // we do not track this
       cleanupFileProvider(data.files, provider, log)
-        .catch(e => log.fatal(
-          'failed to cleanup file provider for %s', filename, e
-        ));
+        .catch(e => log.fatal('failed to cleanup file provider for %s', filename, e));
 
       // cleanup local database
       const pipeline = redis.pipeline();

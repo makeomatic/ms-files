@@ -40,7 +40,9 @@ const retrieveContentLength = (redis, index, prefixLength) => (
  * @returns {Promise<[totalStorage: number, publicStorage: number]>}
  */
 const calculateStorage = (ctx) => {
-  const { redis, allFiles, publicFiles, prefixLength } = ctx;
+  const {
+    redis, allFiles, publicFiles, prefixLength,
+  } = ctx;
   return Promise.props({
     totalContentLength: retrieveContentLength(redis, allFiles, prefixLength),
     publicContentLength: retrieveContentLength(redis, publicFiles, prefixLength),
@@ -102,7 +104,7 @@ module.exports = function listFiles({ params }) {
 
       const allFiles = `${FILES_INDEX}:${username}`;
       const publicFiles = `${FILES_INDEX}:${username}:pub`;
-      const includeStorage = params.includeStorage;
+      const { includeStorage } = params;
       const prefixLength = config.redis.options.keyPrefix.length;
 
       const ctx = {

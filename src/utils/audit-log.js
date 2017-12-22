@@ -27,7 +27,7 @@ module.exports = [
 
       if (error) {
         const err = is.fn(error.toJSON) ? error.toJSON() : error.toString();
-        const statusCode = error.statusCode;
+        const { statusCode } = error;
 
         // determine error level
         let level = 'error';

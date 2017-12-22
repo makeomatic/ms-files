@@ -179,8 +179,7 @@ const iframePre = flatstr(`<iframe
   frameborder="0"
   style="border:0;"
   onmousewheel=""
-  src="https://api.cappasity.com/api/player/`.replace(/\s+/g, ' ')
-);
+  src="https://api.cappasity.com/api/player/`.replace(/\s+/g, ' '));
 
 // prepare options for 3 types of model - inserted after id
 const iframeMesh = flatstr(`/embedded?${coreQS}&${meshQS}"></iframe>`);

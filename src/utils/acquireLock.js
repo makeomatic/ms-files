@@ -2,15 +2,14 @@ const { MultiLockError } = require('dlock');
 const { HttpStatusError } = require('common-errors');
 
 function acquireLock(ctx, ...keys) {
-  const dlock = ctx.dlock;
-  const log = ctx.log;
+  const { dlock, log } = ctx;
 
   let acquire;
   let args;
 
   if (keys.length === 1) {
     acquire = dlock.once;
-    args = keys[0];
+    [args] = keys;
   } else {
     acquire = dlock.multi;
     args = keys;

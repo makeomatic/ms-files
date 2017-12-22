@@ -17,7 +17,9 @@ const {
  * Internal functions
  */
 function interstore(username) {
-  const { isPublic, temp, tags, redis } = this;
+  const {
+    isPublic, temp, tags, redis,
+  } = this;
   this.username = username;
 
   // choose which set to use
@@ -78,7 +80,9 @@ function interstore(username) {
  * Perform fetch from redis
  */
 function fetchFromRedis(filesIndex) {
-  const { criteria, order, strFilter, offset, limit, expiration } = this;
+  const {
+    criteria, order, strFilter, offset, limit, expiration,
+  } = this;
   return this.redis.fsort(filesIndex, `${FILES_DATA}:*`, criteria, order, strFilter, Date.now(), offset, limit, expiration);
 }
 
@@ -147,7 +151,9 @@ function truthy(_, idx) {
  * Prepares response
  */
 function prepareResponse(data) {
-  const { service, timer, offset, limit } = this;
+  const {
+    service, timer, offset, limit,
+  } = this;
   const { filenames, props, length } = data;
   const filteredFilenames = filenames.filter(truthy, props);
 
