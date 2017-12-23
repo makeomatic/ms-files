@@ -31,7 +31,7 @@ module.exports = [
 
         // determine error level
         let level = 'error';
-        if (statusCode && statusCode < 400 && statusCode !== 404) {
+        if (statusCode && (statusCode < 400 || statusCode === 404)) {
           level = 'warn';
         } else if (error.name === 'ValidationError') {
           level = 'warn';
