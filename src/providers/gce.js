@@ -347,8 +347,16 @@ module.exports = class GCETransport extends AbstractFileTransfer {
    */
   readFileStream(filename, opts = {}) {
     this.log.debug('initiating read of %s', filename);
+    const {
+      onError,
+      onResponse,
+      onData,
+      onEnd,
+      ..._opts
+    } = opts;
+
     const file = this.bucket.file(filename);
-    const stream = file.createReadStream({ start: opts.start || 0, end: opts.end || undefined });
+    const stream = file.createReadStream(_opts);
 
     // attach event handles if they are present
     ['onError', 'onResponse', 'onData', 'onEnd'].forEach((opt) => {
