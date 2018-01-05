@@ -36,7 +36,7 @@
     "bunyan-noop": "^2.0.0",
     "bunyan-sentry-stream": "^1.1.0",
     "common-errors": "^1.0.5",
-    "dlock": "^6.4.0",
+    "dlock": "^7.0.0",
     "flatstr": "^1.0.5",
     "gcs-resumable-upload": "^0.8.1",
     "ioredis": "^3.2.2",
