@@ -305,7 +305,7 @@ describe('update suite', function suite() {
       return initAndUpload(backgroundData, false).call(this)
         .then(downloadFile.bind(this))
         .then(({ urls }) => {
-          meta.backgroundImage = urls[0];
+          [meta.backgroundImage] = urls;
           return null;
         });
     });

@@ -1,5 +1,5 @@
 // cache env ref
-const env = process.env;
+const { env } = process;
 const sinon = require('sinon');
 const Promise = require('bluebird');
 const originalPredicate = require('../../src/configs/amqp').amqp.retry.predicate;

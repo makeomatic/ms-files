@@ -54,7 +54,7 @@ describe('upload suite', function suite() {
     });
 
     it('initiates upload and returns correct response format', function test() {
-      const message = modelData.message;
+      const { message } = modelData;
 
       return this
         .send(message, 45000)
@@ -98,7 +98,7 @@ describe('upload suite', function suite() {
     });
 
     it('possible to initial directOnly upload', function test() {
-      const message = modelData.message;
+      const { message } = modelData;
 
       return this
         .send({ ...message, directOnly: true }, 45000)
@@ -121,7 +121,7 @@ describe('upload suite', function suite() {
     });
 
     it('initiates public upload and returns correct response format', function test() {
-      const message = modelData.message;
+      const { message } = modelData;
 
       return this
         .send({
@@ -186,7 +186,7 @@ describe('upload suite', function suite() {
 
   describe('packed upload with post-action', function suitePacked() {
     const data = clone(simplePackedData);
-    const message = data.message;
+    const { message } = data;
     let response;
 
     it('rejects packed upload with invalid postAction', function test() {

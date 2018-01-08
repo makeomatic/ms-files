@@ -6,11 +6,10 @@
 
 /* eslint-disable no-console */
 
-const argv = require('yargs')
+const { argv } = require('yargs')
   .describe('confirm', 'init sync')
   .boolean(['confirm'])
-  .help('h')
-  .argv;
+  .help('h');
 
 // Deps
 const Promise = require('bluebird');
@@ -20,7 +19,7 @@ const config = require('../lib/config').get('/', { env: process.env.NODE_ENV });
 
 // Configuration
 const amqpConfig = omit(config.amqp.transport, ['queue', 'listen', 'neck', 'onComplete']);
-const prefix = config.router.routes.prefix;
+const { prefix } = config.router.routes;
 
 // App level code
 const getTransport = () => {

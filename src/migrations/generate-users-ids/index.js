@@ -5,7 +5,9 @@ const { FILES_INDEX, FILES_DATA } = require('../../constant');
 
 const getTransport = amqpConfig => AMQPTransport.connect(amqpConfig).disposer(amqp => amqp.close());
 
-function generateUsersIds({ amqp, config, redis, log }) {
+function generateUsersIds({
+  amqp, config, redis, log,
+}) {
   const resolvedUsers = new Map();
   const pipeline = redis.pipeline();
 
@@ -67,7 +69,9 @@ function migrate({ config, redis, log }) {
   return Promise
     .using(
       getTransport(amqpConfig),
-      amqp => generateUsersIds({ amqp, config, redis, log })
+      amqp => generateUsersIds({
+        amqp, config, redis, log,
+      })
     );
 }
 

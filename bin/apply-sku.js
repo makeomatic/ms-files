@@ -5,15 +5,14 @@
  */
 
 /* eslint-disable no-console */
-const argv = require('yargs')
+const { argv } = require('yargs')
   .describe('user', 'user to scan')
   .describe('filter', 'regexp to filter names')
   .describe('confirm', 'whether to perform update or not, defaults to dry run')
   .describe('overwrite', 'whether to overwrite SKU from older models or not')
   .boolean(['confirm'])
   .demand(['user'])
-  .help('h')
-  .argv;
+  .help('h');
 
 // Deps
 const Promise = require('bluebird');
@@ -23,7 +22,7 @@ const config = require('../lib/config').get('/', { env: process.env.NODE_ENV });
 
 // Configuration
 const amqpConfig = omit(config.amqp.transport, ['queue', 'listen', 'neck', 'onComplete']);
-const prefix = config.router.routes.prefix;
+const { prefix } = config.router.routes;
 const filter = argv.filter && new RegExp(argv.filter);
 const iterator = {
   offset: 0,
@@ -64,8 +63,10 @@ const isNewer = (amqp, newUploadId, existingUploadId) => (
       const isNew = newData - data > 0;
 
       if (isNew === false) {
-        console.info('[warn] overwrite failed: %s older than %s - [%s / %s] by %s',
-          newUploadId, existingUploadId, newData, data, newData - data);
+        console.info(
+          '[warn] overwrite failed: %s older than %s - [%s / %s] by %s',
+          newUploadId, existingUploadId, newData, data, newData - data
+        );
       }
 
       return isNew;
