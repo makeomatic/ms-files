@@ -15,17 +15,25 @@ const filter = fsort.filter({ status: { eq: STATUS_PENDING } });
  * @return {Promise}
  */
 function iterateOverUploadedFiles(lock, opts = {}) {
-  const { amqp, redis, provider, config: { uploadTTL, router } } = this;
+  const {
+    amqp, redis, provider, config: { uploadTTL, router },
+  } = this;
   const { offset = 0, limit = 10 } = opts;
   const route = `${router.routes.prefix}.finish`;
 
   return Promise
-    .bind(this, { params: { offset, limit, filter, temp: true, expiration: 10000 } })
+    .bind(this, {
+      params: {
+        offset, limit, filter, temp: true, expiration: 10000,
+      },
+    })
     .tap(() => lock.extend())
     .then(list)
     .then((data) => {
       // we resolved files, now iterate over them
-      const { files, cursor, page, pages } = data;
+      const {
+        files, cursor, page, pages,
+      } = data;
 
       // found files
       this.log.debug('found files ~ %d/%d/%d', cursor, page, pages);

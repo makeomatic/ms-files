@@ -1,15 +1,15 @@
 const path = require('path');
-const routerExtension = require('@microfleet/core').routerExtension;
+const { routerExtension, ActionTransport } = require('@microfleet/core');
 
 const autoSchema = routerExtension('validate/schemaLessAction');
-const auditLog = routerExtension('audit/log');
+const auditLog = require('../utils/audit-log');
 
 exports.router = {
   routes: {
     directory: path.resolve(__dirname, '../actions'),
     prefix: 'files',
     setTransportsAsDefault: true,
-    transports: ['amqp'],
+    transports: [ActionTransport.amqp],
   },
   extensions: {
     enabled: ['postRequest', 'preRequest', 'preResponse'],

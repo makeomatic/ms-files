@@ -116,7 +116,7 @@ class Files extends Mservice {
    * @return {Promise}
    */
   handleUploadNotification(message) {
-    const prefix = this.config.router.routes.prefix;
+    const { prefix } = this.config.router.routes;
     return this.router
       .dispatch(`${prefix}.finish`, {
         headers: {},

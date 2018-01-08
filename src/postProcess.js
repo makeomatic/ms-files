@@ -7,7 +7,7 @@ const { STATUS_UPLOADED, FILES_OWNER_FIELD } = require('./constant.js');
  * @return {Promise}
  */
 module.exports = function postProcess(offset = 0, uploadedAt) {
-  const prefix = this.config.router.routes.prefix;
+  const { prefix } = this.config.router.routes;
   const filter = {
     status: {
       eq: STATUS_UPLOADED,
@@ -27,7 +27,9 @@ module.exports = function postProcess(offset = 0, uploadedAt) {
       method: 'amqp',
     })
     .then((data) => {
-      const { files, cursor, page, pages } = data;
+      const {
+        files, cursor, page, pages,
+      } = data;
 
       return Promise.resolve(files).mapSeries(file => (
         // make sure to call reflect so that we do not interrupt the procedure

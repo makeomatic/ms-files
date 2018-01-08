@@ -46,8 +46,8 @@ const AlreadyProcessedError = new HttpStatusError(200, '412: upload was already 
 module.exports = function completeFileUpload({ params }) {
   const { filename } = params;
   const { redis, config, amqp } = this;
+  const { prefix } = config.router.routes;
   const uploadPartKey = `${UPLOAD_DATA}:${filename}`;
-  const prefix = config.router.routes.prefix;
 
   return Promise
     .bind(this, uploadPartKey)
@@ -75,7 +75,9 @@ module.exports = function completeFileUpload({ params }) {
     })
     .catchThrow({ message: '409' }, AlreadyProcessedError)
     .then((data) => {
-      const { uploadId, uploadKey, update, postActionKey } = data;
+      const {
+        uploadId, uploadKey, update, postActionKey,
+      } = data;
       const [parts, currentParts, postAction] = update;
 
       // destructure array

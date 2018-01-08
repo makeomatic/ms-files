@@ -142,14 +142,14 @@ module.exports = class GCETransport extends AbstractFileTransfer {
     assert(this._pubsub, '@google-cloud/pubsub not initialized');
 
     // extract config
-    const pubsub = this._config.bucket.channel.pubsub;
+    const { pubsub } = this._config.bucket.channel;
 
     assert(pubsub, 'to subscribe must specify pubsub topic via `pubsub.topic`');
     assert(pubsub.topic, 'to subscribe must specify pubsub topic via `pubsub.topic`');
     assert(pubsub.name, 'must contain a name for proper round-robin distribution');
 
     const Pubsub = this._pubsub;
-    const name = pubsub.name;
+    const { name } = pubsub;
     const config = ld.defaults(pubsub.config || {}, {
       autoAck: false,
       timeout: 5000,
@@ -290,7 +290,9 @@ module.exports = class GCETransport extends AbstractFileTransfer {
   createSignedURL(opts) {
     this.log.debug('initiating signing of URL for %s', opts.resource);
     const { cname } = this;
-    const { action, md5, type, expires, extensionHeaders, resource, ...props } = opts;
+    const {
+      action, md5, type, expires, extensionHeaders, resource, ...props
+    } = opts;
 
     const file = this.bucket.file(resource);
     return file.getSignedUrlAsync({
@@ -316,7 +318,9 @@ module.exports = class GCETransport extends AbstractFileTransfer {
    * @return {Promise}
    */
   initResumableUpload(opts) {
-    const { filename, metadata, generation, ...props } = opts;
+    const {
+      filename, metadata, generation, ...props
+    } = opts;
     this.log.debug('initiating resumable upload of %s', filename);
     const upload = new ResumableUpload({
       ...props,
@@ -343,8 +347,16 @@ module.exports = class GCETransport extends AbstractFileTransfer {
    */
   readFileStream(filename, opts = {}) {
     this.log.debug('initiating read of %s', filename);
+    const {
+      onError,
+      onResponse,
+      onData,
+      onEnd,
+      ..._opts
+    } = opts;
+
     const file = this.bucket.file(filename);
-    const stream = file.createReadStream({ start: opts.start || 0, end: opts.end || undefined });
+    const stream = file.createReadStream(_opts);
 
     // attach event handles if they are present
     ['onError', 'onResponse', 'onData', 'onEnd'].forEach((opt) => {

@@ -62,8 +62,7 @@ function bustCache(redis, file, wait = false) {
 
   const indicies = getIndiciesList(file);
   const pipeline = Promise.map(indicies, index =>
-    redis.fsortBust(index, now)
-  );
+    redis.fsortBust(index, now));
 
   if (wait) {
     return pipeline;

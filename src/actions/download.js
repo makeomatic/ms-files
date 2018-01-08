@@ -52,7 +52,9 @@ const sign = (provider, files, name, expire) => {
  * @return {Promise}
  */
 module.exports = function getDownloadURL({ params }) {
-  const { uploadId, username, rename, types } = params;
+  const {
+    uploadId, username, rename, types,
+  } = params;
   const key = `${FILES_DATA}:${uploadId}`;
 
   return Promise
@@ -96,7 +98,9 @@ module.exports = function getDownloadURL({ params }) {
       }
 
       return Promise
-        .props({ uploadId, name, files, urls, username: alias })
+        .props({
+          uploadId, name, files, urls, username: alias,
+        })
         .tap(output => this.hook.call(this, 'files:download:post', data, output));
     });
 };

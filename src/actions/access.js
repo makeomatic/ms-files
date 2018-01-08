@@ -60,8 +60,7 @@ function removeFromPublic(filename, data) {
         .srem(index, filename)
         .srem(FILES_INDEX_PUBLIC, filename)
         .hdel(id, FILES_PUBLIC_FIELD)
-        .exec()
-    );
+        .exec());
 }
 
 module.exports = function adjustAccess({ params }) {

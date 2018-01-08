@@ -15,7 +15,7 @@ const fetchDataScript = fs.readFileSync(`${__dirname}/../../lua/fetchData.lua`, 
 const missingError = e => /404/.test(e.message);
 const STRINGIFY_FIELDS = zipObject(FIELDS_TO_STRINGIFY);
 const JSON_FIELDS = zipObject([FILES_TAGS_FIELD, 'files']);
-const hasOwnProperty = Object.prototype.hasOwnProperty;
+const { hasOwnProperty } = Object.prototype;
 
 /**
  * Remaps & json-parses some of the fields
@@ -88,7 +88,7 @@ module.exports = function fetchData(key, omitFields = []) {
 
 module.exports.batch = function fetchDataBatch(keys, omitFields = []) {
   const timer = perf('fetchData:batch');
-  const redis = this.redis;
+  const { redis } = this;
 
   // this must include {}
   const prefix = redis.options.keyPrefix;

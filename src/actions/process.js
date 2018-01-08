@@ -27,15 +27,15 @@ const hasAccess = require('../utils/hasAccess');
  */
 module.exports = function postProcessFile({ params }) {
   const { uploadId, username, awaitPostActions } = params;
+  const { maxTries } = this.config;
   const key = `${FILES_DATA}:${uploadId}`;
-  const maxTries = this.config.maxTries;
 
   return Promise
     .bind(this, key)
     .then(fetchData)
     .then(hasAccess(username))
     .then((data) => {
-      const status = data.status;
+      const { status } = data;
       const exportSettings = params.export || data.export;
 
       if (exportSettings) {
@@ -61,7 +61,7 @@ module.exports = function postProcessFile({ params }) {
     })
     .spread(postProcess)
     .tap((data) => {
-      const prefix = this.config.router.routes.prefix;
+      const { prefix } = this.config.router.routes;
       const postActionKey = `${FILES_POST_ACTION}:${uploadId}`;
 
       // check if we have post actions and perform them
