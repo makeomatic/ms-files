@@ -11,7 +11,7 @@
    -d "Brulux is the best ring for your future wife" \
    -u "email@example.com"
 */
-const argv = require('yargs')
+const { argv } = require('yargs')
   .option('folder', {
     alias: 'f',
     description: 'path to folder with models',
@@ -61,8 +61,7 @@ const argv = require('yargs')
     default: false,
     description: 'confirm upload',
   })
-  .help('help')
-  .argv;
+  .help('help');
 
 // deps
 const Promise = require('bluebird');
@@ -77,7 +76,7 @@ const config = require('../lib/config').get('/', { env: process.env.NODE_ENV });
 
 // AMQP adapter
 const amqpConfig = omit(config.amqp.transport, ['queue', 'listen', 'neck', 'onComplete']);
-const prefix = config.router.routes.prefix;
+const { prefix } = config.router.routes;
 const getTransport = () => {
   console.info('establishing connection to amqp with %j', amqpConfig);
   return AMQPTransport.connect(amqpConfig).disposer(amqp => amqp.close());

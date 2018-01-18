@@ -5,15 +5,15 @@
   "version": "0.0.0-development",
   "scripts": {
     "compile": "babel -d ./lib --copy-files ./src",
-    "pretest": "npm run compile",
-    "test": "rimraf ./coverage && yarn run lint && yarn run test:e2e -r 'grpc --build-from-source'",
+    "pretest": "yarn compile",
+    "test": "rimraf ./coverage && yarn lint && yarn test:e2e",
     "test:e2e": "mdep test run",
     "start": "mfleet",
     "lint": "eslint ./src",
-    "prepublishOnly": "npm run compile",
-    "semantic-release": "semantic-release pre && npm publish && semantic-release post",
+    "prepublishOnly": "yarn compile",
+    "semantic-release": "semantic-release",
     "docker-release": "mdep docker release",
-    "release": "yarn && npm run semantic-release && npm run docker-release",
+    "release": "yarn && yarn semantic-release && yarn docker-release",
     "commit": "simple-commit-message"
   },
   "repository": {
@@ -27,18 +27,18 @@
   },
   "homepage": "https://github.com/makeomatic/ms-files#readme",
   "dependencies": {
-    "@google-cloud/storage": "^1.5.1",
-    "@microfleet/core": "^10.1.2",
-    "@microfleet/transport-amqp": "^12.3.2",
+    "@google-cloud/storage": "^1.5.2",
+    "@microfleet/core": "^10.2.2",
+    "@microfleet/transport-amqp": "^13.0.1",
     "bl": "^1.2.1",
     "bluebird": "^3.5.1",
     "bunyan": "^1.8.12",
     "bunyan-noop": "^2.0.0",
     "bunyan-sentry-stream": "^1.1.0",
     "common-errors": "^1.0.5",
-    "dlock": "^6.4.0",
+    "dlock": "^8.0.0",
     "flatstr": "^1.0.5",
-    "gcs-resumable-upload": "^0.8.1",
+    "gcs-resumable-upload": "^0.9.0",
     "ioredis": "^3.2.2",
     "is": "^3.2.1",
     "jaeger-client": "^3.7.0",
@@ -57,16 +57,16 @@
     "request-promise": "^4.2.1",
     "spm-agent-nodejs": "^1.30.9",
     "stdout-stream": "^1.4.0",
-    "uuid": "^3.1.0",
-    "yargs": "^10.0.3"
+    "uuid": "^3.2.1",
+    "yargs": "^10.1.1"
   },
   "optionalDependencies": {
-    "@google-cloud/pubsub": "^0.16.1"
+    "@google-cloud/pubsub": "^0.16.2"
   },
   "devDependencies": {
-    "@makeomatic/deploy": "^4.1.9",
+    "@makeomatic/deploy": "^5.0.2",
     "babel-cli": "^6.26.0",
-    "babel-eslint": "^8.0.3",
+    "babel-eslint": "^8.2.1",
     "babel-plugin-istanbul": "^4.1.4",
     "babel-plugin-transform-class-properties": "^6.24.1",
     "babel-plugin-transform-object-rest-spread": "^6.26.0",
@@ -75,43 +75,24 @@
     "chai": "^4.1.2",
     "codecov": "^3.0.0",
     "cross-env": "^5.1.3",
-    "cz-conventional-changelog": "^2.1.0",
-    "eslint": "^4.14.0",
+    "eslint": "^4.15.0",
     "eslint-config-makeomatic": "^2.0.1",
     "eslint-plugin-import": "^2.8.0",
     "eslint-plugin-promise": "^3.6.0",
     "faker": "^4.1.0",
     "json": "^9.0.6",
-    "mocha": "^4.0.1",
+    "mocha": "^5.0.0",
     "nyc": "^11.4.1",
     "rimraf": "^2.6.1",
-    "semantic-release": "^8.2.0",
-    "sinon": "^4.1.3"
-  },
-  "release": {
-    "verifyConditions": "@makeomatic/condition-semaphore",
-    "generateNotes": "github-post-release",
-    "analyzeCommits": "simple-commit-message",
-    "branch": "master",
-    "getLastRelease": "@makeomatic/last-release-npm"
+    "sinon": "^4.1.6"
   },
   "resolutions": {
     "google-auth-library": "^0.12.0",
     "@google-cloud/common": "^0.15.1",
-    "google-gax": "0.14.2"
-  },
-  "config": {
-    "pre-git": {
-      "commit-msg": "simple",
-      "pre-commit": [],
-      "pre-push": [],
-      "post-commit": [],
-      "post-checkout": [],
-      "post-merge": []
-    }
+    "google-gax": "0.14.3"
   },
   "engines": {
-    "node": ">= 7.6.0",
-    "npm": ">= 3.0.0"
+    "node": ">= 8.9.0",
+    "npm": ">= 4.0.0"
   }
 }
