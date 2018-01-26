@@ -1,7 +1,7 @@
 const AMQPTransport = require('@microfleet/transport-amqp');
 const omit = require('lodash/omit');
 const Promise = require('bluebird');
-const { FILES_INDEX, FILES_DATA } = require('../../constant');
+const { FILES_INDEX, FILES_DATA, FILES_USR_ALIAS_PTR } = require('../../constant');
 
 const getTransport = amqpConfig => AMQPTransport.connect(amqpConfig).disposer(amqp => amqp.close());
 
@@ -57,6 +57,7 @@ function generateUsersIds({
       log.info('rename', owner, 'to', id);
       pipeline.rename(`${FILES_INDEX}:${owner}`, `${FILES_INDEX}:${id}`);
       pipeline.rename(`${FILES_INDEX}:${owner}:pub`, `${FILES_INDEX}:${id}:pub`);
+      pipeline.rename(`${FILES_USR_ALIAS_PTR}:${owner}`, `${FILES_USR_ALIAS_PTR}:${id}`);
     })
     .then(() => pipeline.exec())
     .then(() => log.info('that\'s all folks'))
