@@ -9,6 +9,6 @@ module.exports = function extractMetadata(alias) {
 
   // aliases can't change unless they are deleted, so just cache them internally
   return amqp
-    .publishAndWait(route, { username: alias, fields: ['username'] }, { timeout: 5000, cache: 60000 })
-    .get('username');
+    .publishAndWait(route, { username: alias, fields: ['id'] }, { timeout: 5000, cache: 60000 })
+    .get('id');
 };

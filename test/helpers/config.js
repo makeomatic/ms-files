@@ -1,5 +1,5 @@
 // cache env ref
-const env = process.env;
+const { env } = process;
 const sinon = require('sinon');
 const Promise = require('bluebird');
 const originalPredicate = require('../../src/configs/amqp').amqp.retry.predicate;
@@ -103,4 +103,8 @@ module.exports.enablePubsub = function enablePubsub() {
 
 module.exports.disablePubsub = function disablePubsub() {
   module.exports.transport[0].options.bucket.channel = null;
+};
+
+module.exports.migrations = {
+  enabled: false,
 };

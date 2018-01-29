@@ -1,4 +1,7 @@
 {
+  "rules": {
+    "promise/always-return": 0
+  },
   "env": {
     "mocha": true
   }

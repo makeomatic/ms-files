@@ -79,17 +79,17 @@ describe('update suite', function suite() {
         filename: this.response.uploadId,
         username,
       })
-      .reflect()
-      .then(inspectPromise())
-      .then((result) => {
-        assert.equal(result.username, username);
-        assert.equal(result.file.uploadId, this.response.uploadId);
-        assert.equal(result.file.name, meta.name);
-        assert.equal(result.file.description, meta.description);
-        assert.equal(result.file.website, meta.website);
-        assert.deepEqual(result.file.tags, meta.tags);
-        return null;
-      });
+        .reflect()
+        .then(inspectPromise())
+        .then((result) => {
+          assert.equal(result.username, username);
+          assert.equal(result.file.uploadId, this.response.uploadId);
+          assert.equal(result.file.name, meta.name);
+          assert.equal(result.file.description, meta.description);
+          assert.equal(result.file.website, meta.website);
+          assert.deepEqual(result.file.tags, meta.tags);
+          return null;
+        });
     });
   });
 
@@ -106,10 +106,10 @@ describe('update suite', function suite() {
             filename: 'sku',
             username,
           })
-          .tap((verifyResult) => {
-            assert.equal(verifyResult.file.alias, 'sku');
-            assert.equal(verifyResult.file.uploadId, this.response.uploadId);
-          });
+            .tap((verifyResult) => {
+              assert.equal(verifyResult.file.alias, 'sku');
+              assert.equal(verifyResult.file.uploadId, this.response.uploadId);
+            });
         });
     });
 
@@ -140,10 +140,10 @@ describe('update suite', function suite() {
             filename: 'skubidoo',
             username,
           })
-          .tap((verifyResult) => {
-            assert.equal(verifyResult.file.alias, 'skubidoo');
-            assert.equal(verifyResult.file.uploadId, this.response.uploadId);
-          });
+            .tap((verifyResult) => {
+              assert.equal(verifyResult.file.alias, 'skubidoo');
+              assert.equal(verifyResult.file.uploadId, this.response.uploadId);
+            });
         });
     });
 
@@ -161,11 +161,11 @@ describe('update suite', function suite() {
             filename: 'skubidoo',
             username,
           })
-          .reflect()
-          .then(inspectPromise(false))
-          .tap((error) => {
-            assert.equal(error.statusCode, 404);
-          });
+            .reflect()
+            .then(inspectPromise(false))
+            .tap((error) => {
+              assert.equal(error.statusCode, 404);
+            });
         });
     });
 
@@ -183,10 +183,10 @@ describe('update suite', function suite() {
             filename: 'skubidoo',
             username,
           })
-          .tap((verifyResult) => {
-            assert.equal(verifyResult.file.alias, 'skubidoo');
-            assert.equal(verifyResult.file.uploadId, this.response.uploadId);
-          });
+            .tap((verifyResult) => {
+              assert.equal(verifyResult.file.alias, 'skubidoo');
+              assert.equal(verifyResult.file.uploadId, this.response.uploadId);
+            });
         });
     });
   });
@@ -206,9 +206,9 @@ describe('update suite', function suite() {
             filename: this.response.uploadId,
             username,
           })
-          .tap((verifyResult) => {
-            assert.deepEqual(verifyResult.file.tags, meta.tags);
-          });
+            .tap((verifyResult) => {
+              assert.deepEqual(verifyResult.file.tags, meta.tags);
+            });
         });
     });
 
@@ -226,9 +226,9 @@ describe('update suite', function suite() {
             filename: this.response.uploadId,
             username,
           })
-          .tap((verifyResult) => {
-            assert.equal(verifyResult.file.backgroundColor, meta.backgroundColor);
-          });
+            .tap((verifyResult) => {
+              assert.equal(verifyResult.file.backgroundColor, meta.backgroundColor);
+            });
         });
     });
   });
@@ -239,14 +239,14 @@ describe('update suite', function suite() {
         public: true,
         username,
       })
-      .reflect()
-      .then(inspectPromise())
-      .get('files')
-      .then((response) => {
-        const directUpload = response.find(it => it.id === this.response.uploadId);
-        assert.ok(directUpload, 'upload was not found');
-        return null;
-      });
+        .reflect()
+        .then(inspectPromise())
+        .get('files')
+        .then((response) => {
+          const directUpload = response.find(it => it.id === this.response.uploadId);
+          assert.ok(directUpload, 'upload was not found');
+          return null;
+        });
     });
 
     it('update and set it to directOnly', function test() {
@@ -255,8 +255,8 @@ describe('update suite', function suite() {
         uploadId: this.response.uploadId,
         directOnly: true,
       })
-      .reflect()
-      .then(inspectPromise());
+        .reflect()
+        .then(inspectPromise());
     });
 
     it('does not return direct from a public list', function test() {
@@ -264,14 +264,14 @@ describe('update suite', function suite() {
         public: true,
         username,
       })
-      .reflect()
-      .then(inspectPromise())
-      .get('files')
-      .then((response) => {
-        const directUpload = response.find(it => it.id === this.response.uploadId);
-        assert.ifError(directUpload, 'direct upload was returned from public list');
-        return null;
-      });
+        .reflect()
+        .then(inspectPromise())
+        .get('files')
+        .then((response) => {
+          const directUpload = response.find(it => it.id === this.response.uploadId);
+          assert.ifError(directUpload, 'direct upload was returned from public list');
+          return null;
+        });
     });
 
     it('update and set it back to default', function test() {
@@ -280,8 +280,8 @@ describe('update suite', function suite() {
         uploadId: this.response.uploadId,
         directOnly: false,
       })
-      .reflect()
-      .then(inspectPromise());
+        .reflect()
+        .then(inspectPromise());
     });
 
     it('returns public from a list once again', function test() {
@@ -289,14 +289,14 @@ describe('update suite', function suite() {
         public: true,
         username,
       })
-      .reflect()
-      .then(inspectPromise())
-      .get('files')
-      .then((response) => {
-        const directUpload = response.find(it => it.id === this.response.uploadId);
-        assert.ok(directUpload, 'upload was not found');
-        return null;
-      });
+        .reflect()
+        .then(inspectPromise())
+        .get('files')
+        .then((response) => {
+          const directUpload = response.find(it => it.id === this.response.uploadId);
+          assert.ok(directUpload, 'upload was not found');
+          return null;
+        });
     });
   });
 
@@ -305,7 +305,7 @@ describe('update suite', function suite() {
       return initAndUpload(backgroundData, false).call(this)
         .then(downloadFile.bind(this))
         .then(({ urls }) => {
-          meta.backgroundImage = urls[0];
+          [meta.backgroundImage] = urls;
           return null;
         });
     });
@@ -322,9 +322,9 @@ describe('update suite', function suite() {
             filename: this.response.uploadId,
             username,
           })
-          .tap((verifyResult) => {
-            assert.equal(verifyResult.file.backgroundImage, meta.backgroundImage);
-          });
+            .tap((verifyResult) => {
+              assert.equal(verifyResult.file.backgroundImage, meta.backgroundImage);
+            });
         });
     });
 
@@ -341,9 +341,9 @@ describe('update suite', function suite() {
             filename: this.response.uploadId,
             username,
           })
-          .tap((verifyResult) => {
-            assert.equal(verifyResult.file.backgroundImage, meta.backgroundImage);
-          });
+            .tap((verifyResult) => {
+              assert.equal(verifyResult.file.backgroundImage, meta.backgroundImage);
+            });
         });
     });
 

@@ -143,7 +143,9 @@ function modelBackgroundImageMessage(background, owner) {
   };
 }
 
-function modelSimpleUpload({ simple, preview, owner, ...overwrite }) {
+function modelSimpleUpload({
+  simple, preview, owner, ...overwrite
+}) {
   const files = values(simple);
 
   return {
@@ -215,11 +217,11 @@ function uploadSimple(meta, file, isPublic) {
 // `rsp` is response to that message
 //
 function uploadFiles(msg, rsp) {
-  const files = msg.files;
+  const { files } = msg;
   return Promise
     .map(rsp.files, (part, idx) => {
       const file = files[idx];
-      const location = part.location;
+      const { location } = part;
       const isSimple = location.indexOf('Signature') !== -1;
       return isSimple ? uploadSimple(part, file, rsp.public) : upload(location, file);
     });
@@ -232,7 +234,7 @@ function uploadFiles(msg, rsp) {
 // `rsp` is response to that message
 //
 function finishMessage(rsp, skipProcessing = true) {
-  const files = rsp.files;
+  const { files } = rsp;
   return files.map(file => ({
     filename: file.filename,
     skipProcessing,
@@ -260,7 +262,7 @@ function initUpload(data) {
 //
 function finishUpload(rsp, skipProcessing = true) {
   const messages = finishMessage(rsp, skipProcessing);
-  const amqp = this.amqp;
+  const { amqp } = this;
   return Promise.map(messages, (it) => {
     return amqp
       .publishAndWait('files.finish', it)
@@ -408,7 +410,9 @@ const background = readFile('background');
 const backgroundData = modelBackgroundImageMessage(background, owner);
 const simple = readFile('simple');
 const simpleData = modelSimpleUpload({ simple, preview, owner });
-const simplePackedData = modelSimpleUpload({ simple, preview, owner, contentType: 'image/vnd.cappasity', type: 'c-pack' });
+const simplePackedData = modelSimpleUpload({
+  simple, preview, owner, contentType: 'image/vnd.cappasity', type: 'c-pack',
+});
 
 // Public API
 module.exports = exports = {

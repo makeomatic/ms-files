@@ -4,7 +4,7 @@
   "main": "./lib/index.js",
   "version": "0.0.0-development",
   "scripts": {
-    "compile": "babel -d ./lib --copy-files ./src",
+    "compile": "rimraf ./lib && babel -d ./lib --copy-files ./src",
     "pretest": "yarn compile",
     "test": "rimraf ./coverage && yarn lint && yarn test:e2e",
     "test:e2e": "mdep test run",

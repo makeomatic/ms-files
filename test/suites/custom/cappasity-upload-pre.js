@@ -3,6 +3,7 @@ const assert = require('assert');
 const sinon = require('sinon');
 const set = require('lodash/set');
 const noop = require('lodash/noop');
+const find = require('lodash/find');
 const reject = require('lodash/reject');
 
 const config = require('../../../src/config').get('/');
@@ -12,21 +13,22 @@ const { FILES_INDEX } = require('../../../src/constant');
 
 const { audience } = config.users;
 
-const usernames = [
-  'admin',
-  'free',
-  'professional',
+const users = [
+  { id: '1000000000', alias: 'admin' },
+  { id: '2000000000', alias: 'free' },
+  { id: '3000000000', alias: 'professional' },
+  { id: '4000000000', alias: 'adminLimit' },
 ];
 
 const mockPlan = value => set({}, 'meta.embeddings.value', value);
 
-const mockMetadata = (username, attributes) => ({
-  username,
+const mockMetadata = (alias, attributes) => ({
+  id: find(users, { alias }).id,
   [audience]: attributes,
 });
 
-const mockInternalData = username => ({
-  username,
+const mockInternalData = alias => ({
+  id: find(users, { alias }).id,
 });
 
 const plans = {
@@ -67,7 +69,7 @@ describe('cappasity-upload-pre hook test suite', function suite() {
 
     this.hook = (name, ...args) => {
       if (name === 'files:info:pre') {
-        return require('../../../src/custom/alias-to-username-cappasity').apply(this, args);
+        return require('../../../src/custom/alias-to-user-id-cappasity').apply(this, args);
       }
 
       throw new Error('unexpected hook');
@@ -93,18 +95,18 @@ describe('cappasity-upload-pre hook test suite', function suite() {
         .resolves(plans[id]);
     });
 
-    usernames.forEach((username) => {
+    users.forEach(({ id, alias }) => {
       amqpStub
-        .withArgs(getMetadata, sinon.match({ username }))
-        .returns(Promise.resolve(metadata[username]));
+        .withArgs(getMetadata, sinon.match({ username: alias }))
+        .returns(Promise.resolve(metadata[alias]));
 
       amqpStub
-        .withArgs(getInternalData, sinon.match({ username }))
-        .returns(Promise.resolve(internals[username]));
+        .withArgs(getInternalData, sinon.match({ username: alias }))
+        .returns(Promise.resolve(internals[alias]));
 
       redisStub
-        .withArgs(`${FILES_INDEX}:${username}`)
-        .returns(Promise.resolve(uploadedFiles[username]));
+        .withArgs(`${FILES_INDEX}:${id}`)
+        .returns(Promise.resolve(uploadedFiles[alias]));
     });
   });
 
@@ -141,7 +143,7 @@ describe('cappasity-upload-pre hook test suite', function suite() {
     });
 
     it('should pass - admin user, limit has been reached', function test() {
-      return this.boundHook({ ...data, username: 'admin' })
+      return this.boundHook({ ...data, username: 'adminLimit' })
         .reflect()
         .then(inspectPromise());
     });
