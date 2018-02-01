@@ -6,6 +6,7 @@
 [![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg?style=flat-square)](https://github.com/semantic-release/semantic-release)
 [![Build Status](https://semaphoreci.com/api/v1/projects/88d40f13-da9b-44a5-ad04-4195f4971dd5/656972/shields_badge.svg)](https://semaphoreci.com/makeomatic/ms-files)
 [![Code Climate](https://codeclimate.com/github/makeomatic/ms-files/badges/gpa.svg)](https://codeclimate.com/github/makeomatic/ms-files)
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fmakeomatic%2Fms-files.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Fmakeomatic%2Fms-files?ref=badge_shield)
 
 Handles metadata processing, as well as various post-processing of files
 
@@ -24,3 +25,7 @@ gsutil notification create -t projects/<PROJECT_NAME>/topics/<TOPIC_NAME> -f jso
 ## Roadmap
 
 - [ ] document how it interacts with other services
+
+
+## License
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fmakeomatic%2Fms-files.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Fmakeomatic%2Fms-files?ref=badge_large)
