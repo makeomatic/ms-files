@@ -13,8 +13,7 @@
     "prepublishOnly": "yarn compile",
     "semantic-release": "semantic-release",
     "docker-release": "mdep docker release",
-    "release": "yarn && yarn semantic-release && yarn docker-release",
-    "commit": "simple-commit-message",
+    "release": "yarn --frozen-lockfile && yarn semantic-release",
     "commitmsg": "commitlint -e $GIT_PARAMS",
     "preparecommitmsg": "./node_modules/@makeomatic/deploy/git-hooks/prepare-commit-msg $GIT_PARAMS"
   },
@@ -67,6 +66,7 @@
   },
   "devDependencies": {
     "@makeomatic/deploy": "^6.0.1",
+    "@semantic-release/exec": "^2.2.3",
     "babel-cli": "^6.26.0",
     "babel-eslint": "^8.2.2",
     "babel-plugin-istanbul": "^4.1.4",
@@ -97,5 +97,12 @@
   "engines": {
     "node": ">= 8.9.0",
     "npm": ">= 4.0.0"
-  }
+  },
+  "files": [
+    "src/",
+    "schemas/",
+    "lib/",
+    "lua/",
+    "bin/"
+  ]
 }

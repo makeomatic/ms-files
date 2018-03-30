@@ -9,7 +9,7 @@ COPY yarn.lock package.json ./
 RUN \
   apk --update upgrade \
   && apk --update add git ca-certificates openssl g++ make python linux-headers \
-  && yarn --production \
+  && yarn --production --frozen-lockfile \
   && apk del \
     g++ \
     make \

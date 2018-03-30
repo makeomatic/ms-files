@@ -414,9 +414,19 @@
     import-from "^2.1.0"
     lodash "^4.17.4"
 
-"@semantic-release/error@^2.2.0":
+"@semantic-release/error@^2.1.0", "@semantic-release/error@^2.2.0":
   version "2.2.0"
   resolved "https://registry.yarnpkg.com/@semantic-release/error/-/error-2.2.0.tgz#ee9d5a09c9969eade1ec864776aeda5c5cddbbf0"
+
+"@semantic-release/exec@^2.2.3":
+  version "2.2.3"
+  resolved "https://registry.yarnpkg.com/@semantic-release/exec/-/exec-2.2.3.tgz#a173b6568cab59fc45aefd23281b7f47bd4fecb2"
+  dependencies:
+    "@semantic-release/error" "^2.1.0"
+    debug "^3.1.0"
+    execa "^0.9.0"
+    lodash "^4.17.4"
+    parse-json "^4.0.0"
 
 "@semantic-release/github@^4.1.0":
   version "4.2.8"
