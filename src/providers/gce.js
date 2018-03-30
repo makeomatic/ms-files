@@ -151,20 +151,21 @@ module.exports = class GCETransport extends AbstractFileTransfer {
     const Pubsub = this._pubsub;
     const { name } = pubsub;
     const config = ld.defaults(pubsub.config || {}, {
-      autoAck: false,
-      timeout: 5000,
       terminate: false,
-      maxInProgress: 100,
-      interval: 10,
+      gaxOpts: {
+        autoCreate: true,
+      },
     });
 
     this.log.info('subscribing to %s on %s', pubsub.topic, os.hostname());
 
     // first find if we have an existing subscription
     const topic = Pubsub.topic(pubsub.topic);
-    return topic.subscription(name, config).get({ autoCreate: true }).then((data) => {
+    return topic.subscription(name, config).get(config.gaxOpts).then((data) => {
+      this.log.info('subscribed', data);
       const [subscription] = data;
       subscription.on('message', handler);
+      subscription.on('error', err => this.log.error({ error: err }, 'failed to subscribe'));
       this._pubsub._subscriptions.push(subscription);
 
       // for internal cleanup
@@ -226,6 +227,7 @@ module.exports = class GCETransport extends AbstractFileTransfer {
       return Promise.map(subscriptions, (subscription) => {
         // remove message listener
         subscription.removeAllListeners('message');
+        subscription.removeAllListeners('error');
         // terminate if needed
         if (subscription._terminate) return subscription.delete();
         // done

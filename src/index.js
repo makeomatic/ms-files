@@ -1,6 +1,8 @@
 const Promise = require('bluebird');
 const Mservice = require('@microfleet/core');
-const ld = require('lodash');
+const omit = require('lodash/omit');
+const noop = require('lodash/noop');
+const merge = require('lodash/merge');
 const fsort = require('redis-filtered-sort');
 const LockManager = require('dlock');
 const RedisCluster = require('ioredis').Cluster;
@@ -26,7 +28,7 @@ class Files extends Mservice {
    * and internal providers
    */
   constructor(opts = {}) {
-    super(ld.merge({}, Files.defaultOpts, opts));
+    super(merge({}, Files.defaultOpts, opts));
 
     const config = this._config;
 
@@ -102,7 +104,7 @@ class Files extends Mservice {
     return Promise.join(
       super.close(),
       this.dlock.pubsub.disconnect(),
-      process.env.WEBHOOK_TERMINATE ? this.stopWebhook() : ld.noop
+      process.env.WEBHOOK_TERMINATE ? this.stopWebhook() : noop
     );
   }
 
@@ -116,6 +118,7 @@ class Files extends Mservice {
    * @return {Promise}
    */
   handleUploadNotification(message) {
+    this.log.debug({ message }, 'upload notification');
     const { prefix } = this.config.router.routes;
     return this.router
       .dispatch(`${prefix}.finish`, {
@@ -130,9 +133,10 @@ class Files extends Mservice {
         transport: 'amqp',
         method: 'amqp',
       })
-      .catch(HttpStatusError, this.logWarn.bind(this, `${prefix}.finish`, message))
-      .then(() => Promise.fromCallback(message.ack))
-      .catch(() => Promise.fromCallback(message.skip));
+      .tapCatch(e => this.logWarn(`${prefix}.finish`, omit(message, 'data'), e))
+      .catchReturn(HttpStatusError, null)
+      .then(message.ack)
+      .catch(message.nack);
   }
 
   // log failed notification
@@ -148,13 +152,15 @@ class Files extends Mservice {
     this.log.debug('started connecting');
     return super
       .connect()
+      .bind(this)
       // will be a noop when configuration for it is missing
-      .then(() => this.initWebhook())
+      .then(this.initWebhook)
       // init pubsub if it is present
-      .then(() => Promise.map(this.providers, (provider) => {
+      .return(this.providers)
+      .mapSeries((provider) => {
         if (!provider.config.bucket.channel.pubsub) return null;
         return provider.subscribe(this.handleUploadNotification.bind(this));
-      }, { concurrency: 1 }));
+      });
   }
 }
 

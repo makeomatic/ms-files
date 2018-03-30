@@ -12,14 +12,13 @@ services:
     hostname: rabbitmq
 
   tester:
-    image: makeomatic/node:9.2.0-tester
+    image: makeomatic/node:9.10.0-tester
     links:
       - rabbitmq
       - redis
     working_dir: /src
     volumes:
       - ${PWD}:/src
-      - /etc/localtime:/etc/localtime:ro
     container_name: tester
     environment:
       NODE_ENV: "test"
