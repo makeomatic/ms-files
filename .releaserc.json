@@ -4,11 +4,13 @@
     "@semantic-release/npm",
     "@semantic-release/github"
   ],
+  "prepare": [
+    "@semantic-release/changelog",
+    "@semantic-release/npm",
+    { "path": "@semantic-release/exec", "cmd": "yarn docker-release" },
+    "@semantic-release/git"
+  ],
   "publish": [
-    {
-      "path": "@semantic-release/exec",
-      "cmd": "yarn docker-release"
-    },
     "@semantic-release/npm",
     "@semantic-release/github"
   ],

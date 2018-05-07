@@ -67,6 +67,7 @@
   "devDependencies": {
     "@makeomatic/deploy": "^6.1.0",
     "@semantic-release/exec": "^2.2.4",
+    "@semantic-release/git": "^4.0.3",
     "babel-cli": "^6.26.0",
     "babel-eslint": "^8.2.3",
     "babel-plugin-istanbul": "^4.1.6",
