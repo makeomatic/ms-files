@@ -1,22 +1,14 @@
 const Promise = require('bluebird');
 const AbstractFileTransfer = require('ms-files-transport');
 const ld = require('lodash');
-const ResumableUpload = require('gcs-resumable-upload');
+const createURI = Promise.promisify(require('gcs-resumable-upload').createURI);
 const blackhole = require('bunyan-noop');
 const bl = require('bl');
 const assert = require('assert');
 const os = require('os');
 
 // for some reason it doesn't go through it if we just do the obj
-Promise.promisifyAll(ResumableUpload.prototype);
-
-// single-arg
-Promise.promisifyAll(require('@google-cloud/storage/src/file').prototype);
-Promise.promisifyAll(require('@google-cloud/storage/src/channel').prototype);
-
-// multi-args
-Promise.promisifyAll(require('@google-cloud/storage/src/bucket').prototype, { multiArgs: true });
-Promise.promisifyAll(require('@google-cloud/storage').prototype, { multiArgs: true });
+const unwrap = datum => datum[0];
 
 // include gcloud
 const GStorage = require('@google-cloud/storage');
@@ -102,8 +94,9 @@ module.exports = class GCETransport extends AbstractFileTransfer {
     }
 
     return bucket
-      .createChannelAsync(id, config)
-      .spread((channel) => {
+      .createChannel(id, config)
+      .then(unwrap)
+      .then((channel) => {
         this.log.debug('created channel %s', id);
         return channel;
       })
@@ -131,7 +124,7 @@ module.exports = class GCETransport extends AbstractFileTransfer {
   stopChannel() {
     const channel = this._channel;
     this.log.debug('destroying channel %j', (channel && channel.metadata) || '<noop>');
-    return (channel && channel.stopAsync()) || Promise.resolve();
+    return Promise.resolve(channel && channel.stop());
   }
 
   /**
@@ -297,7 +290,7 @@ module.exports = class GCETransport extends AbstractFileTransfer {
     } = opts;
 
     const file = this.bucket.file(resource);
-    return file.getSignedUrlAsync({
+    const settings = {
       ...props,
       action,
       expires,
@@ -305,7 +298,9 @@ module.exports = class GCETransport extends AbstractFileTransfer {
       contentMd5: md5,
       contentType: type,
       extensionHeaders,
-    });
+    };
+
+    return file.getSignedUrl(settings).then(unwrap);
   }
 
   /**
@@ -323,8 +318,10 @@ module.exports = class GCETransport extends AbstractFileTransfer {
     const {
       filename, metadata, generation, ...props
     } = opts;
+
     this.log.debug('initiating resumable upload of %s', filename);
-    const upload = new ResumableUpload({
+
+    return createURI({
       ...props,
       authClient: this.bucket.storage.authClient,
       bucket: this.bucket.name,
@@ -332,8 +329,6 @@ module.exports = class GCETransport extends AbstractFileTransfer {
       generation,
       metadata,
     });
-
-    return upload.createURIAsync();
   }
 
   /**
@@ -390,7 +385,7 @@ module.exports = class GCETransport extends AbstractFileTransfer {
    */
   makePublic(filename) {
     const file = this.bucket.file(filename);
-    return file.makePublicAsync();
+    return file.makePublic();
   }
 
   /**
@@ -400,7 +395,7 @@ module.exports = class GCETransport extends AbstractFileTransfer {
    */
   makePrivate(filename, options = {}) {
     const file = this.bucket.file(filename);
-    return file.makePrivateAsync(options);
+    return file.makePrivate(options);
   }
 
   /**
@@ -434,7 +429,7 @@ module.exports = class GCETransport extends AbstractFileTransfer {
   exists(filename) {
     this.log.debug('initiating exists check of %s', filename);
     const file = this.bucket.file(filename);
-    return file.existsAsync();
+    return file.exists();
   }
 
   /**
@@ -445,6 +440,6 @@ module.exports = class GCETransport extends AbstractFileTransfer {
   remove(filename) {
     this.log.debug('removing file %s', filename);
     const file = this.bucket.file(filename);
-    return file.deleteAsync();
+    return file.delete();
   }
 };
