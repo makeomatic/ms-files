@@ -440,6 +440,7 @@ module.exports = class GCETransport extends AbstractFileTransfer {
   remove(filename) {
     this.log.debug('removing file %s', filename);
     const file = this.bucket.file(filename);
-    return file.delete();
+    // make sure it is wrapped, so that later we can do .catch(predicate, action)
+    return Promise.resolve(file).call('delete');
   }
 };
