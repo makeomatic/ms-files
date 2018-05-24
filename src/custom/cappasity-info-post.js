@@ -47,6 +47,11 @@ const corePlayerOpts = Object.setPrototypeOf({
     paid: true,
     reqPlanLevel: 20,
   },
+  analytics: {
+    type: 'boolean',
+    default: 1,
+    description: 'Enable analytics',
+  },
 }, null);
 
 // version 1.x.x - mesh
