@@ -1,3 +1,6 @@
+<a name="11.1.5"></a>
+## [11.1.5](https://github.com/makeomatic/ms-files/compare/v11.1.4...v11.1.5) (2018-05-24)
+
 <a name="11.1.4"></a>
 ## [11.1.4](https://github.com/makeomatic/ms-files/compare/v11.1.3...v11.1.4) (2018-05-14)
 
