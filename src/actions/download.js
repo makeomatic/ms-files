@@ -1,10 +1,10 @@
 const Promise = require('bluebird');
-const { FILES_DATA, FILES_OWNER_FIELD, FILES_PUBLIC_FIELD } = require('../constant.js');
+const path = require('path');
 const { HttpStatusError } = require('common-errors');
+const { FILES_DATA, FILES_OWNER_FIELD, FILES_PUBLIC_FIELD } = require('../constant.js');
 const fetchData = require('../utils/fetchData.js');
 const hasAccess = require('../utils/hasAccess.js');
 const isProcessed = require('../utils/isProcessed.js');
-const path = require('path');
 
 // default signed URL expiration time
 const THREE_HOURS = 1000 * 60 * 60 * 3;

@@ -426,10 +426,11 @@ module.exports = class GCETransport extends AbstractFileTransfer {
    * @param  {String} filename
    * @return {Promise}
    */
-  exists(filename) {
+  async exists(filename) {
     this.log.debug('initiating exists check of %s', filename);
     const file = this.bucket.file(filename);
-    return file.exists();
+    const [exists] = await file.exists();
+    return exists;
   }
 
   /**

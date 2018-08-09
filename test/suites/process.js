@@ -120,7 +120,7 @@ describe('process suite', function suite() {
     before('pre-upload file', initAndUpload(modelData));
 
     before('reset onComplete count', function before() {
-      this.files.config.amqp.retry.predicate.reset();
+      this.files.config.amqp.retry.predicate.resetHistory();
     });
 
     it('fails due to post-processing issue', function test() {

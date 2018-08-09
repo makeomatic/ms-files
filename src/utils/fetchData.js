@@ -1,12 +1,12 @@
 const Promise = require('bluebird');
-const { FIELDS_TO_STRINGIFY, FILES_TAGS_FIELD, FILE_MISSING_ERROR } = require('../constant');
-const safeParse = require('./safeParse');
 const perf = require('ms-perf');
 const zipObject = require('lodash/zipObject');
 const debug = require('debug')('ms-files:fetchData');
 const calcSlot = require('cluster-key-slot');
 const fs = require('fs');
 const is = require('is');
+const safeParse = require('./safeParse');
+const { FIELDS_TO_STRINGIFY, FILES_TAGS_FIELD, FILE_MISSING_ERROR } = require('../constant');
 
 /**
  * Helper constants

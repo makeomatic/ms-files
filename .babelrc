@@ -1,14 +1,8 @@
 {
   "plugins": [
-    ["transform-class-properties"],
-    ["transform-object-rest-spread", { "useBuiltIns": true }]
-  ],
-  "presets": [
-    ["env", {
-      "targets": {
-        "node": "8.9.0"
-      }
-    }]
+    "@babel/plugin-transform-strict-mode",
+    "@babel/plugin-proposal-class-properties",
+    ["@babel/plugin-proposal-object-rest-spread", { "useBuiltIns": true }]
   ],
   "env": {
     "test": {

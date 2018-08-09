@@ -9,13 +9,13 @@ const path = require('path');
 const md5 = require('md5');
 const request = require('request-promise');
 const assert = require('assert');
-const Files = require('../../src');
-const config = require('./config');
 const partial = require('lodash/partial');
 const values = require('lodash/values');
 const zlib = require('zlib');
 const url = require('url');
 const is = require('is');
+const Files = require('../../src');
+const config = require('./config');
 
 // helpers
 const cache = {};
@@ -381,7 +381,7 @@ function stopService() {
 
 // resets sinon
 function resetSinon() {
-  config.hooks['files:process:post'].reset();
+  config.hooks['files:process:post'].resetHistory();
 }
 
 //

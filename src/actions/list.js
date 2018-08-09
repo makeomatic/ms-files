@@ -2,8 +2,8 @@ const Promise = require('bluebird');
 const fsort = require('redis-filtered-sort');
 const is = require('is');
 const noop = require('lodash/noop');
-const fetchData = require('../utils/fetchData').batch;
 const perf = require('ms-perf');
+const fetchData = require('../utils/fetchData').batch;
 const {
   FILES_DATA,
   FILES_INDEX,

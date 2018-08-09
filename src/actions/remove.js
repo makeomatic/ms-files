@@ -1,8 +1,8 @@
 const Promise = require('bluebird');
-const hasAccess = require('../utils/hasAccess.js');
-const fetchData = require('../utils/fetchData.js');
-const isUnlisted = require('../utils/isUnlisted.js');
-const { bustCache } = require('../utils/bustCache.js');
+const hasAccess = require('../utils/hasAccess');
+const fetchData = require('../utils/fetchData');
+const isUnlisted = require('../utils/isUnlisted');
+const { bustCache } = require('../utils/bustCache');
 const {
   FILES_INDEX,
   FILES_INDEX_PUBLIC,
@@ -13,7 +13,7 @@ const {
   FILES_TAGS_FIELD,
   FILES_ALIAS_FIELD,
   FILES_USR_ALIAS_PTR,
-} = require('../constant.js');
+} = require('../constant');
 const pipelineError = require('../utils/pipelineError');
 
 /**
@@ -38,51 +38,50 @@ function cleanupFileProvider(files, provider, log, opts = { concurrency: 20 }) {
  * @param  {String} opts.filename
  * @return {Promise}
  */
-module.exports = function removeFile({ params }) {
+module.exports = async function removeFile({ params }) {
   const { filename, username } = params;
   const { redis, log } = this;
   const provider = this.provider('remove', params);
   const key = `${FILES_DATA}:${filename}`;
 
-  return Promise
+  const data = await Promise
     .bind(this, key)
     .then(fetchData)
     .then(isUnlisted)
-    .then(hasAccess(username))
-    .then((data) => {
-      // we do not track this
-      cleanupFileProvider(data.files, provider, log)
-        .catch(e => log.fatal('failed to cleanup file provider for %s', filename, e));
+    .then(hasAccess(username));
 
-      // cleanup local database
-      const pipeline = redis.pipeline();
-      const owner = data[FILES_OWNER_FIELD];
+  // we do not track this
+  cleanupFileProvider(data.files, provider, log)
+    .catch(e => log.fatal('failed to cleanup file provider for %s', filename, e));
 
-      pipeline
-        .del(key)
-        .srem(FILES_INDEX, filename)
-        .srem(`${FILES_INDEX}:${owner}`, filename);
+  // cleanup local database
+  const pipeline = redis.pipeline();
+  const owner = data[FILES_OWNER_FIELD];
 
-      if (data[FILES_PUBLIC_FIELD]) {
-        pipeline.srem(FILES_INDEX_PUBLIC, filename);
-        pipeline.srem(`${FILES_INDEX}:${owner}:pub`, filename);
-      }
+  pipeline
+    .del(key)
+    .srem(FILES_INDEX, filename)
+    .srem(`${FILES_INDEX}:${owner}`, filename);
 
-      const tags = data[FILES_TAGS_FIELD];
-      if (tags) {
-        tags.forEach(tag => pipeline.srem(`${FILES_INDEX_TAGS}:${tag}`, filename));
-      }
+  if (data[FILES_PUBLIC_FIELD]) {
+    pipeline.srem(FILES_INDEX_PUBLIC, filename);
+    pipeline.srem(`${FILES_INDEX}:${owner}:pub`, filename);
+  }
 
-      // remove pointer for the alias if it existed
-      const alias = data[FILES_ALIAS_FIELD];
-      if (alias) {
-        pipeline.hdel(`${FILES_USR_ALIAS_PTR}:${owner}`, alias);
-      }
+  const tags = data[FILES_TAGS_FIELD];
+  if (tags) {
+    tags.forEach(tag => pipeline.srem(`${FILES_INDEX_TAGS}:${tag}`, filename));
+  }
 
-      // execute pipeline and bustCache right after
-      return pipeline
-        .exec()
-        .tap(bustCache(redis, data))
-        .then(pipelineError);
-    });
+  // remove pointer for the alias if it existed
+  const alias = data[FILES_ALIAS_FIELD];
+  if (alias) {
+    pipeline.hdel(`${FILES_USR_ALIAS_PTR}:${owner}`, alias);
+  }
+
+  // execute pipeline and bustCache right after
+  return pipeline
+    .exec()
+    .tap(bustCache(redis, data))
+    .then(pipelineError);
 };

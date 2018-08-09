@@ -3,6 +3,7 @@ const uuid = require('uuid');
 const md5 = require('md5');
 const sumBy = require('lodash/sumBy');
 const get = require('lodash/get');
+const handlePipeline = require('../utils/pipelineError');
 const stringify = require('../utils/stringify.js');
 const extension = require('../utils/extension.js');
 const isValidBackgroundOrigin = require('../utils/isValidBackgroundOrigin.js');
@@ -35,7 +36,7 @@ const {
  * @param  {Boolean} [opts.params.temp=false]
  * @return {Promise}
  */
-module.exports = function initFileUpload({ params }) {
+module.exports = async function initFileUpload({ params }) {
   const {
     files,
     meta,
@@ -58,143 +59,146 @@ module.exports = function initFileUpload({ params }) {
   const isPublic = get(params, 'access.setPublic', false);
   const bucketName = provider.bucket.name;
 
-  return Promise
+  await Promise
     .bind(this, ['files:upload:pre', params])
     .spread(this.hook)
     // do some extra meta validation
     .return(meta)
-    .tap(isValidBackgroundOrigin)
-    // process files
-    .return(files)
-    .map(function initResumableUpload({ md5Hash, type, ...rest }) {
-      // generate filename
-      const filename = [
-        // name
-        [prefix, uploadId, uuid.v4()].join('/'),
-        // extension
-        extension(type, rest.contentType).slice(1),
-      ].join('.');
+    .tap(isValidBackgroundOrigin);
 
-      const metadata = {
-        ...rest,
-        md5Hash: Buffer.from(md5Hash, 'hex').toString('base64'),
-        [FILES_BUCKET_FIELD]: bucketName,
-      };
+  const parts = await Promise.map(files, ({ md5Hash, type, ...rest }) => {
+    // generate filename
+    const filename = [
+      // name
+      [prefix, uploadId, uuid.v4()].join('/'),
+      // extension
+      extension(type, rest.contentType).slice(1),
+    ].join('.');
 
-      // this is an override, because safari has a bug:
-      // it doesn't decode gzip encoding when contentType is not one of
-      // it's supported ones
-      if (type === 'c-bin') {
-        metadata.contentType = 'text/plain';
-      }
+    const metadata = {
+      ...rest,
+      md5Hash: Buffer.from(md5Hash, 'hex').toString('base64'),
+      [FILES_BUCKET_FIELD]: bucketName,
+    };
 
-      // basic extension headers
-      const extensionHeaders = {};
+    // this is an override, because safari has a bug:
+    // it doesn't decode gzip encoding when contentType is not one of
+    // it's supported ones
+    if (type === 'c-bin') {
+      metadata.contentType = 'text/plain';
+    }
 
-      if (isPublic) {
-        extensionHeaders['x-goog-acl'] = 'public-read';
-      }
+    // basic extension headers
+    const extensionHeaders = {};
 
-      let location;
-      if (resumable) {
-        // resumable-upload
-        const acl = extensionHeaders['x-goog-acl'];
-        const predefinedAcl = acl ? acl.replace(/-/g, '') : '';
+    if (isPublic) {
+      extensionHeaders['x-goog-acl'] = 'public-read';
+    }
 
-        location = provider.initResumableUpload({
-          filename,
-          origin,
-          predefinedAcl,
-          metadata: {
-            ...metadata,
-          },
-        });
-      } else {
-        // simple upload
-        location = provider.createSignedURL({
-          action: 'write',
-          md5: metadata.md5Hash,
-          type: metadata.contentType,
-          resource: filename,
-          extensionHeaders,
-          expires: Date.now() + (expires * 1000),
-        });
-      }
+    let location;
+    if (resumable) {
+      // resumable-upload
+      const acl = extensionHeaders['x-goog-acl'];
+      const predefinedAcl = acl ? acl.replace(/-/g, '') : '';
 
-      return Promise.props({
-        ...metadata,
-        type,
+      location = provider.initResumableUpload({
         filename,
-        location,
+        origin,
+        predefinedAcl,
+        metadata: {
+          ...metadata,
+        },
       });
-    })
-    .then((parts) => {
-      const serialized = {};
-      FIELDS_TO_STRINGIFY.forEach((field) => {
-        stringify(meta, field, serialized);
+    } else {
+      // simple upload
+      location = provider.createSignedURL({
+        action: 'write',
+        md5: metadata.md5Hash,
+        type: metadata.contentType,
+        resource: filename,
+        extensionHeaders,
+        expires: Date.now() + (expires * 1000),
       });
+    }
 
-      const fileData = {
-        ...meta,
-        ...serialized,
-        uploadId,
-        startedAt: Date.now(),
-        files: JSON.stringify(parts),
-        parts: files.length,
-        [FILES_CONTENT_LENGTH_FIELD]: sumBy(parts, 'contentLength'),
-        [FILES_STATUS_FIELD]: STATUS_PENDING,
-        [FILES_OWNER_FIELD]: username,
-        [FILES_BUCKET_FIELD]: bucketName,
-      };
+    return Promise.props({
+      ...metadata,
+      type,
+      filename,
+      location,
+    });
+  });
 
-      if (uploadType) {
-        fileData.uploadType = uploadType;
-      }
+  const serialized = Object.create(null);
+  for (const field of FIELDS_TO_STRINGIFY) {
+    stringify(meta, field, serialized);
+  }
 
-      if (isPublic) {
-        fileData[FILES_PUBLIC_FIELD] = 1;
-      }
+  const fileData = {
+    ...meta,
+    ...serialized,
+    uploadId,
+    startedAt: Date.now(),
+    files: JSON.stringify(parts),
+    parts: files.length,
+    [FILES_CONTENT_LENGTH_FIELD]: sumBy(parts, 'contentLength'),
+    [FILES_STATUS_FIELD]: STATUS_PENDING,
+    [FILES_OWNER_FIELD]: username,
+    [FILES_BUCKET_FIELD]: bucketName,
+  };
 
-      if (temp) {
-        fileData[FILES_TEMP_FIELD] = 1;
-      }
+  if (uploadType) {
+    fileData.uploadType = uploadType;
+  }
 
-      if (unlisted) {
-        fileData[FILES_UNLISTED_FIELD] = 1;
-      }
+  if (isPublic) {
+    fileData[FILES_PUBLIC_FIELD] = 1;
+  }
 
-      if (directOnly) {
-        fileData[FILES_DIRECT_ONLY_FIELD] = 1;
-      }
+  if (temp) {
+    fileData[FILES_TEMP_FIELD] = 1;
+  }
 
-      const pipeline = redis.pipeline();
-      const uploadKey = `${FILES_DATA}:${uploadId}`;
+  if (unlisted) {
+    fileData[FILES_UNLISTED_FIELD] = 1;
+  }
 
-      pipeline
-        .sadd(FILES_INDEX_TEMP, uploadId)
-        .hmset(uploadKey, fileData)
-        .expire(uploadKey, uploadTTL);
+  if (directOnly) {
+    fileData[FILES_DIRECT_ONLY_FIELD] = 1;
+  }
 
-      parts.forEach((part) => {
-        const partKey = `${UPLOAD_DATA}:${part.filename}`;
-        pipeline
-          .hmset(partKey, { [FILES_STATUS_FIELD]: STATUS_PENDING, uploadId })
-          .expire(partKey, uploadTTL);
-      });
+  const pipeline = redis.pipeline();
+  const uploadKey = `${FILES_DATA}:${uploadId}`;
 
-      // in case we have post action provided - save it for when we complete "finish" action
-      if (postAction) {
-        const postActionKey = `${FILES_POST_ACTION}:${uploadId}`;
-        pipeline.set(postActionKey, JSON.stringify(postAction), 'EX', uploadTTL);
-      }
+  pipeline
+    .sadd(FILES_INDEX_TEMP, uploadId)
+    .hmset(uploadKey, fileData)
+    .expire(uploadKey, uploadTTL);
 
-      return pipeline
-        .exec()
-        .return({
-          ...fileData,
-          ...meta,
-          files: parts,
-        });
-    })
-    .tap(data => this.hook.call(this, 'files:upload:post', data));
+  parts.forEach((part) => {
+    const partKey = `${UPLOAD_DATA}:${part.filename}`;
+    pipeline
+      .hmset(partKey, { [FILES_STATUS_FIELD]: STATUS_PENDING, uploadId })
+      .expire(partKey, uploadTTL);
+  });
+
+  // in case we have post action provided - save it for when we complete "finish" action
+  if (postAction) {
+    const postActionKey = `${FILES_POST_ACTION}:${uploadId}`;
+    pipeline.set(postActionKey, JSON.stringify(postAction), 'EX', uploadTTL);
+  }
+
+  await pipeline.exec().then(handlePipeline);
+
+  const data = {
+    ...fileData,
+    ...meta,
+    files: parts,
+  };
+
+  await Promise
+    .bind(this, ['files:upload:post', data])
+    .spread(this.hook);
+
+  return data;
 };

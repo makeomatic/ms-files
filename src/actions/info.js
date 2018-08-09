@@ -1,9 +1,11 @@
 const Promise = require('bluebird');
+const assert = require('assert');
+const { NotImplementedError, HttpStatusError } = require('common-errors');
+const { FILES_DATA, FILES_OWNER_FIELD } = require('../constant');
 const fetchData = require('../utils/fetchData');
 const resolveFilename = require('../utils/resolveFilename');
 
-const { NotImplementedError, HttpStatusError } = require('common-errors');
-const { FILES_DATA, FILES_OWNER_FIELD } = require('../constant');
+const NOT_IMPLEMENTED_ERROR = new NotImplementedError('files:info:pre hook must be specified to use this endpoint');
 
 /**
  * File information
@@ -11,40 +13,35 @@ const { FILES_DATA, FILES_OWNER_FIELD } = require('../constant');
  * @param  {Object} opts.username
  * @return {Promise}
  */
-module.exports = function getFileInfo({ params }) {
+module.exports = async function getFileInfo({ params }) {
   const { filename: possibleFilename, username: owner } = params;
 
-  return Promise
+  const [username] = await Promise
     .bind(this, ['files:info:pre', owner])
-    .spread(this.hook)
-    .spread((username) => {
-      if (!username) {
-        throw new NotImplementedError('files:info:pre hook must be specified to use this endpoint');
-      }
+    .spread(this.hook);
 
-      return Promise.props({
-        username,
-        filename: resolveFilename.call(this, possibleFilename, username),
-      });
-    })
-    .then(data => Promise.props({
-      username: data.username,
-      file: fetchData.call(this, `${FILES_DATA}:${data.filename}`),
-    }))
-    .then((data) => {
-      // ref file
-      const info = data.file;
+  assert(username, NOT_IMPLEMENTED_ERROR);
 
-      // check that owner is a match
-      // even in-case with public we want the user to specify username
-      if (info[FILES_OWNER_FIELD] !== data.username) {
-        throw new HttpStatusError(401, 'please sign as an owner of this model to access it');
-      }
+  const filename = await Promise
+    .bind(this, [possibleFilename, username])
+    .spread(resolveFilename);
 
-      // rewire owner to requested username
-      info.owner = owner;
+  const file = await Promise
+    .bind(this, `${FILES_DATA}:${filename}`)
+    .then(fetchData);
 
-      return data;
-    })
-    .tap(data => this.hook.call(this, 'files:info:post', data.file));
+  // check that owner is a match
+  // even in-case with public we want the user to specify username
+  if (file[FILES_OWNER_FIELD] !== username) {
+    throw new HttpStatusError(401, 'please sign as an owner of this model to access it');
+  }
+
+  // rewire owner to requested username
+  file.owner = owner;
+
+  await Promise
+    .bind(this, ['files:info:post', file])
+    .spread(this.hook);
+
+  return { username, file };
 };

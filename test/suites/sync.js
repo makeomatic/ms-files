@@ -1,12 +1,11 @@
 const Promise = require('bluebird');
 const assert = require('assert');
-const { STATUS_PENDING } = require('../../src/constant.js');
+const { STATUS_PROCESSED } = require('../../src/constant');
 
 // helpers
 const {
   startService,
   stopService,
-  inspectPromise,
   modelData,
   owner,
   bindSend,
@@ -33,13 +32,10 @@ describe('finish upload suite', function suite() {
 
   it('...waits for a couple of seconds', () => Promise.delay(10000));
 
-  it('returns correct STATUS_PROCESSED', function test() {
-    return this.amqp
-      .publishAndWait('files.info', { filename: this.response.uploadId, username: owner })
-      .reflect()
-      .then(inspectPromise())
-      .then((rsp) => {
-        assert.ifError(rsp.file.status === STATUS_PENDING);
-      });
+  it('returns correct STATUS_PROCESSED', async function test() {
+    const rsp = await this.amqp
+      .publishAndWait('files.info', { filename: this.response.uploadId, username: owner });
+
+    assert.ok(rsp.file.status === STATUS_PROCESSED, JSON.stringify(rsp.file));
   });
 });

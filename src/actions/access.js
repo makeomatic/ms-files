@@ -1,4 +1,5 @@
 const Promise = require('bluebird');
+const handlePipeline = require('../utils/pipelineError');
 const fetchData = require('../utils/fetchData');
 const hasAccess = require('../utils/hasAccess');
 const isProcessed = require('../utils/isProcessed');
@@ -9,7 +10,7 @@ const {
   FILES_DIRECT_ONLY_FIELD,
 } = require('../constant');
 
-function addToPublic(filename, data) {
+async function addToPublic(filename, data) {
   const { provider, redis } = this;
   const { files } = data;
   const owner = data[FILES_OWNER_FIELD];
@@ -23,23 +24,23 @@ function addToPublic(filename, data) {
   // get transport
   const transport = provider('access', data);
 
-  return Promise
-    .map(files, file => transport.makePublic(file.filename))
-    .then(() => {
-      const pipeline = redis
-        .pipeline()
-        .hset(id, FILES_PUBLIC_FIELD, 1);
+  await Promise.map(files, file => (
+    transport.makePublic(file.filename)
+  ));
 
-      if (!isDirectOnly) {
-        pipeline.sadd(index, filename);
-        pipeline.sadd(FILES_INDEX_PUBLIC, filename);
-      }
+  const pipeline = redis
+    .pipeline()
+    .hset(id, FILES_PUBLIC_FIELD, 1);
 
-      return pipeline.exec();
-    });
+  if (!isDirectOnly) {
+    pipeline.sadd(index, filename);
+    pipeline.sadd(FILES_INDEX_PUBLIC, filename);
+  }
+
+  return pipeline.exec().then(handlePipeline);
 }
 
-function removeFromPublic(filename, data) {
+async function removeFromPublic(filename, data) {
   const { provider, redis } = this;
   const { files } = data;
   const owner = data[FILES_OWNER_FIELD];
@@ -52,30 +53,32 @@ function removeFromPublic(filename, data) {
   // get transport
   const transport = provider('access', data);
 
-  return Promise
-    .map(files, file => transport.makePrivate(file.filename))
-    .then(() =>
-      redis
-        .pipeline()
-        .srem(index, filename)
-        .srem(FILES_INDEX_PUBLIC, filename)
-        .hdel(id, FILES_PUBLIC_FIELD)
-        .exec());
+  await Promise.map(files, file => (
+    transport.makePrivate(file.filename)
+  ));
+
+  return redis
+    .pipeline()
+    .srem(index, filename)
+    .srem(FILES_INDEX_PUBLIC, filename)
+    .hdel(id, FILES_PUBLIC_FIELD)
+    .exec()
+    .then(handlePipeline);
 }
 
-module.exports = function adjustAccess({ params }) {
+module.exports = async function adjustAccess({ params }) {
   const { redis } = this;
   const { uploadId, setPublic, username } = params;
   const id = `${FILES_DATA}:${uploadId}`;
 
-  return Promise
+  const data = await Promise
     .bind(this, id)
     .then(fetchData)
     .then(hasAccess(username))
-    .then(isProcessed)
-    .then(data => (
-      Promise.bind(this, [uploadId, data])
-        .spread(setPublic ? addToPublic : removeFromPublic)
-        .tap(bustCache(redis, data, true))
-    ));
+    .then(isProcessed);
+
+  return Promise
+    .bind(this, [uploadId, data])
+    .spread(setPublic ? addToPublic : removeFromPublic)
+    .tap(bustCache(redis, data, true));
 };

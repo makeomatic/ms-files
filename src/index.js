@@ -6,12 +6,12 @@ const merge = require('lodash/merge');
 const fsort = require('redis-filtered-sort');
 const LockManager = require('dlock');
 const RedisCluster = require('ioredis').Cluster;
-const StorageProviders = require('./providers');
-const conf = require('./config');
 
 // constants
 const { HttpStatusError } = require('common-errors');
-const { WEBHOOK_RESOURCE_ID } = require('./constant.js');
+const { WEBHOOK_RESOURCE_ID } = require('./constant');
+const StorageProviders = require('./providers');
+const conf = require('./config');
 
 /**
  * @class Files

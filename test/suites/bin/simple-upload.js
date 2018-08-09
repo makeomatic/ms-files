@@ -42,7 +42,7 @@ describe('binary: simple-upload', function suite() {
         '  resumable: false,',
         '  temp: false,',
         '  unlisted: false,',
-        '  files: ',
+        '  files:',
         '   [ { type: \'c-preview\',',
         '       contentType: \'image/jpeg\',',
         '       contentLength: 64024,',
