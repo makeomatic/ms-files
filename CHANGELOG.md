@@ -1,3 +1,15 @@
+# [12.0.0](https://github.com/makeomatic/ms-files/compare/v11.1.5...v12.0.0) (2018-08-09)
+
+
+### Bug Fixes
+
+* verify file exists before setting it as uploaded ([6e70124](https://github.com/makeomatic/ms-files/commit/6e70124))
+
+
+### BREAKING CHANGES
+
+* node 10.8.0, babel 7
+
 <a name="11.1.5"></a>
 ## [11.1.5](https://github.com/makeomatic/ms-files/compare/v11.1.4...v11.1.5) (2018-05-24)
 
