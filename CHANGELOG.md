@@ -1,3 +1,10 @@
+## [12.0.1](https://github.com/makeomatic/ms-files/compare/v12.0.0...v12.0.1) (2018-08-10)
+
+
+### Bug Fixes
+
+* downgrade gcs due to cname issues ([bac5cd3](https://github.com/makeomatic/ms-files/commit/bac5cd3))
+
 # [12.0.0](https://github.com/makeomatic/ms-files/compare/v11.1.5...v12.0.0) (2018-08-09)
 
 
