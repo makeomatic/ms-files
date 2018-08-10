@@ -1,5 +1,5 @@
 const Promise = require('bluebird');
-const uuid = require('uuid');
+const uuidv4 = require('uuid/v4');
 const md5 = require('md5');
 const sumBy = require('lodash/sumBy');
 const get = require('lodash/get');
@@ -55,7 +55,7 @@ module.exports = async function initFileUpload({ params }) {
 
   const provider = this.provider('upload', params);
   const prefix = md5(username);
-  const uploadId = uuid.v4();
+  const uploadId = uuidv4();
   const isPublic = get(params, 'access.setPublic', false);
   const bucketName = provider.bucket.name;
 
@@ -66,11 +66,11 @@ module.exports = async function initFileUpload({ params }) {
     .return(meta)
     .tap(isValidBackgroundOrigin);
 
-  const parts = await Promise.map(files, ({ md5Hash, type, ...rest }) => {
+  const parts = await Promise.map(files, async ({ md5Hash, type, ...rest }) => {
     // generate filename
     const filename = [
       // name
-      [prefix, uploadId, uuid.v4()].join('/'),
+      [prefix, uploadId, uuidv4()].join('/'),
       // extension
       extension(type, rest.contentType).slice(1),
     ].join('.');
@@ -101,7 +101,7 @@ module.exports = async function initFileUpload({ params }) {
       const acl = extensionHeaders['x-goog-acl'];
       const predefinedAcl = acl ? acl.replace(/-/g, '') : '';
 
-      location = provider.initResumableUpload({
+      location = await provider.initResumableUpload({
         filename,
         origin,
         predefinedAcl,
@@ -111,7 +111,7 @@ module.exports = async function initFileUpload({ params }) {
       });
     } else {
       // simple upload
-      location = provider.createSignedURL({
+      location = await provider.createSignedURL({
         action: 'write',
         md5: metadata.md5Hash,
         type: metadata.contentType,
@@ -121,12 +121,12 @@ module.exports = async function initFileUpload({ params }) {
       });
     }
 
-    return Promise.props({
+    return {
       ...metadata,
       type,
       filename,
       location,
-    });
+    };
   });
 
   const serialized = Object.create(null);
