@@ -178,7 +178,11 @@ module.exports = async function initFileUpload({ params }) {
   parts.forEach((part) => {
     const partKey = `${UPLOAD_DATA}:${part.filename}`;
     pipeline
-      .hmset(partKey, { [FILES_STATUS_FIELD]: STATUS_PENDING, uploadId })
+      .hmset(partKey, {
+        [FILES_BUCKET_FIELD]: bucketName,
+        [FILES_STATUS_FIELD]: STATUS_PENDING,
+        uploadId,
+      })
       .expire(partKey, uploadTTL);
   });
 
