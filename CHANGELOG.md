@@ -1,3 +1,10 @@
+## [12.0.2](https://github.com/makeomatic/ms-files/compare/v12.0.1...v12.0.2) (2018-08-13)
+
+
+### Bug Fixes
+
+* finish provider selector ([d6df0c0](https://github.com/makeomatic/ms-files/commit/d6df0c0))
+
 ## [12.0.1](https://github.com/makeomatic/ms-files/compare/v12.0.0...v12.0.1) (2018-08-10)
 
 
