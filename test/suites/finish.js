@@ -52,24 +52,22 @@ describe('finish upload suite', function suite() {
 
   it('returns progress and 409 on repeated notification', function test() {
     const [file] = this.response.files;
-    return Promise
-      .resolve([file, file])
-      .map((_, idx) => (
-        this.send({ filename: file.filename })
-          .reflect()
-          .then(inspectPromise(false))
-          .then((err) => {
-            if (idx === 0) {
-              assert.equal(err.statusCode, 202);
-              assert.equal(err.message, `1/${this.response.files.length} uploaded`);
-            } else {
-              assert.equal(err.statusCode, 200);
-              assert.equal(err.message, '412: upload was already processed');
-            }
+    return Promise.mapSeries([file, file], (_, idx) => {
+      return this.send({ filename: file.filename })
+        .reflect()
+        .then(inspectPromise(false))
+        .then((err) => {
+          if (idx === 0) {
+            assert.equal(err.statusCode, 202);
+            assert.equal(err.message, `1/${this.response.files.length} uploaded`);
+          } else {
+            assert.equal(err.statusCode, 200);
+            assert.equal(err.message, '412: upload was already processed');
+          }
 
-            return null;
-          })
-      ));
+          return null;
+        });
+    });
   });
 
   it('returns progress until all files have uploaded', function test() {
