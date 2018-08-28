@@ -142,3 +142,5 @@ exports.uploadTTL = 60 * 60 * 24;
  * @type {Number}
  */
 exports.maxTries = Infinity;
+
+exports.apiDomain = 'api.cappasity.com';
