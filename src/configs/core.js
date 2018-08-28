@@ -147,4 +147,4 @@ exports.maxTries = Infinity;
  * API Domain
  * @type {String}
  */
-exports.apiDomain;
+exports.apiDomain = null;
