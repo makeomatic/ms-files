@@ -12,6 +12,8 @@ const {
   CAPPASITY_IMAGE_MODEL,
 } = require('../constant');
 
+const CAPPASITY_API_DOMAIN = 'api.cappasity.com';
+
 /*
   reqPlanLevel: integer. minimum required user plan level
              forbids changing option value
@@ -265,10 +267,16 @@ const GREEN_LIGHT_STATUSES = Object.setPrototypeOf({
   [STATUS_FAILED]: true,
 }, null);
 
+let apiDomain;
+
 // Actual code that populates .embed from predefined data
 module.exports = function getEmbeddedInfo(file) {
+  if (apiDomain === undefined) {
+    apiDomain = this.config.apiDomain || CAPPASITY_API_DOMAIN;
+  }
+
   if (GREEN_LIGHT_STATUSES[file.status] === true) {
-    const dynamicOptions = getPlayerOpts(file.uploadId, file, this.config.apiDomain);
+    const dynamicOptions = getPlayerOpts(file.uploadId, file, apiDomain);
 
     file.embed = {
       code: dynamicOptions.code,
