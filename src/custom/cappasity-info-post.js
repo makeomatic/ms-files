@@ -254,10 +254,10 @@ const getPlayerOpts = (id, { uploadType, c_ver: modelVersion, packed }, apiDomai
 
   const data = selector[version];
   const baseUrl = getBaseUrl(apiDomain);
-  const src = `${baseUrl}/${id}/embedded?${data.qs}`;
+  const code = `${iframePre} src="${baseUrl}/${id}/embedded?${data.qs}"></iframe>`;
 
   return {
-    code: `${iframePre} src="${src}"></iframe>`,
+    code,
     params: data.params,
   };
 };
