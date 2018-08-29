@@ -3,6 +3,7 @@
 // 3. если 3двью имеет версию 4+ - добавляются зум опции
 
 const flatstr = require('flatstr');
+const memoize = require('lodash/memoize');
 
 const {
   STATUS_PROCESSED,
@@ -11,8 +12,6 @@ const {
 
   CAPPASITY_IMAGE_MODEL,
 } = require('../constant');
-
-const CAPPASITY_API_DOMAIN = 'api.cappasity.com';
 
 /*
   reqPlanLevel: integer. minimum required user plan level
@@ -185,8 +184,7 @@ const iframePre = flatstr(`<iframe
   height="{{ height }}"
   frameborder="0"
   style="border:0;"
-  onmousewheel=""
-  src="`.replace(/\s+/g, ' '));
+  onmousewheel=""`.replace(/\s+/g, ' '));
 
 // prepare options for 3 types of model - inserted after id
 const iframeMesh = flatstr(`${coreQS}&${meshQS}`);
@@ -238,6 +236,9 @@ const selector = Object.setPrototypeOf({
 }, null);
 
 const is4 = version => /^4\./.test(version);
+
+const getBaseUrl = memoize(apiDomain => `https://${apiDomain}/api/player`);
+
 const getPlayerOpts = (id, { uploadType, c_ver: modelVersion, packed }, apiDomain) => {
   // if upload type isn't simple - means we have old mesh upload
   // generally c_ver -> 1.x.x
@@ -252,10 +253,11 @@ const getPlayerOpts = (id, { uploadType, c_ver: modelVersion, packed }, apiDomai
       : ZOOM_TYPE;
 
   const data = selector[version];
-  const src = `https://${apiDomain}/api/player/${id}/embedded?${data.qs}`;
+  const baseUrl = getBaseUrl(apiDomain);
+  const src = `${baseUrl}/${id}/embedded?${data.qs}`;
 
   return {
-    code: `${iframePre}${src}"></iframe>`,
+    code: `${iframePre} src="${src}"></iframe>`,
     params: data.params,
   };
 };
@@ -267,16 +269,10 @@ const GREEN_LIGHT_STATUSES = Object.setPrototypeOf({
   [STATUS_FAILED]: true,
 }, null);
 
-let apiDomain;
-
 // Actual code that populates .embed from predefined data
 module.exports = function getEmbeddedInfo(file) {
-  if (apiDomain === undefined) {
-    apiDomain = this.config.apiDomain || CAPPASITY_API_DOMAIN;
-  }
-
   if (GREEN_LIGHT_STATUSES[file.status] === true) {
-    const dynamicOptions = getPlayerOpts(file.uploadId, file, apiDomain);
+    const dynamicOptions = getPlayerOpts(file.uploadId, file, this.config.apiDomain);
 
     file.embed = {
       code: dynamicOptions.code,

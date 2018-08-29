@@ -147,4 +147,8 @@ exports.maxTries = Infinity;
  * API Domain
  * @type {String}
  */
-exports.apiDomain = null;
+exports.apiDomain = {
+  $filter: 'env',
+  $default: 'set-your-hostname',
+  production: 'set-your-hostname',
+};

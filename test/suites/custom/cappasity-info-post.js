@@ -5,8 +5,16 @@ const flatstr = require('flatstr');
 const hook = require('../../../src/custom/cappasity-info-post');
 const { inspectPromise } = require('../../helpers/utils');
 
+const file = {
+  uploadId: 'f1c9d940-35bf-44f7-9134-89bee51d0ee3',
+  uploadType: 'simple',
+  c_ver: '4.0.0',
+  packed: false,
+  status: '3',
+};
+
 describe('cappasity-info-post hook test suite', function suite() {
-  before('add stubs', function stubs() {
+  beforeEach('add stubs', function stubs() {
     this.config = {
       apiDomain: 'api.cappasity.com',
     };
@@ -16,14 +24,6 @@ describe('cappasity-info-post hook test suite', function suite() {
 
   describe('get embedded info', function modelSuite() {
     it('should be able to set embed code', function test() {
-      const file = {
-        uploadId: 'f1c9d940-35bf-44f7-9134-89bee51d0ee3',
-        uploadType: 'simple',
-        c_ver: '4.0.0',
-        packed: false,
-        status: '3',
-      };
-
       const embeddedFile = this.boundHook(file);
 
       assert.ok(embeddedFile.embed);
