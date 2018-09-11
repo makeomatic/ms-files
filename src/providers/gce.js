@@ -1,6 +1,6 @@
 const Promise = require('bluebird');
 const AbstractFileTransfer = require('ms-files-transport');
-const ld = require('lodash');
+const { get, merge, defaults } = require('lodash');
 const createURI = Promise.promisify(require('gcs-resumable-upload').createURI);
 const blackhole = require('bunyan-noop');
 const bl = require('bl');
@@ -11,7 +11,7 @@ const os = require('os');
 const unwrap = datum => datum[0];
 
 // include gcloud
-const GStorage = require('@google-cloud/storage');
+const { Storage } = require('@google-cloud/storage');
 
 /**
  * Main transport class
@@ -44,7 +44,7 @@ module.exports = class GCETransport extends AbstractFileTransfer {
 
   constructor(opts = {}) {
     super();
-    this._config = ld.merge({}, GCETransport.defaultOpts, opts);
+    this._config = merge({}, GCETransport.defaultOpts, opts);
     this._logger = this._config.logger || blackhole();
     this.setupGCE();
   }
@@ -68,7 +68,7 @@ module.exports = class GCETransport extends AbstractFileTransfer {
    * Creates authenticated instance of gcloud
    */
   setupGCE() {
-    this._gcs = new GStorage(this._config.gce);
+    this._gcs = new Storage(this._config.gce);
 
     try {
       const PubSub = require('@google-cloud/pubsub');
@@ -101,7 +101,7 @@ module.exports = class GCETransport extends AbstractFileTransfer {
         return channel;
       })
       .catch({ code: 400 }, (err) => {
-        if (ld.get(err, 'errors[0].reason') === 'channelIdNotUnique' && resourceId) {
+        if (get(err, 'errors[0].reason') === 'channelIdNotUnique' && resourceId) {
           this.log.debug('found existing channel %s - %s', id, resourceId);
           return gcs.channel(id, resourceId);
         }
@@ -143,7 +143,7 @@ module.exports = class GCETransport extends AbstractFileTransfer {
 
     const Pubsub = this._pubsub;
     const { name } = pubsub;
-    const config = ld.defaults(pubsub.config || {}, {
+    const config = defaults(pubsub.config || {}, {
       terminate: false,
       gaxOpts: {
         autoCreate: true,
@@ -284,7 +284,7 @@ module.exports = class GCETransport extends AbstractFileTransfer {
    */
   createSignedURL(opts) {
     this.log.debug('initiating signing of URL for %s', opts.resource);
-    const { cname } = this;
+    const { cname, rename } = this;
     const {
       action, md5, type, expires, extensionHeaders, resource, ...props
     } = opts;
@@ -294,7 +294,7 @@ module.exports = class GCETransport extends AbstractFileTransfer {
       ...props,
       action,
       expires,
-      cname,
+      cname: rename ? cname : false,
       contentMd5: md5,
       contentType: type,
       extensionHeaders,
