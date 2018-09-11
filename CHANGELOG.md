@@ -1,3 +1,10 @@
+# [12.1.0](https://github.com/makeomatic/ms-files/compare/v12.0.2...v12.1.0) (2018-09-11)
+
+
+### Features
+
+* gcs storage 2.0 ([#149](https://github.com/makeomatic/ms-files/issues/149)) ([48fe381](https://github.com/makeomatic/ms-files/commit/48fe381))
+
 ## [12.0.2](https://github.com/makeomatic/ms-files/compare/v12.0.1...v12.0.2) (2018-08-13)
 
 
