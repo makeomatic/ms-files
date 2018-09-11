@@ -89,7 +89,7 @@ module.exports = async function initFileUpload({ params }) {
     }
 
     // basic extension headers
-    const extensionHeaders = {};
+    const extensionHeaders = Object.create(null);
 
     if (isPublic) {
       extensionHeaders['x-goog-acl'] = 'public-read';
@@ -97,14 +97,10 @@ module.exports = async function initFileUpload({ params }) {
 
     let location;
     if (resumable) {
-      // resumable-upload
-      const acl = extensionHeaders['x-goog-acl'];
-      const predefinedAcl = acl ? acl.replace(/-/g, '') : '';
-
       location = await provider.initResumableUpload({
         filename,
         origin,
-        predefinedAcl,
+        public: isPublic,
         metadata: {
           ...metadata,
         },
