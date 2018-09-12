@@ -142,3 +142,13 @@ exports.uploadTTL = 60 * 60 * 24;
  * @type {Number}
  */
 exports.maxTries = Infinity;
+
+/**
+ * API Domain
+ * @type {String}
+ */
+exports.apiDomain = {
+  $filter: 'env',
+  $default: 'set-your-hostname',
+  production: 'set-your-hostname',
+};

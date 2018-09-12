@@ -3,6 +3,7 @@
 // 3. если 3двью имеет версию 4+ - добавляются зум опции
 
 const flatstr = require('flatstr');
+const memoize = require('lodash/memoize');
 
 const {
   STATUS_PROCESSED,
@@ -183,13 +184,12 @@ const iframePre = flatstr(`<iframe
   height="{{ height }}"
   frameborder="0"
   style="border:0;"
-  onmousewheel=""
-  src="https://api.cappasity.com/api/player/`.replace(/\s+/g, ' '));
+  onmousewheel=""`.replace(/\s+/g, ' '));
 
 // prepare options for 3 types of model - inserted after id
-const iframeMesh = flatstr(`/embedded?${coreQS}&${meshQS}"></iframe>`);
-const iframeRotate = flatstr(`/embedded?${coreQS}&${rotateQS}"></iframe>`);
-const iframeZoom = flatstr(`/embedded?${coreQS}&${rotateQS}&${zoomQS}"></iframe>`);
+const iframeMesh = flatstr(`${coreQS}&${meshQS}`);
+const iframeRotate = flatstr(`${coreQS}&${rotateQS}`);
+const iframeZoom = flatstr(`${coreQS}&${rotateQS}&${zoomQS}`);
 
 // pregenerate option objects - 1.x.x
 const paramsMesh = Object.setPrototypeOf({
@@ -236,7 +236,10 @@ const selector = Object.setPrototypeOf({
 }, null);
 
 const is4 = version => /^4\./.test(version);
-const getPlayerOpts = (id, { uploadType, c_ver: modelVersion, packed }) => {
+
+const getBaseUrl = memoize(apiDomain => `https://${apiDomain}/api/player`);
+
+const getPlayerOpts = (id, { uploadType, c_ver: modelVersion, packed }, apiDomain) => {
   // if upload type isn't simple - means we have old mesh upload
   // generally c_ver -> 1.x.x
   // eslint-disable-next-line no-nested-ternary
@@ -250,9 +253,11 @@ const getPlayerOpts = (id, { uploadType, c_ver: modelVersion, packed }) => {
       : ZOOM_TYPE;
 
   const data = selector[version];
+  const baseUrl = getBaseUrl(apiDomain);
+  const code = `${iframePre} src="${baseUrl}/${id}/embedded?${data.qs}"></iframe>`;
 
   return {
-    code: `${iframePre}${id}${data.qs}`,
+    code,
     params: data.params,
   };
 };
@@ -267,7 +272,7 @@ const GREEN_LIGHT_STATUSES = Object.setPrototypeOf({
 // Actual code that populates .embed from predefined data
 module.exports = function getEmbeddedInfo(file) {
   if (GREEN_LIGHT_STATUSES[file.status] === true) {
-    const dynamicOptions = getPlayerOpts(file.uploadId, file);
+    const dynamicOptions = getPlayerOpts(file.uploadId, file, this.config.apiDomain);
 
     file.embed = {
       code: dynamicOptions.code,
