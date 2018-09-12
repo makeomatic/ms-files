@@ -1,3 +1,10 @@
+# [12.2.0](https://github.com/makeomatic/ms-files/compare/v12.1.0...v12.2.0) (2018-09-12)
+
+
+### Features
+
+* configurable api domain ([#148](https://github.com/makeomatic/ms-files/issues/148)) ([a5f9f9f](https://github.com/makeomatic/ms-files/commit/a5f9f9f))
+
 # [12.1.0](https://github.com/makeomatic/ms-files/compare/v12.0.2...v12.1.0) (2018-09-11)
 
 

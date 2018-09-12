@@ -2,7 +2,7 @@
   "name": "ms-files",
   "description": "Opinionated solution for managing files with GCS and other cloud storage providers",
   "main": "./lib/index.js",
-  "version": "12.1.0",
+  "version": "12.2.0",
   "scripts": {
     "compile": "rimraf ./lib && babel -d ./lib --copy-files ./src",
     "pretest": "yarn compile",
