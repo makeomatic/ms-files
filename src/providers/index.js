@@ -32,10 +32,12 @@ function initProvider(logger) {
     switch (transport.cname) {
       case true:
         provider.cname = `https://${bucket}`;
+        provider.rename = true;
         break;
 
       case 'gce':
         provider.cname = `https://storage.googleapis.com/${bucket}`;
+        provider.rename = false;
         break;
 
       default:

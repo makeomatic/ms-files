@@ -2,9 +2,9 @@ const Promise = require('bluebird');
 const path = require('path');
 const { HttpStatusError } = require('common-errors');
 const { FILES_DATA, FILES_OWNER_FIELD, FILES_PUBLIC_FIELD } = require('../constant.js');
-const fetchData = require('../utils/fetchData.js');
-const hasAccess = require('../utils/hasAccess.js');
-const isProcessed = require('../utils/isProcessed.js');
+const fetchData = require('../utils/fetchData');
+const hasAccess = require('../utils/hasAccess');
+const isProcessed = require('../utils/isProcessed');
 
 // default signed URL expiration time
 const THREE_HOURS = 1000 * 60 * 60 * 3;
@@ -51,56 +51,61 @@ const sign = (provider, files, name, expire) => {
  * @param  {Object} opts.params.username
  * @return {Promise}
  */
-module.exports = function getDownloadURL({ params }) {
-  const {
-    uploadId, username, rename, types,
-  } = params;
+async function getDownloadURL({ params }) {
+  const { uploadId, username, rename, types } = params;
   const key = `${FILES_DATA}:${uploadId}`;
 
-  return Promise
+  const data = await Promise
     .bind(this, key)
     .then(fetchData)
-    .then(isProcessed)
-    .then((data) => {
-      // parse file data
-      const provider = this.provider('download', data);
-      const files = types ? data.files.filter(file => types.includes(file.type)) : data.files;
+    .then(isProcessed);
 
-      // metadata
-      const { name } = data;
-      const { cname, expire } = provider;
+  // parse file data
+  const provider = this.provider('download', data);
+  const files = types
+    ? data.files.filter(file => types.includes(file.type))
+    : data.files;
 
-      // check status and if we have public link available - use it
-      let alias;
-      let urls;
-      if (data[FILES_PUBLIC_FIELD]) {
-        // fetch alias
-        alias = this.hook
-          .call(this, 'files:download:alias', data[FILES_OWNER_FIELD])
-          .get(0);
+  // metadata
+  const { name } = data;
+  const { cname, expire } = provider;
 
-        // form URLs
-        if (rename) {
-          urls = sign(provider, files, name, expire);
-        } else {
-          urls = files.map(file => `${cname}/${encodeURIComponent(file.filename)}`);
-        }
+  // check status and if we have public link available - use it
+  let alias;
+  let urls;
+  if (data[FILES_PUBLIC_FIELD]) {
+    // fetch alias
+    alias = this.hook('files:download:alias', data[FILES_OWNER_FIELD]).get(0);
 
-      // no username - throw
-      } else if (!username) {
-        throw new HttpStatusError(401, 'file does not belong to the provided user');
+    // form URLs
+    if (rename) {
+      urls = sign(provider, files, name, expire);
+    } else {
+      urls = files.map(file => `${cname}/${encodeURIComponent(file.filename)}`);
+    }
 
-      // will throw if no access
-      } else if (hasAccess(username)(data)) {
-        // alias is username, sign URLs
-        alias = username;
-        urls = sign(provider, files, name, expire);
-      }
+  // no username - throw
+  } else if (!username) {
+    return Promise.reject(new HttpStatusError(401, 'file does not belong to the provided user'));
 
-      return Promise
-        .props({
-          uploadId, name, files, urls, username: alias,
-        })
-        .tap(output => this.hook.call(this, 'files:download:post', data, output));
-    });
-};
+  // will throw if no access
+  } else if (hasAccess(username)(data)) {
+    // alias is username, sign URLs
+    alias = username;
+    urls = sign(provider, files, name, expire);
+  }
+
+  const response = await Promise.props({
+    uploadId,
+    name,
+    files,
+    urls,
+    username: alias,
+  });
+
+  await this.hook('files:download:post', data, response);
+
+  return response;
+}
+
+module.exports = getDownloadURL;
