@@ -13,12 +13,11 @@ describe('download suite', function suite() {
     bindSend,
     initAndUpload,
     processUpload,
-    config,
     updateAccess,
   } = require('../helpers/utils.js');
 
   const route = 'files.download';
-  const bucketName = config.transport[0].options.bucket.name;
+  const bucketName = require('../configs/generic/core').transport[0].options.bucket.name;
 
   // setup functions
   before('start service', startService);

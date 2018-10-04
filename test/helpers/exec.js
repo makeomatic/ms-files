@@ -1,7 +1,7 @@
 const Promise = require('bluebird');
 const spawn = require('child_process').execFile;
 const assert = require('assert');
-const transport = require('./config').amqp.transport.connection;
+const transport = require('../configs/generic/core').amqp.transport.connection;
 
 module.exports = (binaryPath, extraArgs = []) => function exec(args = []) {
   return Promise.fromCallback(next => (

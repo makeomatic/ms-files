@@ -35,8 +35,20 @@ class Files extends Mservice {
     // extend with storage providers
     StorageProviders(this);
 
+    // 2 different plugin types
+    let redisDuplicate;
+    if (config.plugins.includes('redisCluster')) {
+      this.redisType = 'redisCluster';
+      redisDuplicate = () => new RedisCluster(config.redis.hosts, config.redis.options);
+    } else if (config.plugins.includes('redisSentinel')) {
+      this.redisType = 'redisSentinel';
+      redisDuplicate = redis => redis.duplicate();
+    } else {
+      throw new Error('must include redis family plugins');
+    }
+
     // init scripts
-    this.on('plugin:connect:redisCluster', (redis) => {
+    this.on(`plugin:connect:${this.redisType}`, (redis) => {
       fsort.attach(redis, 'fsort');
 
       this.log.debug('enabling lock manager');
@@ -45,7 +57,7 @@ class Files extends Mservice {
         // main connection
         client: redis,
         // second connection
-        pubsub: new RedisCluster(config.redis.hosts, config.redis.options),
+        pubsub: redisDuplicate(redis),
         log: this.log,
       });
     });

@@ -10,7 +10,6 @@ describe('upload suite', function suite() {
     startService,
     stopService,
     inspectPromise,
-    config,
     bindSend,
     uploadFiles,
     modelData,
@@ -24,7 +23,7 @@ describe('upload suite', function suite() {
 
   // data
   const route = 'files.upload';
-  const bucketName = config.transport[0].options.bucket.name;
+  const bucketName = require('../configs/generic/core').transport[0].options.bucket.name;
   const { STATUS_PENDING, STATUS_PROCESSED, FILES_PACKED_FIELD } = require('../../src/constant.js');
 
   // setup functions
