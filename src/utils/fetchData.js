@@ -109,7 +109,7 @@ module.exports = function fetchData(key, omitFields = []) {
 
 module.exports.batch = function fetchDataBatch(keys, omitFields = []) {
   const timer = perf('fetchData:batch');
-  const { redis, redisType } = this;
+  const { redis, service: { redisType } } = this;
 
   const masterNode = redisType === 'redisCluster'
     ? selectMaster(redis)

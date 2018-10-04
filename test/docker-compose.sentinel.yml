@@ -19,7 +19,7 @@ services:
         ipv4_address: 172.19.238.20
 
   redis-sentinel:
-    links:
+    depends_on:
       - redis
     volumes:
       - ./fixtures/redis-sentinel:/etc/redis-sentinel
