@@ -1,3 +1,15 @@
+# [13.0.0](https://github.com/makeomatic/ms-files/compare/v12.2.0...v13.0.0) (2018-10-04)
+
+
+### Features
+
+* upgrade ioredis to 4, test sentinel setup ([#150](https://github.com/makeomatic/ms-files/issues/150)) ([f4564c5](https://github.com/makeomatic/ms-files/commit/f4564c5))
+
+
+### BREAKING CHANGES
+
+* ioredis@4, added sentinel test suite, ensure tests can run in parallel
+
 # [12.2.0](https://github.com/makeomatic/ms-files/compare/v12.1.0...v12.2.0) (2018-09-12)
 
 
