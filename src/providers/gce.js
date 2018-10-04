@@ -175,6 +175,8 @@ module.exports = class GCETransport extends AbstractFileTransfer {
    * @return {Promise}
    */
   async createBucket() {
+    let bucket;
+
     const gcs = this._gcs;
     const needle = this._config.bucket.name;
 
@@ -183,11 +185,11 @@ module.exports = class GCETransport extends AbstractFileTransfer {
 
     // retrieves bucket gce metadata
     if (exists) {
-      return gceBucket.get();
+      [bucket] = await gceBucket.get();
+    } else {
+      this.log.debug('initiating createBucket: %s', needle);
+      [bucket] = await gcs.createBucket(needle, this._config.bucket.metadata);
     }
-
-    this.log.debug('initiating createBucket: %s', needle);
-    const [bucket] = await gcs.createBucket(needle, this._config.bucket.metadata);
 
     return bucket;
   }
