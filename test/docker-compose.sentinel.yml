@@ -10,18 +10,34 @@ networks:
 
 services:
   redis:
+    image: redis:4.0.11-alpine
     hostname: redis
-    image: makeomatic/redis-cluster:3.2.9
+    expose:
+      - "6379"
     networks:
       files:
-        ipv4_address: 172.19.238.10
+        ipv4_address: 172.19.238.20
+
+  redis-sentinel:
+    links:
+      - redis
+    volumes:
+      - ./fixtures/redis-sentinel:/etc/redis-sentinel
+    image: redis:4.0.11-alpine
+    hostname: redis-sentinel
+    expose:
+      - "26379"
+    command: redis-server /etc/redis-sentinel/redis-sentinel.conf --sentinel
+    networks:
+      files:
+        ipv4_address: 172.19.238.21
 
   rabbitmq:
     image: makeomatic/rabbitmq:3.6.12
     hostname: rabbitmq
     networks:
       files:
-        ipv4_address: 172.19.238.11
+        ipv4_address: 172.19.238.22
 
   tester:
     image: makeomatic/node:10.11.0-tester
@@ -32,14 +48,14 @@ services:
     volumes:
       - ${PWD}:/src
       - ./configs/generic:/src/configs/core:ro
-      - ./configs/redis-cluster:/src/configs/redis:ro
+      - ./configs/redis-sentinel:/src/configs/redis:ro
     environment:
       NODE_ENV: "test"
       DEBUG: "${DEBUG}"
-      TEST_BUCKET: "makeomatic-131231"
+      TEST_BUCKET: "makeomatic-131232"
       DOTENV_FILE_PATH: "/src/test/.env"
       NCONF_FILE_PATH: '["/src/configs/core","/src/configs/redis"]'
     command: tail -f /dev/null
     networks:
       files:
-        ipv4_address: 172.19.238.12
+        ipv4_address: 172.19.238.23

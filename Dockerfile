@@ -10,6 +10,7 @@ RUN \
   apk --update upgrade \
   && apk --update add git ca-certificates openssl g++ make python linux-headers \
   && yarn --production --frozen-lockfile \
+  && yarn cache clean \
   && apk del \
     g++ \
     make \

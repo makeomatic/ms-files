@@ -3,19 +3,18 @@
 // and generating metadata for them
 //
 
+const { inspectPromise } = require('@makeomatic/deploy');
 const Promise = require('bluebird');
 const fs = require('fs');
 const path = require('path');
 const md5 = require('md5');
 const request = require('request-promise');
-const assert = require('assert');
 const partial = require('lodash/partial');
 const values = require('lodash/values');
 const zlib = require('zlib');
 const url = require('url');
 const is = require('is');
 const Files = require('../../src');
-const config = require('./config');
 
 // helpers
 const cache = {};
@@ -318,70 +317,49 @@ function getInfo({ filename, username }) {
 }
 
 //
-// Simple sync helper for promise inspection
-//
-function inspectPromise(mustBeFulfilled = true) {
-  return function inspection(promise) {
-    const isFulfilled = promise.isFulfilled();
-    assert.equal(promise.isPending(), false, 'promise was still pending');
-    assert.equal(promise.isCancelled(), false, 'promise was cancelled');
-
-    try {
-      // we expected the promise to fail or succeed
-      assert.equal(isFulfilled, mustBeFulfilled);
-    } catch (e) {
-      if (isFulfilled) {
-        const message = JSON.stringify(promise.value());
-        return Promise.reject(new Error(`Promise did not fail: ${message}`));
-      }
-
-      throw promise.reason();
-    }
-
-
-    return mustBeFulfilled ? promise.value() : promise.reason();
-  };
-}
-
-//
 // We want tests to be idempotent, here are the helpers for that
 // start service
 //
-function startService() {
-  const service = this.files = new Files(config);
-  return service
-    .connect()
-    .tap(() => {
-      const amqp = this.amqp = service.amqp;
-      this.send = function send(route, msg, timeout = 5500) {
-        return amqp.publishAndWait(route, msg, { timeout });
-      };
-    });
+async function startService() {
+  const service = this.files = new Files(this.configOverride);
+  await service.connect();
+
+  const amqp = this.amqp = service.amqp;
+  this.send = function send(route, msg, timeout = 5500) {
+    return amqp.publishAndWait(route, msg, { timeout });
+  };
 }
 
 //
 // stop service and cleanup
 //
-function stopService() {
+async function stopService() {
   const service = this.files;
-  return Promise
-    .map(service.redis.nodes('master'), node => node.flushdb())
-    .finally(() => (
-      Promise.map(service.providers, transport => Promise.fromNode(next => (
-        transport._bucket ? transport._bucket.deleteFiles({ force: true }, next) : next()
-      )))
-    ))
-    .finally(() => service.close().reflect())
-    .finally(() => {
-      this.amqp = null;
-      this.files = null;
-      this.send = null;
-    });
+
+  if (service.redisType === 'redisCluster') {
+    await Promise.map(service.redis.nodes('master'), node => (
+      node.flushdb()
+    ));
+  } else {
+    await service.redis.flushdb();
+  }
+
+  try {
+    await Promise.map(service.providers, transport => (
+      transport._bucket && transport._bucket.deleteFiles({ force: true })
+    ));
+  } finally {
+    await service.close().reflect();
+
+    this.amqp = null;
+    this.files = null;
+    this.send = null;
+  }
 }
 
 // resets sinon
 function resetSinon() {
-  config.hooks['files:process:post'].resetHistory();
+  this.files.config.hooks['files:process:post'].resetHistory();
 }
 
 //
@@ -426,7 +404,6 @@ module.exports = exports = {
   backgroundData,
   simpleData,
   simplePackedData,
-  config,
   upload,
   readFile,
   modelMessage,

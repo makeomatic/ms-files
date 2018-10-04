@@ -68,6 +68,27 @@ function deserializePipeline(response) {
   return Promise.resolve(reserializeData(data[0], data[1])).reflect();
 }
 
+function selectMaster(redis) {
+  // this must include {}
+  const prefix = redis.options.keyPrefix;
+  const slot = calcSlot(prefix);
+  // they will all refer to the same slot, because we prefix with {}
+  // this has possibility of throwing, but not likely to since previous operations
+  // would've been rejected already, in a promise this will result in a rejection
+  const nodeKeys = redis.slots[slot];
+  const masters = redis.connectionPool.nodes.master;
+  const masterNode = nodeKeys.reduce((node, key) => node || masters[key], null);
+
+  // uses internal implementation details
+  if (is.fn(masterNode.fetchData) !== true) {
+    masterNode.options.keyPrefix = prefix;
+    masterNode.defineCommand('fetchData', { lua: fetchDataScript });
+    masterNode.options.keyPrefix = null;
+  }
+
+  return masterNode;
+}
+
 /**
  * Fetches data
  * @param  {String} key
@@ -88,24 +109,11 @@ module.exports = function fetchData(key, omitFields = []) {
 
 module.exports.batch = function fetchDataBatch(keys, omitFields = []) {
   const timer = perf('fetchData:batch');
-  const { redis } = this;
+  const { redis, redisType } = this;
 
-  // this must include {}
-  const prefix = redis.options.keyPrefix;
-  const slot = calcSlot(prefix);
-  // they will all refer to the same slot, because we prefix with {}
-  // this has possibility of throwing, but not likely to since previous operations
-  // would've been rejected already, in a promise this will result in a rejection
-  const nodeKeys = redis.slots[slot];
-  const masters = redis.connectionPool.nodes.master;
-  const masterNode = nodeKeys.reduce((node, key) => node || masters[key], null);
-
-  // uses internal implementation details
-  if (is.fn(masterNode.fetchData) !== true) {
-    masterNode.options.keyPrefix = prefix;
-    masterNode.defineCommand('fetchData', { lua: fetchDataScript });
-    masterNode.options.keyPrefix = null;
-  }
+  const masterNode = redisType === 'redisCluster'
+    ? selectMaster(redis)
+    : redis;
 
   const pipeline = masterNode.pipeline();
   keys.forEach(addToPipeline, { pipeline, omitFields });
