@@ -131,7 +131,7 @@ module.exports = class GCETransport extends AbstractFileTransfer {
    * Handles pubsub for object change notifications
    * @return {Subscription}
    */
-  subscribe(handler) {
+  async subscribe(handler) {
     assert(this._pubsub, '@google-cloud/pubsub not initialized');
 
     // extract config
@@ -154,18 +154,18 @@ module.exports = class GCETransport extends AbstractFileTransfer {
 
     // first find if we have an existing subscription
     const topic = Pubsub.topic(pubsub.topic);
-    return topic.subscription(name, config).get(config.gaxOpts).then((data) => {
-      this.log.info('subscribed', data);
-      const [subscription] = data;
-      subscription.on('message', handler);
-      subscription.on('error', err => this.log.error({ error: err }, 'failed to subscribe'));
-      this._pubsub._subscriptions.push(subscription);
+    const [subscription] = await topic
+      .subscription(name, config)
+      .get(config.gaxOpts);
 
-      // for internal cleanup
-      if (config.terminate) subscription._terminate = true;
+    subscription.on('message', handler);
+    subscription.on('error', err => this.log.error({ error: err }, 'failed to subscribe'));
+    this._pubsub._subscriptions.push(subscription);
 
-      return subscription;
-    });
+    // for internal cleanup
+    if (config.terminate) subscription._terminate = true;
+
+    return subscription;
   }
 
   /**

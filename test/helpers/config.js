@@ -9,7 +9,7 @@ exports.enablePubsub = function enablePubsub() {
   set(transport[0], 'options.bucket.channel', {
     pubsub: {
       topic: 'gcs-object-create',
-      name: 'test-runner',
+      name: `test-runner-${Math.random()}`,
       config: {
         terminate: true,
       },
