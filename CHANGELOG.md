@@ -1,3 +1,10 @@
+## [13.0.1](https://github.com/makeomatic/ms-files/compare/v13.0.0...v13.0.1) (2018-10-07)
+
+
+### Bug Fixes
+
+* temporarily downgrade ioredis ([#151](https://github.com/makeomatic/ms-files/issues/151)) ([2c9aa58](https://github.com/makeomatic/ms-files/commit/2c9aa58))
+
 # [13.0.0](https://github.com/makeomatic/ms-files/compare/v12.2.0...v13.0.0) (2018-10-04)
 
 
