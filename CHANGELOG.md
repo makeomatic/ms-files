@@ -1,3 +1,10 @@
+## [13.0.2](https://github.com/makeomatic/ms-files/compare/v13.0.1...v13.0.2) (2018-11-15)
+
+
+### Bug Fixes
+
+* upgrades deps, enables health check ([#152](https://github.com/makeomatic/ms-files/issues/152)) ([0516e67](https://github.com/makeomatic/ms-files/commit/0516e67))
+
 ## [13.0.1](https://github.com/makeomatic/ms-files/compare/v13.0.0...v13.0.1) (2018-10-07)
 
 
