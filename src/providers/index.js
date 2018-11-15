@@ -1,5 +1,5 @@
 const Promise = require('bluebird');
-const { Microfleet, PluginsTypes } = require('@microfleet/core');
+const { Microfleet, PluginTypes } = require('@microfleet/core');
 const assert = require('assert');
 const debug = require('debug')('ms-files-providers');
 
@@ -103,8 +103,8 @@ function initProviders(service) {
   service.providersByBucket = Object.setPrototypeOf(providersByBucket, null);
 
   // internal plugin API
-  service.addConnector(PluginsTypes.database, connectProviders(service.providers));
-  service.addDestructor(PluginsTypes.database, closeProviders(service.providers));
+  service.addConnector(PluginTypes.database, connectProviders(service.providers));
+  service.addDestructor(PluginTypes.database, closeProviders(service.providers));
 }
 
 // Public API
