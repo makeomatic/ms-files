@@ -71,7 +71,7 @@ module.exports = class GCETransport extends AbstractFileTransfer {
     this._gcs = new Storage(this._config.gce);
 
     try {
-      const PubSub = require('@google-cloud/pubsub');
+      const { PubSub } = require('@google-cloud/pubsub');
 
       this._pubsub = new PubSub(this._config.gce);
       this._pubsub._subscriptions = [];
