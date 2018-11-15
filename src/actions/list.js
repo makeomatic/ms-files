@@ -1,3 +1,4 @@
+const { ActionTransport } = require('@microfleet/core');
 const Promise = require('bluebird');
 const fsort = require('redis-filtered-sort');
 const is = require('is');
@@ -177,7 +178,7 @@ function prepareResponse(data) {
  * List files
  * @return {Promise}
  */
-module.exports = function listFiles({ params }) {
+async function listFiles({ params }) {
   const timer = perf('list');
 
   const {
@@ -246,4 +247,7 @@ module.exports = function listFiles({ params }) {
     .tap(timer('fetch'))
     .then(prepareResponse)
     .finally(timer);
-};
+}
+
+listFiles.transports = [ActionTransport.amqp];
+module.exports = listFiles;

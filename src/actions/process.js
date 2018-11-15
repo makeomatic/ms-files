@@ -1,3 +1,4 @@
+const { ActionTransport } = require('@microfleet/core');
 const Promise = require('bluebird');
 const { HttpStatusError } = require('common-errors');
 const {
@@ -25,7 +26,7 @@ const hasAccess = require('../utils/hasAccess');
  * @param  {Boolean} request.params.awaitPostActions
  * @return {Promise}
  */
-module.exports = async function postProcessFile({ params }) {
+async function postProcessFile({ params }) {
   const { uploadId, username, awaitPostActions } = params;
   const { maxTries } = this.config;
   const key = `${FILES_DATA}:${uploadId}`;
@@ -97,4 +98,7 @@ module.exports = async function postProcessFile({ params }) {
 
   await this.redis.del(postActionKey);
   return response;
-};
+}
+
+postProcessFile.transports = [ActionTransport.amqp];
+module.exports = postProcessFile;

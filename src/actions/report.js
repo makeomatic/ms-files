@@ -1,3 +1,4 @@
+const { ActionTransport } = require('@microfleet/core');
 const Promise = require('bluebird');
 const fsort = require('redis-filtered-sort');
 const { NotImplementedError } = require('common-errors');
@@ -90,7 +91,7 @@ function merge(args) {
  * Returns amount of models on the given account.
  * @returns {Promise<{ total: number, public: number }>}
  */
-module.exports = function listFiles({ params }) {
+async function report({ params }) {
   return Promise
     .bind(this, ['files:info:pre', params.username])
     .spread(this.hook)
@@ -127,4 +128,7 @@ module.exports = function listFiles({ params }) {
         .all(work)
         .then(merge);
     });
-};
+}
+
+report.transports = [ActionTransport.amqp];
+module.exports = report;

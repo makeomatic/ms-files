@@ -1,3 +1,4 @@
+const { ActionTransport } = require('@microfleet/core');
 const Promise = require('bluebird');
 const hasAccess = require('../utils/hasAccess');
 const fetchData = require('../utils/fetchData');
@@ -38,7 +39,7 @@ function cleanupFileProvider(files, provider, log, opts = { concurrency: 20 }) {
  * @param  {String} opts.filename
  * @return {Promise}
  */
-module.exports = async function removeFile({ params }) {
+async function removeFile({ params }) {
   const { filename, username } = params;
   const { redis, log } = this;
   const provider = this.provider('remove', params);
@@ -84,4 +85,7 @@ module.exports = async function removeFile({ params }) {
     .exec()
     .tap(bustCache(redis, data))
     .then(pipelineError);
-};
+}
+
+removeFile.transports = [ActionTransport.amqp];
+module.exports = removeFile;

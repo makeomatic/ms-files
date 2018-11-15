@@ -1,3 +1,4 @@
+const { ActionTransport } = require('@microfleet/core');
 const Promise = require('bluebird');
 const uuidv4 = require('uuid/v4');
 const md5 = require('md5');
@@ -36,7 +37,7 @@ const {
  * @param  {Boolean} [opts.params.temp=false]
  * @return {Promise}
  */
-module.exports = async function initFileUpload({ params }) {
+async function initFileUpload({ params }) {
   const {
     files,
     meta,
@@ -201,4 +202,7 @@ module.exports = async function initFileUpload({ params }) {
     .spread(this.hook);
 
   return data;
-};
+}
+
+initFileUpload.transports = [ActionTransport.amqp];
+module.exports = initFileUpload;

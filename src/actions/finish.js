@@ -1,3 +1,4 @@
+const { ActionTransport } = require('@microfleet/core');
 const Promise = require('bluebird');
 const assert = require('assert');
 const { HttpStatusError } = require('common-errors');
@@ -47,7 +48,7 @@ const is409 = { message: '409' };
  * @param  {Boolean} opts.params.await
  * @return {Promise}
  */
-module.exports = async function completeFileUpload({ params }) {
+async function completeFileUpload({ params }) {
   const { filename } = params;
   const { redis, config, amqp, provider } = this;
   const { prefix } = config.router.routes;
@@ -145,4 +146,8 @@ module.exports = async function completeFileUpload({ params }) {
   const action = params.await ? 'publishAndWait' : 'publish';
   const route = `${prefix}.process`;
   return amqp[action](route, { uploadId });
-};
+}
+
+completeFileUpload.transports = [ActionTransport.amqp];
+
+module.exports = completeFileUpload;

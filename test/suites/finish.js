@@ -33,7 +33,8 @@ describe('finish upload suite', function suite() {
       .reflect()
       .then(inspectPromise(false))
       .then((err) => {
-        assert.equal(err.name, 'ValidationError');
+        assert.equal(err.name, 'HttpStatusError');
+        assert.equal(err.statusCode, 400);
         return null;
       });
   });

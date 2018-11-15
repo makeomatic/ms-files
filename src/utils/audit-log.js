@@ -1,17 +1,16 @@
 const is = require('is');
-const Promise = require('bluebird');
 
 module.exports = [
   {
     point: 'preRequest',
-    handler: (route, request) => {
+    async handler(route, request) {
       request.auditLog = { start: process.hrtime() };
-      return Promise.resolve([route, request]);
+      return [route, request];
     },
   },
   {
     point: 'preResponse',
-    handler: function preResponse(error, result, request) {
+    async handler(error, result, request) {
       const service = this;
       const execTime = request.auditLog.execTime = process.hrtime(request.auditLog.start);
 
@@ -39,10 +38,10 @@ module.exports = [
 
         request.log[level](meta, 'Error performing operation', err);
       } else {
-        request.log.info(meta, 'completed operation', service._config.debug ? result : '');
+        request.log.info(meta, 'completed operation', service.config.debug ? result : '');
       }
 
-      return Promise.resolve([error, result]);
+      return [error, result];
     },
   },
 ];

@@ -16,7 +16,7 @@ module.exports = function finishPost(fileData, lock) {
 
   if (!fileData.bucket) {
     const provider = this.provider('download', fileData);
-    fileData.bucket = provider._config.bucket.name;
+    fileData.bucket = provider.config.bucket.name;
   }
 
   const message = {

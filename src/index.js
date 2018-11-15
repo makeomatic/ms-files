@@ -1,5 +1,5 @@
 const Promise = require('bluebird');
-const Mservice = require('@microfleet/core');
+const { Microfleet, ConnectorsTypes } = require('@microfleet/core');
 const omit = require('lodash/omit');
 const noop = require('lodash/noop');
 const merge = require('lodash/merge');
@@ -16,7 +16,7 @@ const conf = require('./config');
 /**
  * @class Files
  */
-class Files extends Mservice {
+class Files extends Microfleet {
   /**
    * Default options for the service
    * @type {Object}
@@ -30,7 +30,7 @@ class Files extends Mservice {
   constructor(opts = {}) {
     super(merge({}, Files.defaultOpts, opts));
 
-    const config = this._config;
+    const { config } = this;
 
     // extend with storage providers
     StorageProviders(this);
@@ -64,7 +64,7 @@ class Files extends Mservice {
 
     // add migration connector
     if (config.migrations.enabled === true) {
-      this.addConnector(Mservice.ConnectorsTypes.migration, () => (
+      this.addConnector(ConnectorsTypes.migration, () => (
         this.migrate('redis', `${__dirname}/migrations`)
       ));
     }
