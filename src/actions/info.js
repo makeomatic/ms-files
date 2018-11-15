@@ -1,3 +1,4 @@
+const { ActionTransport } = require('@microfleet/core');
 const Promise = require('bluebird');
 const assert = require('assert');
 const { NotImplementedError, HttpStatusError } = require('common-errors');
@@ -13,7 +14,7 @@ const NOT_IMPLEMENTED_ERROR = new NotImplementedError('files:info:pre hook must 
  * @param  {Object} opts.username
  * @return {Promise}
  */
-module.exports = async function getFileInfo({ params }) {
+async function getFileInfo({ params }) {
   const { filename: possibleFilename, username: owner } = params;
 
   const [username] = await Promise
@@ -44,4 +45,7 @@ module.exports = async function getFileInfo({ params }) {
     .spread(this.hook);
 
   return { username, file };
-};
+}
+
+getFileInfo.transports = [ActionTransport.amqp];
+module.exports = getFileInfo;

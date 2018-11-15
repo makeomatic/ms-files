@@ -1,3 +1,4 @@
+const { ActionTransport } = require('@microfleet/core');
 const Promise = require('bluebird');
 const noop = require('lodash/noop');
 const handlePipeline = require('../utils/pipelineError');
@@ -150,7 +151,7 @@ function updateMeta(params) {
  * @param  {String}  opts.username
  * @return {Promise}
  */
-module.exports = function initFileUpdate({ params }) {
+function initFileUpdate({ params }) {
   const { uploadId, meta } = params;
 
   // ensure there are no race-conditions
@@ -158,4 +159,7 @@ module.exports = function initFileUpdate({ params }) {
     acquireLock.call(this, uploadId, meta[FILES_ALIAS_FIELD]),
     () => updateMeta.call(this, params)
   );
-};
+}
+
+initFileUpdate.transports = [ActionTransport.amqp];
+module.exports = initFileUpdate;

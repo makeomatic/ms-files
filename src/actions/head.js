@@ -1,3 +1,4 @@
+const { ActionTransport } = require('@microfleet/core');
 const { HttpStatusError } = require('common-errors');
 const { FILES_USR_ALIAS_PTR } = require('../constant');
 const handlePipeline = require('../utils/pipelineError');
@@ -20,5 +21,7 @@ async function headAction({ params }) {
 
   return response;
 }
+
+headAction.transports = [ActionTransport.amqp];
 
 module.exports = headAction;

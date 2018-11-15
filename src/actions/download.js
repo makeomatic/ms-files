@@ -1,3 +1,4 @@
+const { ActionTransport } = require('@microfleet/core');
 const Promise = require('bluebird');
 const path = require('path');
 const { HttpStatusError } = require('common-errors');
@@ -107,5 +108,7 @@ async function getDownloadURL({ params }) {
 
   return response;
 }
+
+getDownloadURL.transports = [ActionTransport.amqp];
 
 module.exports = getDownloadURL;

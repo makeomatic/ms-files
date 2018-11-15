@@ -1,3 +1,4 @@
+const { ActionTransport } = require('@microfleet/core');
 const Promise = require('bluebird');
 const fsort = require('redis-filtered-sort');
 const moment = require('moment');
@@ -71,3 +72,5 @@ module.exports = function sync() {
   return Promise
     .using(this, acquireLock(this, 'bucket-sync'), iterateOverUploadedFiles);
 };
+
+module.exports.transports = [ActionTransport.amqp];

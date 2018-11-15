@@ -1,3 +1,4 @@
+const { ActionTransport } = require('@microfleet/core');
 const Promise = require('bluebird');
 const handlePipeline = require('../utils/pipelineError');
 const fetchData = require('../utils/fetchData');
@@ -66,7 +67,7 @@ async function removeFromPublic(filename, data) {
     .then(handlePipeline);
 }
 
-module.exports = async function adjustAccess({ params }) {
+async function adjustAccess({ params }) {
   const { redis } = this;
   const { uploadId, setPublic, username } = params;
   const id = `${FILES_DATA}:${uploadId}`;
@@ -81,4 +82,8 @@ module.exports = async function adjustAccess({ params }) {
     .bind(this, [uploadId, data])
     .spread(setPublic ? addToPublic : removeFromPublic)
     .tap(bustCache(redis, data, true));
-};
+}
+
+adjustAccess.transports = [ActionTransport.amqp];
+
+module.exports = adjustAccess;
