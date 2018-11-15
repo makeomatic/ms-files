@@ -41,6 +41,7 @@
     "dlock": "^8.1.0",
     "flatstr": "^1.0.8",
     "gcs-resumable-upload": "^0.13.0",
+    "hapi": "^17.7.0",
     "ioredis": "4.2.0",
     "is": "^3.2.1",
     "jaeger-client": "^3.13.0",
