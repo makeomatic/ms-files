@@ -1,5 +1,4 @@
 const is = require('is');
-const Promise = require('bluebird');
 
 module.exports = [
   {
