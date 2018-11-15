@@ -1,5 +1,5 @@
 const Promise = require('bluebird');
-const Mservice = require('@microfleet/core');
+const { Microfleet, PluginsTypes } = require('@microfleet/core');
 const assert = require('assert');
 const debug = require('debug')('ms-files-providers');
 
@@ -81,7 +81,7 @@ function closeProviders(providers) {
  * internal connectors storage
  */
 function initProviders(service) {
-  assert.ok(service instanceof Mservice, 'service must be an instance of Mservice');
+  assert.ok(service instanceof Microfleet, 'service must be an instance of Mservice');
 
   // select provider predicate
   service.provider = (...args) => {
@@ -103,8 +103,8 @@ function initProviders(service) {
   service.providersByBucket = Object.setPrototypeOf(providersByBucket, null);
 
   // internal plugin API
-  service.addConnector(Mservice.PluginsTypes.database, connectProviders(service.providers));
-  service.addDestructor(Mservice.PluginsTypes.database, closeProviders(service.providers));
+  service.addConnector(PluginsTypes.database, connectProviders(service.providers));
+  service.addDestructor(PluginsTypes.database, closeProviders(service.providers));
 }
 
 // Public API
