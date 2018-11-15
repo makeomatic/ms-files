@@ -17,5 +17,6 @@ exports.plugins = [
   'opentracing',
   'router',
   'amqp',
+  'http',
   'redisSentinel',
 ];
