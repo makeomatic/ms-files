@@ -199,8 +199,8 @@ describe('upload suite', function suite() {
         .reflect()
         .then(inspectPromise(false))
         .then((err) => {
-          assert.equal(err.code, 400);
-          assert.equal(err.name, 'ValidationError');
+          assert.equal(err.statusCode, 400);
+          assert.equal(err.name, 'HttpStatusError');
           return null;
         });
     });
@@ -218,8 +218,8 @@ describe('upload suite', function suite() {
         .reflect()
         .then(inspectPromise(false))
         .then((err) => {
-          assert.equal(err.code, 400);
-          assert.equal(err.name, 'ValidationError');
+          assert.equal(err.statusCode, 400);
+          assert.equal(err.name, 'HttpStatusError');
           return null;
         });
     });
