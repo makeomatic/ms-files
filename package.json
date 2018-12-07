@@ -17,6 +17,9 @@
     "docker-release": "mdep docker release",
     "release": "yarn --frozen-lockfile && yarn semantic-release"
   },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/makeomatic/ms-files.git"
