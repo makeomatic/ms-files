@@ -1,3 +1,10 @@
+## [13.0.5](https://github.com/makeomatic/ms-files/compare/v13.0.4...v13.0.5) (2018-12-19)
+
+
+### Bug Fixes
+
+* missing sentry/node ([0c72b88](https://github.com/makeomatic/ms-files/commit/0c72b88))
+
 ## [13.0.4](https://github.com/makeomatic/ms-files/compare/v13.0.3...v13.0.4) (2018-12-19)
 
 
