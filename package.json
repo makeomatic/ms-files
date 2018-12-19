@@ -35,6 +35,7 @@
     "@microfleet/core": "^13.3.2",
     "@microfleet/transport-amqp": "^13.1.3",
     "@microfleet/validation": "^8.1.0",
+    "@sentry/node": "^4.4.2",
     "bl": "^2.1.2",
     "bluebird": "^3.5.3",
     "bunyan": "^1.8.12",
