@@ -1,3 +1,10 @@
+## [13.0.4](https://github.com/makeomatic/ms-files/compare/v13.0.3...v13.0.4) (2018-12-19)
+
+
+### Bug Fixes
+
+* missing dep, upgrade deps ([ffb3c8f](https://github.com/makeomatic/ms-files/commit/ffb3c8f))
+
 ## [13.0.3](https://github.com/makeomatic/ms-files/compare/v13.0.2...v13.0.3) (2018-12-07)
 
 
