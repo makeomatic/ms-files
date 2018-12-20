@@ -142,7 +142,7 @@ exports.uploadTTL = 60 * 60 * 24;
  * max tries for post-processing
  * @type {Number}
  */
-exports.maxTries = Infinity;
+exports.maxTries = Number.MAX_SAFE_INTEGER;
 
 /**
  * API Domain
