@@ -1,3 +1,10 @@
+## [13.0.7](https://github.com/makeomatic/ms-files/compare/v13.0.6...v13.0.7) (2018-12-20)
+
+
+### Bug Fixes
+
+* default config maxTries ([486142f](https://github.com/makeomatic/ms-files/commit/486142f))
+
 ## [13.0.6](https://github.com/makeomatic/ms-files/compare/v13.0.5...v13.0.6) (2018-12-20)
 
 
