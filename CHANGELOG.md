@@ -1,3 +1,10 @@
+## [13.0.6](https://github.com/makeomatic/ms-files/compare/v13.0.5...v13.0.6) (2018-12-20)
+
+
+### Bug Fixes
+
+* upgrade logger, ensure masterNode exists ([48c34c5](https://github.com/makeomatic/ms-files/commit/48c34c5))
+
 ## [13.0.5](https://github.com/makeomatic/ms-files/compare/v13.0.4...v13.0.5) (2018-12-19)
 
 
