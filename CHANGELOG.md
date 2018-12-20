@@ -1,3 +1,10 @@
+## [13.0.8](https://github.com/makeomatic/ms-files/compare/v13.0.7...v13.0.8) (2018-12-20)
+
+
+### Bug Fixes
+
+* sentry logging ([f3d1977](https://github.com/makeomatic/ms-files/commit/f3d1977))
+
 ## [13.0.7](https://github.com/makeomatic/ms-files/compare/v13.0.6...v13.0.7) (2018-12-20)
 
 
