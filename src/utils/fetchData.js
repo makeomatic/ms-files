@@ -68,7 +68,7 @@ function deserializePipeline(response) {
   return Promise.resolve(reserializeData(data[0], data[1])).reflect();
 }
 
-function selectMaster(redis) {
+async function selectMaster(redis) {
   // this must include {}
   const prefix = redis.options.keyPrefix;
   const slot = calcSlot(prefix);
@@ -78,6 +78,11 @@ function selectMaster(redis) {
   const nodeKeys = redis.slots[slot];
   const masters = redis.connectionPool.nodes.master;
   const masterNode = nodeKeys.reduce((node, key) => node || masters[key], null);
+
+  // if we have no master - delay the request by 100ms
+  if (masterNode === null) {
+    return Promise.delay(100).return(redis).then(selectMaster);
+  }
 
   // uses internal implementation details
   if (is.fn(masterNode.fetchData) !== true) {
@@ -107,20 +112,22 @@ module.exports = function fetchData(key, omitFields = []) {
     .finally(timer);
 };
 
-module.exports.batch = function fetchDataBatch(keys, omitFields = []) {
+module.exports.batch = async function fetchDataBatch(keys, omitFields = []) {
   const timer = perf('fetchData:batch');
   const { redis, service: { redisType } } = this;
 
   const masterNode = redisType === 'redisCluster'
-    ? selectMaster(redis)
+    ? await selectMaster(redis)
     : redis;
 
   const pipeline = masterNode.pipeline();
   keys.forEach(addToPipeline, { pipeline, omitFields });
 
-  return pipeline
-    .exec()
-    .tap(timer('pipeline'))
-    .map(deserializePipeline)
-    .finally(timer);
+  try {
+    const data = await pipeline.exec();
+    timer('pipeline')();
+    return await Promise.map(data, deserializePipeline);
+  } finally {
+    timer();
+  }
 };

@@ -414,10 +414,10 @@
     through2 "^3.0.0"
     uuid "^3.1.0"
 
-"@google-cloud/storage@2.3.3":
-  version "2.3.3"
-  resolved "https://registry.yarnpkg.com/@google-cloud/storage/-/storage-2.3.3.tgz#e4e68056f734361ede3bf81233de89f2d3751673"
-  integrity sha512-CW5LvzompZqkXTEWNsr4yke/XD2mYvZeoVahehwSkqp9BY/EPIKvHrlJpRn2pNiZHKH3QsXdNr2GJHVdw/NMPg==
+"@google-cloud/storage@2.3.4":
+  version "2.3.4"
+  resolved "https://registry.yarnpkg.com/@google-cloud/storage/-/storage-2.3.4.tgz#44619372ae316e0f8c19ec5e0c006899c4c4bbe9"
+  integrity sha512-TjEMVxdW1L18yyxvPWEylM1F4ijZ/k4lGKrKro2XNqqOy+fnisc+F2TbpiSJSbdmsMzeCunDkXepdb5AFA62cw==
   dependencies:
     "@google-cloud/common" "^0.27.0"
     "@google-cloud/paginator" "^0.1.0"
@@ -506,9 +506,9 @@
     lodash "^4.17.10"
 
 "@microfleet/core@^13.3.2":
-  version "13.3.2"
-  resolved "https://registry.yarnpkg.com/@microfleet/core/-/core-13.3.2.tgz#fd532f35cfe7f31e5e211d5106bae43145662cf1"
-  integrity sha512-YpvmAQT6c9auy780kpCPpBv5bd+N/CKe1I1olBbcH9JD/m7oi6A7K6rvg2mRzIa+KRbYFYIlxZwNz4SLdMy43Q==
+  version "13.4.0"
+  resolved "https://registry.yarnpkg.com/@microfleet/core/-/core-13.4.0.tgz#a64c032a572e1e0155576d7200bfa80fd5f97a20"
+  integrity sha512-x49aH+gXKsGjzsFJ+HfQZWZtsj+rJ3UQBqZKNBcC3GInEBJuepPJpPw/EU2t1oLwJSSBTRLirDQJQ+L+s+j6Iw==
   dependencies:
     bluebird "^3.5.2"
     bluebird-retry "^0.11.0"
@@ -520,12 +520,15 @@
     eventemitter3 "^3.1.0"
     get-value "^3.0.1"
     glob "^7.1.3"
-    is "^3.2.1"
+    is "^3.3.0"
     lodash "^4.17.11"
     lodash.intersection "^4.4.0"
     lodash.partial "^4.2.1"
     opentracing "^0.14.3"
+    pino "^5.10.2"
+    pino-multi-stream "^4.0.1"
     semver "^5.6.0"
+    sonic-boom "^0.7.1"
     sort-by "^1.1.1"
     stdout-stream "^1.4.1"
     yargs-parser "^11.0.0"
@@ -1498,20 +1501,6 @@ builtins@^1.0.3:
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/builtins/-/builtins-1.0.3.tgz#cb94faeb61c8696451db36534e1422f94f0aee88"
   integrity sha1-y5T662HIaWRR2zZTThQi+U8K7og=
-
-bunyan-noop@^2.0.0:
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/bunyan-noop/-/bunyan-noop-2.0.0.tgz#06e870b6a228e8912506777d17b0094fcfe6b174"
-  integrity sha1-BuhwtqIo6JElBnd9F7AJT8/msXQ=
-  dependencies:
-    stream-blackhole "^1.0.3"
-
-bunyan-sentry-stream@^1.1.0:
-  version "1.2.1"
-  resolved "https://registry.yarnpkg.com/bunyan-sentry-stream/-/bunyan-sentry-stream-1.2.1.tgz#fdd9f42fa75879f2a210579bdc2712f8285cd12b"
-  integrity sha1-/dn0L6dYefKiEFeb3CcS+Chc0Ss=
-  dependencies:
-    lodash.omit "4.5.0"
 
 bunyan@^1.8.12:
   version "1.8.12"
@@ -6491,12 +6480,19 @@ pinkie@^2.0.0:
   resolved "https://registry.yarnpkg.com/pinkie/-/pinkie-2.0.4.tgz#72556b80cfa0d48a974e80e77248e80ed4f7f870"
   integrity sha1-clVrgM+g1IqXToDnckjoDtT3+HA=
 
+pino-multi-stream@^4.0.1:
+  version "4.0.1"
+  resolved "https://registry.yarnpkg.com/pino-multi-stream/-/pino-multi-stream-4.0.1.tgz#a311b531569936548c15272917297dff1580f39a"
+  integrity sha512-gedNC9apr65SF3JkKwC98rcFVkfvTI3NFl2l+KVvvN2lHKpyyIw5mpPdsdaYHsKnUFFPw+jHfqYhaganGgOGbw==
+  dependencies:
+    pino "^5.0.0"
+
 pino-std-serializers@^2.3.0:
   version "2.3.0"
   resolved "https://registry.yarnpkg.com/pino-std-serializers/-/pino-std-serializers-2.3.0.tgz#34eeaab97c055c28e22c0542ae55978e7e427786"
   integrity sha512-klfGoOsP6sJH7ON796G4xoUSx2fkpFgKHO4YVVO2zmz31jR+etzc/QzGJILaOIiCD6HTCFgkPx+XN8nk+ruqPw==
 
-pino@^5.10.1, pino@^5.8.0:
+pino@^5.0.0, pino@^5.10.1, pino@^5.10.2, pino@^5.8.0:
   version "5.10.2"
   resolved "https://registry.yarnpkg.com/pino/-/pino-5.10.2.tgz#6daa2176ff7a62c2c6d0e1a6c8124e6d12be4b6d"
   integrity sha512-EXpD/W4v3JNysmkgrYDUb1sax1M2nd+C9/EexmZvOnMwflJlEII4wfIEEzkEwLRUcpCA0avzsRZohB5n0+G5fw==
@@ -7804,11 +7800,6 @@ stealthy-require@^1.1.0:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/stealthy-require/-/stealthy-require-1.1.1.tgz#35b09875b4ff49f26a777e509b3090a3226bf24b"
   integrity sha1-NbCYdbT/SfJqd35QmzCQoyJr8ks=
-
-stream-blackhole@^1.0.3:
-  version "1.0.3"
-  resolved "https://registry.yarnpkg.com/stream-blackhole/-/stream-blackhole-1.0.3.tgz#6fc2e2c2e9d9fde6be8c68d3db88de09802e4d63"
-  integrity sha1-b8LiwunZ/ea+jGjT24jeCYAuTWM=
 
 stream-combiner2@~1.1.1:
   version "1.1.1"

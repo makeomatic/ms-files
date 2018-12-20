@@ -2,7 +2,6 @@ const Promise = require('bluebird');
 const AbstractFileTransfer = require('ms-files-transport');
 const { get, merge, defaults } = require('lodash');
 const createURI = Promise.promisify(require('gcs-resumable-upload').createURI);
-const blackhole = require('bunyan-noop');
 const bl = require('bl');
 const assert = require('assert');
 const os = require('os');
@@ -45,7 +44,7 @@ module.exports = class GCETransport extends AbstractFileTransfer {
   constructor(opts = {}) {
     super();
     this._config = merge({}, GCETransport.defaultOpts, opts);
-    this._logger = this._config.logger || blackhole();
+    this._logger = this._config.logger;
     this.setupGCE();
   }
 
