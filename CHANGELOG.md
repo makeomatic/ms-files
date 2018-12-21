@@ -1,3 +1,11 @@
+## [13.0.9](https://github.com/makeomatic/ms-files/compare/v13.0.8...v13.0.9) (2018-12-21)
+
+
+### Bug Fixes
+
+* sentry logger ([876bd10](https://github.com/makeomatic/ms-files/commit/876bd10))
+* upgrade deps ([6c3ceb9](https://github.com/makeomatic/ms-files/commit/6c3ceb9))
+
 ## [13.0.8](https://github.com/makeomatic/ms-files/compare/v13.0.7...v13.0.8) (2018-12-20)
 
 
