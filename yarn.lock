@@ -506,9 +506,9 @@
     lodash "^4.17.10"
 
 "@microfleet/core@^13.3.2":
-  version "13.4.4"
-  resolved "https://registry.yarnpkg.com/@microfleet/core/-/core-13.4.4.tgz#1fbd6e9a89a944bf518c0644a24a8778a55a86dc"
-  integrity sha512-OUMiAY0FVSUcqFhATdeknQkjmAjpzrlXwl/QOaPauwsYjNgPUTnGlP43k0A4YTkrnRk4pmEtcb/1fvrzKzZiow==
+  version "13.4.6"
+  resolved "https://registry.yarnpkg.com/@microfleet/core/-/core-13.4.6.tgz#0f55684f0e502ba16cc1dbf198e78c4e4d4fa7d0"
+  integrity sha512-X7H/TSzuH4SMS8gB7D0XR47xOvT3nOQFTcUwjEIuPKnShuwFvmj+yRhCqAQtENSEHPBstaztaZaTB6CAi7/aMA==
   dependencies:
     bluebird "^3.5.2"
     bluebird-retry "^0.11.0"
@@ -526,7 +526,6 @@
     lodash.partial "^4.2.1"
     lsmod "^1.0.0"
     opentracing "^0.14.3"
-    parent-module "^0.1.0"
     pino "^5.10.3"
     pino-multi-stream "^4.0.1"
     read-pkg-up "^4.0.0"
@@ -1395,9 +1394,9 @@ boom@7.x.x:
     hoek "6.x.x"
 
 bottleneck@^2.0.1:
-  version "2.14.0"
-  resolved "https://registry.yarnpkg.com/bottleneck/-/bottleneck-2.14.0.tgz#4cbd8ffb4cf589ca4e71853561fbe1e464924864"
-  integrity sha512-hM5zQPPpIe2/pn8rornETr2x7/HOBGJ5u1RW1js6zvE5453bRMMbtbZl0ojB8yNj7w2xNWddpNukrhOikHb7BQ==
+  version "2.14.1"
+  resolved "https://registry.yarnpkg.com/bottleneck/-/bottleneck-2.14.1.tgz#3134b3dabbdafa19abbb0531c03529858d029190"
+  integrity sha512-FAZr9OekUbx/lCGY/Sok2QOFOy3exRWRcjVJfmHrh3J9UoIaLHT0E+TwhXTIPmKS8JHuX6i/eH/kmhhHBEx7DQ==
 
 bounce@1.x.x:
   version "1.2.3"
@@ -1634,11 +1633,6 @@ callsites@^0.2.0:
   version "0.2.0"
   resolved "https://registry.yarnpkg.com/callsites/-/callsites-0.2.0.tgz#afab96262910a7f33c19a5775825c69f34e350ca"
   integrity sha1-r6uWJikQp/M8GaV3WCXGnzTjUMo=
-
-callsites@^1.0.0:
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/callsites/-/callsites-1.0.1.tgz#c14c24188ce8e1d6a030b4c3c942e6ba895b6a1a"
-  integrity sha1-wUwkGIzo4dagMLTDyULmuolbaho=
 
 callsites@^2.0.0:
   version "2.0.0"
@@ -6208,13 +6202,6 @@ parallel-transform@^1.1.0:
     cyclist "~0.2.2"
     inherits "^2.0.3"
     readable-stream "^2.1.5"
-
-parent-module@^0.1.0:
-  version "0.1.0"
-  resolved "https://registry.yarnpkg.com/parent-module/-/parent-module-0.1.0.tgz#b5292863a1e8c476ecf857e7d75c98920b24b8a6"
-  integrity sha1-tSkoY6HoxHbs+Ffn11yYkgskuKY=
-  dependencies:
-    callsites "^1.0.0"
 
 parse-github-url@^1.0.1:
   version "1.0.2"
