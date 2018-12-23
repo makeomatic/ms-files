@@ -1,3 +1,10 @@
+## [13.0.11](https://github.com/makeomatic/ms-files/compare/v13.0.10...v13.0.11) (2018-12-23)
+
+
+### Bug Fixes
+
+* updated deps ([96faae5](https://github.com/makeomatic/ms-files/commit/96faae5))
+
 ## [13.0.10](https://github.com/makeomatic/ms-files/compare/v13.0.9...v13.0.10) (2018-12-23)
 
 
