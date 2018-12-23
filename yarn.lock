@@ -506,9 +506,9 @@
     lodash "^4.17.10"
 
 "@microfleet/core@^13.3.2":
-  version "13.4.8"
-  resolved "https://registry.yarnpkg.com/@microfleet/core/-/core-13.4.8.tgz#f968ddda1ab8ce2cd207f13297f649dc7b1c1714"
-  integrity sha512-pXImF1vVriQ6TV1Kg4jhz9CXl5IPnVh0hU+gfDA0trDw+fwndif/5mosQr/JGjiTKtlIQLaT8i1tlx4ju0zKrw==
+  version "13.4.9"
+  resolved "https://registry.yarnpkg.com/@microfleet/core/-/core-13.4.9.tgz#bc0fb935f915b2713deaba20ea8030d1b86d0bec"
+  integrity sha512-MQCPwGx1rYJ85JOtHUboqUEHMsUWk57ZeqpJWqyyxxxkiV8Q2Q/Px9MDg21OmaVwCsx+dqs9H/EGmo7qoQFYpg==
   dependencies:
     bluebird "^3.5.2"
     bluebird-retry "^0.11.0"
