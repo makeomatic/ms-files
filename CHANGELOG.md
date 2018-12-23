@@ -1,3 +1,10 @@
+## [13.0.12](https://github.com/makeomatic/ms-files/compare/v13.0.11...v13.0.12) (2018-12-23)
+
+
+### Bug Fixes
+
+* updated audit log ([a300bdd](https://github.com/makeomatic/ms-files/commit/a300bdd))
+
 ## [13.0.11](https://github.com/makeomatic/ms-files/compare/v13.0.10...v13.0.11) (2018-12-23)
 
 
