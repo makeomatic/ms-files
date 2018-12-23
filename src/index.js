@@ -98,7 +98,7 @@ class Files extends Microfleet {
           .stopChannel()
           .tap(data => this.log.info('stopped channel', data))
           .then(() => this.redis.del(hookId))
-          .catch(e => this.log.error('failed to stop channel', e));
+          .catch(e => this.log.error({ err: e }, 'failed to stop channel'));
       });
   }
 
@@ -153,7 +153,7 @@ class Files extends Microfleet {
 
   // log failed notification
   logWarn(route, args, e) {
-    this.log.warn({ route, args }, e);
+    this.log.warn({ route, args, err: e }, 'failed notification');
   }
 
   /**

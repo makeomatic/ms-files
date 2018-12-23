@@ -91,7 +91,7 @@ function fetchFromRedis(filesIndex) {
  * Reports missing file error
  */
 function reportMissingError(err, filename) {
-  this.log.fatal('failed to fetch data for %s', filename, err);
+  this.log.fatal({ err }, 'failed to fetch data for %s', filename);
   return false;
 }
 

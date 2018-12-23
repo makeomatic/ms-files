@@ -22,7 +22,7 @@ function acquireLock(ctx, ...keys) {
       throw new HttpStatusError(409, 'concurrent access to a locked resource, try again in a few seconds');
     })
     .disposer(lock => (
-      lock.release().catch(err => log.error('failed to release lock for', args, err))
+      lock.release().catch(err => log.error({ err }, 'failed to release lock for', args))
     ));
 }
 

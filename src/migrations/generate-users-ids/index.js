@@ -36,7 +36,7 @@ function generateUsersIds({
                 }
               })
               .catch({ statusCode: 404 }, (e) => {
-                log.error(e);
+                log.error({ err: e }, 'failed to find user during migration');
                 return null;
               })
         );

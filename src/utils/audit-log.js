@@ -36,9 +36,14 @@ module.exports = [
           level = 'warn';
         }
 
-        request.log[level](meta, 'Error performing operation', err);
+        meta.err = err;
+        request.log[level](meta, 'Error performing operation');
       } else {
-        request.log.info(meta, 'completed operation', service.config.debug ? result : '');
+        if (service.config.debug) {
+          meta.response = result;
+        }
+
+        request.log.info(meta, 'completed operation');
       }
 
       return [error, result];
