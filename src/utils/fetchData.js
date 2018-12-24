@@ -80,7 +80,7 @@ async function selectMaster(redis) {
   const masterNode = nodeKeys.reduce((node, key) => node || masters[key], null);
 
   // if we have no master - delay the request by 100ms
-  if (masterNode === null) {
+  if (masterNode == null) {
     return Promise.delay(100).return(redis).then(selectMaster);
   }
 
