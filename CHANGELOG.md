@@ -1,3 +1,10 @@
+## [13.0.14](https://github.com/makeomatic/ms-files/compare/v13.0.13...v13.0.14) (2018-12-24)
+
+
+### Bug Fixes
+
+* ensure masterNode is present ([196cab4](https://github.com/makeomatic/ms-files/commit/196cab4))
+
 ## [13.0.13](https://github.com/makeomatic/ms-files/compare/v13.0.12...v13.0.13) (2018-12-23)
 
 
