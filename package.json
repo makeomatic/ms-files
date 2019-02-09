@@ -39,7 +39,7 @@
     "bl": "^2.1.2",
     "bluebird": "^3.5.3",
     "common-errors": "^1.0.5",
-    "dlock": "^8.1.0",
+    "dlock": "^9.0.0",
     "flatstr": "^1.0.9",
     "gcs-resumable-upload": "^0.14.1",
     "hapi": "^18.1.0",
