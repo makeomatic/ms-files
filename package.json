@@ -31,7 +31,7 @@
   },
   "homepage": "https://github.com/makeomatic/ms-files#readme",
   "dependencies": {
-    "@google-cloud/storage": "2.3.4",
+    "@google-cloud/storage": "2.4.2",
     "@microfleet/core": "^13.3.2",
     "@microfleet/transport-amqp": "^13.1.3",
     "@microfleet/validation": "^8.1.0",
@@ -41,9 +41,9 @@
     "common-errors": "^1.0.5",
     "dlock": "^8.1.0",
     "flatstr": "^1.0.9",
-    "gcs-resumable-upload": "^0.13.0",
-    "hapi": "^17.8.1",
-    "ioredis": "4.3.0",
+    "gcs-resumable-upload": "^0.14.1",
+    "hapi": "^18.1.0",
+    "ioredis": "^4.6.2",
     "is": "^3.3.0",
     "jaeger-client": "^3.13.0",
     "lodash": "^4.17.11",
@@ -54,6 +54,7 @@
     "ms-files-transport": "^1.0.2",
     "ms-perf": "^1.0.1",
     "opentracing-js-ioredis": "2.1.2",
+    "prom-client": "^11.2.1",
     "raven": "^2.6.4",
     "redis-filtered-sort": "^2.3.0",
     "request": "^2.88.0",
@@ -63,7 +64,7 @@
     "yargs": "^12.0.5"
   },
   "optionalDependencies": {
-    "@google-cloud/pubsub": "^0.22.2"
+    "@google-cloud/pubsub": "^0.24.1"
   },
   "devDependencies": {
     "@babel/cli": "^7.2.0",

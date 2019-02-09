@@ -1,6 +1,5 @@
 const Promise = require('bluebird');
 const { Microfleet, ConnectorsTypes } = require('@microfleet/core');
-const omit = require('lodash/omit');
 const noop = require('lodash/noop');
 const merge = require('lodash/merge');
 const fsort = require('redis-filtered-sort');
@@ -129,11 +128,13 @@ class Files extends Microfleet {
    * @param {Mixed} attributes
    * @return {Promise}
    */
-  handleUploadNotification(message) {
+  async handleUploadNotification(message) {
     this.log.debug({ message }, 'upload notification');
     const { prefix } = this.config.router.routes;
-    return this.router
-      .dispatch(`${prefix}.finish`, {
+    const route = `${prefix}.finish`;
+
+    try {
+      await this.router.dispatch(route, {
         headers: {},
         query: {},
         // payload
@@ -144,11 +145,16 @@ class Files extends Microfleet {
         },
         transport: 'amqp',
         method: 'amqp',
-      })
-      .tapCatch(e => this.logWarn(`${prefix}.finish`, omit(message, 'data'), e))
-      .catchReturn(HttpStatusError, null)
-      .then(message.ack)
-      .catch(message.nack);
+      });
+    } catch (err) {
+      this.log.warn({ route, args: message.attributes, err }, 'failed notification');
+      if (!(err instanceof HttpStatusError)) {
+        message.nack(err);
+        return;
+      }
+    }
+
+    message.ack();
   }
 
   // log failed notification
