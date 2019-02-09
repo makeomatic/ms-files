@@ -1,3 +1,5 @@
+## [13.0.16](https://github.com/makeomatic/ms-files/compare/v13.0.15...v13.0.16) (2019-02-09)
+
 ## [13.0.15](https://github.com/makeomatic/ms-files/compare/v13.0.14...v13.0.15) (2019-02-09)
 
 
