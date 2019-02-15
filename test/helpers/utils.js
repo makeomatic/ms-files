@@ -274,7 +274,8 @@ function finishUpload(rsp, skipProcessing = true) {
 //
 function initAndUpload(data, skipProcessing = true) {
   return function uploader() {
-    return initUpload(data).call(this)
+    return initUpload(data)
+      .call(this)
       .tap(rsp => finishUpload.call(this, rsp, skipProcessing));
   };
 }

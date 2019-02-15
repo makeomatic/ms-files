@@ -56,15 +56,18 @@ exports.hooks = {
   },
   // process files hook -> noop
   'files:process:pre': [],
-  'files:process:post': sinon.spy((fileData) => {
-    if (!fileData.export) {
-      // skip processing
-      return null;
-    }
+  'files:process:post': [
+    sinon.spy((fileData) => {
+      if (!fileData.export) {
+        // skip processing
+        return null;
+      }
 
-    fileData[fileData.export.format] = 1;
-    return Promise.delay(100);
-  }),
+      fileData[fileData.export.format] = 1;
+      return Promise.delay(100);
+    }),
+    require(`${cwd}/src/custom/cappasity-tag-file`),
+  ],
   // alias -> username
   'files:info:pre': alias => alias,
   // update pre-processor
@@ -74,8 +77,14 @@ exports.hooks = {
   'files:info:post': require(`${cwd}/src/custom/cappasity-info-post`),
 };
 
-exports.maxTries = 1;
+exports.process = {
+  prefix: 'cappasity-process',
+  postfix: {
+    annotate: 'jobs.annotate.request'
+  },
+}
 
+exports.maxTries = 1;
 
 exports.migrations = {
   enabled: false,
