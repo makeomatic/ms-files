@@ -7,8 +7,6 @@ async function tagFile(fileData) {
     return false;
   }
 
-  console.log(file.filename)
-
   await amqp.publish(
     `${processConfig.prefix}.${processConfig.postfix.annotate}`,
     { filename: file.filename, username, bucket, uploadId }
