@@ -6,9 +6,18 @@
       "minLength": 1,
       "maxLength": 50
     },
-    "uuid-v4": {
+    "uploadId": {
       "type": "string",
-      "pattern": "^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-4[0-9A-Fa-f]{3}-[89ABab][0-9A-Fa-f]{3}-[0-9A-Fa-f]{12}$"
+      "format": "uuid"
+    },
+    "tags": {
+      "type": "array",
+      "maxItems": 20,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^[^,]{1,20}$"
+      }
     },
     "filename": {
       "type": "string",
@@ -244,13 +253,7 @@
           "format": "uri"
         },
         "tags": {
-          "type": "array",
-          "maxItems": 20,
-          "uniqueItems": true,
-          "items": {
-            "type": "string",
-            "pattern": "^[^,]{1,20}$"
-          }
+          "$ref": "common#/definitions/tags"
         },
         "export": {
           "$ref": "common#/definitions/export"

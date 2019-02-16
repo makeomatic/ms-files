@@ -1,0 +1,16 @@
+{
+  "$id": "tag.add",
+  "type": "object",
+  "required": ["uploadId", "username", "tags"],
+  "properties": {
+    "uploadId": {
+      "$ref": "common#/definitions/uploadId"
+    },
+    "username": {
+      "$ref": "common#/definitions/owner"
+    },
+    "tags": {
+      "$ref": "common#/definitions/tags"
+    }
+  }
+}

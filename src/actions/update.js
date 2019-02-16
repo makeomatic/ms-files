@@ -12,8 +12,6 @@ const stringify = require('../utils/stringify');
 const isValidBackgroundOrigin = require('../utils/isValidBackgroundOrigin');
 const { bustCache } = require('../utils/bustCache.js');
 const {
-  FILES_DATA,
-  FILES_INDEX_TAGS,
   FILES_TAGS_FIELD,
   FIELDS_TO_STRINGIFY,
   FILES_USR_ALIAS_PTR,
@@ -23,11 +21,14 @@ const {
   FILES_INDEX,
   FILES_INDEX_PUBLIC,
   FILES_PUBLIC_FIELD,
+  LOCK_UPDATE_KEY,
+  FILES_DATA_INDEX_KEY,
+  FILES_TAGS_INDEX_KEY,
 } = require('../constant.js');
 
 // init disposer
 function acquireLock(uploadId, alias) {
-  const keys = [`file:update:${uploadId}`];
+  const keys = [LOCK_UPDATE_KEY(uploadId)];
 
   // if we remove it - we don't care, so both undefined and '' works
   if (alias) {
@@ -55,7 +56,7 @@ function updateMeta(params) {
     uploadId, username, directOnly, meta,
   } = params;
   const { redis } = this;
-  const key = `${FILES_DATA}:${uploadId}`;
+  const key = FILES_DATA_INDEX_KEY(uploadId);
   const alias = meta[FILES_ALIAS_FIELD];
 
   return Promise
@@ -100,14 +101,11 @@ function updateMeta(params) {
       }
 
       if (hasOwnProperty.call(meta, FILES_TAGS_FIELD) && data[FILES_TAGS_FIELD]) {
-        data[FILES_TAGS_FIELD].forEach(tag => pipeline.srem(`${FILES_INDEX_TAGS}:${tag}`, uploadId));
+        data[FILES_TAGS_FIELD].forEach(tag => pipeline.srem(FILES_TAGS_INDEX_KEY(tag), uploadId));
       }
 
       if (meta[FILES_TAGS_FIELD]) {
-        meta[FILES_TAGS_FIELD].forEach((tag) => {
-          const tagKey = `${FILES_INDEX_TAGS}:${tag}`;
-          pipeline.sadd(tagKey, uploadId);
-        });
+        meta[FILES_TAGS_FIELD].forEach(tag => pipeline.sadd(FILES_TAGS_INDEX_KEY(tag), uploadId));
       }
 
       if (directOnly === false) {

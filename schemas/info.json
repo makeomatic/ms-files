@@ -9,7 +9,7 @@
         "filename": {
             "anyOf": [
                 {
-                    "$ref": "common#/definitions/uuid-v4"
+                    "$ref": "common#/definitions/uploadId"
                 },
                 {
                     "$ref": "common#/definitions/meta/properties/alias"
