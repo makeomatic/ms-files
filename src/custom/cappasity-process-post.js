@@ -6,7 +6,7 @@ const ALLOWED_TYPES = ['c-bin', 'c-texture'];
 
 module.exports = function finishPost(fileData, lock) {
   const { amqp, config } = this;
-  const { processor: { route, timeout } } = config;
+  const { process: { prefix, postfix: { process: route }, timeout: { process: timeout } } } = config;
   const { export: exportSettings } = fileData;
 
   if (!exportSettings) {
@@ -33,7 +33,7 @@ module.exports = function finishPost(fileData, lock) {
   return Promise
     .bind(this)
     .then(() => lock.extend(timeout))
-    .then(() => amqp.publishAndWait(route, message, { timeout }))
+    .then(() => amqp.publishAndWait(`${prefix}.${route}`, message, { timeout }))
     .then((file) => {
       fileData[file.type] = file.filename;
       fileData.files.push(file);
