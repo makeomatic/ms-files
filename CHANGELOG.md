@@ -1,3 +1,15 @@
+# [14.0.0](https://github.com/makeomatic/ms-files/compare/v13.0.16...v14.0.0) (2019-02-25)
+
+
+### Features
+
+* hook for cappasity (tags) ([#154](https://github.com/makeomatic/ms-files/issues/154)) ([8ed9f33](https://github.com/makeomatic/ms-files/commit/8ed9f33))
+
+
+### BREAKING CHANGES
+
+* updated cappasity hooks. New tag updater
+
 ## [13.0.16](https://github.com/makeomatic/ms-files/compare/v13.0.15...v13.0.16) (2019-02-09)
 
 ## [13.0.15](https://github.com/makeomatic/ms-files/compare/v13.0.14...v13.0.15) (2019-02-09)
