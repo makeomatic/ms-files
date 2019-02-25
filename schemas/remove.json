@@ -6,7 +6,7 @@
     ],
     "properties": {
         "filename": {
-            "$ref": "common#/definitions/uuid-v4"
+            "$ref": "common#/definitions/uploadId"
         },
         "username": {
             "$ref": "common#/definitions/owner"

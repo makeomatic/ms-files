@@ -82,3 +82,7 @@ exports.CAPPASITY_TYPE_MAP = Object.setPrototypeOf({
   'c-simple': exports.CAPPASITY_IMAGE_MODEL,
   'c-pack': exports.CAPPASITY_IMAGE_MODEL,
 }, null);
+
+exports.LOCK_UPDATE_KEY = uploadId => `file:update:${uploadId}`;
+exports.FILES_DATA_INDEX_KEY = uploadId => `${exports.FILES_DATA}:${uploadId}`;
+exports.FILES_TAGS_INDEX_KEY = tag => `${exports.FILES_INDEX_TAGS}:${tag}`;

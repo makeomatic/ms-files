@@ -1,7 +1,7 @@
 const { MultiLockError } = require('dlock');
 const { HttpStatusError } = require('common-errors');
 
-function acquireLock(ctx, ...keys) {
+async function acquireLock(ctx, ...keys) {
   const { dlock, log } = ctx;
 
   let acquire;
