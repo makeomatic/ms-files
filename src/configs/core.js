@@ -21,7 +21,7 @@ exports.plugins = [
 ];
 
 /**
- * Bunyan logger configuration
+ * Pino logger configuration
  * by default only ringBuffer logger is enabled in prod
  * @type {Boolean}
  */
