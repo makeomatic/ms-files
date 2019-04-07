@@ -22,9 +22,7 @@ const {
 
 // adds key={{ key }} to .hbs-like template
 const prepareTemplate = key => `${key}={{ ${key} }}`;
-const getQueryString = params => (
-  Object.keys(params).map(prepareTemplate).join('&')
-);
+const getQueryString = params => Object.keys(params).map(prepareTemplate).join('&');
 
 // default options
 const corePlayerOpts = Object.setPrototypeOf({
@@ -106,6 +104,8 @@ const rotatePlayerOpts = Object.setPrototypeOf({
     type: 'boolean',
     description: 'Hide fullscreen',
     default: 1,
+    paid: true,
+    reqPlanLevel: 30,
   },
   hideautorotateopt: {
     type: 'boolean',
@@ -183,8 +183,7 @@ const iframePre = flatstr(`<iframe
   width="{{ width }}"
   height="{{ height }}"
   frameborder="0"
-  style="border:0;"
-  onmousewheel=""`.replace(/\s+/g, ' '));
+  style="border:0;"`.replace(/\s+/g, ' '));
 
 // prepare options for 3 types of model - inserted after id
 const iframeMesh = flatstr(`${coreQS}&${meshQS}`);

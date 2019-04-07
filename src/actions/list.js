@@ -17,7 +17,7 @@ const {
 /**
  * Internal functions
  */
-function interstore(username) {
+async function interstore(username) {
   const {
     isPublic, temp, tags, redis,
   } = this;
@@ -50,41 +50,50 @@ function interstore(username) {
     interstoreKey = `${interstoreKey}:${tagKey}`;
   });
 
-  return redis
-    .pttl(interstoreKey)
-    .then((result) => {
-      if (result > this.interstoreKeyMinTimeleft) {
-        return interstoreKey;
-      }
+  const result = await redis.pttl(interstoreKey);
 
-      return Promise.fromNode((next) => {
-        this.dlock
-          .push(interstoreKey, next)
-          .then((completed) => {
-            redis
-              .pipeline()
-              .sinterstore(interstoreKey, filesIndex, tagKeys)
-              .expire(interstoreKey, this.interstoreKeyTTL)
-              .exec()
-              .return(interstoreKey)
-              .asCallback(completed);
+  if (result > this.interstoreKeyMinTimeleft) {
+    return interstoreKey;
+  }
 
-            return null;
-          })
-          .catch({ name: 'LockAcquisitionError' }, noop)
-          .catch(err => next(err));
-      });
-    });
+  return Promise.fromNode((next) => {
+    this.dlock
+      .push(interstoreKey, next)
+      .then((completed) => {
+        redis
+          .pipeline()
+          .sinterstore(interstoreKey, filesIndex, tagKeys)
+          .expire(interstoreKey, this.interstoreKeyTTL)
+          .exec()
+          .return(interstoreKey)
+          .asCallback(completed);
+
+        return null;
+      })
+      .catch({ name: 'LockAcquisitionError' }, noop)
+      .catch(next);
+  });
 }
 
 /**
  * Perform fetch from redis
  */
-function fetchFromRedis(filesIndex) {
+async function fetchFromRedis(filesIndex) {
   const {
-    criteria, order, strFilter, offset, limit, expiration,
+    redis, criteria, order, strFilter, offset, limit, expiration,
   } = this;
-  return this.redis.fsort(filesIndex, `${FILES_DATA}:*`, criteria, order, strFilter, Date.now(), offset, limit, expiration);
+
+  // split op in 2 operations to reduce lock of redis
+  const now = Date.now();
+  const meta = `${FILES_DATA}:*`;
+
+  // this splits lengthy scripts into 2 phases - getting a sorted set and then filtering
+  const response = await redis.fsort(filesIndex, meta, criteria, order, '{}', now, offset, limit, expiration);
+  if (strFilter === '{}') {
+    return response;
+  }
+
+  return redis.fsort(filesIndex, meta, criteria, order, strFilter, now, offset, limit, expiration);
 }
 
 /**

@@ -36,7 +36,6 @@ describe('cappasity-info-post hook test suite', function suite() {
           height="{{ height }}"
           frameborder="0"
           style="border:0;"
-          onmousewheel=""
           src="https://api.cappasity.com/api/player/f1c9d940-35bf-44f7-9134-89bee51d0ee3/embedded?autorun={{ autorun }}&closebutton={{ closebutton }}&logo={{ logo }}&analytics={{ analytics }}&autorotate={{ autorotate }}&autorotatetime={{ autorotatetime }}&autorotatedelay={{ autorotatedelay }}&autorotatedir={{ autorotatedir }}&hidefullscreen={{ hidefullscreen }}&hideautorotateopt={{ hideautorotateopt }}&hidesettingsbtn={{ hidesettingsbtn }}"
         `)
         .replace(/\s+/g, ' ')
