@@ -1,3 +1,10 @@
+# [14.1.0](https://github.com/makeomatic/ms-files/compare/v14.0.1...v14.1.0) (2019-04-07)
+
+
+### Features
+
+* split fsort into 2 executions ([#156](https://github.com/makeomatic/ms-files/issues/156)) ([af00829](https://github.com/makeomatic/ms-files/commit/af00829))
+
 ## [14.0.1](https://github.com/makeomatic/ms-files/compare/v14.0.0...v14.0.1) (2019-03-14)
 
 
