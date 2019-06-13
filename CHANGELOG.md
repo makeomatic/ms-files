@@ -1,3 +1,10 @@
+## [14.1.1](https://github.com/makeomatic/ms-files/compare/v14.1.0...v14.1.1) (2019-06-13)
+
+
+### Bug Fixes
+
+* upgrade deps, default to v2 for signed urls ([c73aa2b](https://github.com/makeomatic/ms-files/commit/c73aa2b))
+
 # [14.1.0](https://github.com/makeomatic/ms-files/compare/v14.0.1...v14.1.0) (2019-04-07)
 
 
