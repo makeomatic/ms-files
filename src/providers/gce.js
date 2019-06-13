@@ -289,6 +289,7 @@ module.exports = class GCETransport extends AbstractFileTransfer {
 
     const file = this.bucket.file(resource);
     const settings = {
+      version: 'v2',
       ...props,
       action,
       expires,
