@@ -67,12 +67,11 @@ module.exports = class GCETransport extends AbstractFileTransfer {
    * Creates authenticated instance of gcloud
    */
   setupGCE() {
-    this._gcs = new Storage(this._config.gce);
+    this._gcs = new Storage({ ...this._config.gce });
 
     try {
       const { PubSub } = require('@google-cloud/pubsub');
-
-      this._pubsub = new PubSub(this._config.gce);
+      this._pubsub = new PubSub({ ...this._config.gce });
       this._pubsub._subscriptions = [];
     } catch (e) {
       this._logger.warn('failed to load @google-cloud/pubsub', e);
@@ -152,10 +151,18 @@ module.exports = class GCETransport extends AbstractFileTransfer {
     this.log.info('subscribing to %s on %s', pubsub.topic, os.hostname());
 
     // first find if we have an existing subscription
-    const topic = Pubsub.topic(pubsub.topic);
-    const [subscription] = await topic
-      .subscription(name, config)
-      .get(config.gaxOpts);
+    // NOTE: will throw if not created before
+    const [topic] = await Pubsub.topic(pubsub.topic).get();
+    this.log.info({ topic: pubsub.topic }, 'retreived topic');
+
+    // prepare Subscription object
+    const Subscription = topic.subscription(name, {
+      flowControl: { ...config.flowControl },
+      maxConnections: config.maxConnections || 5,
+    });
+
+    const [subscription] = await Subscription.get(config.gaxOpts);
+    this.log.info({ subscription: name }, 'prepared subscription');
 
     subscription.on('message', handler);
     subscription.on('error', err => this.log.error({ error: err }, 'failed to subscribe'));

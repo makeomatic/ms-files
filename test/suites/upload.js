@@ -77,7 +77,7 @@ describe('upload suite', function suite() {
             // verify upoad link
             const location = url.parse(part.location, true);
             assert.equal(location.protocol, 'https:');
-            assert.equal(location.hostname, 'www.googleapis.com');
+            assert.equal(location.hostname, 'storage.googleapis.com');
             assert.equal(location.pathname, `/upload/storage/v1/b/${bucketName}/o`);
             assert.equal(location.query.name, part.filename);
             assert.equal(location.query.uploadType, 'resumable');
@@ -148,7 +148,7 @@ describe('upload suite', function suite() {
             // verify upoad link
             const location = url.parse(part.location, true);
             assert.equal(location.protocol, 'https:');
-            assert.equal(location.hostname, 'www.googleapis.com');
+            assert.equal(location.hostname, 'storage.googleapis.com');
             assert.equal(location.pathname, `/upload/storage/v1/b/${bucketName}/o`);
             assert.equal(location.query.name, part.filename);
             assert.equal(location.query.uploadType, 'resumable');

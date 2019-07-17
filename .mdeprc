@@ -1,4 +1,3 @@
 {
-  "node": "10.16.0",
-  "rebuild": ["grpc", "google-gax"]
+  "node": "10.16.0"
 }

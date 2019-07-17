@@ -33,7 +33,7 @@ services:
         ipv4_address: 172.19.238.21
 
   rabbitmq:
-    image: makeomatic/rabbitmq:3.6.12
+    image: rabbitmq:3.7-alpine
     hostname: rabbitmq
     networks:
       files:
