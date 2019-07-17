@@ -1,3 +1,11 @@
+## [14.1.2](https://github.com/makeomatic/ms-files/compare/v14.1.1...v14.1.2) (2019-07-17)
+
+
+### Bug Fixes
+
+* storage/pubsub configuration no longer being mutated ([74d7345](https://github.com/makeomatic/ms-files/commit/74d7345))
+* update dependencies ([d5d1abf](https://github.com/makeomatic/ms-files/commit/d5d1abf))
+
 ## [14.1.1](https://github.com/makeomatic/ms-files/compare/v14.1.0...v14.1.1) (2019-06-13)
 
 
