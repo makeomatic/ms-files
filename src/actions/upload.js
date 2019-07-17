@@ -54,6 +54,8 @@ async function initFileUpload({ params }) {
 
   const { redis, config: { uploadTTL } } = this;
 
+  this.log.info({ params }, 'preparing upload');
+
   const provider = this.provider('upload', params);
   const prefix = md5(username);
   const uploadId = uuidv4();
@@ -66,6 +68,8 @@ async function initFileUpload({ params }) {
     // do some extra meta validation
     .return(meta)
     .tap(isValidBackgroundOrigin);
+
+  this.log.info({ params }, 'preprocessed upload');
 
   const parts = await Promise.map(files, async ({ md5Hash, type, ...rest }) => {
     // generate filename
@@ -188,6 +192,8 @@ async function initFileUpload({ params }) {
     const postActionKey = `${FILES_POST_ACTION}:${uploadId}`;
     pipeline.set(postActionKey, JSON.stringify(postAction), 'EX', uploadTTL);
   }
+
+  this.log.info({ params }, 'created signed urls and preparing to save them to database');
 
   await pipeline.exec().then(handlePipeline);
 
