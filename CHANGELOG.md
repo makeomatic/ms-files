@@ -1,3 +1,11 @@
+## [14.1.3](https://github.com/makeomatic/ms-files/compare/v14.1.2...v14.1.3) (2019-07-19)
+
+
+### Bug Fixes
+
+* add metrics support into the router ([#158](https://github.com/makeomatic/ms-files/issues/158)) ([586c222](https://github.com/makeomatic/ms-files/commit/586c222))
+* init prometheus in default config ([cd792a2](https://github.com/makeomatic/ms-files/commit/cd792a2))
+
 ## [14.1.2](https://github.com/makeomatic/ms-files/compare/v14.1.1...v14.1.2) (2019-07-17)
 
 
