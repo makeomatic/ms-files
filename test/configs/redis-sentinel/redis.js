@@ -19,4 +19,5 @@ exports.plugins = [
   'amqp',
   'http',
   'redisSentinel',
+  'prometheus',
 ];

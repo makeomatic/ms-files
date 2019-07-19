@@ -18,4 +18,5 @@ exports.plugins = [
   'amqp',
   'http',
   'redisCluster',
+  'prometheus',
 ];
