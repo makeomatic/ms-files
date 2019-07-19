@@ -2,6 +2,7 @@ const path = require('path');
 const { routerExtension, ActionTransport } = require('@microfleet/core');
 
 const autoSchema = routerExtension('validate/schemaLessAction');
+const metricObservability = routerExtension('audit/metrics');
 const auditLog = require('../utils/audit-log');
 
 exports.router = {
@@ -15,7 +16,7 @@ exports.router = {
     ],
   },
   extensions: {
-    enabled: ['postRequest', 'preRequest', 'preResponse'],
-    register: [autoSchema, auditLog],
+    enabled: ['postRequest', 'preRequest', 'preResponse', 'postResponse'],
+    register: [autoSchema, auditLog, metricObservability()],
   },
 };
