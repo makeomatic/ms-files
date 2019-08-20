@@ -22,7 +22,7 @@ describe('tag.add action', function suite() {
         tags: ['PERCHIK', 'FAT', 'FAT'] })
       .reflect()
       .then(inspectPromise(false))
-      .then(error => {
+      .then((error) => {
         assert.equal(error.message, 'tag.add validation failed: data.tags should '
           + 'NOT have duplicate items (items ## 2 and 1 are identical)');
       });
@@ -36,22 +36,22 @@ describe('tag.add action', function suite() {
     let response = await this.amqp.publishAndWait('files.tag.add', {
       uploadId: this.response.uploadId,
       username: owner,
-      tags: ['PERCHIK', 'FAT'] });
+      tags: ['PERCHIK', 'fat'] });
 
     actualTags = await this.files.redis.hget(`files-data:${this.response.uploadId}`, 'tags');
 
     assert.equal(response, true);
-    assert.deepEqual(actualTags, '["ok","done","PERCHIK","FAT"]');
+    assert.deepEqual(actualTags, '["ok","done","perchik","fat"]');
 
     // try duplicate tags
     response = await this.amqp.publishAndWait('files.tag.add', {
       uploadId: this.response.uploadId,
       username: owner,
-      tags: ['CAT', 'FAT'] });
+      tags: ['CAT', 'FAT', 'fat'] });
 
     actualTags = await this.files.redis.hget(`files-data:${this.response.uploadId}`, 'tags');
 
     assert.equal(response, true);
-    assert.deepEqual(actualTags, '["ok","done","PERCHIK","FAT","CAT"]');
+    assert.deepEqual(actualTags, '["ok","done","perchik","fat","cat"]');
   });
 });

@@ -26,6 +26,9 @@ const {
   FILES_TAGS_INDEX_KEY,
 } = require('../constant.js');
 
+const { call } = Function.prototype;
+const { toLowerCase } = String.prototype;
+
 // init disposer
 function acquireLock(uploadId, alias) {
   const keys = [LOCK_UPDATE_KEY(uploadId)];
@@ -101,10 +104,12 @@ function updateMeta(params) {
       }
 
       if (hasOwnProperty.call(meta, FILES_TAGS_FIELD) && data[FILES_TAGS_FIELD]) {
-        data[FILES_TAGS_FIELD].forEach(tag => pipeline.srem(FILES_TAGS_INDEX_KEY(tag), uploadId));
+        // @todo migrate all tags in files data to lowercase and then remove this tag.toLowerCase()
+        data[FILES_TAGS_FIELD].forEach(tag => pipeline.srem(FILES_TAGS_INDEX_KEY(tag.toLowerCase()), uploadId));
       }
 
       if (meta[FILES_TAGS_FIELD]) {
+        meta[FILES_TAGS_FIELD] = meta[FILES_TAGS_FIELD].map(call, toLowerCase);
         meta[FILES_TAGS_FIELD].forEach(tag => pipeline.sadd(FILES_TAGS_INDEX_KEY(tag), uploadId));
       }
 
