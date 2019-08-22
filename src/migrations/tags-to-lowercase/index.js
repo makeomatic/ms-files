@@ -37,7 +37,7 @@ async function tagsToLowercase({ redis, config, log }) {
       log.info(`Union '${fixedKey}' and '${brokenKey}'`);
 
       // a lowercase key could already exist
-      pipeline.sunionstore(fixedKey, brokenKey);
+      pipeline.sunionstore(fixedKey, fixedKey, brokenKey);
       pipeline.del(brokenKey);
     })
     .then(() => pipeline.exec());
