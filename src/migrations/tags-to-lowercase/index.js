@@ -27,10 +27,14 @@ async function tagsToLowercase({ redis, config, log }) {
   return masterNode
     .keys(`${keyPrefix}${FILES_INDEX_TAGS}:*`)
     .map(key => key.replace(keyPrefix, ''))
-    .forEach((key) => {
-      log.info(`Rename '${key}' to '${key.toLowerCase()}'`);
+    .forEach((brokenKey) => {
+      const fixedKey = brokenKey.toLowerCase();
 
-      pipeline.rename(key, key.toLowerCase());
+      log.info(`Union '${fixedKey}' and '${brokenKey}'`);
+
+      // a lowercase key could already exist
+      pipeline.sunionstore(fixedKey, brokenKey);
+      pipeline.del(brokenKey);
     })
     .then(() => pipeline.exec());
 }
