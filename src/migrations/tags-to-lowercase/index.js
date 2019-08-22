@@ -27,7 +27,7 @@ async function tagsToLowercase({ redis, config, log }) {
   return masterNode
     .keys(`${keyPrefix}${FILES_INDEX_TAGS}:*`)
     .map(key => key.replace(keyPrefix, ''))
-    .forEach((brokenKey) => {
+    .each((brokenKey) => {
       const fixedKey = brokenKey.toLowerCase();
 
       log.info(`Union '${fixedKey}' and '${brokenKey}'`);
