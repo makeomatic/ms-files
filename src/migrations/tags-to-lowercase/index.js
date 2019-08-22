@@ -30,6 +30,10 @@ async function tagsToLowercase({ redis, config, log }) {
     .each((brokenKey) => {
       const fixedKey = brokenKey.toLowerCase();
 
+      if (brokenKey === fixedKey) {
+        return;
+      }
+
       log.info(`Union '${fixedKey}' and '${brokenKey}'`);
 
       // a lowercase key could already exist
