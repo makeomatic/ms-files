@@ -14,15 +14,23 @@ const {
   FIELDS_TO_STRINGIFY,
 } = require('../../constant.js');
 
+const { call } = Function.prototype;
+const { toLowerCase } = String.prototype;
+const arrayUniq = (element, index, array) => array.indexOf(element) === index;
+
 async function addTag(params) {
-  const { uploadId, username, tags } = params;
+  const { uploadId, username } = params;
+  const tags = params.tags
+    .map(call, toLowerCase)
+    .filter(arrayUniq);
   const fileData = await fetchData.call(this, FILES_DATA_INDEX_KEY(uploadId));
   const pipeline = this.redis.pipeline();
 
   // it throws error
   hasAccess(username)(fileData);
 
-  const actualTags = fileData[FILES_TAGS_FIELD] || [];
+  // @todo migrate all tags in files data to lowercase and then remove this .map
+  const actualTags = (fileData[FILES_TAGS_FIELD] || []).map(call, toLowerCase);
   const tagsDiff = tags.filter(tag => !actualTags.includes(tag));
 
   for (const tag of tagsDiff) {
