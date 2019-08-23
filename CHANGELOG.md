@@ -1,3 +1,10 @@
+## [14.1.4](https://github.com/makeomatic/ms-files/compare/v14.1.3...v14.1.4) (2019-08-23)
+
+
+### Bug Fixes
+
+* **tags:** convert to lowercase ([#159](https://github.com/makeomatic/ms-files/issues/159)) ([bfa0df7](https://github.com/makeomatic/ms-files/commit/bfa0df7))
+
 ## [14.1.3](https://github.com/makeomatic/ms-files/compare/v14.1.2...v14.1.3) (2019-07-19)
 
 
