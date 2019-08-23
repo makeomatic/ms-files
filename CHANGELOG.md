@@ -1,3 +1,10 @@
+## [14.1.5](https://github.com/makeomatic/ms-files/compare/v14.1.4...v14.1.5) (2019-08-23)
+
+
+### Bug Fixes
+
+* updated style, deps, node 10.16.3 ([7d2f1cb](https://github.com/makeomatic/ms-files/commit/7d2f1cb))
+
 ## [14.1.4](https://github.com/makeomatic/ms-files/compare/v14.1.3...v14.1.4) (2019-08-23)
 
 
