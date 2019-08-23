@@ -12,7 +12,7 @@ const { FIELDS_TO_STRINGIFY, FILES_TAGS_FIELD, FILE_MISSING_ERROR } = require('.
  * Helper constants
  */
 const fetchDataScript = fs.readFileSync(`${__dirname}/../../lua/fetchData.lua`, 'utf8');
-const missingError = e => /404/.test(e.message);
+const missingError = (e) => /404/.test(e.message);
 const STRINGIFY_FIELDS = zipObject(FIELDS_TO_STRINGIFY);
 const JSON_FIELDS = zipObject([FILES_TAGS_FIELD, 'files']);
 const { hasOwnProperty } = Object.prototype;

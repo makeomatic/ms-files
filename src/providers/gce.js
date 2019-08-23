@@ -7,7 +7,7 @@ const assert = require('assert');
 const os = require('os');
 
 // for some reason it doesn't go through it if we just do the obj
-const unwrap = datum => datum[0];
+const unwrap = (datum) => datum[0];
 
 // include gcloud
 const { Storage } = require('@google-cloud/storage');
@@ -15,32 +15,7 @@ const { Storage } = require('@google-cloud/storage');
 /**
  * Main transport class
  */
-module.exports = class GCETransport extends AbstractFileTransfer {
-  static defaultOpts = {
-    gce: {
-      // specify authentication options
-      // here
-    },
-    bucket: {
-      // specify bucket
-      name: 'must-be-a-valid-bucket-name',
-      host: 'storage.cloud.google.com',
-      channel: {
-        // must be persistent in your app to identify the channel
-        id: null,
-        pubsub: null,
-        config: {
-          // change to your webhook address
-          address: 'https://localhost:443',
-          // token: this is your `SECRET`, so make sure you set it to something unique for your application and
-          // verify notification
-          token: undefined,
-        },
-      },
-      metadata: {},
-    },
-  };
-
+class GCETransport extends AbstractFileTransfer {
   constructor(opts = {}) {
     super();
     this._config = merge({}, GCETransport.defaultOpts, opts);
@@ -165,7 +140,7 @@ module.exports = class GCETransport extends AbstractFileTransfer {
     this.log.info({ subscription: name }, 'prepared subscription');
 
     subscription.on('message', handler);
-    subscription.on('error', err => this.log.error({ error: err }, 'failed to subscribe'));
+    subscription.on('error', (err) => this.log.error({ error: err }, 'failed to subscribe'));
     this._pubsub._subscriptions.push(subscription);
 
     // for internal cleanup
@@ -450,4 +425,31 @@ module.exports = class GCETransport extends AbstractFileTransfer {
     // make sure it is wrapped, so that later we can do .catch(predicate, action)
     return Promise.resolve(file).call('delete');
   }
+}
+
+GCETransport.defaultOpts = {
+  gce: {
+    // specify authentication options
+    // here
+  },
+  bucket: {
+    // specify bucket
+    name: 'must-be-a-valid-bucket-name',
+    host: 'storage.cloud.google.com',
+    channel: {
+      // must be persistent in your app to identify the channel
+      id: null,
+      pubsub: null,
+      config: {
+        // change to your webhook address
+        address: 'https://localhost:443',
+        // token: this is your `SECRET`, so make sure you set it to something unique for your application and
+        // verify notification
+        token: undefined,
+      },
+    },
+    metadata: {},
+  },
 };
+
+module.exports = GCETransport;

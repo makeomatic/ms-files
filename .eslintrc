@@ -1,6 +1,5 @@
 {
   "extends": "makeomatic",
-  "parser": "babel-eslint",
   "rules": {
     "object-curly-newline": 0
   }

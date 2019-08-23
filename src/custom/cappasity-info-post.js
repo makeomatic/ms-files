@@ -21,8 +21,8 @@ const {
  */
 
 // adds key={{ key }} to .hbs-like template
-const prepareTemplate = key => `${key}={{ ${key} }}`;
-const getQueryString = params => Object.keys(params).map(prepareTemplate).join('&');
+const prepareTemplate = (key) => `${key}={{ ${key} }}`;
+const getQueryString = (params) => Object.keys(params).map(prepareTemplate).join('&');
 
 // default options
 const corePlayerOpts = Object.setPrototypeOf({
@@ -234,9 +234,9 @@ const selector = Object.setPrototypeOf({
   }, null),
 }, null);
 
-const is4 = version => /^4\./.test(version);
+const is4 = (version) => /^4\./.test(version);
 
-const getBaseUrl = memoize(apiDomain => `https://${apiDomain}/api/player`);
+const getBaseUrl = memoize((apiDomain) => `https://${apiDomain}/api/player`);
 
 const getPlayerOpts = (id, { uploadType, c_ver: modelVersion, packed }, apiDomain) => {
   // if upload type isn't simple - means we have old mesh upload

@@ -31,7 +31,7 @@ async function addTag(params) {
 
   // @todo migrate all tags in files data to lowercase and then remove this .map
   const actualTags = (fileData[FILES_TAGS_FIELD] || []).map(call, toLowerCase);
-  const tagsDiff = tags.filter(tag => !actualTags.includes(tag));
+  const tagsDiff = tags.filter((tag) => !actualTags.includes(tag));
 
   for (const tag of tagsDiff) {
     pipeline.sadd(FILES_TAGS_INDEX_KEY(tag), uploadId);

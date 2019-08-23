@@ -29,7 +29,7 @@ const sortIndexKeys = (redis, index) => (
  */
 const retrieveContentLength = (redis, index, prefixLength) => (
   sortIndexKeys(redis, index)
-    .then(ids => (
+    .then((ids) => (
       redis.fsortAggregate(ids.slice(prefixLength), fileDataPattern, aggregateFilter)
     ))
     .then(JSON.parse)
@@ -54,7 +54,7 @@ const calculateStorage = (ctx) => {
  * Retrieves Amount of Public and Private files.
  * @returns {Promise<{ total: number, public: number }>}
  */
-const retrieveAmountOfFiles = ctx => (
+const retrieveAmountOfFiles = (ctx) => (
   ctx
     .redis
     .pipeline()
@@ -62,7 +62,7 @@ const retrieveAmountOfFiles = ctx => (
     .scard(ctx.publicFiles)
     .exec()
     .then(handlePipeline)
-    .then(data => ({
+    .then((data) => ({
       total: data[0],
       public: data[1],
     }))

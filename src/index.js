@@ -17,19 +17,18 @@ const conf = require('./config');
  */
 class Files extends Microfleet {
   /**
-   * Default options for the service
-   * @type {Object}
-   */
-  static defaultOpts = conf.get('/', { env: process.env.NODE_ENV });
-
-  /**
    * class Constructor, initializes configuration
    * and internal providers
    */
   constructor(opts = {}) {
     super(merge({}, Files.defaultOpts, opts));
-
     const { config } = this;
+
+    /**
+     * Invoke this method to start post-processing of all pending files
+     * @return {Promise}
+     */
+    this.postProcess = require('./postProcess.js');
 
     // extend with storage providers
     StorageProviders(this);
@@ -41,7 +40,7 @@ class Files extends Microfleet {
       redisDuplicate = () => new RedisCluster(config.redis.hosts, config.redis.options);
     } else if (config.plugins.includes('redisSentinel')) {
       this.redisType = 'redisSentinel';
-      redisDuplicate = redis => redis.duplicate();
+      redisDuplicate = (redis) => redis.duplicate();
     } else {
       throw new Error('must include redis family plugins');
     }
@@ -82,7 +81,7 @@ class Files extends Microfleet {
           .bind(provider)
           .then(() => process.env[hookId] || redis.get(hookId))
           .then(provider.setupChannel)
-          .then(resourceId => resourceId && redis.set(hookId, resourceId));
+          .then((resourceId) => resourceId && redis.set(hookId, resourceId));
       });
   }
 
@@ -95,17 +94,11 @@ class Files extends Microfleet {
         const hookId = `${WEBHOOK_RESOURCE_ID}_${idx}`;
         return provider
           .stopChannel()
-          .tap(data => this.log.info('stopped channel', data))
+          .tap((data) => this.log.info('stopped channel', data))
           .then(() => this.redis.del(hookId))
-          .catch(e => this.log.error({ err: e }, 'failed to stop channel'));
+          .catch((e) => this.log.error({ err: e }, 'failed to stop channel'));
       });
   }
-
-  /**
-   * Invoke this method to start post-processing of all pending files
-   * @return {Promise}
-   */
-  postProcess = require('./postProcess.js');
 
   /**
    * Overload close and make sure pubsub is stopped
@@ -181,5 +174,11 @@ class Files extends Microfleet {
       });
   }
 }
+
+/**
+ * Default options for the service
+ * @type {Object}
+ */
+Files.defaultOpts = conf.get('/', { env: process.env.NODE_ENV });
 
 module.exports = Files;

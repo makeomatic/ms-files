@@ -60,7 +60,7 @@ function connectProviders(providers) {
    * Connects providers
    * @return {Promise}
    */
-  return () => Promise.map(providers, provider => provider.connect());
+  return () => Promise.map(providers, (provider) => provider.connect());
 }
 
 /**
@@ -72,7 +72,7 @@ function closeProviders(providers) {
    * Disconnect providers
    * @return {Promise}
    */
-  return () => Promise.map(providers, provider => provider.close());
+  return () => Promise.map(providers, (provider) => provider.close());
 }
 
 /**

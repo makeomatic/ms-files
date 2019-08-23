@@ -74,7 +74,7 @@ function modelMessage(model, textures, preview, owner) {
   };
 
   // generate textures metadata
-  const texturesMessage = textures.map(texture => ({
+  const texturesMessage = textures.map((texture) => ({
     type: 'c-texture',
     contentType: 'image/jpeg',
     contentLength: texture.length,
@@ -155,7 +155,7 @@ function modelSimpleUpload({
         name: 'background',
       },
       files: files
-        .map(file => ({
+        .map((file) => ({
           type: 'c-simple',
           contentType: 'image/jpeg',
           ...overwrite,
@@ -234,7 +234,7 @@ function uploadFiles(msg, rsp) {
 //
 function finishMessage(rsp, skipProcessing = true) {
   const { files } = rsp;
-  return files.map(file => ({
+  return files.map((file) => ({
     filename: file.filename,
     skipProcessing,
     await: true,
@@ -251,7 +251,7 @@ function initUpload(data) {
       .tap((rsp) => {
         this.response = rsp;
       })
-      .tap(rsp => uploadFiles(data, rsp));
+      .tap((rsp) => uploadFiles(data, rsp));
   };
 }
 
@@ -265,7 +265,7 @@ function finishUpload(rsp, skipProcessing = true) {
   return Promise.map(messages, (it) => {
     return amqp
       .publishAndWait('files.finish', it)
-      .catch({ statusCode: 202 }, err => err.message);
+      .catch({ statusCode: 202 }, (err) => err.message);
   });
 }
 
@@ -275,7 +275,7 @@ function finishUpload(rsp, skipProcessing = true) {
 function initAndUpload(data, skipProcessing = true) {
   return function uploader() {
     return initUpload(data).call(this)
-      .tap(rsp => finishUpload.call(this, rsp, skipProcessing));
+      .tap((rsp) => finishUpload.call(this, rsp, skipProcessing));
   };
 }
 
@@ -337,7 +337,7 @@ async function stopService() {
   const service = this.files;
 
   if (service.redisType === 'redisCluster') {
-    await Promise.map(service.redis.nodes('master'), node => (
+    await Promise.map(service.redis.nodes('master'), (node) => (
       node.flushdb()
     ));
   } else {
@@ -345,7 +345,7 @@ async function stopService() {
   }
 
   try {
-    await Promise.map(service.providers, transport => (
+    await Promise.map(service.providers, (transport) => (
       transport._bucket && transport._bucket.deleteFiles({ force: true })
     ));
   } finally {

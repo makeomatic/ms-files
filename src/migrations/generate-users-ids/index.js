@@ -3,7 +3,7 @@ const omit = require('lodash/omit');
 const Promise = require('bluebird');
 const { FILES_INDEX, FILES_DATA, FILES_USR_ALIAS_PTR } = require('../../constant');
 
-const getTransport = amqpConfig => AMQPTransport.connect(amqpConfig).disposer(amqp => amqp.close());
+const getTransport = (amqpConfig) => AMQPTransport.connect(amqpConfig).disposer((amqp) => amqp.close());
 
 function generateUsersIds({
   amqp, config, redis, log,
@@ -13,8 +13,8 @@ function generateUsersIds({
 
   return redis
     .smembers(FILES_INDEX)
-    .tap(filesNames => log.info('files count:', filesNames.length))
-    .map(fileName => redis.hmget(`${FILES_DATA}:${fileName}`, 'owner', 'uploadId'))
+    .tap((filesNames) => log.info('files count:', filesNames.length))
+    .map((fileName) => redis.hmget(`${FILES_DATA}:${fileName}`, 'owner', 'uploadId'))
     .map(
       ([owner, fileName]) => {
         if (resolvedUsers.has(owner) === true) {
@@ -61,7 +61,7 @@ function generateUsersIds({
     })
     .then(() => pipeline.exec())
     .then(() => log.info('that\'s all folks'))
-    .catch(e => log.error(e));
+    .catch((e) => log.error(e));
 }
 
 function migrate({ config, redis, log }) {
@@ -70,7 +70,7 @@ function migrate({ config, redis, log }) {
   return Promise
     .using(
       getTransport(amqpConfig),
-      amqp => generateUsersIds({
+      (amqp) => generateUsersIds({
         amqp, config, redis, log,
       })
     );

@@ -12,7 +12,7 @@ const THREE_HOURS = 1000 * 60 * 60 * 3;
 
 // basename
 const extReplacer = /^[^.]+\.(.*)$/;
-const Extension = name => path.basename(name).replace(extReplacer, '$1');
+const Extension = (name) => path.basename(name).replace(extReplacer, '$1');
 const PromptToSave = (counter, file, name) => {
   const originalExt = Extension(file);
 
@@ -38,7 +38,7 @@ const sign = (provider, files, name, expire) => {
     // resource: filename <- specified per file
   };
 
-  return Promise.map(files, file => provider.createSignedURL({
+  return Promise.map(files, (file) => provider.createSignedURL({
     ...settings,
     resource: file.filename,
     promptSaveAs: PromptToSave(counter, file.filename, name),
@@ -64,7 +64,7 @@ async function getDownloadURL({ params }) {
   // parse file data
   const provider = this.provider('download', data);
   const files = types
-    ? data.files.filter(file => types.includes(file.type))
+    ? data.files.filter((file) => types.includes(file.type))
     : data.files;
 
   // metadata
@@ -82,7 +82,7 @@ async function getDownloadURL({ params }) {
     if (rename) {
       urls = sign(provider, files, name, expire);
     } else {
-      urls = files.map(file => `${cname}/${encodeURIComponent(file.filename)}`);
+      urls = files.map((file) => `${cname}/${encodeURIComponent(file.filename)}`);
     }
 
   // no username - throw

@@ -19,7 +19,7 @@ module.exports = function handlePipelineError(args) {
   }
 
   if (errors.length > 0) {
-    const message = errors.map(err => err.message).join('; ');
+    const message = errors.map((err) => err.message).join('; ');
     throw new RedisError(message);
   }
 

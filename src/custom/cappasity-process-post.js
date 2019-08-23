@@ -27,7 +27,7 @@ module.exports = function finishPost(fileData, lock) {
       compression: exportSettings.compression,
       meta: exportSettings.meta || {},
     },
-    files: fileData.files.filter(file => ALLOWED_TYPES.indexOf(file.type) >= 0),
+    files: fileData.files.filter((file) => ALLOWED_TYPES.indexOf(file.type) >= 0),
   };
 
   return Promise

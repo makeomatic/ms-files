@@ -243,7 +243,7 @@ describe('update suite', function suite() {
         .then(inspectPromise())
         .get('files')
         .then((response) => {
-          const directUpload = response.find(it => it.id === this.response.uploadId);
+          const directUpload = response.find((it) => it.id === this.response.uploadId);
           assert.ok(directUpload, 'upload was not found');
           return null;
         });
@@ -268,7 +268,7 @@ describe('update suite', function suite() {
         .then(inspectPromise())
         .get('files')
         .then((response) => {
-          const directUpload = response.find(it => it.id === this.response.uploadId);
+          const directUpload = response.find((it) => it.id === this.response.uploadId);
           assert.ifError(directUpload, 'direct upload was returned from public list');
           return null;
         });
@@ -293,7 +293,7 @@ describe('update suite', function suite() {
         .then(inspectPromise())
         .get('files')
         .then((response) => {
-          const directUpload = response.find(it => it.id === this.response.uploadId);
+          const directUpload = response.find((it) => it.id === this.response.uploadId);
           assert.ok(directUpload, 'upload was not found');
           return null;
         });

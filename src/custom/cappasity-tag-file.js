@@ -2,7 +2,7 @@ async function tagFile(fileData) {
   const { amqp, config: { process: processConfig } } = this;
   // new owner format
   const { files, owner, bucket, uploadId } = fileData;
-  const file = files.find(f => f.type === 'c-preview');
+  const file = files.find((f) => f.type === 'c-preview');
 
   if (file === undefined) {
     return false;

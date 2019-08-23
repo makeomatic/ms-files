@@ -18,5 +18,5 @@ module.exports = function extractMetadata(userId) {
       timeout: 5000,
       cache: 60000 * 5, /* 5 minutes */
     })
-    .then(it => it[audience].alias);
+    .then((it) => it[audience].alias);
 };

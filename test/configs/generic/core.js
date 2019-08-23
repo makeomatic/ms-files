@@ -47,7 +47,7 @@ exports.hooks = {
   // return input, assume there are models
   'files:upload:pre': ({ files, uploadType, meta }) => {
     // specifies type packed
-    if (uploadType === 'simple' && files.find(it => it.type === 'c-pack')) {
+    if (uploadType === 'simple' && files.find((it) => it.type === 'c-pack')) {
       meta.packed = '1';
       return Promise.resolve();
     }
@@ -66,11 +66,11 @@ exports.hooks = {
     return Promise.delay(100);
   }),
   // alias -> username
-  'files:info:pre': alias => alias,
+  'files:info:pre': (alias) => alias,
   // update pre-processor
   'files:update:pre': [],
   // return same username, because we mock it
-  'files:download:alias': username => username,
+  'files:download:alias': (username) => username,
   'files:info:post': require(`${cwd}/src/custom/cappasity-info-post`),
 };
 

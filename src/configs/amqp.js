@@ -1,6 +1,6 @@
 // make sure we dont reject .process right away
 const processRegExp = /\.process$/;
-const isProcess = name => processRegExp.test(name);
+const isProcess = (name) => processRegExp.test(name);
 
 exports.amqp = {
   transport: {

@@ -20,14 +20,14 @@ const users = [
   { id: '4000000000', alias: 'adminLimit' },
 ];
 
-const mockPlan = value => set({}, 'meta.embeddings.value', value);
+const mockPlan = (value) => set({}, 'meta.embeddings.value', value);
 
 const mockMetadata = (alias, attributes) => ({
   id: find(users, { alias }).id,
   [audience]: attributes,
 });
 
-const mockInternalData = alias => ({
+const mockInternalData = (alias) => ({
   id: find(users, { alias }).id,
 });
 

@@ -75,7 +75,7 @@ function updateMeta(params) {
     .then(hasAccess(username))
     .then(isAliasTaken(alias))
     // call hook
-    .tap(data => this.hook.call(this, 'files:update:pre', username, data))
+    .tap((data) => this.hook.call(this, 'files:update:pre', username, data))
     // perform update
     .then((data) => {
       const pipeline = redis.pipeline();
@@ -105,12 +105,12 @@ function updateMeta(params) {
 
       if (hasOwnProperty.call(meta, FILES_TAGS_FIELD) && data[FILES_TAGS_FIELD]) {
         // @todo migrate all tags in files data to lowercase and then remove this tag.toLowerCase()
-        data[FILES_TAGS_FIELD].forEach(tag => pipeline.srem(FILES_TAGS_INDEX_KEY(tag.toLowerCase()), uploadId));
+        data[FILES_TAGS_FIELD].forEach((tag) => pipeline.srem(FILES_TAGS_INDEX_KEY(tag.toLowerCase()), uploadId));
       }
 
       if (meta[FILES_TAGS_FIELD]) {
         meta[FILES_TAGS_FIELD] = meta[FILES_TAGS_FIELD].map(call, toLowerCase);
-        meta[FILES_TAGS_FIELD].forEach(tag => pipeline.sadd(FILES_TAGS_INDEX_KEY(tag), uploadId));
+        meta[FILES_TAGS_FIELD].forEach((tag) => pipeline.sadd(FILES_TAGS_INDEX_KEY(tag), uploadId));
       }
 
       if (directOnly === false) {

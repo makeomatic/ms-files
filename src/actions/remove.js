@@ -23,7 +23,7 @@ const pipelineError = require('../utils/pipelineError');
  */
 function cleanupFileProvider(files, provider, log, opts = { concurrency: 20 }) {
   return Promise
-    .map(files, file => (
+    .map(files, (file) => (
       provider
         .remove(file.filename)
         .catch({ code: 404 }, (err) => {
@@ -53,7 +53,7 @@ async function removeFile({ params }) {
 
   // we do not track this
   cleanupFileProvider(data.files, provider, log)
-    .catch(e => log.fatal({ err: e }, 'failed to cleanup file provider for %s', filename));
+    .catch((e) => log.fatal({ err: e }, 'failed to cleanup file provider for %s', filename));
 
   // cleanup local database
   const pipeline = redis.pipeline();
@@ -71,7 +71,7 @@ async function removeFile({ params }) {
 
   const tags = data[FILES_TAGS_FIELD];
   if (tags) {
-    tags.forEach(tag => pipeline.srem(`${FILES_INDEX_TAGS}:${tag}`, filename));
+    tags.forEach((tag) => pipeline.srem(`${FILES_INDEX_TAGS}:${tag}`, filename));
   }
 
   // remove pointer for the alias if it existed

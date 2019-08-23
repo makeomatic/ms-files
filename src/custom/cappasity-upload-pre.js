@@ -11,7 +11,7 @@ const {
   FILES_PACKED_FIELD,
 } = require('../constant');
 
-const isPack = it => it.type === 'c-pack';
+const isPack = (it) => it.type === 'c-pack';
 
 // resolve real username and fetch plan data
 function getUserData(alias) {
@@ -39,7 +39,7 @@ function getUserData(alias) {
     // fetch plan data
     return amqp
       .publishAndWait(planGet.route, plan, planGet.options)
-      .then(planData => ({
+      .then((planData) => ({
         userId,
         roles,
         plan: planData,

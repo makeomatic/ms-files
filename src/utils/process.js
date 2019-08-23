@@ -57,7 +57,7 @@ module.exports = function processFile(key, data) {
             .return({ finalizedData, fileKeys });
         })
         .tap(() => lock.extend())
-        .tap(container => this.hook.call(this, 'files:process:post', container.finalizedData, lock))
+        .tap((container) => this.hook.call(this, 'files:process:post', container.finalizedData, lock))
         .then((container) => {
           const serialized = {};
           STRINGIFY_LIST.forEach((field) => {
@@ -80,7 +80,7 @@ module.exports = function processFile(key, data) {
               [FILES_STATUS_FIELD]: STATUS_PROCESSED,
             });
         })
-        .catch(err => (
+        .catch((err) => (
           redis
             .pipeline()
             .hmset(`${FILES_DATA}:${uploadId}`, {

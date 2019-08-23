@@ -125,7 +125,7 @@ function omitErrors(result, promise, idx) {
 /**
  * Prepares filenames
  */
-const prepareFilenames = filename => `${FILES_DATA}:${filename}`;
+const prepareFilenames = (filename) => `${FILES_DATA}:${filename}`;
 
 /**
  * Fetch extra data from redis based on IDS
@@ -174,7 +174,7 @@ function prepareResponse(data) {
       return service.hook('files:info:post', fileData).return(fileData);
     })
     .tap(timer('files:info:post'))
-    .then(files => ({
+    .then((files) => ({
       files,
       cursor: offset + limit,
       page: Math.floor(offset / limit) + 1,

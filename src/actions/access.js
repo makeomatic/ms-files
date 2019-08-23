@@ -25,7 +25,7 @@ async function addToPublic(filename, data) {
   // get transport
   const transport = provider('access', data);
 
-  await Promise.map(files, file => (
+  await Promise.map(files, (file) => (
     transport.makePublic(file.filename)
   ));
 
@@ -54,7 +54,7 @@ async function removeFromPublic(filename, data) {
   // get transport
   const transport = provider('access', data);
 
-  await Promise.map(files, file => (
+  await Promise.map(files, (file) => (
     transport.makePrivate(file.filename)
   ));
 

@@ -31,7 +31,7 @@ module.exports = function postProcess(offset = 0, uploadedAt) {
         files, cursor, page, pages,
       } = data;
 
-      return Promise.resolve(files).mapSeries(file => (
+      return Promise.resolve(files).mapSeries((file) => (
         // make sure to call reflect so that we do not interrupt the procedure
         this.router.dispatch(`${prefix}.process`, {
           headers: {},
