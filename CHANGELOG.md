@@ -1,3 +1,10 @@
+## [14.2.1](https://github.com/makeomatic/ms-files/compare/v14.2.0...v14.2.1) (2019-10-02)
+
+
+### Bug Fixes
+
+* upgrade deps ([5c9c9cc](https://github.com/makeomatic/ms-files/commit/5c9c9cc))
+
 # [14.2.0](https://github.com/makeomatic/ms-files/compare/v14.1.5...v14.2.0) (2019-10-02)
 
 
