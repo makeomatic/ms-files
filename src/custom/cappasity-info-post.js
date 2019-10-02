@@ -51,6 +51,16 @@ const corePlayerOpts = Object.setPrototypeOf({
     default: 1,
     description: 'Enable analytics',
   },
+  uipadx: {
+    type: 'integer',
+    default: 0,
+    description: 'Horizontal (left, right) UI padding in pixels',
+  },
+  uipady: {
+    type: 'integer',
+    default: 0,
+    description: 'Vertical (top, bottom) UI padding in pixels',
+  },
 }, null);
 
 // version 1.x.x - mesh
