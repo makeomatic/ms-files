@@ -1,3 +1,10 @@
+# [14.2.0](https://github.com/makeomatic/ms-files/compare/v14.1.5...v14.2.0) (2019-10-02)
+
+
+### Features
+
+* **capp:** add model ui padding embed params ([#160](https://github.com/makeomatic/ms-files/issues/160)) ([e0dda22](https://github.com/makeomatic/ms-files/commit/e0dda22))
+
 ## [14.1.5](https://github.com/makeomatic/ms-files/compare/v14.1.4...v14.1.5) (2019-08-23)
 
 
