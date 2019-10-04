@@ -15,7 +15,9 @@
     "prepublishOnly": "yarn compile",
     "semantic-release": "semantic-release",
     "docker-release": "mdep docker release",
-    "release": "yarn --frozen-lockfile && yarn semantic-release"
+    "release": "yarn --frozen-lockfile && yarn semantic-release",
+    "snyk-protect": "snyk protect",
+    "prepublish": "npm run snyk-protect"
   },
   "publishConfig": {
     "registry": "https://registry.npmjs.org"
@@ -62,7 +64,8 @@
     "request-promise": "^4.2.1",
     "stdout-stream": "^1.4.1",
     "uuid": "^3.3.3",
-    "yargs": "^14.0.0"
+    "yargs": "^14.0.0",
+    "snyk": "^1.230.5"
   },
   "optionalDependencies": {
     "@google-cloud/pubsub": "^1.1.0"
@@ -109,5 +112,6 @@
       "commit-msg": "commitlint -e $HUSKY_GIT_PARAMS",
       "prepare-commit-msg": "./node_modules/@makeomatic/deploy/git-hooks/prepare-commit-msg $HUSKY_GIT_PARAMS"
     }
-  }
+  },
+  "snyk": true
 }
