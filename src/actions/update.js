@@ -1,6 +1,7 @@
 const { ActionTransport } = require('@microfleet/core');
 const Promise = require('bluebird');
 const noop = require('lodash/noop');
+const { HttpStatusError } = require('common-errors');
 const handlePipeline = require('../utils/pipelineError');
 const getLock = require('../utils/acquireLock');
 const fetchData = require('../utils/fetchData');
@@ -65,8 +66,14 @@ function preProcessMetadata(data) {
   if (description != null && typeof description === 'string') {
     data.description = description.trim();
   }
+
   if (alias != null && typeof alias === 'string') {
+    const origLen = alias.length;
+
     data.alias = alias.trim();
+    if (origLen > 0 && data.alias.length === 0) {
+      throw new HttpStatusError(400, 'empty alias after trim');
+    }
   }
 
   return data;

@@ -147,23 +147,40 @@ describe('update suite', function suite() {
         });
     });
 
-    it('allows alias with spaces and trims them', function test() {
-      return this
-        .send({ uploadId: this.response.uploadId, username, meta: { alias: '  skub idoo ' } }, 15000)
-        .reflect()
-        .then(inspectPromise())
-        .then((result) => {
-          assert.equal(result, true);
+    it('allows alias with spaces and trims them', async function test() {
+      const result = await this.send({
+        uploadId: this.response.uploadId,
+        username,
+        meta: { alias: '  skub idoo ' },
+      }, 15000);
 
-          return getInfo.call(this, {
-            filename: 'skub idoo',
-            username,
-          })
-            .tap((verifyResult) => {
-              assert.equal(verifyResult.file.alias, 'skub idoo');
-              assert.equal(verifyResult.file.uploadId, this.response.uploadId);
-            });
-        });
+      assert.equal(result, true);
+
+      const verifyResult = await getInfo.call(this, {
+        filename: 'skub idoo',
+        username,
+      });
+
+      assert.equal(verifyResult.file.alias, 'skub idoo');
+      assert.equal(verifyResult.file.uploadId, this.response.uploadId);
+    });
+
+    it('throws if alias is empty after trimming', async function test() {
+      let serviceError;
+
+      try {
+        await this.send({
+          uploadId: this.response.uploadId,
+          username,
+          meta: { alias: '    ' },
+        }, 15000);
+      } catch (e) {
+        serviceError = e;
+      }
+
+      assert.ok(serviceError, 'should throw error');
+      assert(serviceError.statusCode === 400);
+      assert(serviceError.message === 'empty alias after trim');
     });
 
     it('removes alias', function test() {
