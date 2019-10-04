@@ -236,7 +236,7 @@
       "properties": {
         "alias": {
           "type": "string",
-          "pattern": "^[0-9A-Za-z_\\-.]{0,50}$"
+          "pattern": "^[0-9A-Za-z_\\-.\\s]{0,50}$"
         },
         "name": {
           "type": "string",
@@ -245,7 +245,7 @@
         },
         "description": {
           "type": "string",
-          "minLength": 1,
+          "minLength": 0,
           "maxLength": 2000
         },
         "website": {
