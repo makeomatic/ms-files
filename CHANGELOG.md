@@ -1,3 +1,10 @@
+# [14.3.0](https://github.com/makeomatic/ms-files/compare/v14.2.1...v14.3.0) (2019-10-08)
+
+
+### Features
+
+* permit spaces in alias and allow empty description ([#163](https://github.com/makeomatic/ms-files/issues/163)) ([e60be03](https://github.com/makeomatic/ms-files/commit/e60be03))
+
 ## [14.2.1](https://github.com/makeomatic/ms-files/compare/v14.2.0...v14.2.1) (2019-10-02)
 
 
