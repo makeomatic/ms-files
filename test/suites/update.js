@@ -147,6 +147,42 @@ describe('update suite', function suite() {
         });
     });
 
+    it('allows alias with spaces and trims them', async function test() {
+      const result = await this.send({
+        uploadId: this.response.uploadId,
+        username,
+        meta: { alias: '  skub idoo ' },
+      }, 15000);
+
+      assert.equal(result, true);
+
+      const verifyResult = await getInfo.call(this, {
+        filename: 'skub idoo',
+        username,
+      });
+
+      assert.equal(verifyResult.file.alias, 'skub idoo');
+      assert.equal(verifyResult.file.uploadId, this.response.uploadId);
+    });
+
+    it('throws if alias is empty after trimming', async function test() {
+      let serviceError;
+
+      try {
+        await this.send({
+          uploadId: this.response.uploadId,
+          username,
+          meta: { alias: '    ' },
+        }, 15000);
+      } catch (e) {
+        serviceError = e;
+      }
+
+      assert.ok(serviceError, 'should throw error');
+      assert(serviceError.statusCode === 400);
+      assert(serviceError.message === 'empty alias after trim');
+    });
+
     it('removes alias', function test() {
       // even-though we update the same model to the same alias, 409 is correct
       // and is sufficient, since it makes no sense to do noop update here
@@ -297,6 +333,44 @@ describe('update suite', function suite() {
           assert.ok(directUpload, 'upload was not found');
           return null;
         });
+    });
+  });
+
+  describe('Description trim and empty', function emptyDescription() {
+    it('permits empty description', async function test() {
+      const { uploadId } = this.response;
+      meta.description = '';
+
+      await this.send({
+        uploadId,
+        username,
+        meta,
+      }, 45000);
+
+      const fileInfo = await getInfo.call(this, {
+        filename: uploadId,
+        username,
+      });
+
+      assert.strictEqual(fileInfo.file.description, '', 'Description should be empty');
+    });
+
+    it('trims description', async function test() {
+      const { uploadId } = this.response;
+      meta.description = ' foo ';
+
+      await this.send({
+        uploadId,
+        username,
+        meta,
+      }, 45000);
+
+      const fileInfo = await getInfo.call(this, {
+        filename: uploadId,
+        username,
+      });
+
+      assert.strictEqual(fileInfo.file.description, 'foo', 'Description should be trimmed');
     });
   });
 

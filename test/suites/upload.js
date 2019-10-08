@@ -232,7 +232,7 @@ describe('upload suite', function suite() {
           uploadType: 'simple',
           postAction: {
             update: {
-              alias: 'bananza',
+              alias: 'ban anza',
             },
           },
         })
@@ -264,7 +264,7 @@ describe('upload suite', function suite() {
 
     it('info returns data based on alias', function test() {
       return getInfo
-        .call(this, { filename: 'bananza', username: message.username })
+        .call(this, { filename: 'ban anza', username: message.username })
         .reflect()
         .then(inspectPromise())
         .then((rsp) => {

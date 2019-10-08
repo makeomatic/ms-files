@@ -1,6 +1,7 @@
 const { ActionTransport } = require('@microfleet/core');
 const Promise = require('bluebird');
 const noop = require('lodash/noop');
+const { HttpStatusError } = require('common-errors');
 const handlePipeline = require('../utils/pipelineError');
 const getLock = require('../utils/acquireLock');
 const fetchData = require('../utils/fetchData');
@@ -54,12 +55,37 @@ function hasProperties(obj) {
   return false;
 }
 
+/**
+ * Process provided metadata
+ * @param data - File MetaData
+ * */
+function preProcessMetadata(data) {
+  const { description, alias } = data;
+
+  // Trim extra spaces in case of typo
+  if (description != null && typeof description === 'string') {
+    data.description = description.trim();
+  }
+
+  if (alias != null && typeof alias === 'string') {
+    const origLen = alias.length;
+
+    data.alias = alias.trim();
+    if (origLen > 0 && data.alias.length === 0) {
+      throw new HttpStatusError(400, 'empty alias after trim');
+    }
+  }
+
+  return data;
+}
+
 function updateMeta(params) {
   const {
-    uploadId, username, directOnly, meta,
+    uploadId, username, directOnly,
   } = params;
   const { redis } = this;
   const key = FILES_DATA_INDEX_KEY(uploadId);
+  const meta = preProcessMetadata(params.meta);
   const alias = meta[FILES_ALIAS_FIELD];
 
   return Promise
