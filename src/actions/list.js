@@ -4,7 +4,7 @@ const fsort = require('redis-filtered-sort');
 const is = require('is');
 const noop = require('lodash/noop');
 const perf = require('ms-perf');
-const fetchData = require('../utils/fetchData').batch;
+const fetchData = require('../utils/fetch-data').batch;
 const {
   FILES_DATA,
   FILES_INDEX,
@@ -12,7 +12,7 @@ const {
   FILES_INDEX_TAGS,
   FILES_INDEX_TEMP,
   FILES_LIST,
-} = require('../constant.js');
+} = require('../constant');
 
 /**
  * Internal functions
@@ -160,27 +160,29 @@ function truthy(_, idx) {
 /**
  * Prepares response
  */
-function prepareResponse(data) {
+async function prepareResponse(data) {
   const {
     service, timer, offset, limit,
   } = this;
   const { filenames, props, length } = data;
   const filteredFilenames = filenames.filter(truthy, props);
 
-  return Promise
-    .map(filteredFilenames, (filename, idx) => {
-      const fileData = props[idx];
-      fileData.id = filename;
-      return service.hook('files:info:post', fileData).return(fileData);
-    })
-    .tap(timer('files:info:post'))
-    .then((files) => ({
-      files,
-      cursor: offset + limit,
-      page: Math.floor(offset / limit) + 1,
-      pages: Math.ceil(length / limit),
-      time: timer(),
-    }));
+  const files = await Promise.map(filteredFilenames, async (filename, idx) => {
+    const fileData = props[idx];
+    fileData.id = filename;
+    await service.hook('files:info:post', fileData);
+    return fileData;
+  });
+
+  timer('files:info:post');
+
+  return {
+    files,
+    cursor: offset + limit,
+    page: Math.floor(offset / limit) + 1,
+    pages: Math.ceil(length / limit),
+    time: timer(),
+  };
 }
 
 /**
@@ -188,7 +190,7 @@ function prepareResponse(data) {
  * @return {Promise}
  */
 async function listFiles({ params }) {
-  const timer = perf('list');
+  const timer = perf('list', { thunk: false });
 
   const {
     redis,
@@ -243,19 +245,19 @@ async function listFiles({ params }) {
     strFilter,
   };
 
-  return Promise
-    .bind(this, ['files:info:pre', owner])
-    .spread(this.hook)
-    .tap(timer('files:info:pre'))
-    .bind(ctx)
-    .spread(interstore)
-    .tap(timer('interstore'))
-    .then(fetchFromRedis)
-    .tap(timer('fsort'))
-    .then(fetchExtraData)
-    .tap(timer('fetch'))
-    .then(prepareResponse)
-    .finally(timer);
+  try {
+    const args = await this.hook('files:info:pre', owner);
+    timer('files:info:pre');
+    const stored = await interstore.apply(ctx, args);
+    timer('interstore');
+    const ids = await fetchFromRedis.call(ctx, stored);
+    timer('fsort');
+    const data = await fetchExtraData.call(ctx, ids);
+    timer('fetch');
+    return await prepareResponse.call(ctx, data);
+  } finally {
+    timer();
+  }
 }
 
 listFiles.transports = [ActionTransport.amqp];

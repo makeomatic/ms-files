@@ -1,8 +1,8 @@
 const Promise = require('bluebird');
 const omit = require('lodash/omit');
 const stringify = require('./stringify.js');
-const acquireLock = require('./acquireLock');
-const { bustCache } = require('./bustCache.js');
+const acquireLock = require('./acquire-lock');
+const { bustCache } = require('./bust-cache');
 const {
   STATUS_PROCESSED,
   STATUS_PROCESSING,

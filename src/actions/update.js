@@ -2,16 +2,16 @@ const { ActionTransport } = require('@microfleet/core');
 const Promise = require('bluebird');
 const noop = require('lodash/noop');
 const { HttpStatusError } = require('common-errors');
-const handlePipeline = require('../utils/pipelineError');
-const getLock = require('../utils/acquireLock');
-const fetchData = require('../utils/fetchData');
-const isProcessed = require('../utils/isProcessed');
-const isUnlisted = require('../utils/isUnlisted');
-const hasAccess = require('../utils/hasAccess');
-const isAliasTaken = require('../utils/isAliasTaken');
+const handlePipeline = require('../utils/pipeline-error');
+const getLock = require('../utils/acquire-lock');
+const fetchData = require('../utils/fetch-data');
+const isProcessed = require('../utils/is-processed');
+const isUnlisted = require('../utils/is-unlisted');
+const hasAccess = require('../utils/has-access');
+const isAliasTaken = require('../utils/is-alias-taken');
 const stringify = require('../utils/stringify');
-const isValidBackgroundOrigin = require('../utils/isValidBackgroundOrigin');
-const { bustCache } = require('../utils/bustCache.js');
+const isValidBackgroundOrigin = require('../utils/is-valid-background-origin');
+const { bustCache } = require('../utils/bust-cache');
 const {
   FILES_TAGS_FIELD,
   FIELDS_TO_STRINGIFY,

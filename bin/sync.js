@@ -24,7 +24,7 @@ const { prefix } = config.router.routes;
 // App level code
 const getTransport = () => {
   console.info('establishing connection to amqp with %j', amqpConfig);
-  return AMQPTransport.connect(amqpConfig).disposer(amqp => amqp.close());
+  return AMQPTransport.connect(amqpConfig).disposer((amqp) => amqp.close());
 };
 
 // perform update

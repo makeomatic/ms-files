@@ -40,7 +40,7 @@ services:
         ipv4_address: 172.19.238.22
 
   tester:
-    image: makeomatic/node:10.16.3-tester
+    image: makeomatic/node:12.13.0-tester
     links:
       - rabbitmq
       - redis

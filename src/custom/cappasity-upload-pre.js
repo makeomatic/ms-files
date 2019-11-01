@@ -5,7 +5,7 @@ const noop = require('lodash/noop');
 const includes = require('lodash/includes');
 const { HttpStatusError } = require('common-errors');
 
-const isCappasityUpload = require('../utils/isCappasityUpload');
+const isCappasityUpload = require('../utils/is-cappasity-upload');
 const {
   FILES_INDEX,
   FILES_PACKED_FIELD,

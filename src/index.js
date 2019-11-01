@@ -28,7 +28,7 @@ class Files extends Microfleet {
      * Invoke this method to start post-processing of all pending files
      * @return {Promise}
      */
-    this.postProcess = require('./postProcess.js');
+    this.postProcess = require('./post-process');
 
     // extend with storage providers
     StorageProviders(this);
@@ -159,19 +159,14 @@ class Files extends Microfleet {
    * Overload connect and make sure we have access to bucket
    * @return {Promise}
    */
-  connect() {
+  async connect() {
     this.log.debug('started connecting');
-    return super
-      .connect()
-      .bind(this)
-      // will be a noop when configuration for it is missing
-      .then(this.initWebhook)
-      // init pubsub if it is present
-      .return(this.providers)
-      .mapSeries((provider) => {
-        if (!provider.config.bucket.channel.pubsub) return null;
-        return provider.subscribe(this.handleUploadNotification.bind(this));
-      });
+    await super.connect();
+    await this.initWebhook();
+    await Promise.mapSeries(this.providers, (provider) => {
+      if (!provider.config.bucket.channel.pubsub) return null;
+      return provider.subscribe(this.handleUploadNotification.bind(this));
+    });
   }
 }
 
