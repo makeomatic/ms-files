@@ -1,7 +1,7 @@
 const { ActionTransport } = require('@microfleet/core');
 const { HttpStatusError } = require('common-errors');
 const { FILES_USR_ALIAS_PTR } = require('../constant');
-const handlePipeline = require('../utils/pipelineError');
+const handlePipeline = require('../utils/pipeline-error');
 
 async function headAction({ params }) {
   const { aliases, username } = params;

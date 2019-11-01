@@ -1,6 +1,7 @@
 const assert = require('assert');
 const uuid = require('uuid');
 const url = require('url');
+const { encodeURI } = require('@google-cloud/storage/build/src/util');
 
 describe('download suite', function suite() {
   // helpers
@@ -14,7 +15,7 @@ describe('download suite', function suite() {
     initAndUpload,
     processUpload,
     updateAccess,
-  } = require('../helpers/utils.js');
+  } = require('../helpers/utils');
 
   const route = 'files.download';
   const bucketName = require('../configs/generic/core').transport[0].options.bucket.name;
@@ -82,7 +83,7 @@ describe('download suite', function suite() {
             const parsedLink = url.parse(link, true);
             assert.equal(parsedLink.protocol, 'https:', link);
             assert.equal(parsedLink.host, 'storage.googleapis.com', link);
-            assert.equal(parsedLink.pathname, `/${bucketName}/${encodeURIComponent(rsp.files[idx].filename)}`, link);
+            assert.equal(parsedLink.pathname, `/${bucketName}/${encodeURI(rsp.files[idx].filename, false)}`, link);
             assert.ok(parsedLink.query.GoogleAccessId, link);
             assert.ok(parsedLink.query.Expires, link);
             assert.ok(parsedLink.query.Signature, link);
@@ -114,7 +115,7 @@ describe('download suite', function suite() {
             const parsedLink = url.parse(link, true);
             assert.equal(parsedLink.protocol, 'https:', link);
             assert.equal(parsedLink.host, 'storage.googleapis.com', link);
-            assert.equal(parsedLink.pathname, `/${bucketName}/${encodeURIComponent(rsp.files[idx].filename)}`, link);
+            assert.equal(parsedLink.pathname, `/${bucketName}/${encodeURI(rsp.files[idx].filename, false)}`, link);
             assert.ok(parsedLink.query.GoogleAccessId, link);
             assert.ok(parsedLink.query.Expires, link);
             assert.ok(parsedLink.query.Signature, link);
@@ -148,7 +149,7 @@ describe('download suite', function suite() {
               const parsedLink = url.parse(link, true);
               assert.equal(parsedLink.protocol, 'https:', link);
               assert.equal(parsedLink.host, 'storage.googleapis.com', link);
-              assert.equal(parsedLink.pathname, `/${bucketName}/${encodeURIComponent(rsp.files[idx].filename)}`, link);
+              assert.equal(parsedLink.pathname, `/${bucketName}/${encodeURI(rsp.files[idx].filename, false)}`, link);
               assert.ifError(parsedLink.query.GoogleAccessId, link);
               assert.ifError(parsedLink.query.Expires, link);
               assert.ifError(parsedLink.query.Signature, link);
@@ -179,7 +180,7 @@ describe('download suite', function suite() {
               const parsedLink = url.parse(link, true);
               assert.equal(parsedLink.protocol, 'https:', link);
               assert.equal(parsedLink.host, 'storage.googleapis.com', link);
-              assert.equal(parsedLink.pathname, `/${bucketName}/${encodeURIComponent(rsp.files[idx].filename)}`, link);
+              assert.equal(parsedLink.pathname, `/${bucketName}/${encodeURI(rsp.files[idx].filename, false)}`, link);
               assert.ok(parsedLink.query.GoogleAccessId, link);
               assert.ok(parsedLink.query.Expires, link);
               assert.ok(parsedLink.query.Signature, link);

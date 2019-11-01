@@ -1,10 +1,10 @@
 const { ActionTransport } = require('@microfleet/core');
 const Promise = require('bluebird');
-const handlePipeline = require('../utils/pipelineError');
-const fetchData = require('../utils/fetchData');
-const hasAccess = require('../utils/hasAccess');
-const isProcessed = require('../utils/isProcessed');
-const { bustCache } = require('../utils/bustCache');
+const handlePipeline = require('../utils/pipeline-error');
+const fetchData = require('../utils/fetch-data');
+const hasAccess = require('../utils/has-access');
+const isProcessed = require('../utils/is-processed');
+const { bustCache } = require('../utils/bust-cache');
 const {
   FILES_INDEX, FILES_INDEX_PUBLIC,
   FILES_DATA, FILES_OWNER_FIELD, FILES_PUBLIC_FIELD,

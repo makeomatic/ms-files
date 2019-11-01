@@ -79,11 +79,11 @@ const amqpConfig = omit(config.amqp.transport, ['queue', 'listen', 'neck', 'onCo
 const { prefix } = config.router.routes;
 const getTransport = () => {
   console.info('establishing connection to amqp with %j', amqpConfig);
-  return AMQPTransport.connect(amqpConfig).disposer(amqp => amqp.close());
+  return AMQPTransport.connect(amqpConfig).disposer((amqp) => amqp.close());
 };
 
 // prepare upload
-const readFile = _type => (filepath) => {
+const readFile = (_type) => (filepath) => {
   const file = fs.readFileSync(filepath);
   const ext = path.extname(filepath);
   const type = _type || (ext === '.pack' ? 'c-pack' : 'c-simple');
@@ -114,7 +114,7 @@ if (argv.reverse) {
 }
 
 if (argv.excludePreview) {
-  modelFiles = modelFiles.filter(it => (it !== previewFile));
+  modelFiles = modelFiles.filter((it) => (it !== previewFile));
 }
 
 console.info('resolved %d file(s)', modelFiles.length);
@@ -173,16 +173,16 @@ function reportSuccess(meta) {
   process.stdout.write('.');
   return this
     .publishAndWait(`${prefix}.finish`, { filename: meta.filename })
-    .catchReturn(e => [200, 202].indexOf(e.statusCode) >= 0, 'ok');
+    .catchReturn((e) => [200, 202].indexOf(e.statusCode) >= 0, 'ok');
 }
 
 /**
  * Inits upload, sends stuff to GCS, reports finish
  */
-const uploadFiles = amqp => (
+const uploadFiles = (amqp) => (
   amqp
     .publishAndWait(`${prefix}.upload`, uploadMessage)
-    .then(data => Promise.props({
+    .then((data) => Promise.props({
       data,
       uploadFiles: Promise
         .bind(amqp, data.files)
@@ -192,7 +192,7 @@ const uploadFiles = amqp => (
     }))
     .get('data')
     .get('uploadId')
-    .then(id => console.info(`\n${id}`))
+    .then((id) => console.info(`\n${id}`))
 );
 
 if (argv.confirm) {

@@ -5,7 +5,7 @@ const debug = require('debug')('ms-files:fetchData');
 const calcSlot = require('cluster-key-slot');
 const fs = require('fs');
 const is = require('is');
-const safeParse = require('./safeParse');
+const safeParse = require('./safe-parse');
 const { FIELDS_TO_STRINGIFY, FILES_TAGS_FIELD, FILE_MISSING_ERROR } = require('../constant');
 
 /**

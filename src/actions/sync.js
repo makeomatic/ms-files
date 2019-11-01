@@ -3,8 +3,8 @@ const Promise = require('bluebird');
 const fsort = require('redis-filtered-sort');
 const moment = require('moment');
 const list = require('./list.js');
-const acquireLock = require('../utils/acquireLock');
-const { STATUS_PENDING, FILES_INDEX_TEMP } = require('../constant.js');
+const acquireLock = require('../utils/acquire-lock');
+const { STATUS_PENDING, FILES_INDEX_TEMP } = require('../constant');
 
 // cached filter
 const filter = fsort.filter({ status: { eq: STATUS_PENDING } });

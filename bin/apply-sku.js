@@ -42,7 +42,7 @@ const iterator = {
 // App level code
 const getTransport = () => {
   console.info('establishing connection to amqp with %j', amqpConfig);
-  return AMQPTransport.connect(amqpConfig).disposer(amqp => amqp.close());
+  return AMQPTransport.connect(amqpConfig).disposer((amqp) => amqp.close());
 };
 
 const removeSKU = (amqp, uploadId) => (
@@ -121,7 +121,7 @@ const listAndUpdate = (amqp) => {
         console.info('pages found: %d', data.pages);
       }
     })
-    .tap(data => Promise.map(data.files, file => performUpdate(amqp, file), { concurrency: 1 }))
+    .tap((data) => Promise.map(data.files, (file) => performUpdate(amqp, file), { concurrency: 1 }))
     .tap((data) => {
       // recursively work on the next page
       if (data.page < data.pages) {

@@ -3,8 +3,8 @@ const Promise = require('bluebird');
 const assert = require('assert');
 const { NotImplementedError, HttpStatusError } = require('common-errors');
 const { FILES_DATA, FILES_OWNER_FIELD } = require('../constant');
-const fetchData = require('../utils/fetchData');
-const resolveFilename = require('../utils/resolveFilename');
+const fetchData = require('../utils/fetch-data');
+const resolveFilename = require('../utils/resolve-filename');
 
 const NOT_IMPLEMENTED_ERROR = new NotImplementedError('files:info:pre hook must be specified to use this endpoint');
 

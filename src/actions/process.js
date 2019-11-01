@@ -14,8 +14,8 @@ const {
 } = require('../constant');
 
 const postProcess = require('../utils/process');
-const fetchData = require('../utils/fetchData');
-const hasAccess = require('../utils/hasAccess');
+const fetchData = require('../utils/fetch-data');
+const hasAccess = require('../utils/has-access');
 
 /**
  * Post process file

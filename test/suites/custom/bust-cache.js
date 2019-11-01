@@ -1,5 +1,5 @@
 const assert = require('assert');
-const mod = require('../../../src/utils/bustCache');
+const mod = require('../../../src/utils/bust-cache');
 const {
   FILES_INDEX,
   FILES_INDEX_PUBLIC,

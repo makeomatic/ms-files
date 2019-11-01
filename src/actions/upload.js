@@ -4,10 +4,10 @@ const uuidv4 = require('uuid/v4');
 const md5 = require('md5');
 const sumBy = require('lodash/sumBy');
 const get = require('lodash/get');
-const handlePipeline = require('../utils/pipelineError');
-const stringify = require('../utils/stringify.js');
-const extension = require('../utils/extension.js');
-const isValidBackgroundOrigin = require('../utils/isValidBackgroundOrigin.js');
+const handlePipeline = require('../utils/pipeline-error');
+const stringify = require('../utils/stringify');
+const extension = require('../utils/extension');
+const isValidBackgroundOrigin = require('../utils/is-valid-background-origin');
 const {
   STATUS_PENDING,
   UPLOAD_DATA,

@@ -1,9 +1,9 @@
 const { ActionTransport } = require('@microfleet/core');
 const Promise = require('bluebird');
-const hasAccess = require('../utils/hasAccess');
-const fetchData = require('../utils/fetchData');
-const isUnlisted = require('../utils/isUnlisted');
-const { bustCache } = require('../utils/bustCache');
+const hasAccess = require('../utils/has-access');
+const fetchData = require('../utils/fetch-data');
+const isUnlisted = require('../utils/is-unlisted');
+const { bustCache } = require('../utils/bust-cache');
 const {
   FILES_INDEX,
   FILES_INDEX_PUBLIC,
@@ -15,7 +15,7 @@ const {
   FILES_ALIAS_FIELD,
   FILES_USR_ALIAS_PTR,
 } = require('../constant');
-const pipelineError = require('../utils/pipelineError');
+const pipelineError = require('../utils/pipeline-error');
 
 /**
  * This function used as coroutine, we don't track the result

@@ -2,10 +2,11 @@ const { ActionTransport } = require('@microfleet/core');
 const Promise = require('bluebird');
 const path = require('path');
 const { HttpStatusError } = require('common-errors');
-const { FILES_DATA, FILES_OWNER_FIELD, FILES_PUBLIC_FIELD } = require('../constant.js');
-const fetchData = require('../utils/fetchData');
-const hasAccess = require('../utils/hasAccess');
-const isProcessed = require('../utils/isProcessed');
+const { encodeURI } = require('@google-cloud/storage/build/src/util');
+const { FILES_DATA, FILES_OWNER_FIELD, FILES_PUBLIC_FIELD } = require('../constant');
+const fetchData = require('../utils/fetch-data');
+const hasAccess = require('../utils/has-access');
+const isProcessed = require('../utils/is-processed');
 
 // default signed URL expiration time
 const THREE_HOURS = 1000 * 60 * 60 * 3;
@@ -76,18 +77,19 @@ async function getDownloadURL({ params }) {
   let urls;
   if (data[FILES_PUBLIC_FIELD]) {
     // fetch alias
-    alias = this.hook('files:download:alias', data[FILES_OWNER_FIELD]).get(0);
+    alias = this.hook('files:download:alias', data[FILES_OWNER_FIELD])
+      .then((x) => x[0]);
 
     // form URLs
     if (rename) {
       urls = sign(provider, files, name, expire);
     } else {
-      urls = files.map((file) => `${cname}/${encodeURIComponent(file.filename)}`);
+      urls = files.map((file) => `${cname}/${encodeURI(file.filename, false)}`);
     }
 
   // no username - throw
   } else if (!username) {
-    return Promise.reject(new HttpStatusError(401, 'file does not belong to the provided user'));
+    throw new HttpStatusError(401, 'file does not belong to the provided user');
 
   // will throw if no access
   } else if (hasAccess(username)(data)) {

@@ -139,8 +139,10 @@ class GCETransport extends AbstractFileTransfer {
     const [subscription] = await Subscription.get(config.gaxOpts);
     this.log.info({ subscription: name }, 'prepared subscription');
 
+    subscription.on('error', (err) => this.log.error({ err }, 'failed to subscribe'));
+    subscription.on('close', () => subscription.open());
     subscription.on('message', handler);
-    subscription.on('error', (err) => this.log.error({ error: err }, 'failed to subscribe'));
+
     this._pubsub._subscriptions.push(subscription);
 
     // for internal cleanup
@@ -199,12 +201,15 @@ class GCETransport extends AbstractFileTransfer {
     if (subscriptions && subscriptions.length > 0) {
       return Promise.map(subscriptions, (subscription) => {
         // remove message listener
+        subscription.removeAllListeners('close');
         subscription.removeAllListeners('message');
         subscription.removeAllListeners('error');
+
         // terminate if needed
         if (subscription._terminate) return subscription.delete();
+
         // done
-        return null;
+        return subscription.close();
       });
     }
 

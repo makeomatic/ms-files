@@ -1,10 +1,10 @@
 const { ActionTransport } = require('@microfleet/core');
 const Promise = require('bluebird');
 
-const hasAccess = require('../../utils/hasAccess');
-const handlePipeline = require('../../utils/pipelineError');
-const fetchData = require('../../utils/fetchData');
-const getLock = require('../../utils/acquireLock');
+const hasAccess = require('../../utils/has-access');
+const handlePipeline = require('../../utils/pipeline-error');
+const fetchData = require('../../utils/fetch-data');
+const getLock = require('../../utils/acquire-lock');
 const stringify = require('../../utils/stringify');
 const {
   LOCK_UPDATE_KEY,

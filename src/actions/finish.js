@@ -2,8 +2,8 @@ const { ActionTransport } = require('@microfleet/core');
 const Promise = require('bluebird');
 const assert = require('assert');
 const { HttpStatusError } = require('common-errors');
-const fetchData = require('../utils/fetchData');
-const handlePipeline = require('../utils/pipelineError');
+const fetchData = require('../utils/fetch-data');
+const handlePipeline = require('../utils/pipeline-error');
 const {
   STATUS_UPLOADED,
   STATUS_PENDING,

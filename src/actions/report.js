@@ -3,7 +3,7 @@ const Promise = require('bluebird');
 const fsort = require('redis-filtered-sort');
 const { NotImplementedError } = require('common-errors');
 
-const handlePipeline = require('../utils/pipelineError');
+const handlePipeline = require('../utils/pipeline-error');
 const { FILES_INDEX, FILES_DATA, FILES_CONTENT_LENGTH_FIELD } = require('../constant');
 
 const fileDataPattern = `${FILES_DATA}:*`;
