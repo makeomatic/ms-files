@@ -1,3 +1,10 @@
+# [14.4.0](https://github.com/makeomatic/ms-files/compare/v14.3.0...v14.4.0) (2019-11-01)
+
+
+### Features
+
+* node 12.13.0, upgraded all deps ([#165](https://github.com/makeomatic/ms-files/issues/165)) ([947b123](https://github.com/makeomatic/ms-files/commit/947b123))
+
 # [14.3.0](https://github.com/makeomatic/ms-files/compare/v14.2.1...v14.3.0) (2019-10-08)
 
 
