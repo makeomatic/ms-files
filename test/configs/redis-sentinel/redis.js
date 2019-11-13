@@ -20,4 +20,5 @@ exports.plugins = [
   'http',
   'redisSentinel',
   'prometheus',
+  'couchdb',
 ];

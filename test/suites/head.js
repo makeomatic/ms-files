@@ -24,7 +24,7 @@ describe('header suite', function suite() {
         username: owner,
         meta: { alias: 'skubidoo' },
       },
-      15000
+      { timeout: 15000 }
     );
   });
   before('helpers', bindSend('files.head'));

@@ -1,8 +1,7 @@
 const assert = require('assert');
 const Promise = require('bluebird');
-const get = require('lodash/get');
+const get = require('get-value');
 const noop = require('lodash/noop');
-const includes = require('lodash/includes');
 const { HttpStatusError } = require('common-errors');
 
 const isCappasityUpload = require('../utils/is-cappasity-upload');
@@ -56,8 +55,8 @@ function checkUploadsLimit(params) {
     .bind(this, params.username)
     .then(getUserData)
     .then((data) => {
-      const { userId, roles, plan } = data;
-      const isAdmin = includes(roles, 'admin');
+      const { userId, roles = [], plan } = data;
+      const isAdmin = roles.includes('admin');
 
       // skip next checks if user is admin
       if (isAdmin) {
