@@ -3,15 +3,12 @@ const Promise = require('bluebird');
 const uuidv4 = require('uuid/v4');
 const md5 = require('md5');
 const sumBy = require('lodash/sumBy');
-const get = require('lodash/get');
-const handlePipeline = require('../utils/pipeline-error');
+const get = require('get-value');
 const stringify = require('../utils/stringify');
 const extension = require('../utils/extension');
 const isValidBackgroundOrigin = require('../utils/is-valid-background-origin');
 const {
   STATUS_PENDING,
-  UPLOAD_DATA,
-  FILES_DATA,
   FILES_PUBLIC_FIELD,
   FILES_TEMP_FIELD,
   FILES_BUCKET_FIELD,
@@ -19,11 +16,9 @@ const {
   FILES_UNLISTED_FIELD,
   FILES_STATUS_FIELD,
   FIELDS_TO_STRINGIFY,
-  FILES_INDEX_TEMP,
-  FILES_POST_ACTION,
   FILES_DIRECT_ONLY_FIELD,
   FILES_CONTENT_LENGTH_FIELD,
-} = require('../constant.js');
+} = require('../constant');
 
 /**
  * Initiates upload
@@ -51,8 +46,6 @@ async function initFileUpload({ params }) {
     postAction,
     directOnly,
   } = params;
-
-  const { redis, config: { uploadTTL } } = this;
 
   this.log.info({ params }, 'preparing upload');
 
@@ -168,34 +161,8 @@ async function initFileUpload({ params }) {
     fileData[FILES_DIRECT_ONLY_FIELD] = 1;
   }
 
-  const pipeline = redis.pipeline();
-  const uploadKey = `${FILES_DATA}:${uploadId}`;
-
-  pipeline
-    .sadd(FILES_INDEX_TEMP, uploadId)
-    .hmset(uploadKey, fileData)
-    .expire(uploadKey, uploadTTL);
-
-  parts.forEach((part) => {
-    const partKey = `${UPLOAD_DATA}:${part.filename}`;
-    pipeline
-      .hmset(partKey, {
-        [FILES_BUCKET_FIELD]: bucketName,
-        [FILES_STATUS_FIELD]: STATUS_PENDING,
-        uploadId,
-      })
-      .expire(partKey, uploadTTL);
-  });
-
-  // in case we have post action provided - save it for when we complete "finish" action
-  if (postAction) {
-    const postActionKey = `${FILES_POST_ACTION}:${uploadId}`;
-    pipeline.set(postActionKey, JSON.stringify(postAction), 'EX', uploadTTL);
-  }
-
+  await this.dbManager.prepareUpload(uploadId, fileData, parts, postAction);
   this.log.info({ params }, 'created signed urls and preparing to save them to database');
-
-  await pipeline.exec().then(handlePipeline);
 
   const data = {
     ...fileData,

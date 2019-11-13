@@ -18,13 +18,13 @@ const { call } = Function.prototype;
 const { toLowerCase } = String.prototype;
 const arrayUniq = (element, index, array) => array.indexOf(element) === index;
 
-async function addTag(params) {
+async function addTag(lock, service, params) {
   const { uploadId, username } = params;
   const tags = params.tags
     .map(call, toLowerCase)
     .filter(arrayUniq);
-  const fileData = await fetchData.call(this, FILES_DATA_INDEX_KEY(uploadId));
-  const pipeline = this.redis.pipeline();
+  const fileData = await fetchData.call(service, FILES_DATA_INDEX_KEY(uploadId));
+  const pipeline = service.redis.pipeline();
 
   // it throws error
   hasAccess(username)(fileData);
@@ -57,7 +57,9 @@ async function addTagAction({ params }) {
 
   return Promise.using(
     getLock(this, LOCK_UPDATE_KEY(uploadId)),
-    () => addTag.call(this, params)
+    this,
+    params,
+    addTag
   );
 }
 

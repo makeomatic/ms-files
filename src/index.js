@@ -10,6 +10,9 @@ const { HttpStatusError } = require('common-errors');
 const { WEBHOOK_RESOURCE_ID } = require('./constant');
 const StorageProviders = require('./providers');
 const conf = require('./config');
+const DatabaseManager = require('./services/db-manager');
+const RedisManager = require('./services/redis');
+const CouchDBManager = require('./services/couchdb');
 
 /**
  * @class Files
@@ -38,6 +41,9 @@ class Files extends Microfleet {
     // extend with storage providers
     StorageProviders(this);
 
+    // database abstraction
+    this.dbManager = new DatabaseManager(this);
+
     // 2 different plugin types
     if (config.plugins.includes('redisCluster')) {
       this.redisType = 'redisCluster';
@@ -60,6 +66,12 @@ class Files extends Microfleet {
         pubsub: redis.duplicate(),
         log: this.log,
       });
+
+      this.dbManager.addStorage(new RedisManager(redis, config), 'redis');
+    });
+
+    this.on('plugin:connect:couchdb', (couchdb) => {
+      this.dbManager.addStorage(new CouchDBManager(couchdb, config), 'couchdb');
     });
 
     // add migration connector
