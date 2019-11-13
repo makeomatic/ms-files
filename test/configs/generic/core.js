@@ -1,12 +1,11 @@
 /* eslint-disable import/no-dynamic-require */
 
-const Promise = require('bluebird');
-const sinon = require('sinon');
-
 // workspace
 const { env } = process;
 const cwd = process.cwd();
 const originalPredicate = require(`${cwd}/src/configs/amqp`).amqp.retry.predicate;
+const Promise = require(`${cwd}/node_modules/bluebird`);
+const sinon = require(`${cwd}/node_modules/sinon`);
 
 exports.amqp = {
   transport: {

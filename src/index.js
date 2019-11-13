@@ -4,7 +4,6 @@ const noop = require('lodash/noop');
 const merge = require('lodash/merge');
 const fsort = require('redis-filtered-sort');
 const LockManager = require('dlock');
-const RedisCluster = require('ioredis').Cluster;
 
 // constants
 const { HttpStatusError } = require('common-errors');
@@ -25,6 +24,12 @@ class Files extends Microfleet {
     const { config } = this;
 
     /**
+     * Determines whether we have couchdb enabled
+     * @type {boolean}
+     */
+    this.couchEnabled = config.plugins.includes('couchdb');
+
+    /**
      * Invoke this method to start post-processing of all pending files
      * @return {Promise}
      */
@@ -34,13 +39,10 @@ class Files extends Microfleet {
     StorageProviders(this);
 
     // 2 different plugin types
-    let redisDuplicate;
     if (config.plugins.includes('redisCluster')) {
       this.redisType = 'redisCluster';
-      redisDuplicate = () => new RedisCluster(config.redis.hosts, config.redis.options);
     } else if (config.plugins.includes('redisSentinel')) {
       this.redisType = 'redisSentinel';
-      redisDuplicate = (redis) => redis.duplicate();
     } else {
       throw new Error('must include redis family plugins');
     }
@@ -55,7 +57,7 @@ class Files extends Microfleet {
         // main connection
         client: redis,
         // second connection
-        pubsub: redisDuplicate(redis),
+        pubsub: redis.duplicate(),
         log: this.log,
       });
     });
@@ -64,7 +66,7 @@ class Files extends Microfleet {
     if (config.migrations.enabled === true) {
       this.addConnector(ConnectorsTypes.migration, () => (
         this.migrate('redis', `${__dirname}/migrations`)
-      ));
+      ), 'redis-migration');
     }
   }
 

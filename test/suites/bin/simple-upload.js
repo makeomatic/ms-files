@@ -28,52 +28,47 @@ describe('binary: simple-upload', function suite() {
     '--report-finish',
   ];
 
-  it('dry run: prepares upload message', function test() {
-    return exec([...opts]).then((lines) => {
-      assert.deepEqual(lines, [
-        'resolved 1 file(s)',
-        'Dry run, printing prepared message:',
-        '',
-        '',
-        '{',
-        '  username: \'v@makeomatic.ru\',',
-        '  meta: { name: \'pack sample\' },',
-        '  access: { setPublic: true },',
-        '  uploadType: \'simple\',',
-        '  resumable: false,',
-        '  temp: false,',
-        '  unlisted: false,',
-        '  files: [',
-        '    {',
-        '      type: \'c-preview\',',
-        '      contentType: \'image/jpeg\',',
-        '      contentLength: 64024,',
-        '      md5Hash: \'03506d1122d213baa1445f6b5655d2e4\'',
-        '    },',
-        '    {',
-        '      type: \'c-pack\',',
-        '      contentType: \'image/vnd.cappasity\',',
-        '      contentLength: 21680,',
-        '      md5Hash: \'4f91e44f50cc8647611606eff0ada50e\'',
-        '    }',
-        '  ]',
-        '}',
-      ]);
+  it('dry run: prepares upload message', async function test() {
+    const lines = await exec([...opts]);
 
-      return null;
-    });
+    assert.deepEqual(lines, [
+      'resolved 1 file(s)',
+      'Dry run, printing prepared message:',
+      '',
+      '',
+      '{',
+      '  username: \'v@makeomatic.ru\',',
+      '  meta: { name: \'pack sample\' },',
+      '  access: { setPublic: true },',
+      '  uploadType: \'simple\',',
+      '  resumable: false,',
+      '  temp: false,',
+      '  unlisted: false,',
+      '  files: [',
+      '    {',
+      '      type: \'c-preview\',',
+      '      contentType: \'image/jpeg\',',
+      '      contentLength: 64024,',
+      '      md5Hash: \'03506d1122d213baa1445f6b5655d2e4\'',
+      '    },',
+      '    {',
+      '      type: \'c-pack\',',
+      '      contentType: \'image/vnd.cappasity\',',
+      '      contentLength: 21680,',
+      '      md5Hash: \'4f91e44f50cc8647611606eff0ada50e\'',
+      '    }',
+      '  ]',
+      '}',
+    ]);
   });
 
-  it('confirm: sends upload', function test() {
-    return exec([...opts, '--confirm'])
-      .then((lines) => {
-        const uploadId = lines[3];
-        assert.ok(uploadId);
-        return this.send({ username: owner, filename: uploadId });
-      })
-      .then((response) => {
-        assert.equal(response.file.status, '3');
-        return null;
-      });
+  it('confirm: sends upload', async function test() {
+    const lines = await exec([...opts, '--confirm']);
+
+    const uploadId = lines.pop();
+    assert.ok(uploadId);
+
+    const response = await this.send({ username: owner, filename: uploadId });
+    assert.equal(response.file.status, '3');
   });
 });

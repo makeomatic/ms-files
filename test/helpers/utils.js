@@ -262,6 +262,7 @@ function initUpload(data) {
 function finishUpload(rsp, skipProcessing = true) {
   const messages = finishMessage(rsp, skipProcessing);
   const { amqp } = this;
+
   return Promise.map(messages, (it) => {
     return amqp
       .publishAndWait('files.finish', it)

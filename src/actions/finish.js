@@ -35,7 +35,6 @@ const jsonFields = JSON.stringify(fields);
 
 const MissingError = new HttpStatusError(200, '404: could not find upload');
 const AlreadyProcessedError = new HttpStatusError(200, '412: upload was already processed');
-const PartialProcessingError = new HttpStatusError(202, '');
 const is404 = { statusCode: 404 };
 const is409 = { message: '409' };
 
@@ -94,8 +93,7 @@ async function completeFileUpload({ params }) {
 
   // use pooled error to avoid stack generation
   if (currentParts < totalParts) {
-    PartialProcessingError.message = `${currentParts}/${totalParts} uploaded`;
-    throw PartialProcessingError;
+    throw new HttpStatusError(202, `${currentParts}/${totalParts} uploaded`);
   }
 
   const pipeline = redis.pipeline();
@@ -137,7 +135,7 @@ async function completeFileUpload({ params }) {
     pipeline.persist(postActionKey);
   }
 
-  await pipeline.exec().then(handlePipeline);
+  handlePipeline(await pipeline.exec());
 
   if (params.skipProcessing) {
     return 'upload completed, processing skipped';

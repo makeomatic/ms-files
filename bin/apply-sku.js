@@ -42,7 +42,7 @@ const iterator = {
 // App level code
 const getTransport = () => {
   console.info('establishing connection to amqp with %j', amqpConfig);
-  return AMQPTransport.connect(amqpConfig).disposer((amqp) => amqp.close());
+  return AMQPTransport.connect({ ...amqpConfig, debug: false }).disposer((amqp) => amqp.close());
 };
 
 const removeSKU = (amqp, uploadId) => (

@@ -1,6 +1,6 @@
 // redis conf
 const redisHosts = [7000, 7001, 7002]
-  .map((port) => ({ host: '172.19.238.10', port }));
+  .map((port) => ({ host: 'redis-cluster', port }));
 
 exports.redis = {
   hosts: redisHosts,
@@ -19,4 +19,5 @@ exports.plugins = [
   'http',
   'redisCluster',
   'prometheus',
+  'couchdb',
 ];

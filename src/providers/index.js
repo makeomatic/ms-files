@@ -103,8 +103,8 @@ function initProviders(service) {
   service.providersByBucket = Object.setPrototypeOf(providersByBucket, null);
 
   // internal plugin API
-  service.addConnector(PluginTypes.database, connectProviders(service.providers));
-  service.addDestructor(PluginTypes.database, closeProviders(service.providers));
+  service.addConnector(PluginTypes.database, connectProviders(service.providers), 'file-providers');
+  service.addDestructor(PluginTypes.database, closeProviders(service.providers), 'file-providers');
 }
 
 // Public API

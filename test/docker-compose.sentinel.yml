@@ -1,61 +1,14 @@
-version: '2'
-
-networks:
-  files:
-    driver: bridge
-    ipam:
-      driver: default
-      config:
-      - subnet: 172.19.238.0/24
+version: '3'
 
 services:
-  redis:
-    image: redis:5-alpine
-    hostname: redis
-    expose:
-      - "6379"
-    networks:
-      files:
-        ipv4_address: 172.19.238.20
-
-  redis-sentinel:
-    depends_on:
-      - redis
-    volumes:
-      - ./fixtures/redis-sentinel:/etc/redis-sentinel
-    image: redis:5-alpine
-    hostname: redis-sentinel
-    expose:
-      - "26379"
-    command: redis-server /etc/redis-sentinel/redis-sentinel.conf --sentinel
-    networks:
-      files:
-        ipv4_address: 172.19.238.21
-
-  rabbitmq:
-    image: rabbitmq:3.7-alpine
-    hostname: rabbitmq
-    networks:
-      files:
-        ipv4_address: 172.19.238.22
-
   tester:
-    image: makeomatic/node:12.13.0-tester
-    links:
-      - rabbitmq
-      - redis
-    working_dir: /src
     volumes:
       - ${PWD}:/src
-      - ./configs/generic:/src/configs/core:ro
-      - ./configs/redis-sentinel:/src/configs/redis:ro
+      - ${PWD}/test/configs/generic:/configs/core:ro
+      - ${PWD}/test/configs/redis-sentinel:/configs/redis:ro
     environment:
       NODE_ENV: "test"
       DEBUG: "${DEBUG}"
       TEST_BUCKET: "makeomatic-131232"
       DOTENV_FILE_PATH: "/src/test/.env"
-      NCONF_FILE_PATH: '["/src/configs/core","/src/configs/redis"]'
-    command: tail -f /dev/null
-    networks:
-      files:
-        ipv4_address: 172.19.238.23
+      NCONF_FILE_PATH: '["/configs/core","/configs/redis"]'
