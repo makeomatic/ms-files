@@ -1,3 +1,10 @@
+# [14.5.0](https://github.com/makeomatic/ms-files/compare/v14.4.0...v14.5.0) (2019-11-27)
+
+
+### Features
+
+* allow upload videos ([#167](https://github.com/makeomatic/ms-files/issues/167)) ([c1e99d2](https://github.com/makeomatic/ms-files/commit/c1e99d2721f16737fbcb0640ffc0a738811d67d5))
+
 # [14.4.0](https://github.com/makeomatic/ms-files/compare/v14.3.0...v14.4.0) (2019-11-01)
 
 
