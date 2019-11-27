@@ -222,6 +222,30 @@
         }
       }
     },
+    "video": {
+      "type": "object",
+      "required": ["type", "contentType", "contentLength", "md5Hash"],
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "type": "string",
+          "const": "video"
+        },
+        "contentType": {
+          "type": "string",
+          "enum": ["video/mp4", "video/webm"]
+        },
+        "contentLength": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 20000000
+        },
+        "md5Hash": {
+          "type": "string",
+          "pattern": "^[0-9A-Fa-f]{32}$"
+        }
+      }
+    },
     "meta": {
       "type": "object",
       "additionalProperties": false,

@@ -16,7 +16,8 @@
           { "$ref": "common#/definitions/cappasity-image" },
           { "$ref": "common#/definitions/image" },
           { "$ref": "common#/definitions/background-image" },
-          { "$ref": "common#/definitions/arbitrary" }
+          { "$ref": "common#/definitions/arbitrary" },
+          { "$ref": "common#/definitions/video" }
         ]
       }
     },
