@@ -17,15 +17,13 @@ describe('header suite', function suite() {
     return processUpload.call(this, this.response);
   });
   before('set alias', function setAlias() {
-    return this.amqp.publishAndWait(
-      'files.update',
-      {
-        uploadId: this.response.uploadId,
-        username: owner,
-        meta: { alias: 'skubidoo' },
-      },
-      15000
-    );
+    const msg = {
+      uploadId: this.response.uploadId,
+      username: owner,
+      meta: { alias: 'skubidoo' },
+    };
+
+    return this.amqp.publishAndWait('files.update', msg, { timeout: 15000 });
   });
   before('helpers', bindSend('files.head'));
 
