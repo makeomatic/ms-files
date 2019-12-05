@@ -38,6 +38,15 @@
       "type": "string",
       "pattern": "^(#(?:[\\dA-Fa-f]{3}){1,2}|rgb\\((?:\\d{1,3},\\s*){2}\\d{1,3}\\))$"
     },
+    "platforms": {
+      "type": "array",
+      "maxItems": 16,
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 32
+      }
+    },
     "export": {
       "type": "object",
       "required": ["format", "compression"],
@@ -107,6 +116,9 @@
         "source-sha256": {
           "type": "string",
           "pattern": "^[0-9A-Fa-f]{64}$"
+        },
+        "platforms": {
+          "$ref": "#/definitions/platforms"
         }
       }
     },
@@ -141,6 +153,121 @@
         "md5Hash": {
           "type": "string",
           "pattern": "^[0-9A-Fa-f]{32}$"
+        },
+        "platforms": {
+          "$ref": "#/definitions/platforms"
+        }
+      }
+    },
+    "cappasity-pack": {
+      "type": "object",
+      "required": ["type", "contentType", "contentLength", "md5Hash"],
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "type": "string",
+          "format": "^c-pack\\d+$"
+        },
+        "contentType": {
+          "type": "string",
+          "format": "^image/vnd.cappasity(\\+[a-z0-9]*)?$"
+        },
+        "contentLength": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 104857600
+        },
+        "md5Hash": {
+          "type": "string",
+          "pattern": "^[0-9A-Fa-f]{32}$"
+        },
+        "platforms": {
+          "$ref": "#/definitions/platforms"
+        }
+      }
+    },
+    "cappasity-usdz": {
+      "type": "object",
+      "required": ["type", "contentType", "contentLength", "md5Hash"],
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "type": "string",
+          "const": "c-usdz"
+        },
+        "contentType": {
+          "type": "string",
+          "enum": [
+            "model/usd",
+            "model/vnd.usdz+zip",
+            "model/vnd.pixar.usd"
+          ]
+        },
+        "contentLength": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 104857600
+        },
+        "md5Hash": {
+          "type": "string",
+          "pattern": "^[0-9A-Fa-f]{32}$"
+        },
+        "platforms": {
+          "$ref": "#/definitions/platforms"
+        }
+      }
+    },
+    "cappasity-gltf": {
+      "type": "object",
+      "required": ["type", "contentType", "contentLength", "md5Hash"],
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "type": "string",
+          "const": "c-gltf"
+        },
+        "contentType": {
+          "type": "string",
+          "enum": ["model/gltf+json", "model/gltf-binary"]
+        },
+        "contentLength": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 104857600
+        },
+        "md5Hash": {
+          "type": "string",
+          "pattern": "^[0-9A-Fa-f]{32}$"
+        },
+        "platforms": {
+          "$ref": "#/definitions/platforms"
+        }
+      }
+    },
+    "cappasity-masks": {
+      "type": "object",
+      "required": ["type", "contentType", "contentLength", "md5Hash"],
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "type": "string",
+          "const": "c-masks"
+        },
+        "contentType": {
+          "type": "string",
+          "enum": ["image/png", "image/vnd.cappasity+masks"]
+        },
+        "contentLength": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 104857600
+        },
+        "md5Hash": {
+          "type": "string",
+          "pattern": "^[0-9A-Fa-f]{32}$"
+        },
+        "platforms": {
+          "$ref": "#/definitions/platforms"
         }
       }
     },
@@ -309,6 +436,25 @@
             "human",
             "user"
           ]
+        },
+        "capabilities": {
+          "description": "Contains capabilities for a given 3D model",
+          "type": "array",
+          "uniqueItems": true,
+          "maxItems": 32,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 32
+          }
+        },
+        "dimensions": {
+          "description": "sizes of 3d object in metres",
+          "type": "array",
+          "maxItems": 32,
+          "items": {
+            "type": "number"
+          }
         }
       }
     },
