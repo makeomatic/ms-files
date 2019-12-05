@@ -170,7 +170,7 @@
         },
         "contentType": {
           "type": "string",
-          "format": "^image/vnd.cappasity(\\+[a-z0-9]*)?$"
+          "pattern": "^image/vnd.cappasity(\\+[a-z0-9]*)?$"
         },
         "contentLength": {
           "type": "integer",
