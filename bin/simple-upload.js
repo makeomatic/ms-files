@@ -79,7 +79,10 @@ const amqpConfig = omit(config.amqp.transport, ['queue', 'listen', 'neck', 'onCo
 const { prefix } = config.router.routes;
 const getTransport = () => {
   console.info('establishing connection to amqp with %j', amqpConfig);
-  return AMQPTransport.connect(amqpConfig).disposer((amqp) => amqp.close());
+  return AMQPTransport.connect({
+    ...amqpConfig,
+    debug: false,
+  }).disposer((amqp) => amqp.close());
 };
 
 // prepare upload
