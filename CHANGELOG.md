@@ -1,3 +1,10 @@
+# [14.6.0](https://github.com/makeomatic/ms-files/compare/v14.5.0...v14.6.0) (2019-12-05)
+
+
+### Features
+
+* new upload types & params ([#168](https://github.com/makeomatic/ms-files/issues/168)) ([c5a61c6](https://github.com/makeomatic/ms-files/commit/c5a61c6461b63fd06f8bd045fcfe532a0018f413))
+
 # [14.5.0](https://github.com/makeomatic/ms-files/compare/v14.4.0...v14.5.0) (2019-11-27)
 
 
