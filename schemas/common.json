@@ -166,7 +166,7 @@
       "properties": {
         "type": {
           "type": "string",
-          "format": "^c-pack\\d+$"
+          "pattern": "^c-pack\\d+$"
         },
         "contentType": {
           "type": "string",
@@ -255,7 +255,7 @@
         },
         "contentType": {
           "type": "string",
-          "enum": ["image/png", "image/vnd.cappasity+masks"]
+          "const": "image/vnd.cappasity+masks"
         },
         "contentLength": {
           "type": "integer",
