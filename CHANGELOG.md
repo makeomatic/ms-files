@@ -1,3 +1,10 @@
+## [14.6.1](https://github.com/makeomatic/ms-files/compare/v14.6.0...v14.6.1) (2019-12-10)
+
+
+### Bug Fixes
+
+* c-pack type errors ([#169](https://github.com/makeomatic/ms-files/issues/169)) ([8b35f76](https://github.com/makeomatic/ms-files/commit/8b35f763448001a8c2a6fe2bc4ca0d70b4378d61))
+
 # [14.6.0](https://github.com/makeomatic/ms-files/compare/v14.5.0...v14.6.0) (2019-12-05)
 
 
