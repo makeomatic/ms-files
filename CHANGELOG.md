@@ -1,3 +1,10 @@
+## [14.6.2](https://github.com/makeomatic/ms-files/compare/v14.6.1...v14.6.2) (2019-12-10)
+
+
+### Bug Fixes
+
+* capabilities, dimensions (de)serialization ([04e2215](https://github.com/makeomatic/ms-files/commit/04e2215d64d714a15d71cf5efb761eac6ec38ff1))
+
 ## [14.6.1](https://github.com/makeomatic/ms-files/compare/v14.6.0...v14.6.1) (2019-12-10)
 
 
