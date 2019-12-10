@@ -9,7 +9,6 @@ describe('upload suite', function suite() {
   const {
     startService,
     stopService,
-    inspectPromise,
     bindSend,
     uploadFiles,
     modelData,
@@ -19,12 +18,12 @@ describe('upload suite', function suite() {
     finishUpload,
     processUpload,
     getInfo,
-  } = require('../helpers/utils.js');
+  } = require('../helpers/utils');
 
   // data
   const route = 'files.upload';
   const bucketName = require('../configs/generic/core').transport[0].options.bucket.name;
-  const { STATUS_PENDING, STATUS_PROCESSED, FILES_PACKED_FIELD } = require('../../src/constant.js');
+  const { STATUS_PENDING, STATUS_PROCESSED, FILES_PACKED_FIELD } = require('../../src/constant');
 
   // setup functions
   before('start service', startService);
@@ -32,153 +31,126 @@ describe('upload suite', function suite() {
   before('helpers', bindSend(route));
 
   describe('resumable upload suite', function resumableUploadSuite() {
-    it('verifies input data and rejects on invalid format', function test() {
-      return this
-        .send({ ...modelData.message, username: false })
-        .reflect()
-        .then(inspectPromise(false));
+    it('verifies input data and rejects on invalid format', async function test() {
+      await assert.rejects(this.send({ ...modelData.message, username: false }));
     });
 
-    it('rejects upload if meta.alias is specified', function test() {
-      return this
-        .send({
-          ...modelData.message,
-          meta: {
-            ...modelData.message.meta,
-            alias: 'sample-alias',
-          },
-        })
-        .reflect()
-        .then(inspectPromise(false));
+    it('rejects upload if meta.alias is specified', async function test() {
+      await assert.rejects(this.send({
+        ...modelData.message,
+        meta: {
+          ...modelData.message.meta,
+          alias: 'sample-alias',
+        },
+      }));
     });
 
-    it('initiates upload and returns correct response format', function test() {
+    it('initiates upload and returns correct response format', async function test() {
       const { message } = modelData;
 
-      return this
-        .send(message, 45000)
-        .reflect()
-        .then(inspectPromise())
-        .then((rsp) => {
-          assert.equal(rsp.name, message.meta.name);
-          assert.equal(rsp.owner, message.username);
-          assert.ok(rsp.uploadId);
-          assert.ok(rsp.startedAt);
-          assert.ok(rsp.files);
-          assert.ifError(rsp.public);
-          assert.equal(rsp.status, STATUS_PENDING);
-          assert.equal(rsp.parts, message.files.length);
-          assert.deepEqual(rsp.controlsData, message.meta.controlsData);
+      const rsp = await this.send(message, 45000);
 
-          // verify that location is present
-          rsp.files.forEach((part) => {
-            assert.ok(part.location);
+      assert.equal(rsp.name, message.meta.name);
+      assert.equal(rsp.owner, message.username);
+      assert.ok(rsp.uploadId);
+      assert.ok(rsp.startedAt);
+      assert.ok(rsp.files);
+      assert.ifError(rsp.public);
+      assert.equal(rsp.status, STATUS_PENDING);
+      assert.equal(rsp.parts, message.files.length);
+      assert.deepEqual(rsp.controlsData, message.meta.controlsData);
 
-            // verify upoad link
-            const location = url.parse(part.location, true);
-            assert.equal(location.protocol, 'https:');
-            assert.equal(location.hostname, 'storage.googleapis.com');
-            assert.equal(location.pathname, `/upload/storage/v1/b/${bucketName}/o`);
-            assert.equal(location.query.name, part.filename);
-            assert.equal(location.query.uploadType, 'resumable');
-            assert.ok(location.query.upload_id);
+      // verify that location is present
+      rsp.files.forEach((part) => {
+        assert.ok(part.location);
 
-            // verify that filename contains multiple parts
-            const [ownerHash, uploadId, filename] = part.filename.split('/');
-            assert.equal(md5(owner), ownerHash);
-            assert.equal(rsp.uploadId, uploadId);
-            assert.ok(filename);
-          });
+        // verify upoad link
+        const location = url.parse(part.location, true);
+        assert.equal(location.protocol, 'https:');
+        assert.equal(location.hostname, 'storage.googleapis.com');
+        assert.equal(location.pathname, `/upload/storage/v1/b/${bucketName}/o`);
+        assert.equal(location.query.name, part.filename);
+        assert.equal(location.query.uploadType, 'resumable');
+        assert.ok(location.query.upload_id);
 
-          // save for the next
-          this.response = rsp;
-          return null;
-        });
+        // verify that filename contains multiple parts
+        const [ownerHash, uploadId, filename] = part.filename.split('/');
+        assert.equal(md5(owner), ownerHash);
+        assert.equal(rsp.uploadId, uploadId);
+        assert.ok(filename);
+      });
+
+      // save for the next
+      this.response = rsp;
     });
 
-    it('possible to initial directOnly upload', function test() {
+    it('possible to initial directOnly upload', async function test() {
       const { message } = modelData;
 
-      return this
-        .send({ ...message, directOnly: true }, 45000)
-        .reflect()
-        .then(inspectPromise())
-        .then((data) => {
-          assert.ok(data.direct, 'field direct is not set');
-          return null;
-        });
+      const data = await this.send({ ...message, directOnly: true }, 45000);
+
+      assert.ok(data.direct, 'field direct is not set');
     });
 
-    it('upload is possible based on the returned data', function test() {
-      return uploadFiles(modelData, this.response)
-        .reflect()
-        .then(inspectPromise())
-        .map((resp) => {
-          assert.equal(resp.statusCode, 200);
-          return null;
-        });
+    it('upload is possible based on the returned data', async function test() {
+      const resp = await uploadFiles(modelData, this.response);
+      for (const body of resp) {
+        assert.equal(body.statusCode, 200);
+      }
     });
 
-    it('initiates public upload and returns correct response format', function test() {
+    it('initiates public upload and returns correct response format', async function test() {
       const { message } = modelData;
 
-      return this
-        .send({
-          ...message,
-          access: {
-            setPublic: true,
-          },
-        }, 45000)
-        .reflect()
-        .then(inspectPromise())
-        .then((rsp) => {
-          assert.equal(rsp.name, message.meta.name);
-          assert.equal(rsp.owner, message.username);
-          assert.ok(rsp.uploadId);
-          assert.ok(rsp.startedAt);
-          assert.ok(rsp.files);
-          assert.ok(rsp.public);
-          assert.equal(rsp.status, STATUS_PENDING);
-          assert.equal(rsp.parts, message.files.length);
+      const rsp = await this.send({
+        ...message,
+        access: {
+          setPublic: true,
+        },
+      }, 45000);
 
-          // verify that location is present
-          rsp.files.forEach((part) => {
-            assert.ok(part.location);
+      assert.equal(rsp.name, message.meta.name);
+      assert.equal(rsp.owner, message.username);
+      assert.ok(rsp.uploadId);
+      assert.ok(rsp.startedAt);
+      assert.ok(rsp.files);
+      assert.ok(rsp.public);
+      assert.equal(rsp.status, STATUS_PENDING);
+      assert.equal(rsp.parts, message.files.length);
 
-            // verify upoad link
-            const location = url.parse(part.location, true);
-            assert.equal(location.protocol, 'https:');
-            assert.equal(location.hostname, 'storage.googleapis.com');
-            assert.equal(location.pathname, `/upload/storage/v1/b/${bucketName}/o`);
-            assert.equal(location.query.name, part.filename);
-            assert.equal(location.query.uploadType, 'resumable');
-            assert.ok(location.query.upload_id);
+      // verify that location is present
+      rsp.files.forEach((part) => {
+        assert.ok(part.location);
 
-            // verify that filename contains multiple parts
-            const [ownerHash, uploadId, filename] = part.filename.split('/');
-            assert.equal(md5(owner), ownerHash);
-            assert.equal(rsp.uploadId, uploadId);
-            assert.ok(filename);
-          });
+        // verify upoad link
+        const location = url.parse(part.location, true);
+        assert.equal(location.protocol, 'https:');
+        assert.equal(location.hostname, 'storage.googleapis.com');
+        assert.equal(location.pathname, `/upload/storage/v1/b/${bucketName}/o`);
+        assert.equal(location.query.name, part.filename);
+        assert.equal(location.query.uploadType, 'resumable');
+        assert.ok(location.query.upload_id);
 
-          // save for the next
-          this.response = rsp;
-          return null;
-        });
+        // verify that filename contains multiple parts
+        const [ownerHash, uploadId, filename] = part.filename.split('/');
+        assert.equal(md5(owner), ownerHash);
+        assert.equal(rsp.uploadId, uploadId);
+        assert.ok(filename);
+      });
+
+      // save for the next
+      this.response = rsp;
     });
 
-    it('upload is possible based on the returned data: public', function test() {
-      return uploadFiles(modelData, this.response)
-        .reflect()
-        .then(inspectPromise())
-        .map((resp) => {
-          assert.equal(resp.statusCode, 200);
-          return null;
-        });
+    it('upload is possible based on the returned data: public', async function test() {
+      const resp = await uploadFiles(modelData, this.response);
+      for (const req of resp) {
+        assert.equal(req.statusCode, 200);
+      }
     });
 
     it('able to download public files right away', function test() {
-      const file = this.response.files[0];
+      const [file] = this.response.files;
       return request.get(`https://storage.googleapis.com/${bucketName}/${file.filename}`);
     });
   });
@@ -188,70 +160,52 @@ describe('upload suite', function suite() {
     const { message } = data;
     let response;
 
-    it('rejects packed upload with invalid postAction', function test() {
-      return this
-        .send({
-          ...message,
-          access: { setPublic: true },
-          uploadType: 'simple',
-          postAction: {},
-        })
-        .reflect()
-        .then(inspectPromise(false))
-        .then((err) => {
-          assert.equal(err.statusCode, 400);
-          assert.equal(err.name, 'HttpStatusError');
-          return null;
-        });
+    it('rejects packed upload with invalid postAction', async function test() {
+      await assert.rejects(this.send({
+        ...message,
+        access: { setPublic: true },
+        uploadType: 'simple',
+        postAction: {},
+      }), {
+        statusCode: 400,
+        name: 'HttpStatusError',
+      });
     });
 
-    it('rejects packed upload with no properties in update postAction', function test() {
-      return this
-        .send({
-          ...message,
-          access: { setPublic: true },
-          uploadType: 'simple',
-          postAction: {
-            update: {},
+    it('rejects packed upload with no properties in update postAction', async function test() {
+      await assert.rejects(this.send({
+        ...message,
+        access: { setPublic: true },
+        uploadType: 'simple',
+        postAction: {
+          update: {},
+        },
+      }), {
+        statusCode: 400,
+        name: 'HttpStatusError',
+      });
+    });
+
+    it('creates upload with valid post-action', async function test() {
+      const rsp = await this.send({
+        ...message,
+        access: { setPublic: true },
+        uploadType: 'simple',
+        postAction: {
+          update: {
+            alias: 'ban anza',
           },
-        })
-        .reflect()
-        .then(inspectPromise(false))
-        .then((err) => {
-          assert.equal(err.statusCode, 400);
-          assert.equal(err.name, 'HttpStatusError');
-          return null;
-        });
+        },
+      });
+
+      response = rsp;
     });
 
-    it('creates upload with valid post-action', function test() {
-      return this
-        .send({
-          ...message,
-          access: { setPublic: true },
-          uploadType: 'simple',
-          postAction: {
-            update: {
-              alias: 'ban anza',
-            },
-          },
-        })
-        .reflect()
-        .then(inspectPromise())
-        .then((rsp) => {
-          response = rsp;
-          return null;
-        });
-    });
-
-    it('uploads data', function test() {
-      return uploadFiles(data, response)
-        .reflect()
-        .then(inspectPromise())
-        .map((resp) => {
-          assert.equal(resp.statusCode, 200);
-          return null;
-        });
+    it('uploads data', async function test() {
+      const resp = await uploadFiles(data, response);
+      for (const req of resp) {
+        assert.equal(req.statusCode, 200);
+      }
     });
 
     it('finishes upload', function test() {
@@ -262,97 +216,82 @@ describe('upload suite', function suite() {
       return processUpload.call(this, response, { awaitPostActions: true });
     });
 
-    it('info returns data based on alias', function test() {
-      return getInfo
-        .call(this, { filename: 'ban anza', username: message.username })
-        .reflect()
-        .then(inspectPromise())
-        .then((rsp) => {
-          assert.equal(rsp.file.status, STATUS_PROCESSED);
-          assert.equal(rsp.file[FILES_PACKED_FIELD], '1');
-          return null;
-        });
+    it('info returns data based on alias', async function test() {
+      const rsp = await getInfo
+        .call(this, { filename: 'ban anza', username: message.username });
+
+      assert.equal(rsp.file.status, STATUS_PROCESSED);
+      assert.equal(rsp.file[FILES_PACKED_FIELD], '1');
     });
   });
 
   describe('signed url', function signedURLSuite() {
     let response;
 
-    it('initiates signed URL upload', function test() {
+    it('initiates signed URL upload', async function test() {
       const { message } = simpleData;
 
-      return this
-        .send({
-          ...message,
-          resumable: false,
-          access: {
-            setPublic: true,
-          },
-          uploadType: 'simple',
-        })
-        .reflect()
-        .then(inspectPromise())
-        .then((rsp) => {
-          assert.equal(rsp.name, message.meta.name);
-          assert.equal(rsp.owner, message.username);
-          assert.ok(rsp.uploadId);
-          assert.ok(rsp.startedAt);
-          assert.ok(rsp.files);
-          assert.ok(rsp.public);
-          assert.equal(rsp.status, STATUS_PENDING);
-          assert.equal(rsp.parts, message.files.length);
+      const rsp = await this.send({
+        ...message,
+        resumable: false,
+        access: {
+          setPublic: true,
+        },
+        uploadType: 'simple',
+      });
 
-          // verify that location is present
-          rsp.files.forEach((part) => {
-            assert.ok(part.location);
+      assert.equal(rsp.name, message.meta.name);
+      assert.equal(rsp.owner, message.username);
+      assert.ok(rsp.uploadId);
+      assert.ok(rsp.startedAt);
+      assert.ok(rsp.files);
+      assert.ok(rsp.public);
+      assert.equal(rsp.status, STATUS_PENDING);
+      assert.equal(rsp.parts, message.files.length);
 
-            // verify upload link
-            const location = url.parse(part.location, true);
-            assert.equal(location.protocol, 'https:');
-            assert.equal(location.hostname, 'storage.googleapis.com');
-            assert.equal(decodeURIComponent(location.pathname), `/${bucketName}/${part.filename}`);
-            assert.ok(location.query.GoogleAccessId);
-            assert.ok(location.query.Signature);
-            assert.ok(location.query.Expires);
+      // verify that location is present
+      rsp.files.forEach((part) => {
+        assert.ok(part.location);
 
-            // verify that filename contains multiple parts
-            const [ownerHash, uploadId, filename] = part.filename.split('/');
-            assert.equal(md5(owner), ownerHash);
-            assert.equal(rsp.uploadId, uploadId);
-            assert.ok(filename);
-          });
+        // verify upload link
+        const location = url.parse(part.location, true);
+        assert.equal(location.protocol, 'https:');
+        assert.equal(location.hostname, 'storage.googleapis.com');
+        assert.equal(decodeURIComponent(location.pathname), `/${bucketName}/${part.filename}`);
+        assert.ok(location.query.GoogleAccessId);
+        assert.ok(location.query.Signature);
+        assert.ok(location.query.Expires);
 
-          // save for the next
-          response = rsp;
-          return null;
-        });
+        // verify that filename contains multiple parts
+        const [ownerHash, uploadId, filename] = part.filename.split('/');
+        assert.equal(md5(owner), ownerHash);
+        assert.equal(rsp.uploadId, uploadId);
+        assert.ok(filename);
+      });
+
+      // save for the next
+      response = rsp;
     });
 
-    it('able to upload files', function test() {
-      return uploadFiles(simpleData, response)
-        .reflect()
-        .then(inspectPromise())
-        .map((resp) => {
-          assert.equal(resp.statusCode, 200);
-          return null;
-        });
+    it('able to upload files', async function test() {
+      const resp = await uploadFiles(simpleData, response);
+      for (const req of resp) {
+        assert.equal(req.statusCode, 200);
+      }
     });
 
-    it('should fail when trying to upload non-resumable upload with resumable modifiers', function type() {
+    it('should fail when trying to upload non-resumable upload with resumable modifiers', async function type() {
       const { message } = simpleData;
 
-      return this
-        .send({
-          ...message,
-          resumable: false,
-          access: {
-            setPublic: true,
-          },
-          unlisted: true,
-          temp: true,
-        })
-        .reflect()
-        .then(inspectPromise(false));
+      await assert.rejects(this.send({
+        ...message,
+        resumable: false,
+        access: {
+          setPublic: true,
+        },
+        unlisted: true,
+        temp: true,
+      }));
     });
   });
 
@@ -409,6 +348,100 @@ describe('upload suite', function suite() {
       };
 
       assert.ok(this.files.validateSync('upload', obj).error, 'error not thrown!');
+    });
+  });
+
+  describe('c-type uploads', function cTypeUploads() {
+    it('c-masks', async function test() {
+      const msg = {
+        files: [{
+          contentLength: 3795,
+          contentType: 'image/jpeg',
+          md5Hash: '6816574b9e4647c3257946838d44be01',
+          type: 'c-preview',
+        },
+        {
+          contentLength: 10692,
+          contentType: 'image/vnd.cappasity',
+          md5Hash: '499da7aeb8324608ee96ef947ae8aefe',
+          type: 'c-pack',
+        },
+        {
+          contentLength: 272234,
+          contentType: 'image/vnd.cappasity+masks',
+          md5Hash: '5acb9db280091d3d506197e0dc662c07',
+          type: 'c-masks',
+        }],
+        access: { setPublic: true },
+        directOnly: false,
+        meta: {
+          backgroundColor: '#FFFFFF',
+          backgroundImage: '',
+          c_ver: '4.1.0',
+          name: 'script_experiment',
+          type: 'object',
+          dimensions: [0.5, 0.35],
+          capabilities: ['ar_3dview', 'web_3dview'],
+        },
+        postAction: {
+          update: {
+            alias: 'script_experiment_sku',
+          },
+        },
+        resumable: false,
+        temp: false,
+        unlisted: false,
+        uploadType: 'simple',
+        username: 'any',
+      };
+
+      await this.send(msg);
+    });
+
+    it('c-packs', async function test() {
+      const msg = {
+        files: [{
+          contentLength: 3795,
+          contentType: 'image/jpeg',
+          md5Hash: '6816574b9e4647c3257946838d44be01',
+          type: 'c-preview',
+        },
+        {
+          contentLength: 10692,
+          contentType: 'image/vnd.cappasity',
+          md5Hash: '499da7aeb8324608ee96ef947ae8aefe',
+          type: 'c-pack',
+        },
+        {
+          contentLength: 272234,
+          contentType: 'image/vnd.cappasity+2',
+          md5Hash: '5acb9db280091d3d506197e0dc662c07',
+          type: 'c-pack2',
+        }],
+        access: { setPublic: true },
+        directOnly: false,
+        meta: {
+          backgroundColor: '#FFFFFF',
+          backgroundImage: '',
+          c_ver: '4.1.0',
+          name: 'script_experiment',
+          type: 'object',
+          dimensions: [0.5, 0.35],
+          capabilities: ['ar_3dview', 'web_3dview'],
+        },
+        postAction: {
+          update: {
+            alias: 'script_experiment_sku_2',
+          },
+        },
+        resumable: false,
+        temp: false,
+        unlisted: false,
+        uploadType: 'simple',
+        username: 'any',
+      };
+
+      await this.send(msg);
     });
   });
 

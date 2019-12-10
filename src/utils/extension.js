@@ -7,8 +7,11 @@ const { TYPE_MAP } = require('../constant');
  * @param  {String} contentType
  * @return {String}
  */
+const exp = /^([^.]{1}.*)$/;
+const cpack = (type) => (type.startsWith('c-pack') ? '.pack' : false);
 const typeToExtension = (type, contentType) => TYPE_MAP[type]
-  || extension(contentType).replace(/^([^.]{1}.*)$/, '.$1')
+  || cpack(type)
+  || (extension(contentType) || '').replace(exp, '.$1')
   || '.bin';
 
 module.exports = typeToExtension;
