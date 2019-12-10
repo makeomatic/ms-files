@@ -72,6 +72,8 @@ exports.FIELDS_TO_STRINGIFY = [
   exports.FILES_TAGS_FIELD,
   exports.FILES_EXPORT_FIELD,
   exports.FILES_CONTROLS_FIELD,
+  'capabilities',
+  'dimensions',
 ];
 
 exports.CAPPASITY_3D_MODEL = 'model';

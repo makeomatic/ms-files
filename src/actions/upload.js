@@ -23,7 +23,7 @@ const {
   FILES_POST_ACTION,
   FILES_DIRECT_ONLY_FIELD,
   FILES_CONTENT_LENGTH_FIELD,
-} = require('../constant.js');
+} = require('../constant');
 
 /**
  * Initiates upload
@@ -195,7 +195,7 @@ async function initFileUpload({ params }) {
 
   this.log.info({ params }, 'created signed urls and preparing to save them to database');
 
-  await pipeline.exec().then(handlePipeline);
+  handlePipeline(await pipeline.exec());
 
   const data = {
     ...fileData,
