@@ -59,6 +59,8 @@ module.exports = exports = Object.setPrototypeOf({
     'c-preview': '.jpeg',
     'c-archive': '.zip',
     'c-pack': '.pack',
+    'c-masks': '.mask',
+    'c-usdz': '.usdz',
   }, null),
 
   // errors

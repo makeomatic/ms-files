@@ -12,16 +12,16 @@
       "minItems": 1,
       "items": {
         "anyOf": [
-          { "$ref": "common#/definitions/cappasity-binary" },
-          { "$ref": "common#/definitions/cappasity-image" },
+          { "$ref": "common#/definitions/cp-binary" },
+          { "$ref": "common#/definitions/cp-image" },
           { "$ref": "common#/definitions/image" },
           { "$ref": "common#/definitions/background-image" },
           { "$ref": "common#/definitions/arbitrary" },
           { "$ref": "common#/definitions/video" },
-          { "$ref": "common#/definitions/cappasity-pack" },
-          { "$ref": "common#/definitions/cappasity-masks" },
-          { "$ref": "common#/definitions/cappasity-gltf" },
-          { "$ref": "common#/definitions/cappasity-usdz" }
+          { "$ref": "common#/definitions/cp-pack" },
+          { "$ref": "common#/definitions/cp-masks" },
+          { "$ref": "common#/definitions/cp-gltf" },
+          { "$ref": "common#/definitions/cp-usdz" }
         ]
       }
     },
@@ -123,16 +123,17 @@
     "then": {
       "properties": {
         "files": {
-          "items": {
-            "$ref": "common#/definitions/cappasity-image"
-          },
           "contains": {
-            "type": "object",
-            "properties": {
-              "type": {
-                "const": "c-preview"
+            "allOf": [{
+              "$ref": "common#/definitions/cp-image"
+            }, {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "const": "c-preview"
+                }
               }
-            }
+            }]
           }
         }
       }

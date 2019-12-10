@@ -81,7 +81,7 @@
         }
       }
     },
-    "cappasity-binary": {
+    "cp-binary": {
       "type": "object",
       "required": ["type", "contentType", "contentLength", "contentEncoding", "md5Hash", "decompressedLength", "source-sha256"],
       "additionalProperties": false,
@@ -123,7 +123,7 @@
         }
       }
     },
-    "cappasity-image": {
+    "cp-image": {
       "type": "object",
       "required": ["type", "contentType", "contentLength", "md5Hash"],
       "additionalProperties": false,
@@ -160,7 +160,7 @@
         }
       }
     },
-    "cappasity-pack": {
+    "cp-pack": {
       "type": "object",
       "required": ["type", "contentType", "contentLength", "md5Hash"],
       "additionalProperties": false,
@@ -187,7 +187,7 @@
         }
       }
     },
-    "cappasity-usdz": {
+    "cp-usdz": {
       "type": "object",
       "required": ["type", "contentType", "contentLength", "md5Hash"],
       "additionalProperties": false,
@@ -200,6 +200,7 @@
           "type": "string",
           "enum": [
             "model/usd",
+            "model/usdz",
             "model/vnd.usdz+zip",
             "model/vnd.pixar.usd"
           ]
@@ -218,7 +219,7 @@
         }
       }
     },
-    "cappasity-gltf": {
+    "cp-gltf": {
       "type": "object",
       "required": ["type", "contentType", "contentLength", "md5Hash"],
       "additionalProperties": false,
@@ -245,7 +246,7 @@
         }
       }
     },
-    "cappasity-masks": {
+    "cp-masks": {
       "type": "object",
       "required": ["type", "contentType", "contentLength", "md5Hash"],
       "additionalProperties": false,
