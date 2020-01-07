@@ -61,6 +61,20 @@ const corePlayerOpts = Object.setPrototypeOf({
     default: 0,
     description: 'Vertical (top, bottom) UI padding in pixels',
   },
+  enablestoreurl: {
+    type: 'boolean',
+    default: 0,
+    paid: true,
+    reqPlanLevel: 30,
+    description: 'Enable in-player link to the store page',
+  },
+  storeurl: {
+    type: 'string',
+    default: '',
+    paid: true,
+    reqPlanLevel: 30,
+    description: 'In-player link to the store page',
+  },
 }, null);
 
 // version 1.x.x - mesh
