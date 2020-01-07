@@ -1,3 +1,10 @@
+# [14.7.0](https://github.com/makeomatic/ms-files/compare/v14.6.2...v14.7.0) (2020-01-07)
+
+
+### Features
+
+* add store url fields to embed ([#171](https://github.com/makeomatic/ms-files/issues/171)) ([bf64e2a](https://github.com/makeomatic/ms-files/commit/bf64e2aedfc5a9f97de8725dad1b8c8a55172ae6))
+
 ## [14.6.2](https://github.com/makeomatic/ms-files/compare/v14.6.1...v14.6.2) (2019-12-10)
 
 
