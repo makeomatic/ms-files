@@ -1,3 +1,10 @@
+# [14.8.0](https://github.com/makeomatic/ms-files/compare/v14.7.0...v14.8.0) (2020-01-13)
+
+
+### Features
+
+* **embed:** add embed option to hide player`s hints ([#172](https://github.com/makeomatic/ms-files/issues/172)) ([2dc12d9](https://github.com/makeomatic/ms-files/commit/2dc12d99db948577ebea7c4a10dd7fece8b14eaa))
+
 # [14.7.0](https://github.com/makeomatic/ms-files/compare/v14.6.2...v14.7.0) (2020-01-07)
 
 
