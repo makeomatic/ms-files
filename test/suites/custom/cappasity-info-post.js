@@ -37,10 +37,11 @@ describe('cappasity-info-post hook test suite', function suite() {
           src="https://api.cappasity.com/api/player/f1c9d940-35bf-44f7-9134-89bee51d0ee3/`
           + 'embedded?autorun={{ autorun }}&closebutton={{ closebutton }}&logo={{ logo }}'
           + '&analytics={{ analytics }}&uipadx={{ uipadx }}&uipady={{ uipady }}'
-          + '&enablestoreurl={{ enablestoreurl }}&storeurl={{ storeurl }}&autorotate='
-          + '{{ autorotate }}&autorotatetime={{ autorotatetime }}&autorotatedelay='
-          + '{{ autorotatedelay }}&autorotatedir={{ autorotatedir }}&hidefullscreen='
-          + '{{ hidefullscreen }}&hideautorotateopt={{ hideautorotateopt }}&hidesettingsbtn={{ hidesettingsbtn }}"')
+          + '&enablestoreurl={{ enablestoreurl }}&storeurl={{ storeurl }}&hidehints={{ hidehints }}'
+          + '&autorotate={{ autorotate }}&autorotatetime={{ autorotatetime }}'
+          + '&autorotatedelay={{ autorotatedelay }}&autorotatedir={{ autorotatedir }}'
+          + '&hidefullscreen={{ hidefullscreen }}&hideautorotateopt={{ hideautorotateopt }}'
+          + '&hidesettingsbtn={{ hidesettingsbtn }}"')
         .replace(/\s+/g, ' ')
         .trim();
 

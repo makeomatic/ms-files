@@ -75,6 +75,13 @@ const corePlayerOpts = Object.setPrototypeOf({
     reqPlanLevel: 30,
     description: 'In-player link to the store page',
   },
+  hidehints: {
+    type: 'boolean',
+    default: 0,
+    description: 'Hide hints',
+    paid: true,
+    reqPlanLevel: 30,
+  },
 }, null);
 
 // version 1.x.x - mesh
