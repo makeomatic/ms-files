@@ -66,7 +66,7 @@ const corePlayerOpts = Object.setPrototypeOf({
     default: 0,
     paid: true,
     reqPlanLevel: 30,
-    description: 'Enable in-player link to the store page',
+    description: 'Enable product url',
   },
   storeurl: {
     type: 'string',
