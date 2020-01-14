@@ -1,3 +1,10 @@
+## [14.8.1](https://github.com/makeomatic/ms-files/compare/v14.8.0...v14.8.1) (2020-01-14)
+
+
+### Bug Fixes
+
+* node 12.14.0 ([b34687b](https://github.com/makeomatic/ms-files/commit/b34687b1575391a7f16fd673798f38db3e4bb6c1))
+
 # [14.8.0](https://github.com/makeomatic/ms-files/compare/v14.7.0...v14.8.0) (2020-01-13)
 
 
