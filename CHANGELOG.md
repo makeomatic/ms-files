@@ -1,3 +1,10 @@
+## [14.8.2](https://github.com/makeomatic/ms-files/compare/v14.8.1...v14.8.2) (2020-01-14)
+
+
+### Bug Fixes
+
+* shorten store url toggle description ([#173](https://github.com/makeomatic/ms-files/issues/173)) ([11af0d5](https://github.com/makeomatic/ms-files/commit/11af0d597be18e4ae7e694a925db9267cb79a4a1))
+
 ## [14.8.1](https://github.com/makeomatic/ms-files/compare/v14.8.0...v14.8.1) (2020-01-14)
 
 
