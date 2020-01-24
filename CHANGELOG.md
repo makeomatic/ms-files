@@ -1,3 +1,15 @@
+# [15.0.0](https://github.com/makeomatic/ms-files/compare/v14.8.2...v15.0.0) (2020-01-24)
+
+
+### Features
+
+* upgrade @microfleet/core to 16 ([e1d8cad](https://github.com/makeomatic/ms-files/commit/e1d8caddd41070eba1eb325b7c43ef6f3c9cf278))
+
+
+### BREAKING CHANGES
+
+* transient configuration changes, min node is 12.14
+
 ## [14.8.2](https://github.com/makeomatic/ms-files/compare/v14.8.1...v14.8.2) (2020-01-14)
 
 
