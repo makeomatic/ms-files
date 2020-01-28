@@ -1,0 +1,12 @@
+{
+    "$id": "count",
+    "type": "object",
+    "required": [
+        "username"
+    ],
+    "properties": {
+        "username": {
+            "$ref": "common#/definitions/owner"
+        }
+    }
+}
