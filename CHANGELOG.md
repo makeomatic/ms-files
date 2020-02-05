@@ -1,3 +1,10 @@
+# [15.1.0](https://github.com/makeomatic/ms-files/compare/v15.0.0...v15.1.0) (2020-02-05)
+
+
+### Features
+
+* add file count by user action ([#174](https://github.com/makeomatic/ms-files/issues/174)) ([8fbc6b7](https://github.com/makeomatic/ms-files/commit/8fbc6b71b31563a9c18bc60aa1df2c7341bd3cee))
+
 # [15.0.0](https://github.com/makeomatic/ms-files/compare/v14.8.2...v15.0.0) (2020-01-24)
 
 
