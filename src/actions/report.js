@@ -4,7 +4,12 @@ const fsort = require('redis-filtered-sort');
 const { NotImplementedError } = require('common-errors');
 
 const handlePipeline = require('../utils/pipeline-error');
-const { FILES_INDEX, FILES_DATA, FILES_CONTENT_LENGTH_FIELD } = require('../constant');
+const {
+  FILES_DATA,
+  FILES_CONTENT_LENGTH_FIELD,
+  FILES_USER_INDEX_KEY,
+  FILES_USER_INDEX_PUBLIC_KEY,
+} = require('../constant');
 
 const fileDataPattern = `${FILES_DATA}:*`;
 const aggregateFilter = fsort.filter({
@@ -103,8 +108,8 @@ async function report({ params }) {
       // redis
       const { redis, config } = this;
 
-      const allFiles = `${FILES_INDEX}:${username}`;
-      const publicFiles = `${FILES_INDEX}:${username}:pub`;
+      const allFiles = FILES_USER_INDEX_KEY(username);
+      const publicFiles = FILES_USER_INDEX_PUBLIC_KEY(username);
       const { includeStorage } = params;
       const prefixLength = config.redis.options.keyPrefix.length;
 

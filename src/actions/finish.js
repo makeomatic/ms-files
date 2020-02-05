@@ -22,6 +22,8 @@ const {
   FILES_UNLISTED_FIELD,
   FILES_POST_ACTION,
   FILES_DIRECT_ONLY_FIELD,
+  FILES_USER_INDEX_KEY,
+  FILES_USER_INDEX_PUBLIC_KEY,
 } = require('../constant.js');
 
 // cached vars
@@ -115,13 +117,13 @@ async function completeFileUpload({ params }) {
 
     if (!isUnlisted) {
       pipeline.sadd(FILES_INDEX, uploadId);
-      pipeline.sadd(`${FILES_INDEX}:${username}`, uploadId);
+      pipeline.sadd(FILES_USER_INDEX_KEY(username), uploadId);
 
       // convert 1 or undef to Boolean
       // if `isDirectOnly` is truthy, we won't publish this in the public index
       if (isPublic && !isDirectOnly) {
         pipeline.sadd(FILES_INDEX_PUBLIC, uploadId);
-        pipeline.sadd(`${FILES_INDEX}:${username}:pub`, uploadId);
+        pipeline.sadd(FILES_USER_INDEX_PUBLIC_KEY(username), uploadId);
       }
 
       // push to tags index

@@ -4,6 +4,7 @@ const {
   FILES_INDEX,
   FILES_INDEX_PUBLIC,
   FILES_INDEX_TEMP,
+  FILES_USER_INDEX_KEY,
 
   FILES_PUBLIC_FIELD,
   FILES_TEMP_FIELD,
@@ -35,7 +36,7 @@ function getIndiciesList(file) {
   }
 
   const username = file[FILES_OWNER_FIELD];
-  const FILES_INDEX_USER = `${FILES_INDEX}:${username}`;
+  const FILES_INDEX_USER = FILES_USER_INDEX_KEY(username);
 
   // Basic indicies
   const INDICIES = [

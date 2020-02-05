@@ -19,12 +19,12 @@ const {
   FILES_ALIAS_FIELD,
   FILES_OWNER_FIELD,
   FILES_DIRECT_ONLY_FIELD,
-  FILES_INDEX,
   FILES_INDEX_PUBLIC,
   FILES_PUBLIC_FIELD,
   LOCK_UPDATE_KEY,
   FILES_DATA_INDEX_KEY,
   FILES_TAGS_INDEX_KEY,
+  FILES_USER_INDEX_PUBLIC_KEY,
 } = require('../constant.js');
 
 const { call } = Function.prototype;
@@ -110,7 +110,7 @@ function updateMeta(params) {
       const existingAlias = data[FILES_ALIAS_FIELD];
       const owner = data[FILES_OWNER_FIELD];
       const aliasPTRs = `${FILES_USR_ALIAS_PTR}:${owner}`;
-      const userPublicIndex = `${FILES_INDEX}:${owner}:pub`;
+      const userPublicIndex = FILES_USER_INDEX_PUBLIC_KEY(owner);
       const isPublic = data[FILES_PUBLIC_FIELD];
 
       if (alias) {

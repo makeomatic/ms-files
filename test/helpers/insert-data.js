@@ -4,8 +4,13 @@ const faker = require('faker');
 const uuid = require('uuid');
 const {
   STATUS_PROCESSED,
-  FILES_DATA, FILES_INDEX, FILES_INDEX_PUBLIC,
-  FILES_OWNER_FIELD, FILES_PUBLIC_FIELD,
+  FILES_DATA,
+  FILES_INDEX,
+  FILES_INDEX_PUBLIC,
+  FILES_OWNER_FIELD,
+  FILES_PUBLIC_FIELD,
+  FILES_USER_INDEX_KEY,
+  FILES_USER_INDEX_PUBLIC_KEY,
 } = require('../../src/constant.js');
 
 function createFakeFile({ owners, statuses }) {
@@ -32,12 +37,12 @@ function insertFile(file) {
     .redis
     .pipeline()
     .sadd(FILES_INDEX, id)
-    .sadd(`${FILES_INDEX}:${file.owner}`, id);
+    .sadd(FILES_USER_INDEX_KEY(file.owner), id);
 
   if (ld.sample([0, 1]) === 1 && file.status === STATUS_PROCESSED) {
     file[FILES_PUBLIC_FIELD] = 1;
     pipeline.sadd(FILES_INDEX_PUBLIC, id);
-    pipeline.sadd(`${FILES_INDEX}:${file.owner}:pub`, id);
+    pipeline.sadd(FILES_USER_INDEX_PUBLIC_KEY(file.owner), id);
   }
 
   pipeline.hmset(`${FILES_DATA}:${id}`, file);
