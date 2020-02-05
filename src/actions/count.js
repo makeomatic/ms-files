@@ -1,5 +1,4 @@
 const { ActionTransport } = require('@microfleet/core');
-const assert = require('assert');
 const Promise = require('bluebird');
 const { HttpStatusError } = require('common-errors');
 const { FILES_USER_INDEX_KEY, FILES_USER_INDEX_PUBLIC_KEY } = require('../constant');
@@ -16,7 +15,9 @@ async function getFileCount({ params }) {
     .bind(this, ['files:info:pre', owner])
     .spread(this.hook);
 
-  assert(username, new HttpStatusError(404, `User "${owner}" not found`));
+  if (!username) {
+    throw new HttpStatusError(404, `User "${owner}" not found`);
+  }
 
   const totalCount = this.redis.scard(FILES_USER_INDEX_KEY(username));
   const publicCount = this.redis.scard(FILES_USER_INDEX_PUBLIC_KEY(username));
