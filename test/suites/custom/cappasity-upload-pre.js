@@ -9,7 +9,7 @@ const reject = require('lodash/reject');
 const config = require('../../../src/config').get('/');
 const hook = require('../../../src/custom/cappasity-upload-pre');
 const { inspectPromise } = require('../../helpers/utils');
-const { FILES_INDEX } = require('../../../src/constant');
+const { FILES_USER_INDEX_KEY } = require('../../../src/constant');
 
 const { audience } = config.users;
 
@@ -105,7 +105,7 @@ describe('cappasity-upload-pre hook test suite', function suite() {
         .returns(Promise.resolve(internals[alias]));
 
       redisStub
-        .withArgs(`${FILES_INDEX}:${id}`)
+        .withArgs(FILES_USER_INDEX_KEY(id))
         .returns(Promise.resolve(uploadedFiles[alias]));
     });
   });

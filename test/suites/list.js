@@ -1,8 +1,6 @@
-const Promise = require('bluebird');
 const assert = require('assert');
 const faker = require('faker');
 const ld = require('lodash');
-const uuid = require('uuid');
 
 // helpers
 const {
@@ -16,13 +14,12 @@ const {
   meta,
   owner: username,
 } = require('../helpers/utils.js');
+const { insertData } = require('../helpers/insert-data');
 
 const route = 'files.list';
 const updateRoute = 'files.update';
 const {
   STATUS_UPLOADED, STATUS_PROCESSED,
-  FILES_DATA, FILES_INDEX, FILES_INDEX_PUBLIC,
-  FILES_OWNER_FIELD, FILES_PUBLIC_FIELD,
 } = require('../../src/constant.js');
 
 describe('list suite', function suite() {
@@ -38,43 +35,6 @@ describe('list suite', function suite() {
   const statusValues = [STATUS_UPLOADED, STATUS_PROCESSED];
   const owners = ld.times(5, faker.internet.email);
   owners.push(username); // for some intersection with updated file
-
-  function createFakeFile() {
-    const owner = ld.sample(owners);
-    const startedAt = faker.date.past().getTime();
-
-    return {
-      uploadId: uuid.v4(),
-      status: ld.sample(statusValues),
-      startedAt,
-      uploadedAt: startedAt + 1000,
-      name: faker.commerce.productName(),
-      files: JSON.stringify([]), // can insert real files, but dont care
-      contentLength: ld.random(1, 2132311),
-      parts: ld.random(1, 4),
-      [FILES_OWNER_FIELD]: owner,
-    };
-  }
-
-  function insertFile(file) {
-    const id = file.uploadId;
-    const pipeline = this
-      .files
-      .redis
-      .pipeline()
-      .sadd(FILES_INDEX, id)
-      .sadd(`${FILES_INDEX}:${file.owner}`, id);
-
-    if (ld.sample([0, 1]) === 1 && file.status === STATUS_PROCESSED) {
-      file[FILES_PUBLIC_FIELD] = 1;
-      pipeline.sadd(FILES_INDEX_PUBLIC, id);
-      pipeline.sadd(`${FILES_INDEX}:${file.owner}:pub`, id);
-    }
-
-    pipeline.hmset(`${FILES_DATA}:${id}`, file);
-
-    return pipeline.exec();
-  }
 
   function alphanumSort(direction, field) {
     return (a, b) => {
@@ -108,8 +68,8 @@ describe('list suite', function suite() {
   const ascSortStartAt = sort(1, 'numeric', 'startedAt');
   const descSortStartAt = sort(-1, 'numeric', 'startedAt');
 
-  before('insert data', function test() {
-    return Promise.all(ld.times(500, () => insertFile.call(this, createFakeFile())));
+  before('insert data', function insertFiles() {
+    return insertData.call(this, { times: 500, owners, statuses: statusValues });
   });
 
   describe('owner-based list', function testSuite() {

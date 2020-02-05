@@ -5,6 +5,9 @@ const {
   FILES_INDEX_PUBLIC,
   FILES_INDEX_TEMP,
 
+  FILES_USER_INDEX_KEY,
+  FILES_USER_INDEX_PUBLIC_KEY,
+
   FILES_OWNER_FIELD,
   FILES_PUBLIC_FIELD,
   FILES_TEMP_FIELD,
@@ -26,8 +29,8 @@ describe('bustCache utils suite', function suite() {
   };
 
   describe('getIndiciesList() suite', function getIndiciesListSuite() {
-    const FILES_INDEX_USER = `${FILES_INDEX}:${username}`;
-    const FILES_INDEX_USER_PUB = `${FILES_INDEX_USER}:pub`;
+    const FILES_INDEX_USER = FILES_USER_INDEX_KEY(username);
+    const FILES_INDEX_USER_PUB = FILES_USER_INDEX_PUBLIC_KEY(username);
 
     const BASIC_INDICIES = [
       FILES_INDEX,

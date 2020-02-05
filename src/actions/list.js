@@ -12,6 +12,8 @@ const {
   FILES_INDEX_TAGS,
   FILES_INDEX_TEMP,
   FILES_LIST,
+  FILES_USER_INDEX_KEY,
+  FILES_USER_INDEX_PUBLIC_KEY,
 } = require('../constant');
 
 /**
@@ -26,9 +28,9 @@ async function interstore(username) {
   // choose which set to use
   let filesIndex;
   if (isPublic && username) {
-    filesIndex = `${FILES_INDEX}:${username}:pub`;
+    filesIndex = FILES_USER_INDEX_PUBLIC_KEY(username);
   } else if (username) {
-    filesIndex = `${FILES_INDEX}:${username}`;
+    filesIndex = FILES_USER_INDEX_KEY(username);
   } else if (isPublic) {
     filesIndex = FILES_INDEX_PUBLIC;
   } else if (temp) {

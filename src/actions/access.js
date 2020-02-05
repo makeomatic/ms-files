@@ -6,9 +6,12 @@ const hasAccess = require('../utils/has-access');
 const isProcessed = require('../utils/is-processed');
 const { bustCache } = require('../utils/bust-cache');
 const {
-  FILES_INDEX, FILES_INDEX_PUBLIC,
-  FILES_DATA, FILES_OWNER_FIELD, FILES_PUBLIC_FIELD,
+  FILES_DATA,
+  FILES_OWNER_FIELD,
+  FILES_PUBLIC_FIELD,
   FILES_DIRECT_ONLY_FIELD,
+  FILES_INDEX_PUBLIC,
+  FILES_USER_INDEX_PUBLIC_KEY,
 } = require('../constant');
 
 async function addToPublic(filename, data) {
@@ -19,7 +22,7 @@ async function addToPublic(filename, data) {
 
   // in case this is a directOnly file,
   // we must not add it to public
-  const index = `${FILES_INDEX}:${owner}:pub`;
+  const index = FILES_USER_INDEX_PUBLIC_KEY(owner);
   const id = `${FILES_DATA}:${filename}`;
 
   // get transport
@@ -48,7 +51,7 @@ async function removeFromPublic(filename, data) {
 
   // in case of removal we don't care if it's direct only
   // or not - it must not be in the public index
-  const index = `${FILES_INDEX}:${owner}:pub`;
+  const index = FILES_USER_INDEX_PUBLIC_KEY(owner);
   const id = `${FILES_DATA}:${filename}`;
 
   // get transport

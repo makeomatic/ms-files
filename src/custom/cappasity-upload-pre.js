@@ -7,8 +7,8 @@ const { HttpStatusError } = require('common-errors');
 
 const isCappasityUpload = require('../utils/is-cappasity-upload');
 const {
-  FILES_INDEX,
   FILES_PACKED_FIELD,
+  FILES_USER_INDEX_KEY,
 } = require('../constant');
 
 const isPack = (it) => it.type === 'c-pack';
@@ -64,7 +64,7 @@ function checkUploadsLimit(params) {
         return null;
       }
 
-      const FILES_PER_USER_SET = `${FILES_INDEX}:${userId}`;
+      const FILES_PER_USER_SET = FILES_USER_INDEX_KEY(userId);
       const embeddings = get(plan, 'meta.embeddings.value', 0);
 
       return redis.scard(FILES_PER_USER_SET).then((uploadedFiles) => {
