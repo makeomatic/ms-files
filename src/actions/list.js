@@ -39,7 +39,7 @@ async function interstore(username) {
     filesIndex = FILES_INDEX;
   }
 
-  if (!tags) {
+  if (!Array.isArray(tags) || tags.length === 0) {
     return filesIndex;
   }
 
