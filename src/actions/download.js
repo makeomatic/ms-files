@@ -64,7 +64,7 @@ async function getDownloadURL({ params }) {
 
   // parse file data
   const provider = this.provider('download', data);
-  const files = (types && types.length > 0)
+  const files = Array.isArray(types) && types.length > 0
     ? data.files.filter((file) => types.includes(file.type))
     : data.files;
 
