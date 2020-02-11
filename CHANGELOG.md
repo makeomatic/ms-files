@@ -1,3 +1,10 @@
+## [15.1.1](https://github.com/makeomatic/ms-files/compare/v15.1.0...v15.1.1) (2020-02-11)
+
+
+### Bug Fixes
+
+* allow empty `types` in download request schema ([#175](https://github.com/makeomatic/ms-files/issues/175)) ([10f89ed](https://github.com/makeomatic/ms-files/commit/10f89ed907d0b0332c048d7d0e2ecf38e62fc713))
+
 # [15.1.0](https://github.com/makeomatic/ms-files/compare/v15.0.0...v15.1.0) (2020-02-05)
 
 
