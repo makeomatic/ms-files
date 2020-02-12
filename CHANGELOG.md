@@ -1,3 +1,10 @@
+## [15.1.2](https://github.com/makeomatic/ms-files/compare/v15.1.1...v15.1.2) (2020-02-12)
+
+
+### Bug Fixes
+
+* allow empty collections in list schema ([#176](https://github.com/makeomatic/ms-files/issues/176)) ([dac2218](https://github.com/makeomatic/ms-files/commit/dac2218165c34d6d1510b14ae2634c54c5d2d93c))
+
 ## [15.1.1](https://github.com/makeomatic/ms-files/compare/v15.1.0...v15.1.1) (2020-02-11)
 
 
