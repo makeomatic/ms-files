@@ -36,16 +36,16 @@ describe('cappasity-info-post hook test suite', function suite() {
           style="border:0;"
           src="https://api.cappasity.com/api/player/f1c9d940-35bf-44f7-9134-89bee51d0ee3/`
           + 'embedded?autorun={{ autorun }}&closebutton={{ closebutton }}&logo={{ logo }}'
-          + '&analytics={{ analytics }}&uipadx={{ uipadx }}&uipady={{ uipady }}'
-          + '&enablestoreurl={{ enablestoreurl }}&storeurl={{ storeurl }}&hidehints={{ hidehints }}'
-          + '&autorotate={{ autorotate }}&autorotatetime={{ autorotatetime }}'
+          + '&analytics={{ analytics }}&cappasityai={{ cappasityai }}&uipadx={{ uipadx }}'
+          + '&uipady={{ uipady }}&enablestoreurl={{ enablestoreurl }}&storeurl={{ storeurl }}'
+          + '&hidehints={{ hidehints }}&autorotate={{ autorotate }}&autorotatetime={{ autorotatetime }}'
           + '&autorotatedelay={{ autorotatedelay }}&autorotatedir={{ autorotatedir }}'
           + '&hidefullscreen={{ hidefullscreen }}&hideautorotateopt={{ hideautorotateopt }}'
           + '&hidesettingsbtn={{ hidesettingsbtn }}"')
         .replace(/\s+/g, ' ')
         .trim();
 
-      assert.equal(embeddedFile.embed.code, `<iframe ${expectedAttrs}></iframe>`);
+      assert.equal(embeddedFile.embed.code, `{{ cappasityai }}<iframe ${expectedAttrs}></iframe>`);
     });
   });
 });
