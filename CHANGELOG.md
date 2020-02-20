@@ -1,3 +1,10 @@
+# [15.2.0](https://github.com/makeomatic/ms-files/compare/v15.1.2...v15.2.0) (2020-02-20)
+
+
+### Features
+
+* **embed:** add cappasityai field to embed params ([#177](https://github.com/makeomatic/ms-files/issues/177)) ([010ecaa](https://github.com/makeomatic/ms-files/commit/010ecaa3c8db696ea6667de0e74779db73c9c564))
+
 ## [15.1.2](https://github.com/makeomatic/ms-files/compare/v15.1.1...v15.1.2) (2020-02-12)
 
 
