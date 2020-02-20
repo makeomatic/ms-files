@@ -275,6 +275,7 @@ const selector = Object.setPrototypeOf({
 const is4 = (version) => /^4\./.test(version);
 
 const getBaseUrl = memoize((apiDomain) => `https://${apiDomain}/api/player`);
+const getAiHtml = memoize((apiDomain) => `<script async src="${getBaseUrl(apiDomain)}/cappasity-ai"></script>`);
 
 const getPlayerOpts = (id, { uploadType, c_ver: modelVersion, packed }, apiDomain) => {
   // if upload type isn't simple - means we have old mesh upload
@@ -291,13 +292,11 @@ const getPlayerOpts = (id, { uploadType, c_ver: modelVersion, packed }, apiDomai
 
   const data = selector[version];
   const baseUrl = getBaseUrl(apiDomain);
+  const ai = getAiHtml(apiDomain);
   const code = `{{ cappasityai }}${iframePre} src="${baseUrl}/${id}/embedded?${data.qs}"></iframe>`;
 
-  if ('analytics' in data.params) {
-    data.params.analytics.cappasityai = `<script async src="${baseUrl}/cappasity-ai"></script>`;
-  }
-
   return {
+    ai,
     code,
     params: data.params,
   };
@@ -316,6 +315,7 @@ module.exports = function getEmbeddedInfo(file) {
     const dynamicOptions = getPlayerOpts(file.uploadId, file, this.config.apiDomain);
 
     file.embed = {
+      ai: dynamicOptions.ai,
       code: dynamicOptions.code,
       params: dynamicOptions.params,
     };
