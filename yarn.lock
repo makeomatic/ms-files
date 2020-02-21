@@ -787,10 +787,10 @@
     alce "1.x.x"
     yargs "15.1.0"
 
-"@makeomatic/deploy@^10.0.1":
-  version "10.0.1"
-  resolved "https://registry.yarnpkg.com/@makeomatic/deploy/-/deploy-10.0.1.tgz#69ff565d26f5c9a55b5015f9cdd1f303cee69b45"
-  integrity sha512-s4h1SJXiIjM2UkTM4QqS818hQKLDI3TGgEJcyVATvCH/7REJRnFFAwxgzzPuGipaXqsck4QjEUeRLAdPWobPWw==
+"@makeomatic/deploy@^10.1.1":
+  version "10.1.1"
+  resolved "https://registry.yarnpkg.com/@makeomatic/deploy/-/deploy-10.1.1.tgz#2cb96a1d6d3203f5d09bb203456f7c74c332832c"
+  integrity sha512-qfZIh8ZlWPF9MjYTmlXgQzjiGX+vAa3lNZcMEhxN52oVbWFiHskpjIcuNbB5dUr+HNhYFMhdourrQdVdVSCfZQ==
   dependencies:
     "@commitlint/cli" "^8.3.5"
     bluebird "^3.7.2"
@@ -799,7 +799,7 @@
     death "^1.1.0"
     find-up "^4.1.0"
     glob "^7.1.6"
-    husky "^4.0.10"
+    husky "^4.2.1"
     hyperid "^2.0.3"
     is "^3.2.1"
     js-yaml "^3.13.1"
@@ -811,7 +811,7 @@
     pino "^5.16.0"
     read-pkg "^5.2.0"
     rimraf "^3.0.0"
-    semantic-release "16.0.2"
+    semantic-release "16.0.3"
     shelljs "^0.8.3"
     strip-final-newline "^2.0.0"
     yargs "^15.1.0"
@@ -4359,10 +4359,10 @@ humanize-ms@^1.2.1:
   dependencies:
     ms "^2.0.0"
 
-husky@^4.0.10:
-  version "4.2.1"
-  resolved "https://registry.yarnpkg.com/husky/-/husky-4.2.1.tgz#b09f1bd9129e6c323cc515dc17081d0615e2d7c1"
-  integrity sha512-Qa0lRreeIf4Tl92sSs42ER6qc3hzoyQPPorzOrFWfPEVbdi6LuvJEqWKPk905fOWIR76iBpp7ECZNIwk+a8xuQ==
+husky@^4.2.1:
+  version "4.2.3"
+  resolved "https://registry.yarnpkg.com/husky/-/husky-4.2.3.tgz#3b18d2ee5febe99e27f2983500202daffbc3151e"
+  integrity sha512-VxTsSTRwYveKXN4SaH1/FefRJYCtx+wx04sSVcOpD7N2zjoHxa+cEJ07Qg5NmV3HAK+IRKOyNVpi2YBIVccIfQ==
   dependencies:
     chalk "^3.0.0"
     ci-info "^2.0.0"
@@ -7862,10 +7862,10 @@ secure-keys@^1.0.0:
   resolved "https://registry.yarnpkg.com/secure-keys/-/secure-keys-1.0.0.tgz#f0c82d98a3b139a8776a8808050b824431087fca"
   integrity sha1-8MgtmKOxOah3aogIBQuCRDEIf8o=
 
-semantic-release@16.0.2:
-  version "16.0.2"
-  resolved "https://registry.yarnpkg.com/semantic-release/-/semantic-release-16.0.2.tgz#4570b84324cbc2a82e71dbb75208b9f6c6c81570"
-  integrity sha512-KQmPGJvhB3qn49pFGnAuSm8txOV6nLWrUg/jQG+1CYfg7rrroVKqpZ9mmA6+PjfoFCroQ0Na7Ee5DuzHiR6e/A==
+semantic-release@16.0.3:
+  version "16.0.3"
+  resolved "https://registry.yarnpkg.com/semantic-release/-/semantic-release-16.0.3.tgz#af152cbbc7e8d9b694ecb345f539219a2d10749f"
+  integrity sha512-k9AFk0v1AM241R2+d16Z0W6q7qjkd8bmKcpLfpE+8tttynwjOfJVrrqyAAzTscS+V/lTKqvJNZJVRjlyIkAYUg==
   dependencies:
     "@semantic-release/commit-analyzer" "^7.0.0"
     "@semantic-release/error" "^2.2.0"

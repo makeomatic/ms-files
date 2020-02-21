@@ -1,23 +1,35 @@
 {
-    "$id": "info",
-    "type": "object",
+  "$id": "info",
+  "type": "object",
+  "if": { "properties": { "skipOwnerCheck": { "const": true } } },
+  "then" : {
     "required": [
-        "filename",
-        "username"
-    ],
-    "properties": {
-        "filename": {
-            "anyOf": [
-                {
-                    "$ref": "common#/definitions/uploadId"
-                },
-                {
-                    "$ref": "common#/definitions/meta/properties/alias"
-                }
-            ]
+      "filename"
+    ]
+  },
+  "else": {
+    "required": [
+      "filename",
+      "username"
+    ]
+  },
+  "properties": {
+    "skipOwnerCheck": {
+      "default": false,
+      "type": "boolean"
+    },
+    "filename": {
+      "anyOf": [
+        {
+          "$ref": "common#/definitions/uploadId"
         },
-        "username": {
-            "$ref": "common#/definitions/owner"
+        {
+          "$ref": "common#/definitions/meta/properties/alias"
         }
+      ]
+    },
+    "username": {
+      "$ref": "common#/definitions/owner"
     }
+  }
 }
