@@ -51,13 +51,6 @@ const corePlayerOpts = Object.setPrototypeOf({
     default: 1,
     description: 'Enable analytics',
   },
-  // introduced to mitigate issue on desktop clients where
-  // parameters are not interpolated unless present in querystring
-  cappasityai: {
-    type: 'string',
-    default: '',
-    description: 'Legacy support parameter',
-  },
   uipadx: {
     type: 'integer',
     default: 0,
@@ -293,7 +286,7 @@ const getPlayerOpts = (id, { uploadType, c_ver: modelVersion, packed }, apiDomai
   const data = selector[version];
   const baseUrl = getBaseUrl(apiDomain);
   const ai = getAiHtml(apiDomain);
-  const code = `{{ cappasityai }}${iframePre} src="${baseUrl}/${id}/embedded?${data.qs}"></iframe>`;
+  const code = `${iframePre} src="${baseUrl}/${id}/embedded?${data.qs}"></iframe>`;
 
   return {
     ai,
