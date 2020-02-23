@@ -32,6 +32,56 @@ describe('info suite', function suite() {
   // tear-down
   after('stop service', stopService);
 
+  it('#validation skipOwnerCheck invalid type', () => {
+    it('invalid username', async function testInfoInternal() {
+      const req = this.send({ filename: this.response.uploadId, username: owner, skipOwnerCheck: 'some' });
+      await assert.rejects(req, /skipOwnerCheck/);
+    });
+  });
+
+  describe('#validation owner check enabled', () => {
+    it('missing username', async function testInfoInternal() {
+      const req = this.send({ filename: this.response.uploadId });
+      await assert.rejects(req, /username/);
+    });
+
+    it('invalid username', async function testInfoInternal() {
+      const req = this.send({ filename: this.response.uploadId, username: 123 });
+      await assert.rejects(req, /username/);
+    });
+  });
+
+  describe('#validation owner check disabled', () => {
+    it('returns information without username', async function testInfoInternal() {
+      const { file } = await this.send({ filename: this.response.uploadId, skipOwnerCheck: true });
+      assert.equal(file.owner, owner);
+      assert.equal(file.uploadId, this.response.uploadId);
+    });
+
+    it('returns information with username', async function testInfoInternal() {
+      const { file, username } = await this.send({ filename: this.response.uploadId, skipOwnerCheck: true, username: 'some' });
+      assert.equal(file.owner, owner);
+      assert.equal(username, 'some');
+      assert.equal(file.uploadId, this.response.uploadId);
+    });
+
+    it('invalid username', async function testInfoInternal() {
+      const req = this.send({ filename: this.response.uploadId, username: 123, skipOwnerCheck: true });
+      await assert.rejects(req, /username/);
+    });
+
+    it('filename missing', async function testInfoInternal() {
+      const req = this.send({ skipOwnerCheck: true });
+      await assert.rejects(req, /filename/);
+    });
+
+    it('filename numeric', async function testInfoInternal() {
+      const req = this.send({ filename: 123, skipOwnerCheck: true });
+      await assert.rejects(req, /filename/);
+    });
+  });
+
+
   it('404 on missing filename/upload-id', async function test() {
     const req = this.send({ filename: uuid.v4(), username: owner });
     await assert.rejects(req, { statusCode: 404 });
@@ -63,12 +113,6 @@ describe('info suite', function suite() {
     it('400 on missing username', async function test() {
       const req = this.send({ filename: this.response.uploadId });
       await assert.rejects(req, { statusCode: 400 });
-    });
-
-    it('not throws 401 if noCheckOwner is set', async function testInfoInternal() {
-      const { file } = await this.send({ filename: this.response.uploadId, skipOwnerCheck: true });
-      assert.equal(file.owner, owner);
-      assert.equal(file.uploadId, this.response.uploadId);
     });
 
     it('STATUS_UPLOADED on valid user id', async function test() {
