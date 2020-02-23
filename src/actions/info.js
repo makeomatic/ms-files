@@ -13,7 +13,7 @@ const resolveFilename = require('../utils/resolve-filename');
  */
 async function getFileInfo({ params }) {
   const { filename: possibleFilename, username: owner } = params;
-  const shouldPerformOwnerCheck = typeof params.skipOwnerCheck === 'boolean' ? !params.skipOwnerCheck : true;
+  const shouldPerformOwnerCheck = !params.skipOwnerCheck;
 
   const [username] = await this.hook('files:info:pre', owner);
 
