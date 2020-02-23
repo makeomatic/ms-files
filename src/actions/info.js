@@ -12,18 +12,18 @@ const resolveFilename = require('../utils/resolve-filename');
  * @return {Promise}
  */
 async function getFileInfo({ params }) {
-  const { filename: possibleFilename, username: owner, skipOwnerCheck } = params;
+  const { filename: possibleFilename, username: owner, checkOwner } = params;
 
   const [username] = await this.hook('files:info:pre', owner);
 
-  if (!skipOwnerCheck) {
+  if (checkOwner) {
     assert(username, new NotImplementedError('files:info:pre hook must be specified to use this endpoint'));
   }
 
   const filename = await resolveFilename.call(this, possibleFilename, username);
   const file = await fetchData.call(this, `${FILES_DATA}:${filename}`);
 
-  if (!skipOwnerCheck) {
+  if (checkOwner) {
     // check that owner is a match
     // even in-case with public we want the user to specify username
     if (file[FILES_OWNER_FIELD] !== username) {

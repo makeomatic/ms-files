@@ -1,21 +1,23 @@
 {
   "$id": "info",
   "type": "object",
-  "if": { "properties": { "skipOwnerCheck": { "const": true } } },
+  "if": { "properties": { "checkOwner": { "const": false } } },
   "then" : {
     "required": [
+      "checkOwner",
       "filename"
     ]
   },
   "else": {
     "required": [
+      "checkOwner",
       "filename",
       "username"
     ]
   },
   "properties": {
-    "skipOwnerCheck": {
-      "default": false,
+    "checkOwner": {
+      "default": true,
       "type": "boolean"
     },
     "filename": {

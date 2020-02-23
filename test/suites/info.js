@@ -32,10 +32,10 @@ describe('info suite', function suite() {
   // tear-down
   after('stop service', stopService);
 
-  it('#validation skipOwnerCheck invalid type', () => {
+  it('#validation checkOwner invalid type', () => {
     it('invalid username', async function testInfoInternal() {
-      const req = this.send({ filename: this.response.uploadId, username: owner, skipOwnerCheck: 'some' });
-      await assert.rejects(req, /skipOwnerCheck/);
+      const req = this.send({ filename: this.response.uploadId, username: owner, checkOwner: 'some' });
+      await assert.rejects(req, /checkOwner/);
     });
   });
 
@@ -53,30 +53,30 @@ describe('info suite', function suite() {
 
   describe('#validation owner check disabled', () => {
     it('returns information without username', async function testInfoInternal() {
-      const { file } = await this.send({ filename: this.response.uploadId, skipOwnerCheck: true });
+      const { file } = await this.send({ filename: this.response.uploadId, checkOwner: false });
       assert.equal(file.owner, owner);
       assert.equal(file.uploadId, this.response.uploadId);
     });
 
     it('returns information with username', async function testInfoInternal() {
-      const { file, username } = await this.send({ filename: this.response.uploadId, skipOwnerCheck: true, username: 'some' });
+      const { file, username } = await this.send({ filename: this.response.uploadId, checkOwner: false, username: 'some' });
       assert.equal(file.owner, owner);
       assert.equal(username, 'some');
       assert.equal(file.uploadId, this.response.uploadId);
     });
 
     it('invalid username', async function testInfoInternal() {
-      const req = this.send({ filename: this.response.uploadId, username: 123, skipOwnerCheck: true });
+      const req = this.send({ filename: this.response.uploadId, username: 123, checkOwner: false });
       await assert.rejects(req, /username/);
     });
 
     it('filename missing', async function testInfoInternal() {
-      const req = this.send({ skipOwnerCheck: true });
+      const req = this.send({ checkOwner: false });
       await assert.rejects(req, /filename/);
     });
 
     it('filename numeric', async function testInfoInternal() {
-      const req = this.send({ filename: 123, skipOwnerCheck: true });
+      const req = this.send({ filename: 123, checkOwner: false });
       await assert.rejects(req, /filename/);
     });
   });
