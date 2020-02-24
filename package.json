@@ -6,8 +6,8 @@
   "scripts": {
     "compile": "rimraf ./lib && babel -d ./lib --copy-files ./src",
     "pretest": "yarn compile",
-    "test": "yarn lint && yarn test:e2e",
-    "test:e2e": "yarn test:e2e:cluster && yarn test:e2e:sentinel --arbitrary_exec 'echo \"skip coverage clean\"'",
+    "test": "rimraf ./coverage && yarn lint && yarn test:e2e",
+    "test:e2e": "yarn test:e2e:cluster && yarn test:e2e:sentinel --arbitrary_exec 'echo \"skipped coverage output cleanup between runs to save reports\"'",
     "test:e2e:cluster": "mdep test run",
     "test:e2e:sentinel": "mdep test run --docker_compose ./test/docker-compose.sentinel.yml",
     "start": "mfleet",
