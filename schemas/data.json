@@ -1,0 +1,17 @@
+{
+  "type": "object",
+  "required": [
+    "fileId",
+    "fields"
+  ],
+  "properties": {
+    "fileId": {
+      "$ref": "common#/definitions/uploadId"
+    },
+    "fields": {
+      "type": "array",
+      "default": [ "uploadId" ],
+      "minItems": 1
+    }
+  }
+}

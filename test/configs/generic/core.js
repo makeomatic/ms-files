@@ -70,7 +70,10 @@ exports.hooks = {
   'files:update:pre': [],
   // return same username, because we mock it
   'files:download:alias': (username) => username,
-  'files:info:post': require(`${cwd}/src/custom/cappasity-info-post`),
+  // will help to track hook usage
+  'files:info:post': sinon.spy(function wrapper(file) {
+    return require(`${cwd}/src/custom/cappasity-info-post`).call(this, file);
+  }),
 };
 
 exports.maxTries = 1;
