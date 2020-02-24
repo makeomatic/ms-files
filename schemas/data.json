@@ -1,5 +1,6 @@
 {
   "type": "object",
+  "additionalProperties": false,
   "required": [
     "fileId",
     "fields"
@@ -10,8 +11,11 @@
     },
     "fields": {
       "type": "array",
-      "default": [ "uploadId" ],
-      "minItems": 1
+      "default": [],
+      "items": {
+        "type": "string",
+        "maxLength": 50
+      }
     }
   }
 }
