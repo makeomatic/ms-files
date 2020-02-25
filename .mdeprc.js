@@ -5,9 +5,7 @@ module.exports = {
   sleep: 35,
   services: ['rabbitmq'],
   nycReport: false,
-  arbitrary_exec: 'yarn coverage:clean',
   post_exec: 'yarn coverage:report'
-
 };
 
 switch (process.env.DB) {
@@ -17,4 +15,8 @@ switch (process.env.DB) {
   case 'cluster':
     module.exports.services.push('redisCluster')
     break;
+}
+
+if (process.env.CI !== 'true') {
+  module.exports.arbitrary_exec = 'yarn coverage:clean';
 }
