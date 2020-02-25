@@ -2,5 +2,6 @@
   "require": ["@babel/register"],
   "timeout": 60000,
   "bail": true,
-  "report": "spec"
+  "report": "spec",
+  "forbid-only": true
 }

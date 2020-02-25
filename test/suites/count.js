@@ -12,7 +12,7 @@ const { STATUS_PROCESSED } = require('../../src/constant');
 
 const route = 'files.count';
 
-describe.only('count suite', function suite() {
+describe('count suite', function suite() {
   // setup functions
   before('start service', startService);
 

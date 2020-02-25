@@ -7,5 +7,8 @@ module.exports = {
     "rabbitmq",
     "redisSentinel",
     "redisCluster"
-  ]
+  ],
+  "nycReport": false,
+  "arbitrary_exec": "yarn coverage:clean",
+  "post_exec": "yarn coverage:report",
 }
