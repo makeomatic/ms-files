@@ -273,14 +273,14 @@
         }
       }
     },
-    "с-ar-color": {
+    "c-ar-color": {
       "type": "object",
       "required": ["type", "contentType", "contentLength", "md5Hash"],
       "additionalProperties": false,
       "properties": {
         "type": {
           "type": "string",
-          "const": "с-ar-color"
+          "const": "c-ar-color"
         },
         "contentType": {
           "type": "string",
@@ -300,7 +300,7 @@
         }
       }
     },
-    "с-ar-masks": {
+    "c-ar-masks": {
       "type": "object",
       "required": ["type", "contentType", "contentLength", "md5Hash"],
       "additionalProperties": false,
