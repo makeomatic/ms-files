@@ -1,6 +1,6 @@
 const { ActionTransport } = require('@microfleet/core');
 const Promise = require('bluebird');
-const uuidv4 = require('uuid/v4');
+const { v4: uuidv4 } = require('uuid');
 const md5 = require('md5');
 const sumBy = require('lodash/sumBy');
 const get = require('lodash/get');

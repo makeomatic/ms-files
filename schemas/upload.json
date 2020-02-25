@@ -21,7 +21,9 @@
           { "$ref": "common#/definitions/cp-pack" },
           { "$ref": "common#/definitions/cp-masks" },
           { "$ref": "common#/definitions/cp-gltf" },
-          { "$ref": "common#/definitions/cp-usdz" }
+          { "$ref": "common#/definitions/cp-usdz" },
+          { "$ref": "common#/definitions/c-ar-color" },
+          { "$ref": "common#/definitions/c-ar-masks" }
         ]
       }
     },
