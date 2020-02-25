@@ -284,7 +284,7 @@
         },
         "contentType": {
           "type": "string",
-          "const": "image/vnd.cappasity+ar-masks"
+          "const": "image/vnd.cappasity+ar-color"
         },
         "contentLength": {
           "type": "integer",
@@ -307,7 +307,7 @@
       "properties": {
         "type": {
           "type": "string",
-          "const": "c-masks"
+          "const": "c-ar-masks"
         },
         "contentType": {
           "type": "string",
