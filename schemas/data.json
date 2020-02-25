@@ -2,11 +2,11 @@
   "type": "object",
   "additionalProperties": false,
   "required": [
-    "fileId",
+    "uploadId",
     "fields"
   ],
   "properties": {
-    "fileId": {
+    "uploadId": {
       "$ref": "common#/definitions/uploadId"
     },
     "fields": {

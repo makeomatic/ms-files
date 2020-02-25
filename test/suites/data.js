@@ -27,22 +27,22 @@ describe('data suite', () => {
   after('stop service', stopService.bind(this));
 
   it('404 on missing file', async () => {
-    const req = this.send(route, { fileId: uuid.v4() });
+    const req = this.send(route, { uploadId: uuid.v4() });
 
     await assert.rejects(req, { statusCode: 404 });
   });
 
-  it('400 on invalid fileId', async () => {
-    const req = this.send(route, { fileId: false });
+  it('400 on invalid uploadId', async () => {
+    const req = this.send(route, { uploadId: false });
 
     await assert.rejects(req, {
       statusCode: 400,
-      message: /fileId/,
+      message: /uploadId/,
     });
   });
 
   it('400 on invalid fields param', async () => {
-    const req = this.send(route, { fileId: this.response.uploadId, fields: 'string' });
+    const req = this.send(route, { uploadId: this.response.uploadId, fields: 'string' });
 
     await assert.rejects(req, {
       statusCode: 400,
@@ -52,7 +52,7 @@ describe('data suite', () => {
 
   it('400 on if one of the fields length exceeds 50 chars', async () => {
     const req = this.send(route, {
-      fileId: this.response.uploadId,
+      uploadId: this.response.uploadId,
       fields: [
         250,
       ],
@@ -66,7 +66,7 @@ describe('data suite', () => {
 
   it('400 on if one of the fields length exceeds 50 chars', async () => {
     const req = this.send(route, {
-      fileId: this.response.uploadId,
+      uploadId: this.response.uploadId,
       fields: [
         'a'.repeat(51),
       ],
@@ -79,7 +79,7 @@ describe('data suite', () => {
   });
 
   it('400 on additional param', async () => {
-    const req = this.send(route, { fileId: this.response.uploadId, newParam: true });
+    const req = this.send(route, { uploadId: this.response.uploadId, newParam: true });
 
     await assert.rejects(req, {
       statusCode: 417,
@@ -88,14 +88,14 @@ describe('data suite', () => {
   });
 
   it('returns only upload id if no fields provided', async () => {
-    const { file } = await this.send(route, { fileId: this.response.uploadId });
+    const { file } = await this.send(route, { uploadId: this.response.uploadId });
 
     assert.equal(file.uploadId, this.response.uploadId);
     assert.equal(Object.getOwnPropertyNames(file).length, 1);
   });
 
   it('returns requested fields with uploadId', async () => {
-    const { file } = await this.send(route, { fileId: this.response.uploadId, fields: ['owner'] });
+    const { file } = await this.send(route, { uploadId: this.response.uploadId, fields: ['owner'] });
 
     assert.equal(file.owner, owner);
     assert.equal(file.uploadId, this.response.uploadId);
@@ -104,7 +104,7 @@ describe('data suite', () => {
 
   it('returns data even if file is private', async () => {
     await updateAccess.call(this, this.response.uploadId, owner, false);
-    const { file } = await this.send(route, { fileId: this.response.uploadId, fields: ['owner'] });
+    const { file } = await this.send(route, { uploadId: this.response.uploadId, fields: ['owner'] });
 
     assert.equal(file.owner, owner);
     assert.equal(file.uploadId, this.response.uploadId);

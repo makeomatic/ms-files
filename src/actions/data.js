@@ -10,10 +10,10 @@ const fetchData = require('../utils/fetch-data');
  * @return {Promise}
  */
 async function getFileData({ params }) {
-  const { fileId, fields } = params;
+  const { uploadId, fields } = params;
   const fieldsToQuery = ['uploadId', ...fields];
 
-  const file = await fetchData.call(this, `${FILES_DATA}:${fileId}`, { pick: fieldsToQuery });
+  const file = await fetchData.call(this, `${FILES_DATA}:${uploadId}`, { pick: fieldsToQuery });
 
   return { file };
 }
