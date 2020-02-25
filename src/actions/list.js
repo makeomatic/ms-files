@@ -144,7 +144,7 @@ function fetchExtraData(filenames) {
 
   const mapped = filenames.map(prepareFilenames);
   const pipeline = Promise
-    .bind(this, [mapped, this.without])
+    .bind(this, [mapped, { omit: this.without }])
     .spread(fetchData)
     .bind({ log: this.log, filenames: mapped })
     .reduce(omitErrors, []);

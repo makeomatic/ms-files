@@ -1,5 +1,4 @@
 const { ActionTransport } = require('@microfleet/core');
-const pick = require('lodash/pick');
 
 const { FILES_DATA } = require('../constant');
 const fetchData = require('../utils/fetch-data');
@@ -14,9 +13,9 @@ async function getFileData({ params }) {
   const { fileId, fields } = params;
   const fieldsToQuery = ['uploadId', ...fields];
 
-  const file = await fetchData.call(this, `${FILES_DATA}:${fileId}`);
+  const file = await fetchData.call(this, `${FILES_DATA}:${fileId}`, { pick: fieldsToQuery });
 
-  return { file: pick(file, fieldsToQuery) };
+  return { file };
 }
 
 getFileData.transports = [ActionTransport.amqp];
