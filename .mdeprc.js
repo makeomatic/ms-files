@@ -3,7 +3,11 @@ module.exports = {
   auto_compose: true,
   with_local_compose: true,
   sleep: 35,
-  services: ['rabbitmq']
+  services: ['rabbitmq'],
+  nycReport: false,
+  arbitrary_exec: 'yarn coverage:clean',
+  post_exec: 'yarn coverage:report'
+
 };
 
 switch (process.env.DB) {

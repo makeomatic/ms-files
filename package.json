@@ -15,7 +15,9 @@
     "prepublishOnly": "yarn compile",
     "semantic-release": "semantic-release",
     "docker-release": "mdep docker release",
-    "release": "yarn --frozen-lockfile && yarn semantic-release"
+    "release": "yarn --frozen-lockfile && yarn semantic-release",
+    "coverage:clean": "rimraf .nyc_output",
+    "coverage:report": "yarn nyc report --reporter=lcov"
   },
   "publishConfig": {
     "registry": "https://registry.npmjs.org"

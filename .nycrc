@@ -11,9 +11,8 @@
   "sourceMap": false,
   "instrument": false,
   "cache": true,
+  "clean": false,
   "reporter": [
-    "lcov",
-    "json",
     "text-summary"
   ]
 }
