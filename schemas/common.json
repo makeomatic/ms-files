@@ -273,6 +273,60 @@
         }
       }
     },
+    "c-ar-color": {
+      "type": "object",
+      "required": ["type", "contentType", "contentLength", "md5Hash"],
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "type": "string",
+          "const": "c-ar-color"
+        },
+        "contentType": {
+          "type": "string",
+          "const": "image/vnd.cappasity+ar-color"
+        },
+        "contentLength": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 104857600
+        },
+        "md5Hash": {
+          "type": "string",
+          "pattern": "^[0-9A-Fa-f]{32}$"
+        },
+        "platforms": {
+          "$ref": "#/definitions/platforms"
+        }
+      }
+    },
+    "c-ar-masks": {
+      "type": "object",
+      "required": ["type", "contentType", "contentLength", "md5Hash"],
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "type": "string",
+          "const": "c-ar-masks"
+        },
+        "contentType": {
+          "type": "string",
+          "const": "image/vnd.cappasity+ar-masks"
+        },
+        "contentLength": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 104857600
+        },
+        "md5Hash": {
+          "type": "string",
+          "pattern": "^[0-9A-Fa-f]{32}$"
+        },
+        "platforms": {
+          "$ref": "#/definitions/platforms"
+        }
+      }
+    },
     "background-image": {
       "type": "object",
       "required": ["type", "contentType", "contentLength", "md5Hash"],
@@ -381,7 +435,7 @@
       "patternProperties": {
         "^c_[a-z]+$": {
           "anyOf": [
-            { "type": "string" },
+            { "type": "string", "maxLength": 256 },
             { "type": "number" }
           ]
         }
@@ -456,6 +510,36 @@
           "maxItems": 32,
           "items": {
             "type": "number"
+          }
+        },
+        "ar3dviewProps": {
+          "minProperties": 0,
+          "maxProperties": 64,
+          "type": "object",
+          "patternProperties": {
+            "$[a-zA-Z0-9]^": {
+              "anyOf": [{
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 256
+              }, {
+                "type": "number"
+              }, {
+                "type": "boolean"
+              }, {
+                "type": "array",
+                "maxItems": 32,
+                "items": {
+                  "anyOf": [{
+                    "type" :"string",
+                    "minLength": 1,
+                    "maxLength": 256
+                  }, {
+                    "type": "number"
+                  }]
+                }
+              }]
+            }
           }
         }
       }
