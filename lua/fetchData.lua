@@ -36,7 +36,6 @@ if next(params) ~= nil then
   filtered = {}
   for _,field in pairs(hashKeys) do
     -- if field present in omit we exclude it from pick list
-    redis.log(redis.LOG_WARNING, '\t key', field, omitTree[field] ~= true, pickTree[field] == true)
     if (omitTree[field] ~= true) and (pickTree[field] == true) then table.insert(filtered, field) end
   end
 else
