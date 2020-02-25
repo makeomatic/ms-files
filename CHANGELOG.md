@@ -1,3 +1,15 @@
+# [15.3.0](https://github.com/makeomatic/ms-files/compare/v15.2.0...v15.3.0) (2020-02-25)
+
+
+### Bug Fixes
+
+* **info-post:** remove cappasityai from params/code for legacy support ([#180](https://github.com/makeomatic/ms-files/issues/180)) ([2440d32](https://github.com/makeomatic/ms-files/commit/2440d32218eed62bfe976a4aefd33942cfcad3ec))
+
+
+### Features
+
+* additional 3d ar props ([#183](https://github.com/makeomatic/ms-files/issues/183)) ([d9015eb](https://github.com/makeomatic/ms-files/commit/d9015eb1afd341667a1b7d2a888994433235ed97))
+
 # [15.2.0](https://github.com/makeomatic/ms-files/compare/v15.1.2...v15.2.0) (2020-02-20)
 
 
