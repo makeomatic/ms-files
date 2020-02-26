@@ -17,12 +17,12 @@ local params
 -- * both fields are optional, so if they have type ne object We override them with defalt values
 if type(ARGV[1]) == 'string' then params=cjson.decode(ARGV[1]) end
 
-local omit = (type(params['omit']) == 'table' and params['omit'] or {})
-local pick = (type(params['pick']) == 'table' and params['pick'] or redisCall('hkeys', key))
-
 local filtered
 
-if next(params) ~= nil then
+if type(params) == 'table' then
+  local omit = (type(params['omit']) == 'table' and params['omit'] or {})
+  local pick = (type(params['pick']) == 'table' and params['pick'] or redisCall('hkeys', key))
+
   local insert = table.insert
   local omitTree = {}
 
@@ -35,13 +35,14 @@ if next(params) ~= nil then
     -- if field present in omit we exclude it from pick list
     if (omitTree[field] ~= true) then insert(filtered, field) end
   end
-else
-  filtered = pick
-end
 
--- no fields left
-if #filtered == 0 then
-  return { filtered, {} }
+  -- no fields left
+  if #filtered == 0 then
+    return { filtered, {} }
+  end
+
+else
+  filtered = redisCall('hkeys', key)
 end
 
 -- fetched data

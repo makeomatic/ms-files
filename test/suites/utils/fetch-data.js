@@ -88,4 +88,14 @@ describe('util fetch-data suite', () => {
     const fileInfo = result.value();
     assert.equal(fileInfo.uploadId, this.response.uploadId);
   });
+
+  it('boundFetchData returns data without omit or pick as null or undefined', async () => {
+    const [result] = await boundFetchDataBatch([dataKey], { pick: null, omit: null });
+    const fileInfo = result.value();
+    assert.equal(fileInfo.uploadId, this.response.uploadId);
+
+    const [resultSecond] = await boundFetchDataBatch([dataKey], { pick: undefined, omit: undefined });
+    const fileInfoSecond = resultSecond.value();
+    assert.equal(fileInfoSecond.uploadId, this.response.uploadId);
+  });
 });
