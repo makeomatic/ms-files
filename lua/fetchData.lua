@@ -2,6 +2,7 @@
 -- we need to determine if it exists or not and if it does - return error
 local key = KEYS[1]
 local hashKeys = redis.call('hkeys', key)
+local next = next
 
 -- no keys, doesnt exist
 if next(hashKeys) == nil then
@@ -11,7 +12,7 @@ end
 local params
 -- ARGV[1] could be a JSON object { omit: [], pick: []}
 -- * we do not have whitelist, because we do not know what fields are actually there
--- * fields provided `omit` list automatically excluded from `pick` list.
+-- * fields provided in `omit` list automatically excluded from `pick` list.
 -- * if no fields provided in `pick` list we use all fields from hash
 -- * both fields are optional, so if they have type ne object We override them with defalt values
 if type(ARGV[1]) == 'string' then params=cjson.decode(ARGV[1]) end
@@ -22,6 +23,7 @@ local pick = (type(params['pick']) == 'table' and params['pick'] or hashKeys)
 local filtered
 
 if next(params) ~= nil then
+  local insert = table.insert
   local omitTree = {}
   local pickTree = {}
 
@@ -36,7 +38,7 @@ if next(params) ~= nil then
   filtered = {}
   for _,field in pairs(hashKeys) do
     -- if field present in omit we exclude it from pick list
-    if (omitTree[field] ~= true) and (pickTree[field] == true) then table.insert(filtered, field) end
+    if (omitTree[field] ~= true) and (pickTree[field] == true) then insert(filtered, field) end
   end
 else
   filtered = hashKeys
