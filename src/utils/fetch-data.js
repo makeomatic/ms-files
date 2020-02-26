@@ -45,7 +45,7 @@ function reserializeData(fields, data) {
  * Queues more requests to pipeline
  */
 function addToPipeline(key) {
-  this.pipeline.fetchData(1, key, JSON.stringify(this.fieldFilter));
+  this.pipeline.fetchData(1, key, this.jsonFieldFilter);
 }
 
 /**
@@ -114,7 +114,7 @@ module.exports = function fetchData(key, fieldFilter = {}) {
     .finally(timer);
 };
 
-module.exports.batch = async function fetchDataBatch(keys, fieldFilter) {
+module.exports.batch = async function fetchDataBatch(keys, fieldFilter = {}) {
   const timer = perf('fetchData:batch');
   const { redis, service: { redisType } } = this;
 
@@ -123,7 +123,9 @@ module.exports.batch = async function fetchDataBatch(keys, fieldFilter) {
     : redis;
 
   const pipeline = masterNode.pipeline();
-  keys.forEach(addToPipeline, { pipeline, fieldFilter });
+  const jsonFieldFilter = JSON.stringify(fieldFilter);
+
+  keys.forEach(addToPipeline, { pipeline, jsonFieldFilter });
 
   try {
     const data = await pipeline.exec();

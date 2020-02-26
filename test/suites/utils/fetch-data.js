@@ -14,6 +14,8 @@ const fetchData = require('../../../src/utils/fetch-data');
 
 describe('util fetch-data suite', () => {
   let boundFetchData;
+  let boundFetchDataBatch;
+
   let dataKey;
   before('start service', startService.bind(this));
 
@@ -28,6 +30,11 @@ describe('util fetch-data suite', () => {
       redis: this.files.redis,
     });
 
+    boundFetchDataBatch = fetchData.batch.bind({
+      service: this.files,
+      redis: this.files.redis,
+    });
+
     dataKey = `${FILES_DATA}:${this.response.uploadId}`;
   });
 
@@ -37,7 +44,6 @@ describe('util fetch-data suite', () => {
     const result = boundFetchData('fookey');
     await assert.rejects(result, { statusCode: 404 });
   });
-
 
   it('returns data with no omit or pick', async () => {
     const result = await boundFetchData(dataKey);
@@ -64,7 +70,7 @@ describe('util fetch-data suite', () => {
     assert.deepEqual(result, shouldRespond);
   });
 
-  it('should ignore field passed in omit event if it exists in pick', async () => {
+  it('should ignore field passed in omit even if it exists in pick', async () => {
     const result = await boundFetchData(dataKey, {
       omit: ['owner'],
       pick: ['uploadId', 'owner'],
@@ -75,5 +81,11 @@ describe('util fetch-data suite', () => {
     };
 
     assert.deepEqual(result, shouldRespond);
+  });
+
+  it('boundFetchData returns data without omit or pick', async () => {
+    const [result] = await boundFetchDataBatch([dataKey]);
+    const fileInfo = result.value();
+    assert.equal(fileInfo.uploadId, this.response.uploadId);
   });
 });
