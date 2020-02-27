@@ -1,3 +1,10 @@
+## [15.4.1](https://github.com/makeomatic/ms-files/compare/v15.4.0...v15.4.1) (2020-02-27)
+
+
+### Bug Fixes
+
+* ar3dParams validation ([#184](https://github.com/makeomatic/ms-files/issues/184)) ([64dca13](https://github.com/makeomatic/ms-files/commit/64dca1368474d2541ed1b4d21b854f5f400c388b))
+
 # [15.4.0](https://github.com/makeomatic/ms-files/compare/v15.3.0...v15.4.0) (2020-02-27)
 
 
