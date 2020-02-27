@@ -2,7 +2,6 @@
 -- we need to determine if it exists or not and if it does - return error
 local key = KEYS[1]
 local redisCall = redis.call
-local next = next
 
 -- key type ~= hash means not exists
 if redisCall('type', key).ok ~= 'hash' then

@@ -20,7 +20,21 @@ describe('util fetch-data suite', () => {
   before('start service', startService.bind(this));
 
   before('init upload', async () => {
-    const uploadFn = initUpload.call(this, modelData);
+    const myModelData = {
+      ...modelData,
+      message: {
+        ...modelData.message,
+        meta: {
+          ...modelData.message.meta,
+          tags: ['some', 'tags'],
+          ar3dviewProps: { prop: 43 },
+          dimensions: [3],
+          capabilities: ['cap1'],
+        },
+      },
+    };
+
+    const uploadFn = initUpload.call(this, myModelData);
     await uploadFn.call(this);
     await finishUpload.call(this, this.response);
     await processUpload.call(this, this.response);
@@ -48,6 +62,16 @@ describe('util fetch-data suite', () => {
   it('returns data with no omit or pick', async () => {
     const result = await boundFetchData(dataKey);
     assert.deepEqual(result.uploadId, this.response.uploadId);
+  });
+
+  it('decodes files, tags, dimensions, capabilities, ar3dviewProps', async () => {
+    const result = await boundFetchData(dataKey);
+
+    assert.equal(result.files.length, this.response.files.length);
+    assert.deepEqual(result.tags, this.response.tags);
+    assert.deepEqual(result.dimensions, this.response.dimensions);
+    assert.deepEqual(result.capabilities, this.response.capabilities);
+    assert.deepEqual(result.ar3dviewProps, this.response.ar3dviewProps);
   });
 
   it('returns data with omit and no pick', async () => {

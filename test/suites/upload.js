@@ -495,5 +495,63 @@ describe('upload suite', function suite() {
 
       assert.ok(this.files.validateSync('upload', obj).error);
     });
+
+    it('validates meta.ar3dviewProps', function test() {
+      const invalidShortString = {
+        ...valid,
+        meta: {
+          ar3dviewProps: {
+            invalidShortString: '',
+          },
+        },
+      };
+
+      const invalidLongString = {
+        ...valid,
+        meta: {
+          ar3dviewProps: {
+            invalidLongString: 'a'.repeat(257),
+          },
+        },
+      };
+
+      const invalidArray = {
+        ...valid,
+        meta: {
+          ar3dviewProps: {
+            invalidArray: new Array(39).fill(20, 0, 39),
+          },
+        },
+      };
+
+      const invalidItemArray = {
+        ...valid,
+        meta: {
+          ar3dviewProps: {
+            invalidItemArray: [
+              { some: 1 },
+            ],
+          },
+        },
+      };
+
+      const invalidStringItemArray = {
+        ...valid,
+        meta: {
+          ar3dviewProps: {
+            invalidStringItemArray: [
+              'a'.repeat(257),
+            ],
+          },
+        },
+      };
+
+      const vs = this.files.validateSync;
+      assert(vs('upload', invalidShortString).error.message.match(/invalidShortString/));
+      assert(vs('upload', invalidLongString).error.message.match(/invalidLongString/));
+      assert(vs('upload', invalidArray).error.message.match(/invalidArray/));
+      assert(vs('upload', invalidItemArray).error.message.match(/invalidItemArray/));
+      assert(vs('upload', invalidStringItemArray).error.message.match(/invalidStringItemArray/));
+    });
   });
 });
