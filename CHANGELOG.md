@@ -1,3 +1,10 @@
+# [15.4.0](https://github.com/makeomatic/ms-files/compare/v15.3.0...v15.4.0) (2020-02-27)
+
+
+### Features
+
+* files.data action + tests ([#182](https://github.com/makeomatic/ms-files/issues/182)) ([4b58e13](https://github.com/makeomatic/ms-files/commit/4b58e134b205d6b79e7a7f14b1a2a3a54b82a680))
+
 # [15.3.0](https://github.com/makeomatic/ms-files/compare/v15.2.0...v15.3.0) (2020-02-25)
 
 
