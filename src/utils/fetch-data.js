@@ -45,7 +45,7 @@ function reserializeData(fields, data) {
  * Queues more requests to pipeline
  */
 function addToPipeline(key) {
-  this.pipeline.fetchData(1, key, this.omitFields);
+  this.pipeline.fetchData(1, key, this.jsonFieldFilter);
 }
 
 /**
@@ -97,14 +97,16 @@ async function selectMaster(redis) {
 /**
  * Fetches data
  * @param  {String} key
- * @param  {Array}  [omitFields=[]]
+ * @param  {Object} fieldsFilter
+ * @param  {String[]} [fieldsFilter.omit]
+ * @param  {String[]} [fieldsFilter.pick]
  */
-module.exports = function fetchData(key, omitFields = []) {
+module.exports = function fetchData(key, fieldFilter = {}) {
   const { redis } = this;
   const timer = perf(`fetchData:${key}`);
 
   return redis
-    .fetchData(1, key, omitFields)
+    .fetchData(1, key, JSON.stringify(fieldFilter))
     .tap(timer('redis'))
     .catchThrow(missingError, FILE_MISSING_ERROR)
     .spread(reserializeData)
@@ -112,7 +114,7 @@ module.exports = function fetchData(key, omitFields = []) {
     .finally(timer);
 };
 
-module.exports.batch = async function fetchDataBatch(keys, omitFields = []) {
+module.exports.batch = async function fetchDataBatch(keys, fieldFilter = {}) {
   const timer = perf('fetchData:batch');
   const { redis, service: { redisType } } = this;
 
@@ -121,7 +123,9 @@ module.exports.batch = async function fetchDataBatch(keys, omitFields = []) {
     : redis;
 
   const pipeline = masterNode.pipeline();
-  keys.forEach(addToPipeline, { pipeline, omitFields });
+  const jsonFieldFilter = JSON.stringify(fieldFilter);
+
+  keys.forEach(addToPipeline, { pipeline, jsonFieldFilter });
 
   try {
     const data = await pipeline.exec();

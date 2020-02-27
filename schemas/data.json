@@ -1,0 +1,21 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "uploadId",
+    "fields"
+  ],
+  "properties": {
+    "uploadId": {
+      "$ref": "common#/definitions/uploadId"
+    },
+    "fields": {
+      "type": "array",
+      "default": [],
+      "items": {
+        "type": "string",
+        "maxLength": 50
+      }
+    }
+  }
+}
