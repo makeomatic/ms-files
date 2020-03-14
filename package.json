@@ -35,9 +35,9 @@
   "dependencies": {
     "@google-cloud/storage": "4.3.1",
     "@hapi/hapi": "^19.1.1",
-    "@microfleet/core": "^16.0.3",
+    "@microfleet/core": "^17.0.0",
     "@microfleet/transport-amqp": "^15.2.0",
-    "@microfleet/validation": "^8.1.2",
+    "@microfleet/validation": "^9.0.1",
     "@sentry/node": "^5.12.4",
     "bl": "^4.0.0",
     "bluebird": "^3.7.2",
