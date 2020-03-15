@@ -33,7 +33,7 @@
   },
   "homepage": "https://github.com/makeomatic/ms-files#readme",
   "dependencies": {
-    "@google-cloud/storage": "4.3.1",
+    "@google-cloud/storage": "4.6.0",
     "@hapi/hapi": "^19.1.1",
     "@microfleet/core": "^17.0.0",
     "@microfleet/transport-amqp": "^15.2.0",
@@ -88,7 +88,7 @@
     "eslint-config-makeomatic": "^4.0.0",
     "eslint-plugin-import": "^2.20.1",
     "eslint-plugin-promise": "^4.2.1",
-    "eslint-plugin-unicorn": "^16.1.1",
+    "eslint-plugin-unicorn": "^17.2.0",
     "faker": "^4.1.0",
     "json": "^9.0.6",
     "mocha": "^7.0.1",

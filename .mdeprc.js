@@ -1,5 +1,5 @@
 module.exports = {
-  node: "12.15.0",
+  node: "12.16.1",
   auto_compose: true,
   with_local_compose: true,
   sleep: 35,
