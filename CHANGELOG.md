@@ -1,3 +1,10 @@
+## [15.4.2](https://github.com/makeomatic/ms-files/compare/v15.4.1...v15.4.2) (2020-03-16)
+
+
+### Bug Fixes
+
+* bump @microfleet/core version ([#186](https://github.com/makeomatic/ms-files/issues/186)) ([8eae2fe](https://github.com/makeomatic/ms-files/commit/8eae2fe4c022d901663015cd79203c0b910d0dd4))
+
 ## [15.4.1](https://github.com/makeomatic/ms-files/compare/v15.4.0...v15.4.1) (2020-02-27)
 
 
