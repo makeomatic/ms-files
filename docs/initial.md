@@ -9,7 +9,7 @@ Architecture Diagram:
 
 Client initializes uploading or updating a file or collection of files from a client application (desktop, web, etc.) and talks directly to [GLS](#google-cloud-storage).
 
-## [Cappasity Core API](https://github.com/cappasityinc/cappasity-core)
+## HTTP ACL Gateway
 
 After the first step (upload or update) a client makes request to the API.
 Here is the list of some important calls:
