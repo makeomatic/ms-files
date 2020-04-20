@@ -513,35 +513,7 @@
           }
         },
         "ar3dviewProps": {
-          "minProperties": 0,
-          "maxProperties": 64,
-          "type": "object",
-          "additionalProperties": false,
-          "patternProperties": {
-            "^[a-zA-Z0-9]+$": {
-              "anyOf": [{
-                "type": "string",
-                "minLength": 1,
-                "maxLength": 256
-              }, {
-                "type": "number"
-              }, {
-                "type": "boolean"
-              }, {
-                "type": "array",
-                "maxItems": 32,
-                "items": {
-                  "anyOf": [{
-                    "type" :"string",
-                    "minLength": 1,
-                    "maxLength": 256
-                  }, {
-                    "type": "number"
-                  }]
-                }
-              }]
-            }
-          }
+          "$ref": "#/definitions/propsObject"
         },
         "creationInfo": {
           "description": "Contains description of the application that initiated upload and additional upload information.",
@@ -570,9 +542,7 @@
             },
             "props": {
               "description": "Extra information provided by application.",
-              "type": "object",
-              "minProperties": 0,
-              "maxProperties": 64
+              "$ref": "#/definitions/propsObject"
             }
           }
         }
@@ -604,6 +574,37 @@
           }
         }
       ]
+    },
+    "propsObject": {
+      "minProperties": 0,
+      "maxProperties": 64,
+      "type": "object",
+      "additionalProperties": false,
+      "patternProperties": {
+        "^[a-zA-Z0-9]+$": {
+          "anyOf": [{
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          }, {
+            "type": "number"
+          }, {
+            "type": "boolean"
+          }, {
+            "type": "array",
+            "maxItems": 32,
+            "items": {
+              "anyOf": [{
+                "type" :"string",
+                "minLength": 1,
+                "maxLength": 256
+              }, {
+                "type": "number"
+              }]
+            }
+          }]
+        }
+      }
     }
   }
 }
