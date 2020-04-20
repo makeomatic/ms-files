@@ -1,3 +1,10 @@
+# [15.5.0](https://github.com/makeomatic/ms-files/compare/v15.4.2...v15.5.0) (2020-04-20)
+
+
+### Features
+
+* creationInfo ([#189](https://github.com/makeomatic/ms-files/issues/189)) ([a5fb7db](https://github.com/makeomatic/ms-files/commit/a5fb7dbf42f7754c686b3ffaf19627fdcdcedfc3))
+
 ## [15.4.2](https://github.com/makeomatic/ms-files/compare/v15.4.1...v15.4.2) (2020-03-16)
 
 
