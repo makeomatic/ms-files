@@ -513,33 +513,36 @@
           }
         },
         "ar3dviewProps": {
-          "minProperties": 0,
-          "maxProperties": 64,
-          "type": "object",
+          "$ref": "#/definitions/propsObject"
+        },
+        "creationInfo": {
+          "description": "Contains description of the application that initiated upload and additional upload information.",
           "additionalProperties": false,
-          "patternProperties": {
-            "^[a-zA-Z0-9]+$": {
-              "anyOf": [{
-                "type": "string",
-                "minLength": 1,
-                "maxLength": 256
-              }, {
-                "type": "number"
-              }, {
-                "type": "boolean"
-              }, {
-                "type": "array",
-                "maxItems": 32,
-                "items": {
-                  "anyOf": [{
-                    "type" :"string",
-                    "minLength": 1,
-                    "maxLength": 256
-                  }, {
-                    "type": "number"
-                  }]
-                }
-              }]
+          "properties": {
+            "os": {
+              "type": "string",
+              "enum": [
+                "macos", "linux", "windows", "android", "ios"
+              ]
+            },
+            "osVersion": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 50
+            },
+            "application": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 50
+            },
+            "applicationVersion": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 50
+            },
+            "props": {
+              "description": "Extra information provided by application.",
+              "$ref": "#/definitions/propsObject"
             }
           }
         }
@@ -571,6 +574,37 @@
           }
         }
       ]
+    },
+    "propsObject": {
+      "minProperties": 0,
+      "maxProperties": 64,
+      "type": "object",
+      "additionalProperties": false,
+      "patternProperties": {
+        "^[a-zA-Z0-9]+$": {
+          "anyOf": [{
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          }, {
+            "type": "number"
+          }, {
+            "type": "boolean"
+          }, {
+            "type": "array",
+            "maxItems": 32,
+            "items": {
+              "anyOf": [{
+                "type" :"string",
+                "minLength": 1,
+                "maxLength": 256
+              }, {
+                "type": "number"
+              }]
+            }
+          }]
+        }
+      }
     }
   }
 }
