@@ -75,6 +75,7 @@ exports.FIELDS_TO_STRINGIFY = [
   'capabilities',
   'dimensions',
   'ar3dviewProps',
+  'creationInfo',
 ];
 
 exports.CAPPASITY_3D_MODEL = 'model';
