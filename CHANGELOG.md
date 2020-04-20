@@ -1,3 +1,5 @@
+## [15.5.1](https://github.com/makeomatic/ms-files/compare/v15.5.0...v15.5.1) (2020-04-20)
+
 # [15.5.0](https://github.com/makeomatic/ms-files/compare/v15.4.2...v15.5.0) (2020-04-20)
 
 
