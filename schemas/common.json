@@ -542,6 +542,39 @@
               }]
             }
           }
+        },
+        "creationInfo": {
+          "description": "Contains description of the application that initiated upload and additional upload information.",
+          "additionalProperties": false,
+          "properties": {
+            "os": {
+              "type": "string",
+              "enum": [
+                "macos", "linux", "windows", "android", "ios"
+              ]
+            },
+            "osVersion": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 50
+            },
+            "application": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 50
+            },
+            "applicationVersion": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 50
+            },
+            "props": {
+              "description": "Extra information provided by application.",
+              "type": "object",
+              "minProperties": 0,
+              "maxProperties": 64
+            }
+          }
         }
       }
     },

@@ -496,6 +496,88 @@ describe('upload suite', function suite() {
       assert.ok(this.files.validateSync('upload', obj).error);
     });
 
+    it('validates meta.creationInfo', function test() {
+      const extraProp = {
+        ...valid,
+        meta: {
+          name: 'some',
+          creationInfo: {
+            extraProp: 1,
+          },
+        },
+      };
+
+      const invalidOsVersion = {
+        ...valid,
+        meta: {
+          name: 'some',
+          creationInfo: {
+            osVersion: 'a'.repeat(257),
+          },
+        },
+      };
+
+      const invalidOs = {
+        ...valid,
+        meta: {
+          name: 'some',
+          creationInfo: {
+            os: 'symbian',
+          },
+        },
+      };
+
+      const invalidApplication = {
+        ...valid,
+        meta: {
+          name: 'some',
+          creationInfo: {
+            application: 'a'.repeat(257),
+          },
+        },
+      };
+
+      const invalidApplicationNumber = {
+        ...valid,
+        meta: {
+          name: 'some',
+          creationInfo: {
+            application: 42,
+          },
+        },
+      };
+
+      const invalidApplicationVersion = {
+        ...valid,
+        meta: {
+          name: 'some',
+          creationInfo: {
+            applicationVersion: 'a'.repeat(257),
+          },
+        },
+      };
+
+      const invalidApplicationVersionNumber = {
+        ...valid,
+        meta: {
+          name: 'some',
+          creationInfo: {
+            applicationVersion: 10,
+          },
+        },
+      };
+
+      const vs = this.files.validator.validateSync;
+
+      assert(vs('upload', extraProp).error.message.match(/creationInfo should NOT have additional properties/));
+      assert(vs('upload', invalidOs).error.message.match(/creationInfo.os should be equal to one of the allowed values/));
+      assert(vs('upload', invalidOsVersion).error.message.match(/creationInfo.osVersion should NOT be longer than 256 characters/));
+      assert(vs('upload', invalidApplication).error.message.match(/creationInfo.application should NOT be longer than 256 characters/));
+      assert(vs('upload', invalidApplicationNumber).error.message.match(/creationInfo.application should be string/));
+      assert(vs('upload', invalidApplicationVersion).error.message.match(/creationInfo.applicationVersion should NOT be longer than 256 characters/));
+      assert(vs('upload', invalidApplicationVersionNumber).error.message.match(/creationInfo.applicationVersion should be string/));
+    });
+
     it('validates meta.ar3dviewProps', function test() {
       const invalidShortString = {
         ...valid,

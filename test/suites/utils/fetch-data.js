@@ -28,6 +28,12 @@ describe('util fetch-data suite', () => {
           ...modelData.message.meta,
           tags: ['some', 'tags'],
           ar3dviewProps: { prop: 43 },
+          creationInfo: {
+            os: 'linux',
+            props: {
+              some: 1,
+            },
+          },
           dimensions: [3],
           capabilities: ['cap1'],
         },
@@ -64,7 +70,7 @@ describe('util fetch-data suite', () => {
     assert.deepEqual(result.uploadId, this.response.uploadId);
   });
 
-  it('decodes files, tags, dimensions, capabilities, ar3dviewProps', async () => {
+  it('decodes files, tags, dimensions, capabilities, ar3dviewProps, creationInfo', async () => {
     const result = await boundFetchData(dataKey);
 
     assert.equal(result.files.length, this.response.files.length);
@@ -72,6 +78,7 @@ describe('util fetch-data suite', () => {
     assert.deepEqual(result.dimensions, this.response.dimensions);
     assert.deepEqual(result.capabilities, this.response.capabilities);
     assert.deepEqual(result.ar3dviewProps, this.response.ar3dviewProps);
+    assert.deepEqual(result.creationInfo, this.response.creationInfo);
   });
 
   it('returns data with omit and no pick', async () => {
