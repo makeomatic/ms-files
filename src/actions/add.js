@@ -41,6 +41,7 @@ const {
  * @param  {String} [opts.params.origin]
  * @param  {Array}  opts.params.files
  * @param  {Object} opts.params.meta
+ * @param  {String} opts.params.uploadId
  * @param  {Boolean} [opts.params.directOnly=false]
  * @param  {Boolean} [opts.params.unlisted=false]
  * @param  {Boolean} [opts.params.temp=false]
