@@ -17,7 +17,9 @@
     "docker-release": "mdep docker release",
     "release": "yarn --frozen-lockfile && yarn semantic-release",
     "coverage:clean": "rimraf .nyc_output",
-    "coverage:report": "yarn nyc report --reporter=lcov"
+    "coverage:report": "yarn nyc report --reporter=lcov",
+    "snyk-protect": "snyk protect",
+    "prepare": "yarn run snyk-protect"
   },
   "publishConfig": {
     "registry": "https://registry.npmjs.org"
@@ -64,7 +66,8 @@
     "request-promise": "^4.2.5",
     "stdout-stream": "^1.4.1",
     "uuid": "^7.0.0",
-    "yargs": "^15.0.2"
+    "yargs": "^15.0.2",
+    "snyk": "^1.316.1"
   },
   "optionalDependencies": {
     "@google-cloud/pubsub": "^1.5.0"
@@ -112,5 +115,6 @@
       "commit-msg": "commitlint -e $HUSKY_GIT_PARAMS",
       "prepare-commit-msg": "./node_modules/@makeomatic/deploy/git-hooks/prepare-commit-msg $HUSKY_GIT_PARAMS"
     }
-  }
+  },
+  "snyk": true
 }
