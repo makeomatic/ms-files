@@ -41,7 +41,7 @@ describe('cappasity-info-post hook test suite', function suite() {
           + '&autorotate={{ autorotate }}&autorotatetime={{ autorotatetime }}'
           + '&autorotatedelay={{ autorotatedelay }}&autorotatedir={{ autorotatedir }}'
           + '&hidefullscreen={{ hidefullscreen }}&hideautorotateopt={{ hideautorotateopt }}'
-          + '&hidesettingsbtn={{ hidesettingsbtn }}"')
+          + '&hidesettingsbtn={{ hidesettingsbtn }}&rotationmode={{ rotationmode }}"')
         .replace(/\s+/g, ' ')
         .trim();
 
