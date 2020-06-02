@@ -131,6 +131,26 @@ const rotatePlayerOpts = Object.setPrototypeOf({
     paid: true,
     reqPlanLevel: 30,
   },
+  rotatemode: {
+    type: 'integer',
+    default: 1,
+    description: 'Rotation Mode',
+    enum: {
+      loop: 1,
+      once: 2,
+      boomerang: 3,
+    },
+  },
+  ttc: {
+    type: 'float',
+    default: 1,
+    description: 'Turn Time Coefficient',
+  },
+  autorotationtime: {
+    type: 'float',
+    default: 7,
+    description: 'Autorotation time',
+  },
   hidefullscreen: {
     type: 'boolean',
     description: 'Hide fullscreen',
@@ -187,6 +207,15 @@ const zoomPlayerOpts = Object.setPrototypeOf({
   },
 }, null);
 
+const arPlayerOpts = Object.setPrototypeOf({
+  arbutton: {
+    type: 'boolean',
+    default: 0,
+    description: 'AR button',
+    paid: false,
+  },
+}, null);
+
 const defaultWindowOptions = Object.setPrototypeOf({
   width: {
     type: 'string',
@@ -240,6 +269,7 @@ const paramsZoom = Object.setPrototypeOf({
   ...corePlayerOpts,
   ...rotatePlayerOpts,
   ...zoomPlayerOpts,
+  ...arPlayerOpts,
   ...defaultWindowOptions,
 }, null);
 

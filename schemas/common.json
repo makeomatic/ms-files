@@ -515,6 +515,27 @@
         "ar3dviewProps": {
           "$ref": "#/definitions/propsObject"
         },
+        "playerSettings": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/propsObject"
+          },
+          "properties": {
+            "mode": {
+              "type": "string",
+              "enum": ["loop", "once", "boomerang"]
+            },
+            "ttc": {
+              "type": "number",
+              "exclusiveMinimum": 0,
+              "description": "turn time coefficient"
+            },
+            "autorotationtime": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            }
+          }
+        },
         "creationInfo": {
           "description": "Contains description of the application that initiated upload and additional upload information.",
           "additionalProperties": false,

@@ -126,6 +126,14 @@ function modelBackgroundImageMessage(background, owner) {
       username: owner,
       meta: {
         name: 'background',
+        playerSettings: {
+          mode: 'loop',
+          ttc: 1.3,
+          autorotationtime: 10,
+        },
+        creationInfo: {
+          os: 'macos',
+        },
       },
       files: [{
         type: 'background',
