@@ -146,11 +146,6 @@ const rotatePlayerOpts = Object.setPrototypeOf({
     default: 1,
     description: 'Turn Time Coefficient',
   },
-  autorotationtime: {
-    type: 'float',
-    default: 7,
-    description: 'Autorotation time',
-  },
   hidefullscreen: {
     type: 'boolean',
     description: 'Hide fullscreen',

@@ -521,7 +521,7 @@
             "$ref": "#/definitions/propsObject"
           },
           "properties": {
-            "mode": {
+            "rotatemode": {
               "type": "string",
               "enum": ["loop", "once", "boomerang"]
             },
@@ -530,9 +530,10 @@
               "exclusiveMinimum": 0,
               "description": "turn time coefficient"
             },
-            "autorotationtime": {
+            "autorotatetime": {
               "type": "number",
-              "exclusiveMinimum": 0
+              "minimum": 2,
+              "maximum": 60
             }
           }
         },
