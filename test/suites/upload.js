@@ -18,6 +18,7 @@ describe('upload suite', function suite() {
     finishUpload,
     processUpload,
     getInfo,
+    meta,
   } = require('../helpers/utils');
 
   // data
@@ -233,6 +234,10 @@ describe('upload suite', function suite() {
 
       const rsp = await this.send({
         ...message,
+        meta: {
+          ...meta,
+          ...message.meta,
+        },
         resumable: false,
         access: {
           setPublic: true,
@@ -248,6 +253,8 @@ describe('upload suite', function suite() {
       assert.ok(rsp.public);
       assert.equal(rsp.status, STATUS_PENDING);
       assert.equal(rsp.parts, message.files.length);
+      assert.deepEqual(rsp.playerSettings, meta.playerSettings);
+      assert.deepEqual(rsp.creationInfo, meta.creationInfo);
 
       // verify that location is present
       rsp.files.forEach((part) => {

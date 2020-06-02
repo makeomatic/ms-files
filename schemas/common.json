@@ -518,7 +518,7 @@
         "playerSettings": {
           "type": "object",
           "additionalProperties": {
-            "$ref": "#/definitions/propsObject"
+            "$ref": "#/definitions/simpleTypes"
           },
           "properties": {
             "rotatemode": {
@@ -604,29 +604,32 @@
       "additionalProperties": false,
       "patternProperties": {
         "^[a-zA-Z0-9]+$": {
+          "$ref": "#/definitions/simpleTypes"
+        }
+      }
+    },
+    "simpleTypes": {
+      "anyOf": [{
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 256
+      }, {
+        "type": "number"
+      }, {
+        "type": "boolean"
+      }, {
+        "type": "array",
+        "maxItems": 32,
+        "items": {
           "anyOf": [{
             "type": "string",
             "minLength": 1,
             "maxLength": 256
           }, {
             "type": "number"
-          }, {
-            "type": "boolean"
-          }, {
-            "type": "array",
-            "maxItems": 32,
-            "items": {
-              "anyOf": [{
-                "type" :"string",
-                "minLength": 1,
-                "maxLength": 256
-              }, {
-                "type": "number"
-              }]
-            }
           }]
         }
-      }
+      }]
     }
   }
 }
