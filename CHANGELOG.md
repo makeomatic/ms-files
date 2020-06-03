@@ -1,3 +1,10 @@
+# [15.6.0](https://github.com/makeomatic/ms-files/compare/v15.5.1...v15.6.0) (2020-06-03)
+
+
+### Features
+
+* extra meta props "playerSettings" ([#194](https://github.com/makeomatic/ms-files/issues/194)) ([4b704ae](https://github.com/makeomatic/ms-files/commit/4b704ae9c7f845ba717defd2ccb1577e004c01b8))
+
 ## [15.5.1](https://github.com/makeomatic/ms-files/compare/v15.5.0...v15.5.1) (2020-04-20)
 
 # [15.5.0](https://github.com/makeomatic/ms-files/compare/v15.4.2...v15.5.0) (2020-04-20)
