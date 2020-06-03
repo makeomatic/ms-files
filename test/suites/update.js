@@ -92,6 +92,8 @@ describe('update suite', function suite() {
           assert.equal(result.file.description, meta.description);
           assert.equal(result.file.website, meta.website);
           assert.deepEqual(result.file.tags, meta.tags);
+          assert.deepEqual(result.file.playerSettings, meta.playerSettings);
+          assert.deepEqual(result.file.creationInfo, meta.creationInfo);
           return null;
         });
     });
@@ -387,7 +389,7 @@ describe('update suite', function suite() {
 
       const fileInfo = await getInfo.call(this, { filename: uploadId, username });
 
-      assert.strictEqual(fileInfo.playerSettings, meta.playerSettings);
+      assert.deepEqual(fileInfo.file.playerSettings, meta.playerSettings);
     });
 
     it('able to change ttc', async function test() {
@@ -396,7 +398,7 @@ describe('update suite', function suite() {
 
       await this.send({ uploadId, username, meta: { playerSettings: { ttc: 15 } } }, 45000);
       const fileInfo = await getInfo.call(this, { filename: uploadId, username });
-      assert.strictEqual(fileInfo.playerSettings, meta.playerSettings);
+      assert.deepEqual(fileInfo.file.playerSettings, meta.playerSettings);
     });
 
     it('able to change ttc', async function test() {
@@ -405,7 +407,7 @@ describe('update suite', function suite() {
 
       await this.send({ uploadId, username, meta: { playerSettings: { autorotatetime: 30 } } }, 45000);
       const fileInfo = await getInfo.call(this, { filename: uploadId, username });
-      assert.strictEqual(fileInfo.playerSettings, meta.playerSettings);
+      assert.deepEqual(fileInfo.file.playerSettings, meta.playerSettings);
     });
   });
 

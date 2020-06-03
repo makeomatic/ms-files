@@ -24,7 +24,8 @@ const {
   FILES_DATA_INDEX_KEY,
   FILES_TAGS_INDEX_KEY,
   FILES_USER_INDEX_PUBLIC_KEY,
-} = require('../constant.js');
+  FILES_PLAYER_SETTINGS_FIELD,
+} = require('../constant');
 
 const { call } = Function.prototype;
 const { toLowerCase } = String.prototype;
@@ -131,7 +132,14 @@ async function updateMeta(lock, ctx, params) {
 
   if (hasOwnProperty.call(meta, FILES_TAGS_FIELD) && data[FILES_TAGS_FIELD]) {
     // @todo migrate all tags in files data to lowercase and then remove this tag.toLowerCase()
-    data[FILES_TAGS_FIELD].forEach((tag) => pipeline.srem(FILES_TAGS_INDEX_KEY(tag.toLowerCase()), uploadId));
+    for (const tag of data[FILES_TAGS_FIELD].values()) {
+      pipeline.srem(FILES_TAGS_INDEX_KEY(tag.toLowerCase()), uploadId);
+    }
+  }
+
+  // there is no way to remove a meta field, only overwrite
+  if (meta[FILES_PLAYER_SETTINGS_FIELD]) {
+    meta[FILES_PLAYER_SETTINGS_FIELD] = { ...data[FILES_PLAYER_SETTINGS_FIELD], ...meta[FILES_PLAYER_SETTINGS_FIELD] };
   }
 
   if (meta[FILES_TAGS_FIELD]) {
