@@ -1,6 +1,5 @@
 const { ActionTransport } = require('@microfleet/core');
 const Promise = require('bluebird');
-const noop = require('lodash/noop');
 const { HttpStatusError } = require('common-errors');
 const handlePipeline = require('../utils/pipeline-error');
 const getLock = require('../utils/acquire-lock');
@@ -25,7 +24,8 @@ const {
   FILES_DATA_INDEX_KEY,
   FILES_TAGS_INDEX_KEY,
   FILES_USER_INDEX_PUBLIC_KEY,
-} = require('../constant.js');
+  FILES_PLAYER_SETTINGS_FIELD,
+} = require('../constant');
 
 const { call } = Function.prototype;
 const { toLowerCase } = String.prototype;
@@ -79,17 +79,15 @@ function preProcessMetadata(data) {
   return data;
 }
 
-function updateMeta(params) {
-  const {
-    uploadId, username, directOnly,
-  } = params;
-  const { redis } = this;
+async function updateMeta(lock, ctx, params) {
+  const { uploadId, username, directOnly } = params;
+  const { redis } = ctx;
   const key = FILES_DATA_INDEX_KEY(uploadId);
   const meta = preProcessMetadata(params.meta);
   const alias = meta[FILES_ALIAS_FIELD];
 
-  return Promise
-    .bind(this, meta)
+  const data = await Promise
+    .bind(ctx, meta)
     // do some extra validation
     .tap(isValidBackgroundOrigin)
     // fetch data
@@ -97,79 +95,90 @@ function updateMeta(params) {
     .then(fetchData)
     .then(isProcessed)
     .then(isUnlisted)
-    // TODO: this check was not performed earlier, why?
     .then(hasAccess(username))
-    .then(isAliasTaken(alias))
-    // call hook
-    .tap((data) => this.hook.call(this, 'files:update:pre', username, data))
-    // perform update
-    .then((data) => {
-      const pipeline = redis.pipeline();
+    .then(isAliasTaken(alias));
 
-      // insert reference to current alias for fast lookup within that user
-      const existingAlias = data[FILES_ALIAS_FIELD];
-      const owner = data[FILES_OWNER_FIELD];
-      const aliasPTRs = `${FILES_USR_ALIAS_PTR}:${owner}`;
-      const userPublicIndex = FILES_USER_INDEX_PUBLIC_KEY(owner);
-      const isPublic = data[FILES_PUBLIC_FIELD];
+  // ensure we still hold the lock
+  await lock.extend();
 
-      if (alias) {
-        pipeline.hset(aliasPTRs, alias, uploadId);
-        if (existingAlias) {
-          pipeline.hdel(aliasPTRs, existingAlias);
-        }
-      } else if (alias === '' && existingAlias) {
-        pipeline
-          .hdel(aliasPTRs, existingAlias)
-          .hdel(key, FILES_ALIAS_FIELD);
-      }
+  // call hook
+  await ctx.hook.call(ctx, 'files:update:pre', username, data);
 
-      // ensure that we do nothing if we don't have existing alias
-      if (alias === '') {
-        delete meta[FILES_ALIAS_FIELD]; // <-- this field is empty at this point
-      }
+  // perform update
+  const pipeline = redis.pipeline();
 
-      if (hasOwnProperty.call(meta, FILES_TAGS_FIELD) && data[FILES_TAGS_FIELD]) {
-        // @todo migrate all tags in files data to lowercase and then remove this tag.toLowerCase()
-        data[FILES_TAGS_FIELD].forEach((tag) => pipeline.srem(FILES_TAGS_INDEX_KEY(tag.toLowerCase()), uploadId));
-      }
+  // insert reference to current alias for fast lookup within that user
+  const existingAlias = data[FILES_ALIAS_FIELD];
+  const owner = data[FILES_OWNER_FIELD];
+  const aliasPTRs = `${FILES_USR_ALIAS_PTR}:${owner}`;
+  const userPublicIndex = FILES_USER_INDEX_PUBLIC_KEY(owner);
+  const isPublic = data[FILES_PUBLIC_FIELD];
 
-      if (meta[FILES_TAGS_FIELD]) {
-        meta[FILES_TAGS_FIELD] = meta[FILES_TAGS_FIELD].map(call, toLowerCase);
-        meta[FILES_TAGS_FIELD].forEach((tag) => pipeline.sadd(FILES_TAGS_INDEX_KEY(tag), uploadId));
-      }
+  if (alias) {
+    pipeline.hset(aliasPTRs, alias, uploadId);
+    if (existingAlias) {
+      pipeline.hdel(aliasPTRs, existingAlias);
+    }
+  } else if (alias === '' && existingAlias) {
+    pipeline
+      .hdel(aliasPTRs, existingAlias)
+      .hdel(key, FILES_ALIAS_FIELD);
+  }
 
-      if (directOnly === false) {
-        pipeline.hdel(key, FILES_DIRECT_ONLY_FIELD);
-        // remove from public indices if it is public
-        if (isPublic) {
-          pipeline.sadd(FILES_INDEX_PUBLIC, uploadId);
-          pipeline.sadd(userPublicIndex, uploadId);
-        }
-      } else if (directOnly === true) {
-        pipeline.hset(key, FILES_DIRECT_ONLY_FIELD, '1');
-        // add back to public indices if this file is public
-        if (isPublic) {
-          pipeline.srem(FILES_INDEX_PUBLIC, uploadId);
-          pipeline.srem(userPublicIndex, uploadId);
-        }
-      }
+  // ensure that we do nothing if we don't have existing alias
+  if (alias === '') {
+    delete meta[FILES_ALIAS_FIELD]; // <-- this field is empty at this point
+  }
 
-      FIELDS_TO_STRINGIFY.forEach((field) => {
-        stringify(meta, field);
-      });
+  if (hasOwnProperty.call(meta, FILES_TAGS_FIELD) && data[FILES_TAGS_FIELD]) {
+    // @todo migrate all tags in files data to lowercase and then remove this tag.toLowerCase()
+    for (const tag of data[FILES_TAGS_FIELD].values()) {
+      pipeline.srem(FILES_TAGS_INDEX_KEY(tag.toLowerCase()), uploadId);
+    }
+  }
 
-      // make sure it's not an empty object
-      if (hasProperties(meta)) {
-        pipeline.hmset(key, meta);
-      }
+  // there is no way to remove a meta field, only overwrite
+  if (meta[FILES_PLAYER_SETTINGS_FIELD]) {
+    meta[FILES_PLAYER_SETTINGS_FIELD] = { ...data[FILES_PLAYER_SETTINGS_FIELD], ...meta[FILES_PLAYER_SETTINGS_FIELD] };
+  }
 
-      return pipeline
-        .exec()
-        .then(handlePipeline)
-        .tap(directOnly !== undefined ? bustCache(redis, data, true) : noop)
-        .return(true);
-    });
+  if (meta[FILES_TAGS_FIELD]) {
+    meta[FILES_TAGS_FIELD] = meta[FILES_TAGS_FIELD].map(call, toLowerCase);
+    meta[FILES_TAGS_FIELD].forEach((tag) => pipeline.sadd(FILES_TAGS_INDEX_KEY(tag), uploadId));
+  }
+
+  if (directOnly === false) {
+    pipeline.hdel(key, FILES_DIRECT_ONLY_FIELD);
+    // remove from public indices if it is public
+    if (isPublic) {
+      pipeline.sadd(FILES_INDEX_PUBLIC, uploadId);
+      pipeline.sadd(userPublicIndex, uploadId);
+    }
+  } else if (directOnly === true) {
+    pipeline.hset(key, FILES_DIRECT_ONLY_FIELD, '1');
+    // add back to public indices if this file is public
+    if (isPublic) {
+      pipeline.srem(FILES_INDEX_PUBLIC, uploadId);
+      pipeline.srem(userPublicIndex, uploadId);
+    }
+  }
+
+  for (const field of FIELDS_TO_STRINGIFY.values()) {
+    stringify(meta, field);
+  }
+
+  // make sure it's not an empty object
+  if (hasProperties(meta)) {
+    pipeline.hmset(key, meta);
+  }
+
+  handlePipeline(await pipeline.exec());
+
+  if (directOnly !== undefined) {
+    await bustCache(redis, data, true);
+  }
+
+  return true;
 }
 
 /**
@@ -184,10 +193,7 @@ function initFileUpdate({ params }) {
   const { uploadId, meta } = params;
 
   // ensure there are no race-conditions
-  return Promise.using(
-    acquireLock.call(this, uploadId, meta[FILES_ALIAS_FIELD]),
-    () => updateMeta.call(this, params)
-  );
+  return Promise.using(acquireLock.call(this, uploadId, meta[FILES_ALIAS_FIELD]), this, params, updateMeta);
 }
 
 initFileUpdate.transports = [ActionTransport.amqp];

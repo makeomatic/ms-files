@@ -26,6 +26,10 @@ describe('update suite', function suite() {
     ...modelData,
     message: {
       ...modelData.message,
+      meta: {
+        ...meta,
+        ...modelData.message.meta,
+      },
       access: {
         setPublic: true,
       },
@@ -88,6 +92,8 @@ describe('update suite', function suite() {
           assert.equal(result.file.description, meta.description);
           assert.equal(result.file.website, meta.website);
           assert.deepEqual(result.file.tags, meta.tags);
+          assert.deepEqual(result.file.playerSettings, meta.playerSettings);
+          assert.deepEqual(result.file.creationInfo, meta.creationInfo);
           return null;
         });
     });
@@ -371,6 +377,37 @@ describe('update suite', function suite() {
       });
 
       assert.strictEqual(fileInfo.file.description, 'foo', 'Description should be trimmed');
+    });
+  });
+
+  describe('playerSettings', function playerSettingsSuite() {
+    it('able to change rotation mode', async function test() {
+      const { uploadId } = this.response;
+      meta.playerSettings.rotatemode = 'once';
+
+      await this.send({ uploadId, username, meta: { playerSettings: { rotatemode: 'once' } } }, 45000);
+
+      const fileInfo = await getInfo.call(this, { filename: uploadId, username });
+
+      assert.deepEqual(fileInfo.file.playerSettings, meta.playerSettings);
+    });
+
+    it('able to change ttc', async function test() {
+      const { uploadId } = this.response;
+      meta.playerSettings.ttc = 15;
+
+      await this.send({ uploadId, username, meta: { playerSettings: { ttc: 15 } } }, 45000);
+      const fileInfo = await getInfo.call(this, { filename: uploadId, username });
+      assert.deepEqual(fileInfo.file.playerSettings, meta.playerSettings);
+    });
+
+    it('able to change ttc', async function test() {
+      const { uploadId } = this.response;
+      meta.playerSettings.autorotatetime = 30;
+
+      await this.send({ uploadId, username, meta: { playerSettings: { autorotatetime: 30 } } }, 45000);
+      const fileInfo = await getInfo.call(this, { filename: uploadId, username });
+      assert.deepEqual(fileInfo.file.playerSettings, meta.playerSettings);
     });
   });
 

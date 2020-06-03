@@ -68,14 +68,21 @@ module.exports = exports = Object.setPrototypeOf({
   FILE_PROCESS_IN_PROGRESS_ERROR: new HttpStatusError(409, 'file is being processed'),
 }, null);
 
+exports.FILES_CAPABILITIES_FIELD = 'capabilities';
+exports.FILES_DIMENSIONS_FIELD = 'dimensions';
+exports.FILES_ARPROPS_FIELD = 'ar3dviewProps';
+exports.FILES_CREATION_INFO_FIELD = 'creationInfo';
+exports.FILES_PLAYER_SETTINGS_FIELD = 'playerSettings';
+
 exports.FIELDS_TO_STRINGIFY = [
   exports.FILES_TAGS_FIELD,
   exports.FILES_EXPORT_FIELD,
   exports.FILES_CONTROLS_FIELD,
-  'capabilities',
-  'dimensions',
-  'ar3dviewProps',
-  'creationInfo',
+  exports.FILES_CAPABILITIES_FIELD,
+  exports.FILES_DIMENSIONS_FIELD,
+  exports.FILES_ARPROPS_FIELD,
+  exports.FILES_CREATION_INFO_FIELD,
+  exports.FILES_PLAYER_SETTINGS_FIELD,
 ];
 
 exports.CAPPASITY_3D_MODEL = 'model';

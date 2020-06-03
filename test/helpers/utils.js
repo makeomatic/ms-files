@@ -383,6 +383,14 @@ const meta = {
   description: 'description',
   tags: ['tag1', 'tag2', 'tag3'],
   website: 'http://website.com',
+  playerSettings: {
+    rotatemode: 'loop',
+    ttc: 1.3,
+    autorotationtime: 10,
+  },
+  creationInfo: {
+    os: 'macos',
+  },
 };
 const background = readFile('background');
 const backgroundData = modelBackgroundImageMessage(background, owner);

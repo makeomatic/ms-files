@@ -515,6 +515,28 @@
         "ar3dviewProps": {
           "$ref": "#/definitions/propsObject"
         },
+        "playerSettings": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/simpleTypes"
+          },
+          "properties": {
+            "rotatemode": {
+              "type": "string",
+              "enum": ["loop", "once", "boomerang"]
+            },
+            "ttc": {
+              "type": "number",
+              "exclusiveMinimum": 0,
+              "description": "turn time coefficient"
+            },
+            "autorotatetime": {
+              "type": "number",
+              "minimum": 2,
+              "maximum": 60
+            }
+          }
+        },
         "creationInfo": {
           "description": "Contains description of the application that initiated upload and additional upload information.",
           "additionalProperties": false,
@@ -582,29 +604,32 @@
       "additionalProperties": false,
       "patternProperties": {
         "^[a-zA-Z0-9]+$": {
+          "$ref": "#/definitions/simpleTypes"
+        }
+      }
+    },
+    "simpleTypes": {
+      "anyOf": [{
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 256
+      }, {
+        "type": "number"
+      }, {
+        "type": "boolean"
+      }, {
+        "type": "array",
+        "maxItems": 32,
+        "items": {
           "anyOf": [{
             "type": "string",
             "minLength": 1,
             "maxLength": 256
           }, {
             "type": "number"
-          }, {
-            "type": "boolean"
-          }, {
-            "type": "array",
-            "maxItems": 32,
-            "items": {
-              "anyOf": [{
-                "type" :"string",
-                "minLength": 1,
-                "maxLength": 256
-              }, {
-                "type": "number"
-              }]
-            }
           }]
         }
-      }
+      }]
     }
   }
 }

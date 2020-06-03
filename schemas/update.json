@@ -22,7 +22,8 @@
                 {
                     "not": {
                         "required": [
-                            "export"
+                            "export",
+                            "creationInfo"
                         ]
                     }
                 },
