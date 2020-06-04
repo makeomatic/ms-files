@@ -1,3 +1,10 @@
+## [15.6.1](https://github.com/makeomatic/ms-files/compare/v15.6.0...v15.6.1) (2020-06-04)
+
+
+### Bug Fixes
+
+* **embed:** change default arbutton value ([1e7d084](https://github.com/makeomatic/ms-files/commit/1e7d084e270f5549a8399bd7999709a3fd1a9d34))
+
 # [15.6.0](https://github.com/makeomatic/ms-files/compare/v15.5.1...v15.6.0) (2020-06-03)
 
 
