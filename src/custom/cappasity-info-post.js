@@ -205,7 +205,7 @@ const zoomPlayerOpts = Object.setPrototypeOf({
 const arPlayerOpts = Object.setPrototypeOf({
   arbutton: {
     type: 'boolean',
-    default: 0,
+    default: 1,
     description: 'AR button',
     paid: false,
   },
