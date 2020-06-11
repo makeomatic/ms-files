@@ -1,3 +1,10 @@
+## [15.6.2](https://github.com/makeomatic/ms-files/compare/v15.6.1...v15.6.2) (2020-06-11)
+
+
+### Bug Fixes
+
+* node 12.18 + ar qs ([2874f33](https://github.com/makeomatic/ms-files/commit/2874f3368dcc7951264a1be45641fedc9ad69798))
+
 ## [15.6.1](https://github.com/makeomatic/ms-files/compare/v15.6.0...v15.6.1) (2020-06-04)
 
 
