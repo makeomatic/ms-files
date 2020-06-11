@@ -229,6 +229,7 @@ const coreQS = getQueryString(corePlayerOpts);
 const meshQS = getQueryString(meshPlayerOpts);
 const rotateQS = getQueryString(rotatePlayerOpts);
 const zoomQS = getQueryString(zoomPlayerOpts);
+const arQS = getQueryString(arPlayerOpts);
 
 // common iframe code, lacks <id>
 const iframePre = flatstr(`<iframe
@@ -243,7 +244,7 @@ const iframePre = flatstr(`<iframe
 // prepare options for 3 types of model - inserted after id
 const iframeMesh = flatstr(`${coreQS}&${meshQS}`);
 const iframeRotate = flatstr(`${coreQS}&${rotateQS}`);
-const iframeZoom = flatstr(`${coreQS}&${rotateQS}&${zoomQS}`);
+const iframeZoom = flatstr(`${coreQS}&${rotateQS}&${zoomQS}&${arQS}`);
 
 // pregenerate option objects - 1.x.x
 const paramsMesh = Object.setPrototypeOf({
