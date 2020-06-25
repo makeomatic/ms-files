@@ -1,3 +1,10 @@
+## [15.7.1](https://github.com/makeomatic/ms-files/compare/v15.7.0...v15.7.1) (2020-06-25)
+
+
+### Bug Fixes
+
+* serialize cycle/reverse properties ([e885965](https://github.com/makeomatic/ms-files/commit/e88596586914723e15b647501270e1cd06a382d1))
+
 # [15.7.0](https://github.com/makeomatic/ms-files/compare/v15.6.2...v15.7.0) (2020-06-25)
 
 
