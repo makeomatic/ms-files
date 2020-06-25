@@ -455,6 +455,12 @@
           "minLength": 0,
           "maxLength": 2000
         },
+        "cycle": {
+          "type": "boolean"
+        },
+        "reverse": {
+          "type": "boolean"
+        },
         "website": {
           "type": "string",
           "format": "uri"
@@ -534,6 +540,18 @@
               "type": "number",
               "minimum": 2,
               "maximum": 60
+            },
+            "beginFrame": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "endFrame": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "startViewFrame": {
+              "type": "integer",
+              "minimum": 0
             }
           }
         },

@@ -382,11 +382,16 @@ const meta = {
   name: 'name',
   description: 'description',
   tags: ['tag1', 'tag2', 'tag3'],
+  cycle: true,
+  reverse: false,
   website: 'http://website.com',
   playerSettings: {
     rotatemode: 'loop',
     ttc: 1.3,
     autorotationtime: 10,
+    beginFrame: 0,
+    endFrame: 60,
+    startViewFrame: 10,
   },
   creationInfo: {
     os: 'macos',
