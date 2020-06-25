@@ -1,3 +1,10 @@
+# [15.7.0](https://github.com/makeomatic/ms-files/compare/v15.6.2...v15.7.0) (2020-06-25)
+
+
+### Features
+
+* add advanced playerSettings properties ([#195](https://github.com/makeomatic/ms-files/issues/195)) ([074a353](https://github.com/makeomatic/ms-files/commit/074a353ae7d563ebb4d493027d16228f3476a3c6))
+
 ## [15.6.2](https://github.com/makeomatic/ms-files/compare/v15.6.1...v15.6.2) (2020-06-11)
 
 
