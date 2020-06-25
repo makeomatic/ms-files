@@ -443,7 +443,7 @@ describe('update suite', function suite() {
 
       await this.send({ uploadId, username, meta: { cycle: false } }, 45000);
       const fileInfo = await getInfo.call(this, { filename: uploadId, username });
-      assert.equal(fileInfo.file.cycle, JSON.stringify(meta.cycle));
+      assert.equal(fileInfo.file.cycle, meta.cycle);
     });
 
     it('able to change `reverse`', async function test() {
@@ -452,7 +452,7 @@ describe('update suite', function suite() {
 
       await this.send({ uploadId, username, meta: { reverse: true } }, 45000);
       const fileInfo = await getInfo.call(this, { filename: uploadId, username });
-      assert.strictEqual(fileInfo.file.reverse, JSON.stringify(meta.reverse));
+      assert.strictEqual(fileInfo.file.reverse, meta.reverse);
     });
   });
 
