@@ -401,13 +401,58 @@ describe('update suite', function suite() {
       assert.deepEqual(fileInfo.file.playerSettings, meta.playerSettings);
     });
 
-    it('able to change ttc', async function test() {
+    it('able to change autorotatetime', async function test() {
       const { uploadId } = this.response;
       meta.playerSettings.autorotatetime = 30;
 
       await this.send({ uploadId, username, meta: { playerSettings: { autorotatetime: 30 } } }, 45000);
       const fileInfo = await getInfo.call(this, { filename: uploadId, username });
       assert.deepEqual(fileInfo.file.playerSettings, meta.playerSettings);
+    });
+
+    it('able to change beginFrame', async function test() {
+      const { uploadId } = this.response;
+      meta.playerSettings.beginFrame = 2;
+
+      await this.send({ uploadId, username, meta: { playerSettings: { beginFrame: 2 } } }, 45000);
+      const fileInfo = await getInfo.call(this, { filename: uploadId, username });
+      assert.deepEqual(fileInfo.file.playerSettings, meta.playerSettings);
+    });
+
+    it('able to change endFrame', async function test() {
+      const { uploadId } = this.response;
+      meta.playerSettings.endFrame = 30;
+
+      await this.send({ uploadId, username, meta: { playerSettings: { endFrame: 30 } } }, 45000);
+      const fileInfo = await getInfo.call(this, { filename: uploadId, username });
+      assert.deepEqual(fileInfo.file.playerSettings, meta.playerSettings);
+    });
+
+    it('able to change startViewFrame', async function test() {
+      const { uploadId } = this.response;
+      meta.playerSettings.startViewFrame = 15;
+
+      await this.send({ uploadId, username, meta: { playerSettings: { startViewFrame: 15 } } }, 45000);
+      const fileInfo = await getInfo.call(this, { filename: uploadId, username });
+      assert.deepEqual(fileInfo.file.playerSettings, meta.playerSettings);
+    });
+
+    it('able to change `cycle`', async function test() {
+      const { uploadId } = this.response;
+      meta.cycle = false;
+
+      await this.send({ uploadId, username, meta: { cycle: false } }, 45000);
+      const fileInfo = await getInfo.call(this, { filename: uploadId, username });
+      assert.equal(fileInfo.file.cycle, JSON.stringify(meta.cycle));
+    });
+
+    it('able to change `reverse`', async function test() {
+      const { uploadId } = this.response;
+      meta.reverse = true;
+
+      await this.send({ uploadId, username, meta: { reverse: true } }, 45000);
+      const fileInfo = await getInfo.call(this, { filename: uploadId, username });
+      assert.strictEqual(fileInfo.file.reverse, JSON.stringify(meta.reverse));
     });
   });
 
