@@ -437,6 +437,15 @@ describe('update suite', function suite() {
       assert.deepEqual(fileInfo.file.playerSettings, meta.playerSettings);
     });
 
+    it('able to change `reverse`', async function test() {
+      const { uploadId } = this.response;
+      meta.playerSettings.reverse = true;
+
+      await this.send({ uploadId, username, meta: { playerSettings: { reverse: true } } }, 45000);
+      const fileInfo = await getInfo.call(this, { filename: uploadId, username });
+      assert.deepEqual(fileInfo.file.playerSettings, meta.playerSettings);
+    });
+
     it('able to change `cycle`', async function test() {
       const { uploadId } = this.response;
       meta.cycle = false;
@@ -444,15 +453,6 @@ describe('update suite', function suite() {
       await this.send({ uploadId, username, meta: { cycle: false } }, 45000);
       const fileInfo = await getInfo.call(this, { filename: uploadId, username });
       assert.equal(fileInfo.file.cycle, meta.cycle);
-    });
-
-    it('able to change `reverse`', async function test() {
-      const { uploadId } = this.response;
-      meta.reverse = true;
-
-      await this.send({ uploadId, username, meta: { reverse: true } }, 45000);
-      const fileInfo = await getInfo.call(this, { filename: uploadId, username });
-      assert.strictEqual(fileInfo.file.reverse, meta.reverse);
     });
   });
 
