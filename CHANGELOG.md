@@ -1,3 +1,10 @@
+## [15.7.2](https://github.com/makeomatic/ms-files/compare/v15.7.1...v15.7.2) (2020-06-26)
+
+
+### Bug Fixes
+
+* move reverse parameter into playerSettings field ([#196](https://github.com/makeomatic/ms-files/issues/196)) ([aa71c06](https://github.com/makeomatic/ms-files/commit/aa71c06793e21eb0d64b492af3c737cc11815ade))
+
 ## [15.7.1](https://github.com/makeomatic/ms-files/compare/v15.7.0...v15.7.1) (2020-06-25)
 
 
