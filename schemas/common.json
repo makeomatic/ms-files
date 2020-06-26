@@ -458,9 +458,6 @@
         "cycle": {
           "type": "boolean"
         },
-        "reverse": {
-          "type": "boolean"
-        },
         "website": {
           "type": "string",
           "format": "uri"
@@ -552,6 +549,9 @@
             "startViewFrame": {
               "type": "integer",
               "minimum": 0
+            },
+            "reverse": {
+              "type": "boolean"
             }
           }
         },
