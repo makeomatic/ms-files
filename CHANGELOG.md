@@ -1,3 +1,10 @@
+## [15.7.3](https://github.com/makeomatic/ms-files/compare/v15.7.2...v15.7.3) (2020-07-09)
+
+
+### Bug Fixes
+
+* remove rotatemode from embed options ([71542c5](https://github.com/makeomatic/ms-files/commit/71542c5bd551728aa1321c40393bf4322348b3ef))
+
 ## [15.7.2](https://github.com/makeomatic/ms-files/compare/v15.7.1...v15.7.2) (2020-06-26)
 
 
