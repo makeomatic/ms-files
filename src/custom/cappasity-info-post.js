@@ -131,16 +131,6 @@ const rotatePlayerOpts = Object.setPrototypeOf({
     paid: true,
     reqPlanLevel: 30,
   },
-  rotatemode: {
-    type: 'integer',
-    default: 1,
-    description: 'Rotation Mode',
-    enum: {
-      loop: 1,
-      once: 2,
-      boomerang: 3,
-    },
-  },
   ttc: {
     type: 'float',
     default: 1,
