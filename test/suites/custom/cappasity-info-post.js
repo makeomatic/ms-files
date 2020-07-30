@@ -40,7 +40,6 @@ describe('cappasity-info-post hook test suite', function suite() {
           + '&enablestoreurl={{ enablestoreurl }}&storeurl={{ storeurl }}&hidehints={{ hidehints }}'
           + '&autorotate={{ autorotate }}&autorotatetime={{ autorotatetime }}'
           + '&autorotatedelay={{ autorotatedelay }}&autorotatedir={{ autorotatedir }}'
-          + '&ttc={{ ttc }}'
           + '&hidefullscreen={{ hidefullscreen }}&hideautorotateopt={{ hideautorotateopt }}'
           + '&hidesettingsbtn={{ hidesettingsbtn }}"')
         .replace(/\s+/g, ' ')
