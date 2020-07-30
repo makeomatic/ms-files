@@ -131,11 +131,6 @@ const rotatePlayerOpts = Object.setPrototypeOf({
     paid: true,
     reqPlanLevel: 30,
   },
-  ttc: {
-    type: 'float',
-    default: 1,
-    description: 'Turn Time Coefficient',
-  },
   hidefullscreen: {
     type: 'boolean',
     description: 'Hide fullscreen',
