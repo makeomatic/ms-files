@@ -1,3 +1,10 @@
+## [15.7.4](https://github.com/makeomatic/ms-files/compare/v15.7.3...v15.7.4) (2020-07-30)
+
+
+### Bug Fixes
+
+* **embed:** remove ttc option from embed defaults ([#201](https://github.com/makeomatic/ms-files/issues/201)) ([79db869](https://github.com/makeomatic/ms-files/commit/79db86914d2476f12beb5c26ef1d469e9756c7b5))
+
 ## [15.7.3](https://github.com/makeomatic/ms-files/compare/v15.7.2...v15.7.3) (2020-07-09)
 
 
