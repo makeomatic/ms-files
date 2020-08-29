@@ -39,7 +39,7 @@
     "@microfleet/transport-amqp": "^15.2.0",
     "@microfleet/validation": "^9.0.1",
     "@sentry/node": "^5.17.0",
-    "bl": "^4.0.2",
+    "bl": "^4.0.3",
     "bluebird": "^3.7.2",
     "cluster-key-slot": "^1.1.0",
     "common-errors": "^1.0.5",
