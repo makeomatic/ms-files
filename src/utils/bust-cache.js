@@ -71,6 +71,5 @@ function bustCache(redis, file, wait = false) {
   return Promise.resolve(null);
 }
 
-
 module.exports.getIndiciesList = getIndiciesList;
 module.exports.bustCache = bustCache;

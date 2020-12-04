@@ -5,12 +5,12 @@ const createURI = Promise.promisify(require('gcs-resumable-upload').createURI);
 const bl = require('bl');
 const assert = require('assert');
 const os = require('os');
+const { Storage } = require('@google-cloud/storage');
 
 // for some reason it doesn't go through it if we just do the obj
 const unwrap = (datum) => datum[0];
-
-// include gcloud
-const { Storage } = require('@google-cloud/storage');
+// default signed URL expiration time
+const THREE_HOURS = 1000 * 60 * 60 * 3;
 
 /**
  * Main transport class
@@ -289,6 +289,22 @@ class GCETransport extends AbstractFileTransfer {
     return file.getSignedUrl(settings).then(unwrap);
   }
 
+  // @todo interface
+  getDownloadUrlSigned(filename, downloadName) {
+    return this.createSignedURL({
+      action: 'read',
+      // 3 hours
+      expires: Date.now() + (this.expire || THREE_HOURS),
+      resource: filename,
+      promptSaveAs: downloadName,
+    });
+  }
+
+  // @todo interface
+  getBucketName() {
+    return this._config.bucket.name;
+  }
+
   /**
    * Initializes resumable upload
    * @param  {Object} opts
@@ -433,6 +449,7 @@ class GCETransport extends AbstractFileTransfer {
 }
 
 GCETransport.defaultOpts = {
+  name: 'gce',
   gce: {
     // specify authentication options
     // here

@@ -1,50 +1,25 @@
 const { ActionTransport } = require('@microfleet/core');
 const Promise = require('bluebird');
-const path = require('path');
 const { HttpStatusError } = require('common-errors');
 const { encodeURI } = require('@google-cloud/storage/build/src/util');
 const { FILES_DATA, FILES_OWNER_FIELD, FILES_PUBLIC_FIELD } = require('../constant');
 const fetchData = require('../utils/fetch-data');
 const hasAccess = require('../utils/has-access');
 const isProcessed = require('../utils/is-processed');
+const Filenames = require('../utils/filename-generator');
 
-// default signed URL expiration time
-const THREE_HOURS = 1000 * 60 * 60 * 3;
+function signUrls(provider, files, name) {
+  const downloadNames = new Filenames(name);
+  const urls = [];
 
-// basename
-const extReplacer = /^[^.]+\.(.*)$/;
-const Extension = (name) => path.basename(name).replace(extReplacer, '$1');
-const PromptToSave = (counter, file, name) => {
-  const originalExt = Extension(file);
+  for (const { filename } of files) {
+    urls.push(
+      provider.getDownloadUrlSigned(filename, downloadNames.next(filename, name))
+    );
+  }
 
-  // NOTE: safari filename fix for ignoring content-type
-  // when content-disposition is set
-  const ext = originalExt === 'bin.gz'
-    ? 'txt'
-    : originalExt;
-
-  const val = (counter[ext] || 0) + 1;
-  counter[ext] = val;
-  return `${name}_${val}.${ext}`;
-};
-
-// url signature
-const sign = (provider, files, name, expire) => {
-  // signed URL settings
-  const counter = {};
-  const settings = {
-    action: 'read',
-    // 3 hours
-    expires: Date.now() + (expire || THREE_HOURS),
-    // resource: filename <- specified per file
-  };
-
-  return Promise.map(files, (file) => provider.createSignedURL({
-    ...settings,
-    resource: file.filename,
-    promptSaveAs: PromptToSave(counter, file.filename, name),
-  }));
-};
+  return Promise.all(urls);
+}
 
 /**
  * Get download url
@@ -53,8 +28,10 @@ const sign = (provider, files, name, expire) => {
  * @param  {Object} opts.params.username
  * @return {Promise}
  */
-async function getDownloadURL({ params }) {
+async function getDownloadURL({ params, headers: { headers } }) {
   const { uploadId, username, rename, types } = params;
+  const providerName = headers['x-provider'] || 'gce';
+
   const key = `${FILES_DATA}:${uploadId}`;
 
   const data = await Promise
@@ -63,14 +40,14 @@ async function getDownloadURL({ params }) {
     .then(isProcessed);
 
   // parse file data
-  const provider = this.provider('download', data);
+  const provider = this.provider('download', data, providerName);
   const files = Array.isArray(types) && types.length > 0
     ? data.files.filter((file) => types.includes(file.type))
     : data.files;
 
   // metadata
   const { name } = data;
-  const { cname, expire } = provider;
+  const { cname } = provider;
 
   // check status and if we have public link available - use it
   let alias;
@@ -82,7 +59,7 @@ async function getDownloadURL({ params }) {
 
     // form URLs
     if (rename) {
-      urls = sign(provider, files, name, expire);
+      urls = signUrls(provider, files, name);
     } else {
       urls = files.map((file) => `${cname}/${encodeURI(file.filename, false)}`);
     }
@@ -95,7 +72,7 @@ async function getDownloadURL({ params }) {
   } else if (hasAccess(username)(data)) {
     // alias is username, sign URLs
     alias = username;
-    urls = sign(provider, files, name, expire);
+    urls = signUrls(provider, files, name);
   }
 
   const response = await Promise.props({

@@ -40,6 +40,18 @@ exports.transport = [{
   },
   // its not a public name!
   cname: 'gce',
+}, {
+  name: 'oss',
+  options: {
+    // @todo from env
+    accessKeyId: 'LTAI4G3Z3EK7G5K7Uy7gohVs',
+    // @todo from env
+    accessKeySecret: 'AK9u0t9yXJUUQ8MJq7jmND86FdQVZO',
+    bucket: 'perchik',
+    region: 'cn',
+    secure: true,
+  },
+  urlExpire: 1000 * 60 * 60 * 3, // 3h
 }];
 
 exports.hooks = {
@@ -74,7 +86,6 @@ exports.hooks = {
 };
 
 exports.maxTries = 1;
-
 
 exports.migrations = {
   enabled: false,
