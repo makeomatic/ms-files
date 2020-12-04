@@ -92,7 +92,17 @@ exports.transport = [{
  * Default selectTransport settings
  * @returns {Provider}
  */
-exports.selectTransport = function selectTransport() {
+exports.selectTransport = function selectTransport(_, __, name) {
+  if (name !== undefined) {
+    const transport = this.providers.find((provider) => provider.config.name === name);
+
+    if (transport === undefined) {
+      throw new Error(`unknown provider ${name}`);
+    }
+
+    return transport;
+  }
+
   return this.providers[0];
 };
 

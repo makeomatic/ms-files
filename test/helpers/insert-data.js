@@ -54,5 +54,4 @@ function insertData({ times, ...opts }) {
   return Promise.all(ld.times(times, () => insertFile.call(this, createFakeFile(opts))));
 }
 
-
 module.exports = { createFakeFile, insertFile, insertData };

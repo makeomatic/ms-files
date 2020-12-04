@@ -93,6 +93,32 @@ describe('download suite', function suite() {
         });
     });
 
+    it('returns download URLs: private (oss provider)', async function test() {
+      const response = await this.amqp.publishAndWait(route, {
+        uploadId: this.response.uploadId,
+        username: owner,
+      }, {
+        headers: {
+          'x-provider': 'oss',
+        },
+      });
+
+      assert.ok(response.uploadId);
+      assert.ok(response.files);
+      assert.ok(response.urls);
+
+      response.urls.forEach((link, idx) => {
+        const parsedLink = url.parse(link, true);
+        assert.equal(parsedLink.protocol, 'https:', link);
+        assert.equal(parsedLink.host, 'perchik.cn.aliyuncs.com', link);
+        assert.equal(parsedLink.pathname, `/${encodeURI(response.files[idx].filename, false)}`, link);
+        assert.ok(parsedLink.query.OSSAccessKeyId, link);
+        assert.ok(parsedLink.query.Expires, link);
+        assert.ok(parsedLink.query.Signature, link);
+        assert.ok(parsedLink.query['response-content-disposition'], link);
+      });
+    });
+
     it('returns download partial renamed URLs: private', function test() {
       return this
         .send({
@@ -119,11 +145,43 @@ describe('download suite', function suite() {
             assert.ok(parsedLink.query.GoogleAccessId, link);
             assert.ok(parsedLink.query.Expires, link);
             assert.ok(parsedLink.query.Signature, link);
+            // @todo ok or not?
             assert.ok(parsedLink.query['response-content-disposition'], link);
           });
 
           return null;
         });
+    });
+
+    it('returns download partial renamed URLs: private (oss provider)', async function test() {
+      const response = await this.amqp.publishAndWait(route, {
+        uploadId: this.response.uploadId,
+        username: owner,
+        types: ['c-bin'],
+        rename: true,
+      }, {
+        headers: {
+          'x-provider': 'oss',
+        },
+      });
+
+      assert.ok(response.uploadId);
+      assert.ok(response.files);
+      assert.ok(response.urls);
+
+      response.urls.forEach((link, idx) => {
+        // check that we only have c-bin
+        assert.equal(response.files[idx].type, 'c-bin');
+
+        const parsedLink = url.parse(link, true);
+        assert.equal(parsedLink.protocol, 'https:', link);
+        assert.equal(parsedLink.host, 'perchik.cn.aliyuncs.com', link);
+        assert.equal(parsedLink.pathname, `/${encodeURI(response.files[idx].filename, false)}`, link);
+        assert.ok(parsedLink.query.OSSAccessKeyId, link);
+        assert.ok(parsedLink.query.Expires, link);
+        assert.ok(parsedLink.query.Signature, link);
+        assert.ok(parsedLink.query['response-content-disposition'], link);
+      });
     });
 
     describe('public file', function publicSuite() {
@@ -159,6 +217,33 @@ describe('download suite', function suite() {
           });
       });
 
+      it('returns download URLs: public (oss provider)', async function test() {
+        const response = await this.amqp.publishAndWait(route, {
+          uploadId: this.response.uploadId,
+        }, {
+          headers: {
+            'x-provider': 'oss',
+          },
+        });
+
+        assert.ok(response.uploadId);
+        assert.ok(response.files);
+        assert.ok(response.urls);
+        assert.equal(response.username, this.response.owner);
+
+        response.urls.forEach((link, idx) => {
+          const parsedLink = url.parse(link, true);
+          assert.equal(parsedLink.protocol, 'https:', link);
+          assert.equal(parsedLink.host, 'perchik.cn.aliyuncs.com', link);
+          assert.equal(parsedLink.pathname, `/${encodeURI(response.files[idx].filename, false)}`, link);
+          assert.ifError(parsedLink.query.OSSAccessKeyId, link);
+          assert.ifError(parsedLink.query.Expires, link);
+          assert.ifError(parsedLink.query.Signature, link);
+          // @todo ok or not
+          assert.ifError(parsedLink.query['response-content-disposition'], link);
+        });
+      });
+
       it('returns download partial renamed URLs: public', function test() {
         return this
           .send({
@@ -189,6 +274,36 @@ describe('download suite', function suite() {
 
             return null;
           });
+      });
+
+      it('returns download partial renamed URLs: public', async function test() {
+        const response = await this.amqp.publishAndWait(route, {
+          uploadId: this.response.uploadId,
+          types: ['c-preview'],
+          rename: true,
+        }, {
+          headers: {
+            'x-provider': 'oss',
+          },
+        });
+
+        assert.ok(response.uploadId);
+        assert.ok(response.files);
+        assert.ok(response.urls);
+
+        response.urls.forEach((link, idx) => {
+          // check that we only have c-bin
+          assert.equal(response.files[idx].type, 'c-preview');
+
+          const parsedLink = url.parse(link, true);
+          assert.equal(parsedLink.protocol, 'https:', link);
+          assert.equal(parsedLink.host, 'perchik.cn.aliyuncs.com', link);
+          assert.equal(parsedLink.pathname, `/${encodeURI(response.files[idx].filename, false)}`, link);
+          assert.ok(parsedLink.query.OSSAccessKeyId, link);
+          assert.ok(parsedLink.query.Expires, link);
+          assert.ok(parsedLink.query.Signature, link);
+          assert.ok(parsedLink.query['response-content-disposition'], link);
+        });
       });
     });
   });
