@@ -43,10 +43,9 @@ exports.transport = [{
 }, {
   name: 'oss',
   options: {
-    // @todo from env
-    accessKeyId: 'LTAI4G3Z3EK7G5K7Uy7gohVs',
-    // @todo from env
-    accessKeySecret: 'AK9u0t9yXJUUQ8MJq7jmND86FdQVZO',
+    // from env
+    // accessKeyId: '',
+    // accessKeySecret: '',
     bucket: 'perchik',
     region: 'cn',
     secure: true,

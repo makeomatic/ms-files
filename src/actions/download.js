@@ -40,6 +40,7 @@ async function getDownloadURL({ params, headers: { headers } }) {
     .then(isProcessed);
 
   // parse file data
+  // @todo
   const provider = this.provider('download', data, providerName);
   const files = Array.isArray(types) && types.length > 0
     ? data.files.filter((file) => types.includes(file.type))
