@@ -47,7 +47,7 @@ class OSSTransport extends AbstractFileTransfer {
 
   // @todo interface
   // eslint-disable-next-line class-methods-use-this
-  disconnect() {
+  close() {
     return Promise.resolve();
   }
 }
