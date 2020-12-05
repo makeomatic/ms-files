@@ -30,7 +30,6 @@ function signUrls(provider, files, name) {
  */
 async function getDownloadURL({ params, headers: { headers } }) {
   const { uploadId, username, rename, types } = params;
-  const providerName = headers['x-provider'] || 'gce';
 
   const key = `${FILES_DATA}:${uploadId}`;
 
@@ -41,7 +40,7 @@ async function getDownloadURL({ params, headers: { headers } }) {
 
   // parse file data
   // @todo
-  const provider = this.provider('download', data, providerName);
+  const provider = this.provider('download', data, headers['x-provider']);
   const files = Array.isArray(types) && types.length > 0
     ? data.files.filter((file) => types.includes(file.type))
     : data.files;
