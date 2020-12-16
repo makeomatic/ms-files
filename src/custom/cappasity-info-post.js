@@ -140,6 +140,7 @@ const rotatePlayerOpts = Object.setPrototypeOf({
   },
   hideautorotateopt: {
     type: 'boolean',
+    apps: 0, // higher priority than (own) when iframe is running in cappasity app
     own: 0,
     default: 1,
     invert: true,
