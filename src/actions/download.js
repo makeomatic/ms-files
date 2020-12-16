@@ -14,7 +14,7 @@ function signUrls(provider, files, name) {
 
   for (const { filename } of files) {
     urls.push(
-      provider.getDownloadUrlSigned(filename, downloadNames.next(filename, name))
+      provider.getDownloadUrlSigned(filename, downloadNames.next(filename))
     );
   }
 
