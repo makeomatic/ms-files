@@ -9,8 +9,8 @@ class Filenames {
     this.counter = [];
   }
 
-  next(filename, name) {
-    const { counter } = this;
+  next(filename) {
+    const { counter, name } = this;
     const originalExt = getExtension(filename);
 
     // NOTE: safari filename fix for ignoring content-type
