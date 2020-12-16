@@ -1,3 +1,10 @@
+# [15.8.0](https://github.com/makeomatic/ms-files/compare/v15.7.4...v15.8.0) (2020-12-16)
+
+
+### Features
+
+* **cpst:** add apps field to embed options ([#213](https://github.com/makeomatic/ms-files/issues/213)) ([510b7ea](https://github.com/makeomatic/ms-files/commit/510b7ea3f4eff956ae01d27f93e046a70a4ded13))
+
 ## [15.7.4](https://github.com/makeomatic/ms-files/compare/v15.7.3...v15.7.4) (2020-07-30)
 
 
