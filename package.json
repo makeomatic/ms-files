@@ -53,7 +53,7 @@
     "md5": "^2.2.1",
     "mime-types": "^2.1.27",
     "moment": "^2.26.0",
-    "ms-conf": "^7.0.0",
+    "ms-conf": "^7.0.1",
     "ms-files-transport": "^1.0.2",
     "ms-perf": "^2.0.0",
     "opentracing-js-ioredis": "2.1.2",
@@ -64,7 +64,7 @@
     "request-promise": "^4.2.5",
     "stdout-stream": "^1.4.1",
     "uuid": "^8.1.0",
-    "yargs": "^15.3.1"
+    "yargs": "^16.0.0"
   },
   "optionalDependencies": {
     "@google-cloud/pubsub": "^2.1.0"
