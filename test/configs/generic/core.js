@@ -40,17 +40,6 @@ exports.transport = [{
   },
   // its not a public name!
   cname: 'gce',
-}, {
-  name: 'oss',
-  options: {
-    // from env
-    // accessKeyId: '',
-    // accessKeySecret: '',
-    bucket: 'perchik',
-    region: 'cn',
-    secure: true,
-  },
-  urlExpire: 1000 * 60 * 60 * 3, // 3h
 }];
 
 exports.hooks = {
