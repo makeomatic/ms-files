@@ -1,6 +1,5 @@
 // this file contains logic for selecting transport for uploading
 // input is upload opts
-const is = require('is');
 const { FILES_BUCKET_FIELD, FILES_TEMP_FIELD } = require('../constant');
 
 // action handler
@@ -17,8 +16,10 @@ function uploadSelector({ temp }) {
 //  * download
 //  * remove
 //  * access
-function downloadSelector(opts) {
-  const bucket = opts[FILES_BUCKET_FIELD];
+function downloadSelector(opts, headers = {}) {
+  const bucket = headers['x-cappasity-source'] === 'cn-beijing'
+    ? '3dshot'
+    : opts[FILES_BUCKET_FIELD];
 
   // backwards-compatibility
   if (!bucket) {
@@ -36,14 +37,13 @@ function downloadSelector(opts) {
     return provider;
   }
 
-  throw new Error(`${bucket} is not defined`);
+  throw new Error(`Bucket "${bucket}" is not defined`);
 }
 
 // type map
 const ACTION_TO_SELECTOR = Object.setPrototypeOf({
   // upload action is different
   upload: uploadSelector,
-
   // these are all the same
   access: downloadSelector,
   download: downloadSelector,
@@ -52,13 +52,14 @@ const ACTION_TO_SELECTOR = Object.setPrototypeOf({
 }, null);
 
 // fn for selection
-function selectTransport(action, opts) {
+function selectTransport(action, opts, headers) {
   const thunk = ACTION_TO_SELECTOR[action];
-  if (!is.fn(thunk)) {
+
+  if (typeof thunk !== 'function') {
     throw new Error(`${action} selector not defined`);
   }
 
-  return thunk.call(this, opts);
+  return thunk.call(this, opts, headers);
 }
 
 // public API
