@@ -1,3 +1,4 @@
+// @TODO real config for GCS
 const assert = require('assert');
 const uuid = require('uuid');
 const url = require('url');
@@ -36,6 +37,7 @@ function overrideConfig() {
         region: 'cn-beijing',
         secure: true,
       },
+      cname: 'cdn.3dshot.cn',
       urlExpire: 1000 * 60 * 60 * 3, // 3h
     }],
   };
@@ -273,7 +275,7 @@ describe('download suite', function suite() {
         response.urls.forEach((link, idx) => {
           const parsedLink = url.parse(link, true);
           assert.equal(parsedLink.protocol, 'https:', link);
-          assert.equal(parsedLink.host, '3dshot.cn-beijing.aliyuncs.com', link);
+          assert.equal(parsedLink.host, 'cdn.3dshot.cn', link);
           assert.equal(parsedLink.pathname, `/${encodeURI(response.files[idx].filename, false)}`, link);
           assert.ifError(parsedLink.query.OSSAccessKeyId, link);
           assert.ifError(parsedLink.query.Expires, link);

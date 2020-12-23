@@ -17,9 +17,12 @@ class OSSTransport extends AbstractFileTransfer {
     this.client = new OSS(config.options);
     this.config = config;
     this.urlExpire = config.urlExpire || 1000 * 60 * 60 * 3; // 3h
-    // @todo refactor
     // @todo http or https
-    this.cname = `https://${config.options.bucket}.${config.options.region}.aliyuncs.com`;
+    if (config.cname !== undefined) {
+      this.cname = `https://${config.cname}`;
+    } else {
+      this.cname = `https://${config.options.bucket}.${config.options.region}.aliyuncs.com`;
+    }
   }
 
   // @todo interface
