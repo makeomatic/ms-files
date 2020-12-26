@@ -1,3 +1,21 @@
+# [15.9.0](https://github.com/makeomatic/ms-files/compare/v15.8.0...v15.9.0) (2020-12-26)
+
+
+### Bug Fixes
+
+* oss cname ([9ad371f](https://github.com/makeomatic/ms-files/commit/9ad371fce7d5322fa403789dc68cb7d00710ff62))
+* select provider ([99f73c9](https://github.com/makeomatic/ms-files/commit/99f73c9c08c1990a00d4a09e18c72561bd0383f8))
+* tests ([6cd9dac](https://github.com/makeomatic/ms-files/commit/6cd9dacef93a8fd4edbcefa487c196e2932f18df))
+* tests ([40e498a](https://github.com/makeomatic/ms-files/commit/40e498a322b7e5b1737421ed00e5372bd7ff8de9))
+* tests ([eab2396](https://github.com/makeomatic/ms-files/commit/eab2396774e3da42e9e1cfac0365f79db0d69311))
+* tests ([fec8f13](https://github.com/makeomatic/ms-files/commit/fec8f13bd1063de69621d526868b7a4d2c8d38e8))
+* update deps ([f5738b6](https://github.com/makeomatic/ms-files/commit/f5738b6edf759d67a01b2a0f16d401cce9997ba4))
+
+
+### Features
+
+* oss provider ([3d447e6](https://github.com/makeomatic/ms-files/commit/3d447e6350790b4d73983b66479690db2238fe49))
+
 # [15.8.0](https://github.com/makeomatic/ms-files/compare/v15.7.4...v15.8.0) (2020-12-16)
 
 
