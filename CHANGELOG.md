@@ -1,3 +1,10 @@
+## [15.9.1](https://github.com/makeomatic/ms-files/compare/v15.9.0...v15.9.1) (2020-12-27)
+
+
+### Bug Fixes
+
+* revert prom-client (^12) ([041b039](https://github.com/makeomatic/ms-files/commit/041b039b31f6c69a2c11d8bd54ac9c7f71365af3))
+
 # [15.9.0](https://github.com/makeomatic/ms-files/compare/v15.8.0...v15.9.0) (2020-12-26)
 
 
