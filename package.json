@@ -59,7 +59,7 @@
     "ms-files-transport": "^1.0.2",
     "ms-perf": "^2.0.0",
     "opentracing-js-ioredis": "2.1.2",
-    "prom-client": "^13.0.0",
+    "prom-client": "^12.0.0",
     "raven": "^2.6.4",
     "redis-filtered-sort": "^2.3.0",
     "request": "^2.88.2",
