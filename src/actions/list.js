@@ -2,8 +2,8 @@ const { ActionTransport } = require('@microfleet/core');
 const Promise = require('bluebird');
 const fsort = require('redis-filtered-sort');
 const is = require('is');
-const noop = require('lodash/noop');
 const perf = require('ms-perf');
+const handlePipeline = require('../utils/pipeline-error');
 const fetchData = require('../utils/fetch-data').batch;
 const {
   FILES_DATA,
@@ -19,11 +19,9 @@ const {
 /**
  * Internal functions
  */
-async function interstore(username) {
-  const {
-    isPublic, temp, tags, redis,
-  } = this;
-  this.username = username;
+async function interstore(ctx, username) {
+  const { isPublic, temp, tags, redis, hasTags } = ctx;
+  ctx.username = username;
 
   // choose which set to use
   let filesIndex;
@@ -39,55 +37,62 @@ async function interstore(username) {
     filesIndex = FILES_INDEX;
   }
 
-  if (!Array.isArray(tags) || tags.length === 0) {
+  if (!hasTags) {
     return filesIndex;
   }
 
   const tagKeys = [];
   let interstoreKey = `${FILES_LIST}:${filesIndex}`;
 
-  tags.sort().forEach((tag) => {
+  for (const tag of tags.sort().values()) {
     const tagKey = `${FILES_INDEX_TAGS}:${tag}`;
     tagKeys.push(tagKey);
     interstoreKey = `${interstoreKey}:${tagKey}`;
-  });
+  }
 
   const result = await redis.pttl(interstoreKey);
 
-  if (result > this.interstoreKeyMinTimeleft) {
+  if (result > ctx.interstoreKeyMinTimeleft) {
     return interstoreKey;
   }
 
-  return Promise.fromNode((next) => {
-    this.dlock
-      .push(interstoreKey, next)
-      .then((completed) => {
-        redis
-          .pipeline()
-          .sinterstore(interstoreKey, filesIndex, tagKeys)
-          .expire(interstoreKey, this.interstoreKeyTTL)
-          .exec()
-          .return(interstoreKey)
-          .asCallback(completed);
+  // ensure we only do 1 operation concurrently
+  await ctx.dlock.fanout(interstoreKey, async () => {
+    const res = await redis.pipeline()
+      .sinterstore(interstoreKey, filesIndex, tagKeys)
+      .expire(interstoreKey, ctx.interstoreKeyTTL)
+      .exec();
 
-        return null;
-      })
-      .catch({ name: 'LockAcquisitionError' }, noop)
-      .catch(next);
+    handlePipeline(res);
   });
+
+  return interstoreKey;
 }
 
 /**
  * Perform fetch from redis
  */
-async function fetchFromRedis(filesIndex) {
+async function fetchFromRedis(ctx, filesIndex) {
   const {
-    redis, criteria, order, strFilter, offset, limit, expiration,
-  } = this;
+    redis,
+    criteria,
+    order,
+    strFilter,
+    offset,
+    limit,
+    expiration,
+    hasTags,
+    avoidTagCache,
+  } = ctx;
 
   // split op in 2 operations to reduce lock of redis
   const now = Date.now();
   const meta = `${FILES_DATA}:*`;
+
+  // caches for 1 second when there are tags
+  if (hasTags && avoidTagCache) {
+    return redis.fsort(filesIndex, meta, criteria, order, strFilter, now, offset, limit, 1000); // cache for 1 second
+  }
 
   // this splits lengthy scripts into 2 phases - getting a sorted set and then filtering
   const response = await redis.fsort(filesIndex, meta, criteria, order, '{}', now, offset, limit, expiration);
@@ -132,7 +137,7 @@ const prepareFilenames = (filename) => `${FILES_DATA}:${filename}`;
 /**
  * Fetch extra data from redis based on IDS
  */
-function fetchExtraData(filenames) {
+function fetchExtraData(ctx, filenames) {
   const length = +filenames.pop();
   if (length === 0 || filenames.length === 0) {
     return {
@@ -144,9 +149,9 @@ function fetchExtraData(filenames) {
 
   const mapped = filenames.map(prepareFilenames);
   const pipeline = Promise
-    .bind(this, [mapped, { omit: this.without }])
+    .bind(ctx, [mapped, { omit: ctx.without }])
     .spread(fetchData)
-    .bind({ log: this.log, filenames: mapped })
+    .bind({ log: ctx.log, filenames: mapped })
     .reduce(omitErrors, []);
 
   return Promise.props({ filenames, props: pipeline, length });
@@ -162,10 +167,8 @@ function truthy(_, idx) {
 /**
  * Prepares response
  */
-async function prepareResponse(data) {
-  const {
-    service, timer, offset, limit,
-  } = this;
+async function prepareResponse(ctx, data) {
+  const { service, timer, offset, limit } = ctx;
   const { filenames, props, length } = data;
   const filteredFilenames = filenames.filter(truthy, props);
 
@@ -204,6 +207,7 @@ async function listFiles({ params }) {
   const {
     interstoreKeyTTL,
     interstoreKeyMinTimeleft,
+    avoidTagCache,
   } = config;
 
   const {
@@ -245,18 +249,20 @@ async function listFiles({ params }) {
     temp,
     expiration,
     strFilter,
+    hasTags: Array.isArray(tags) && tags.length > 0,
+    avoidTagCache,
   };
 
   try {
-    const args = await this.hook('files:info:pre', owner);
+    const [username] = await this.hook('files:info:pre', owner);
     timer('files:info:pre');
-    const stored = await interstore.apply(ctx, args);
+    const stored = await interstore(ctx, username);
     timer('interstore');
-    const ids = await fetchFromRedis.call(ctx, stored);
+    const ids = await fetchFromRedis(ctx, stored);
     timer('fsort');
-    const data = await fetchExtraData.call(ctx, ids);
+    const data = await fetchExtraData(ctx, ids);
     timer('fetch');
-    return await prepareResponse.call(ctx, data);
+    return await prepareResponse(ctx, data);
   } finally {
     timer();
   }
