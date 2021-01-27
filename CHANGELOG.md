@@ -1,3 +1,10 @@
+# [15.10.0](https://github.com/makeomatic/ms-files/compare/v15.9.1...v15.10.0) (2021-01-27)
+
+
+### Features
+
+* allow disabling tag search cache ([139a9c7](https://github.com/makeomatic/ms-files/commit/139a9c7f9f0025be954e91bf36afbbbf3b969d89))
+
 ## [15.9.1](https://github.com/makeomatic/ms-files/compare/v15.9.0...v15.9.1) (2020-12-27)
 
 
