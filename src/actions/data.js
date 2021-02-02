@@ -5,8 +5,8 @@ const fetchData = require('../utils/fetch-data');
 
 /**
  * File information
- * @param  {Object} params.fileId
- * @param  {Object} [params.fields]
+ * @param  {Object}   params.uploadId
+ * @param  {String[]} [params.fields]
  * @return {Promise}
  */
 async function getFileData({ params }) {

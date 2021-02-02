@@ -50,7 +50,7 @@ describe('data suite', () => {
     });
   });
 
-  it('400 on if one of the fields length exceeds 50 chars', async () => {
+  it('400 when any of the requested fields are not strings', async () => {
     const req = this.send(route, {
       uploadId: this.response.uploadId,
       fields: [
