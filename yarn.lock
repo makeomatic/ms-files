@@ -394,6 +394,17 @@
   resolved "https://registry.yarnpkg.com/@commitlint/types/-/types-11.0.0.tgz#719cf05fcc1abb6533610a2e0f5dd1e61eac14fe"
   integrity sha512-VoNqai1vR5anRF5Tuh/+SWDFk7xi7oMwHrHrbm1BprYXjB2RJsWLhUrStMssDxEl5lW/z3EUdg8RvH/IUBccSQ==
 
+"@elastic/elasticsearch@^7.11.0":
+  version "7.12.0"
+  resolved "https://registry.yarnpkg.com/@elastic/elasticsearch/-/elasticsearch-7.12.0.tgz#dbb51a2841f644b670a56d8c15899e860928856f"
+  integrity sha512-GquUEytCijFRPEk3DKkkDdyhspB3qbucVQOwih9uNyz3iz804I+nGBUsFo2LwVvLQmQfEM0IY2+yoYfEz5wMug==
+  dependencies:
+    debug "^4.3.1"
+    hpagent "^0.1.1"
+    ms "^2.1.3"
+    pump "^3.0.0"
+    secure-json-parse "^2.3.1"
+
 "@eslint/eslintrc@^0.1.3":
   version "0.1.3"
   resolved "https://registry.yarnpkg.com/@eslint/eslintrc/-/eslintrc-0.1.3.tgz#7d1a2b2358552cc04834c0979bd4275362e37085"
@@ -886,12 +897,13 @@
     debug "^3.1.0"
     lodash "^4.17.10"
 
-"@microfleet/core@^17.5.3":
-  version "17.5.3"
-  resolved "https://registry.yarnpkg.com/@microfleet/core/-/core-17.5.3.tgz#296c60448ab2d4d9fde8bff2105d0f7c2fdfbd42"
-  integrity sha512-mDAux5VHqJpqkgSAGaMHMyX8NL3y9hJSmIQMll+lIAiYS/aYfoeNB1WQGAL5X2mePHTUeN71famfevRnXrFbXQ==
+"@microfleet/core@^17.6.0":
+  version "17.6.0"
+  resolved "https://registry.yarnpkg.com/@microfleet/core/-/core-17.6.0.tgz#40524f27cb7360fabaa93a319cf9cdabdd92ed85"
+  integrity sha512-a/CWsG70YGbias158VkxGcDxmmM1fWPip5zQL3TXttAa4FcK5sfh38OIMtq75bNp2M3pEPl6BqRcTIKRK7fW6w==
   dependencies:
-    "@microfleet/plugin-logger" "^0.5.4"
+    "@elastic/elasticsearch" "^7.11.0"
+    "@microfleet/plugin-logger" "^0.5.6"
     bluebird "^3.7.2"
     bluebird-retry "^0.11.0"
     callsite "^1.0.0"
@@ -917,10 +929,10 @@
     uuid "^8.2.0"
     yargs-parser "^18.1.3"
 
-"@microfleet/plugin-logger@^0.5.4":
-  version "0.5.4"
-  resolved "https://registry.yarnpkg.com/@microfleet/plugin-logger/-/plugin-logger-0.5.4.tgz#b9e50d3636007c1787256ff59221ac5ec20009e7"
-  integrity sha512-fRIQ/b6ipVgsqgRSGUUJQa/BdB3cQMtg4rY3Rctdc9rDOePXePh9LFfiUGj+SFn5ImEWLNOpocEPjk6gnVuXxg==
+"@microfleet/plugin-logger@^0.5.6":
+  version "0.5.6"
+  resolved "https://registry.yarnpkg.com/@microfleet/plugin-logger/-/plugin-logger-0.5.6.tgz#6a380df6cbd2a997e6743cfbbe47fa321a684203"
+  integrity sha512-zt6fSU4v1imG3wRSWk1tqq+v9SRpFZU9u4QqmSiN+s7kIqxV8EafanwWuBKuart6MqZHIdOFf+TSDQsgHRQTng==
   dependencies:
     pino "^6.3.2"
     pino-multi-stream "^5.0.0"
@@ -2986,7 +2998,7 @@ debug@3.1.0:
   dependencies:
     ms "2.0.0"
 
-debug@4, debug@^4.0.0, debug@^4.0.1, debug@^4.1.0, debug@^4.1.1, debug@^4.2.0:
+debug@4, debug@^4.0.0, debug@^4.0.1, debug@^4.1.0, debug@^4.1.1, debug@^4.2.0, debug@^4.3.1:
   version "4.3.1"
   resolved "https://registry.yarnpkg.com/debug/-/debug-4.3.1.tgz#f0d229c505e0c6d8c49ac553d1b13dc183f6b2ee"
   integrity sha512-doEwdvm4PCeK4K3RQN2ZC2BYUBaxwLARCqZmMjtF8a51J2Rb0xpVloFRnCODwqjpwnAoao4pelN8l3RJdv3gRQ==
@@ -4706,6 +4718,11 @@ hosted-git-info@^3.0.0, hosted-git-info@^3.0.6:
   integrity sha512-fWqc0IcuXs+BmE9orLDyVykAG9GJtGLGuZAAqgcckPgv5xad4AcXGIv8galtQvlwutxSlaMcdw7BUtq2EIvqCQ==
   dependencies:
     lru-cache "^6.0.0"
+
+hpagent@^0.1.1:
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/hpagent/-/hpagent-0.1.1.tgz#66f67f16e5c7a8b59a068e40c2658c2c749ad5e2"
+  integrity sha512-IxJWQiY0vmEjetHdoE9HZjD4Cx+mYTr25tR7JCxXaiI3QxW0YqYyM11KyZbHufoa/piWhMb2+D3FGpMgmA2cFQ==
 
 html-escaper@^2.0.0:
   version "2.0.2"
@@ -6461,7 +6478,7 @@ ms@2.1.2:
   resolved "https://registry.yarnpkg.com/ms/-/ms-2.1.2.tgz#d09d1f357b443f493382a8eb3ccd183872ae6009"
   integrity sha512-sGkPx+VjMtmA6MX27oA4FBFELFCZZ4S4XqeGOXCv68tT+jb3vk/RyaKWP0PTKyWtmLSM0b+adUTEvbs1PEaH2w==
 
-ms@^2.0.0, ms@^2.1.1:
+ms@^2.0.0, ms@^2.1.1, ms@^2.1.3:
   version "2.1.3"
   resolved "https://registry.yarnpkg.com/ms/-/ms-2.1.3.tgz#574c8138ce1d2b5861f0b44579dbadd60c6615b2"
   integrity sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA==
@@ -8316,6 +8333,11 @@ sdk-base@^2.0.1:
   integrity sha1-ukAonovfJy7RHdnql+r5jgNtJMY=
   dependencies:
     get-ready "~1.0.0"
+
+secure-json-parse@^2.3.1:
+  version "2.4.0"
+  resolved "https://registry.yarnpkg.com/secure-json-parse/-/secure-json-parse-2.4.0.tgz#5aaeaaef85c7a417f76271a4f5b0cc3315ddca85"
+  integrity sha512-Q5Z/97nbON5t/L/sH6mY2EacfjVGwrCcSi5D3btRO2GZ8pf1K1UN7Z9H5J57hjVU2Qzxr1xO+FmBhOvEkzCMmg==
 
 secure-keys@^1.0.0:
   version "1.0.0"

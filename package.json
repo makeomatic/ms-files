@@ -36,7 +36,7 @@
     "@google-cloud/storage": "5.7.3",
     "@hapi/hapi": "^20.1.0",
     "@hapi/joi": "^17.1.1",
-    "@microfleet/core": "^17.5.3",
+    "@microfleet/core": "^17.6.0",
     "@microfleet/transport-amqp": "^15.2.3",
     "@microfleet/validation": "9",
     "@sentry/node": "^6.0.2",
