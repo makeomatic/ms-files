@@ -1,3 +1,15 @@
+# [15.11.0](https://github.com/makeomatic/ms-files/compare/v15.10.0...v15.11.0) (2021-04-20)
+
+
+### Bug Fixes
+
+* audit log from microfleet ([a6f2e0d](https://github.com/makeomatic/ms-files/commit/a6f2e0d4a4e09969c7069b2b8360ae581becfb39))
+
+
+### Features
+
+* upgrade microfleet to 17.6 ([ef96090](https://github.com/makeomatic/ms-files/commit/ef960907b4e598af54d5af5db4d5d4eb2c3e9684))
+
 # [15.10.0](https://github.com/makeomatic/ms-files/compare/v15.9.1...v15.10.0) (2021-01-27)
 
 
