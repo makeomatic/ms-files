@@ -1,5 +1,5 @@
 const path = require('path');
-const auditLog = require('../utils/audit-log');
+const { Extensions } = require('@microfleet/plugin-router');
 
 exports.router = {
   routes: {
@@ -8,6 +8,6 @@ exports.router = {
     enabledGenericActions: ['health'],
   },
   extensions: {
-    register: [auditLog],
+    register: [Extensions.auditLog()],
   },
 };
