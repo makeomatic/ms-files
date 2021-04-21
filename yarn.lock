@@ -904,7 +904,7 @@
     bluebird-retry "^0.11.0"
     eventemitter3 "^4.0.7"
 
-"@microfleet/core@^17.5.4-next.51":
+"@microfleet/core@canary":
   version "17.5.4-next.51"
   resolved "https://registry.yarnpkg.com/@microfleet/core/-/core-17.5.4-next.51.tgz#c56e9134749cd67e550faae94eac525ac5ff6173"
   integrity sha512-yzuX/ovWB2izvzyZmiJx51KHcTgGilPHcoElux8dtRbilODKdBG2XCdy+gtY/qOFYDla3RfltYhBYm8pOMYk0w==
@@ -938,7 +938,7 @@
     bluebird "^3.7.2"
     uuid "^8.3.2"
 
-"@microfleet/plugin-amqp@^0.0.0-next.582", "@microfleet/plugin-amqp@^0.0.0-next.582+fc13418":
+"@microfleet/plugin-amqp@^0.0.0-next.582+fc13418", "@microfleet/plugin-amqp@canary":
   version "0.0.0-next.582"
   resolved "https://registry.yarnpkg.com/@microfleet/plugin-amqp/-/plugin-amqp-0.0.0-next.582.tgz#a98d67cf60121d4b779c3738843d23d1a6dc2058"
   integrity sha512-Zeo4FV7vq82GZoDDAVeU8XQSQEMpwyagNSFoLWZuFFeQnryGQ8ppXNL2Pjw3o4rZTLF15KuC43fLvj2C+hj5lg==
@@ -946,7 +946,7 @@
     "@microfleet/transport-amqp" "^15.2.6"
     bluebird "^3.7.2"
 
-"@microfleet/plugin-dlock@^0.0.0-next.51":
+"@microfleet/plugin-dlock@canary":
   version "0.0.0-next.51"
   resolved "https://registry.yarnpkg.com/@microfleet/plugin-dlock/-/plugin-dlock-0.0.0-next.51.tgz#34f87c9f808d18c0f27a5993209503318d6b977e"
   integrity sha512-PvJdFnA9ZxmPu34JGIfr8ItAFnRicIjEzpKQJH9NEOCPROaZe1SvLXYfxfqwL7KSD0YLNPewwNuRF9MVZ9kZkw==
@@ -960,7 +960,7 @@
     common-errors "^1.x.x"
     ioredis "^4.26.0"
 
-"@microfleet/plugin-hapi@^0.0.0-next.582", "@microfleet/plugin-hapi@^0.0.0-next.582+fc13418":
+"@microfleet/plugin-hapi@^0.0.0-next.582+fc13418", "@microfleet/plugin-hapi@canary":
   version "0.0.0-next.582"
   resolved "https://registry.yarnpkg.com/@microfleet/plugin-hapi/-/plugin-hapi-0.0.0-next.582.tgz#2c82e33511807497a960c415e7a3821797633471"
   integrity sha512-8tS3ERaau6PN9EkSD5BaMa4IV5m+2L3d/PmyEHYdTJj6FRXmg9NTXHAl3J+SsecYKdO/IcHgfMgGC2RsEwRcoQ==
@@ -974,7 +974,7 @@
     "@microfleet/plugin-validator" "^0.0.1-next.582+fc13418"
     joi "^17.4.0"
 
-"@microfleet/plugin-http@^0.0.0-next.582", "@microfleet/plugin-http@^0.0.0-next.582+fc13418":
+"@microfleet/plugin-http@^0.0.0-next.582+fc13418", "@microfleet/plugin-http@canary":
   version "0.0.0-next.582"
   resolved "https://registry.yarnpkg.com/@microfleet/plugin-http/-/plugin-http-0.0.0-next.582.tgz#d00e96e43e816fe4355f4abb74911391df47f4f6"
   integrity sha512-yV8OaBBpjWc85bdhuj6yWfsVTv099NHaVk9ugDwwRBS0JJjoeqk4U6dKImoHjxFaevoLLArnkV8Nv43aLcRn0g==
@@ -985,7 +985,16 @@
     "@microfleet/plugin-socketio" "^0.0.0-next.582+fc13418"
     "@microfleet/plugin-validator" "^0.0.1-next.582+fc13418"
 
-"@microfleet/plugin-logger@^0.5.5-next.51":
+"@microfleet/plugin-logger@^0.5.5-next.51+fc13418":
+  version "0.5.6"
+  resolved "https://registry.yarnpkg.com/@microfleet/plugin-logger/-/plugin-logger-0.5.6.tgz#6a380df6cbd2a997e6743cfbbe47fa321a684203"
+  integrity sha512-zt6fSU4v1imG3wRSWk1tqq+v9SRpFZU9u4QqmSiN+s7kIqxV8EafanwWuBKuart6MqZHIdOFf+TSDQsgHRQTng==
+  dependencies:
+    pino "^6.3.2"
+    pino-multi-stream "^5.0.0"
+    sonic-boom "^1.0.1"
+
+"@microfleet/plugin-logger@canary":
   version "0.5.5-next.51"
   resolved "https://registry.yarnpkg.com/@microfleet/plugin-logger/-/plugin-logger-0.5.5-next.51.tgz#f5457c93244849a4d2fc7732f4f4d0292f1d0e29"
   integrity sha512-1qC0nBBMhSEIdyaww+WSCurzUd8wxgkDXuI5HKXmyBIj/XGpWxlapD4/LOtV9LbxGUj3r3DZHnO3i9bq6+BD0A==
@@ -998,16 +1007,7 @@
     pino-multi-stream "^5.3.0"
     sonic-boom "^1.4.1"
 
-"@microfleet/plugin-logger@^0.5.5-next.51+fc13418":
-  version "0.5.6"
-  resolved "https://registry.yarnpkg.com/@microfleet/plugin-logger/-/plugin-logger-0.5.6.tgz#6a380df6cbd2a997e6743cfbbe47fa321a684203"
-  integrity sha512-zt6fSU4v1imG3wRSWk1tqq+v9SRpFZU9u4QqmSiN+s7kIqxV8EafanwWuBKuart6MqZHIdOFf+TSDQsgHRQTng==
-  dependencies:
-    pino "^6.3.2"
-    pino-multi-stream "^5.0.0"
-    sonic-boom "^1.0.1"
-
-"@microfleet/plugin-opentracing@^0.0.1-next.582", "@microfleet/plugin-opentracing@^0.0.1-next.582+fc13418":
+"@microfleet/plugin-opentracing@^0.0.1-next.582+fc13418", "@microfleet/plugin-opentracing@canary":
   version "0.0.1-next.582"
   resolved "https://registry.yarnpkg.com/@microfleet/plugin-opentracing/-/plugin-opentracing-0.0.1-next.582.tgz#8e4d63c42a18dc70e30616d65fd9587a325feb6e"
   integrity sha512-+xhltROF7f1iyjNYUQtR5TzFYaEwhVIlEv4kLu0pnWPuvZWufm1tNLM/Y5VTIO8LnyYvKhB+pcjofjpFHoSLwQ==
@@ -1018,7 +1018,7 @@
     "@microfleet/utils" "^0.0.1-next.582+fc13418"
     jaeger-client "^3.18.1"
 
-"@microfleet/plugin-prometheus@^0.0.1-next.582":
+"@microfleet/plugin-prometheus@canary":
   version "0.0.1-next.582"
   resolved "https://registry.yarnpkg.com/@microfleet/plugin-prometheus/-/plugin-prometheus-0.0.1-next.582.tgz#926bc06c06eec239cce3d8aad62a40a6ec6b6fb8"
   integrity sha512-72JHNU7c46tO+apEYXJ6XpfiTUL6rUHm8pmISuWp9NVqLwihJ9c21owVq8HN7awZiAIBS8R++Fkfkth3e+4KOA==
@@ -1028,7 +1028,7 @@
     prom-client "^13.1.0"
     semver "^7.3.5"
 
-"@microfleet/plugin-redis-cluster@^0.0.1-next.582":
+"@microfleet/plugin-redis-cluster@canary":
   version "0.0.1-next.582"
   resolved "https://registry.yarnpkg.com/@microfleet/plugin-redis-cluster/-/plugin-redis-cluster-0.0.1-next.582.tgz#3f068cf1245bd3c6fa0ba0dde4b7917970c6cce2"
   integrity sha512-+qis7Kh24pwI7RKxlcf/ASIhUZpm3OXyk5oJLByFBVzhwAeEC3v10IvS57RIcZpTfF899pQ5ouIuTa5ub76WiQ==
@@ -1054,7 +1054,7 @@
     glob "^7.1.6"
     sort-by "^1.2.0"
 
-"@microfleet/plugin-redis-sentinel@^0.0.1-next.582":
+"@microfleet/plugin-redis-sentinel@canary":
   version "0.0.1-next.582"
   resolved "https://registry.yarnpkg.com/@microfleet/plugin-redis-sentinel/-/plugin-redis-sentinel-0.0.1-next.582.tgz#10621ec67ff8e7e27350458287008a119b8383d4"
   integrity sha512-YVlukxY0tQVApj7xqRmDx+Ic9ux3ktSGLOYiLw2wW2S2M0y9QvmLC7S6DJanFIPEnHcs7wbFLmyCj43H40qaVw==
@@ -1067,7 +1067,7 @@
     debug "^4.3.1"
     opentracing-js-ioredis "^2.1.2"
 
-"@microfleet/plugin-router-amqp@^0.0.0-next.582":
+"@microfleet/plugin-router-amqp@canary":
   version "0.0.0-next.582"
   resolved "https://registry.yarnpkg.com/@microfleet/plugin-router-amqp/-/plugin-router-amqp-0.0.0-next.582.tgz#f3f0646e3fe6d2e1924b6c56aa146937c53d4fae"
   integrity sha512-Kko+5EfYfTdXOyhK73incjSd7YuCQjndo/xaZ6B2DDVnGwPHePgUGUE8GnGqWiMCWOlCAdxG22PbQ1R1xFRodg==
@@ -1097,7 +1097,7 @@
     lodash "^4.17.21"
     opentracing "^0.14.5"
 
-"@microfleet/plugin-router-http@^0.0.0-next.582":
+"@microfleet/plugin-router-http@canary":
   version "0.0.0-next.582"
   resolved "https://registry.yarnpkg.com/@microfleet/plugin-router-http/-/plugin-router-http-0.0.0-next.582.tgz#7b017fc535c1ca4a5639544377e5256edc6ab6c2"
   integrity sha512-vyumRZ101B34bODhfYOVB8xc5tsuaakqryts57QPbm6tqWbB0I/uhb7q0F/bPt/jXuITe+ZQ15MNIcHwECStMA==
@@ -1106,7 +1106,7 @@
     "@microfleet/plugin-router-hapi" "^0.0.0-next.582+fc13418"
     "@microfleet/plugin-validator" "^0.0.1-next.582+fc13418"
 
-"@microfleet/plugin-router@^0.0.0-next.582", "@microfleet/plugin-router@^0.0.0-next.582+fc13418":
+"@microfleet/plugin-router@^0.0.0-next.582+fc13418", "@microfleet/plugin-router@canary":
   version "0.0.0-next.582"
   resolved "https://registry.yarnpkg.com/@microfleet/plugin-router/-/plugin-router-0.0.0-next.582.tgz#1021241d8bd2b6f4659cde15dc83a0ce4dfb838a"
   integrity sha512-Y+jbsi+vdDqICt3VU7XsCP1wKAqSVv1XUGNhZsmdMyfkatjJBlJQzjnp5qx5/JjDRbgvUvvHgGbWrhhW2wxVaA==
@@ -1138,7 +1138,7 @@
     ms-socket.io-adapter-amqp "^8.0.1"
     socket.io "^4.0.1"
 
-"@microfleet/plugin-validator@^0.0.1-next.582", "@microfleet/plugin-validator@^0.0.1-next.582+fc13418":
+"@microfleet/plugin-validator@^0.0.1-next.582+fc13418", "@microfleet/plugin-validator@canary":
   version "0.0.1-next.582"
   resolved "https://registry.yarnpkg.com/@microfleet/plugin-validator/-/plugin-validator-0.0.1-next.582.tgz#cc397415315e9ee8209475dec3cb2c7798b7127d"
   integrity sha512-gES2M076QTjTwjcBoSoaftImDjJC4vbl0fazCmgay4w1KclHELDfm01FX4FwXWiCZN3whYrAjSLBMEGhtBEAEw==
