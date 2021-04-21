@@ -15,8 +15,11 @@ exports.plugins = [
   'logger',
   'opentracing',
   'router',
+  'router-http',
   'amqp',
+  'router-amqp',
   'http',
-  'redisCluster',
+  'redis-cluster',
   'prometheus',
+  'dlock',
 ];

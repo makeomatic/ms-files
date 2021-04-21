@@ -1,4 +1,4 @@
-const { ActionTransport } = require('@microfleet/core');
+const { ActionTransport } = require('@microfleet/plugin-router');
 const Promise = require('bluebird');
 const { HttpStatusError } = require('common-errors');
 const {
@@ -100,5 +100,5 @@ async function postProcessFile({ params }) {
   return response;
 }
 
-postProcessFile.transports = [ActionTransport.amqp];
+postProcessFile.transports = [ActionTransport.amqp, ActionTransport.internal];
 module.exports = postProcessFile;

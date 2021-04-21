@@ -15,10 +15,13 @@ exports.plugins = [
   'logger',
   'opentracing',
   'router',
+  'router-http',
   'amqp',
+  'router-amqp',
   'http',
-  'redisCluster',
+  'redis-cluster',
   'prometheus',
+  'dlock',
 ];
 
 /**
@@ -65,7 +68,7 @@ exports.hooks = {
  * Redis lock settings
  * @type {Object}
  */
-exports.lockManager = {
+exports.dlock = {
   lockPrefix: 'dlock!',
   pubsubChannel: '{ms-files}:dlock',
   lock: {

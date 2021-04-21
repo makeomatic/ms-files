@@ -1,9 +1,8 @@
-const { ActionTransport } = require('@microfleet/core');
+const { ActionTransport } = require('@microfleet/plugin-router');
 const Promise = require('bluebird');
 const fsort = require('redis-filtered-sort');
 const moment = require('moment');
 const list = require('./list.js');
-const acquireLock = require('../utils/acquire-lock');
 const { STATUS_PENDING, FILES_INDEX_TEMP } = require('../constant');
 
 // cached filter
@@ -70,7 +69,7 @@ async function iterateOverUploadedFiles(service, lock, opts = {}) {
  */
 module.exports = function sync() {
   return Promise
-    .using(this, acquireLock(this, 'bucket-sync'), iterateOverUploadedFiles);
+    .using(this, this.dlock.acquireLock(this, 'bucket-sync'), iterateOverUploadedFiles);
 };
 
 module.exports.transports = [ActionTransport.amqp];

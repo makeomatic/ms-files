@@ -46,7 +46,7 @@ describe('data suite', () => {
 
     await assert.rejects(req, {
       statusCode: 400,
-      message: 'data validation failed: data.fields should be array',
+      message: 'data validation failed: data/fields should be array',
     });
   });
 
@@ -60,7 +60,7 @@ describe('data suite', () => {
 
     await assert.rejects(req, {
       statusCode: 400,
-      message: 'data validation failed: data.fields[0] should be string',
+      message: 'data validation failed: data/fields/0 should be string',
     });
   });
 
@@ -74,7 +74,7 @@ describe('data suite', () => {
 
     await assert.rejects(req, {
       statusCode: 400,
-      message: 'data validation failed: data.fields[0] should NOT be longer than 50 characters',
+      message: 'data validation failed: data/fields/0 should NOT have more than 50 characters',
     });
   });
 

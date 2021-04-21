@@ -1,10 +1,8 @@
 const Promise = require('bluebird');
 const { Microfleet, ConnectorsTypes } = require('@microfleet/core');
-const noop = require('lodash/noop');
-const merge = require('lodash/merge');
+const { noop, merge } = require('lodash');
 const fsort = require('redis-filtered-sort');
-const LockManager = require('dlock');
-const RedisCluster = require('ioredis').Cluster;
+require('@microfleet/plugin-dlock');
 
 // constants
 const { HttpStatusError } = require('common-errors');
@@ -33,31 +31,9 @@ class Files extends Microfleet {
     // extend with storage providers
     StorageProviders(this);
 
-    // 2 different plugin types
-    let redisDuplicate;
-    if (config.plugins.includes('redisCluster')) {
-      this.redisType = 'redisCluster';
-      redisDuplicate = () => new RedisCluster(config.redis.hosts, config.redis.options);
-    } else if (config.plugins.includes('redisSentinel')) {
-      this.redisType = 'redisSentinel';
-      redisDuplicate = (redis) => redis.duplicate();
-    } else {
-      throw new Error('must include redis family plugins');
-    }
-
     // init scripts
     this.on(`plugin:connect:${this.redisType}`, (redis) => {
       fsort.attach(redis, 'fsort');
-
-      this.log.debug('enabling lock manager');
-      this.dlock = new LockManager({
-        ...config.lockManager,
-        // main connection
-        client: redis,
-        // second connection
-        pubsub: redisDuplicate(redis),
-        log: this.log,
-      });
     });
 
     // add migration connector
@@ -104,12 +80,11 @@ class Files extends Microfleet {
    * Overload close and make sure pubsub is stopped
    * @return {Promise}
    */
-  close() {
-    return Promise.join(
+  async close() {
+    await Promise.all([
       super.close(),
-      this.dlock.pubsub.disconnect(),
-      process.env.WEBHOOK_TERMINATE ? this.stopWebhook() : noop
-    );
+      process.env.WEBHOOK_TERMINATE ? this.stopWebhook() : noop,
+    ]);
   }
 
   /**
@@ -123,24 +98,17 @@ class Files extends Microfleet {
    */
   async handleUploadNotification(message) {
     this.log.debug({ message }, 'upload notification');
-    const { prefix } = this.config.router.routes;
-    const route = `${prefix}.finish`;
+
+    const params = {
+      filename: message.attributes.objectId,
+      resourceId: message.attributes.resource,
+      action: message.attributes.eventType,
+    };
 
     try {
-      await this.router.dispatch(route, {
-        headers: {},
-        query: {},
-        // payload
-        params: {
-          filename: message.attributes.objectId,
-          resourceId: message.attributes.resource,
-          action: message.attributes.eventType,
-        },
-        transport: 'amqp',
-        method: 'amqp',
-      });
+      await this.dispatch('finish', { params });
     } catch (err) {
-      this.log.warn({ route, args: message.attributes, err }, 'failed notification');
+      this.log.warn({ args: message.attributes, err }, 'failed notification');
       if (!(err instanceof HttpStatusError)) {
         message.nack(err);
         return;

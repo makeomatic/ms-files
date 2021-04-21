@@ -556,6 +556,7 @@
           }
         },
         "creationInfo": {
+          "type": "object",
           "description": "Contains description of the application that initiated upload and additional upload information.",
           "additionalProperties": false,
           "properties": {
