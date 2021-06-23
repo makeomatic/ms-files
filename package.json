@@ -46,6 +46,7 @@
     "@microfleet/plugin-redis-sentinel": "^0.0.1-next.590",
     "@microfleet/plugin-router": "^0.0.0-next.590",
     "@microfleet/plugin-router-amqp": "^0.0.0-next.590",
+    "@microfleet/plugin-router-hapi": "^0.0.0-next.590",
     "@microfleet/plugin-validator": "^0.0.1-next.590",
     "@microfleet/transport-amqp": "^15.2.6",
     "@microfleet/validation": "^10.0.2",
