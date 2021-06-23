@@ -10,7 +10,7 @@ const {
   processUpload,
   initUpload,
   updateAccess,
-} = require('../helpers/utils.js');
+} = require('../helpers/utils');
 
 const route = 'files.data';
 

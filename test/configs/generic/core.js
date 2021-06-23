@@ -3,7 +3,7 @@
 // workspace
 const { env } = process;
 const cwd = process.cwd();
-const originalPredicate = require(`${cwd}/src/configs/amqp`)['router-amqp'].retry.predicate;
+const originalPredicate = require(`${cwd}/src/configs/amqp`).routerAmqp.retry.predicate;
 const Promise = require(`${cwd}/node_modules/bluebird`);
 const sinon = require(`${cwd}/node_modules/sinon`);
 
@@ -16,7 +16,7 @@ exports.amqp = {
   },
 };
 
-exports['router-amqp'] = {
+exports.routerAmqp = {
   retry: {
     predicate: sinon.spy(originalPredicate),
   },

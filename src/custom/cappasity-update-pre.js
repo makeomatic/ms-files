@@ -1,4 +1,4 @@
-const hasAccess = require('../utils/has-access.js');
+const hasAccess = require('../utils/has-access');
 
 module.exports = function extractMetadata(username, data) {
   const { amqp, config } = this;

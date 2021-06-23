@@ -11,7 +11,7 @@ const {
   FILES_TAGS_INDEX_KEY,
   FILES_TAGS_FIELD,
   FIELDS_TO_STRINGIFY,
-} = require('../../constant.js');
+} = require('../../constant');
 
 const { call } = Function.prototype;
 const { toLowerCase } = String.prototype;

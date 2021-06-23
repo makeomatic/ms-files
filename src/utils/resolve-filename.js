@@ -1,4 +1,4 @@
-const { FILES_USR_ALIAS_PTR } = require('../constant.js');
+const { FILES_USR_ALIAS_PTR } = require('../constant');
 
 module.exports = function resolveFilename(possibleAlias, username) {
   const hash = `${FILES_USR_ALIAS_PTR}:${username}`;

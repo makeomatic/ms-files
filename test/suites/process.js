@@ -12,11 +12,11 @@ const {
   initAndUpload,
   processUpload,
   resetSinon,
-} = require('../helpers/utils.js');
+} = require('../helpers/utils');
 
 // data
 const route = 'files.process';
-const { STATUS_PROCESSED } = require('../../src/constant.js');
+const { STATUS_PROCESSED } = require('../../src/constant');
 
 describe('process suite', function suite() {
   // setup functions
@@ -120,7 +120,7 @@ describe('process suite', function suite() {
     before('pre-upload file', initAndUpload(modelData));
 
     before('reset onComplete count', function before() {
-      this.files.config['router-amqp'].retry.predicate.resetHistory();
+      this.files.config.routerAmqp.retry.predicate.resetHistory();
     });
 
     it('fails due to post-processing issue', function test() {
@@ -134,7 +134,7 @@ describe('process suite', function suite() {
     });
 
     it('wait for 2 seconds to ensure that requeue worked', function test() {
-      const spy = this.files.config['router-amqp'].retry.predicate;
+      const spy = this.files.config.routerAmqp.retry.predicate;
       return Promise.delay(2000).then(() => {
         return assert.ok(spy.calledTwice, 'onComplete was called twice');
       });

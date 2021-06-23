@@ -7,7 +7,7 @@ const {
   owner,
   initUpload,
   inspectPromise,
-} = require('../../helpers/utils.js');
+} = require('../../helpers/utils');
 
 describe('tag.add action', function suite() {
   before('start service', startService);

@@ -13,7 +13,7 @@ exports.amqp = {
   },
 };
 
-exports['router-amqp'] = {
+exports.routerAmqp = {
   retry: {
     enabled: true,
     min: 100,

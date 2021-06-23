@@ -8,7 +8,7 @@ const {
   processUpload,
   startService,
   stopService,
-} = require('../helpers/utils.js');
+} = require('../helpers/utils');
 
 describe('header suite', function suite() {
   before('start service', startService);

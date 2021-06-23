@@ -1,5 +1,5 @@
 const { HttpStatusError } = require('common-errors');
-const { FILES_UNLISTED_FIELD } = require('../constant.js');
+const { FILES_UNLISTED_FIELD } = require('../constant');
 
 module.exports = function isUnlisted(data) {
   if (data[FILES_UNLISTED_FIELD]) {
