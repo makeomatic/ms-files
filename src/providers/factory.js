@@ -57,6 +57,14 @@ class ProviderFactory {
 
     return provider;
   }
+
+  // eslint-disable-next-line class-methods-use-this
+  getProviderAWS(transport) {
+    const ProviderAWS = require('./aws');
+    const provider = new ProviderAWS(transport);
+
+    return provider;
+  }
 }
 
 module.exports = ProviderFactory;

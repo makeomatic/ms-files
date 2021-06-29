@@ -40,6 +40,23 @@ exports.transport = [{
   },
   // its not a public name!
   cname: 'gce',
+},
+{
+  name: 'aws',
+  options: {
+    aws: {
+      credentials: {
+        accessKeyId: env.AWS_ACCESS_KEY_ID,
+        secretAccessKey: env.AWS_SECRET_ACCESS_KEY,
+      },
+    },
+    bucket: {
+      name: env.TEST_BUCKET,
+    },
+    // test for direct public URLs
+  },
+  // its not a public name!
+  cname: 'aws',
 }];
 
 exports.hooks = {
