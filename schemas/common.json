@@ -440,6 +440,10 @@
           ]
         }
       },
+      "allOf": [
+        { "if": { "required": ["pWidth"] }, "then": { "required": ["pHeight"] } },
+        { "if": { "required": ["pHeight"] }, "then": { "required": ["pWidth"] } }
+      ],
       "properties": {
         "alias": {
           "type": "string",
@@ -585,7 +589,9 @@
               "$ref": "#/definitions/propsObject"
             }
           }
-        }
+        },
+        "pWidth": { "type": "integer", "description": "Preview/Image width" },
+        "pHeight": { "type": "integer", "description": "Preview/Image height" }
       }
     },
     "filter-props": {
