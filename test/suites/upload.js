@@ -642,5 +642,39 @@ describe('upload suite', function suite() {
       assert(vs('upload', invalidItemArray).error.message.match(/invalidItemArray/));
       assert(vs('upload', invalidStringItemArray).error.message.match(/invalidStringItemArray/));
     });
+
+    it('validates meta.pWidth/pHeight', function test() {
+      const invalidPwh = {
+        ...valid,
+        meta: {
+          name: 'some',
+          pWidth: 'foo',
+          pHeight: 'foo',
+        },
+      };
+
+      const missingPw = {
+        ...valid,
+        meta: {
+          name: 'some',
+          pHeight: 10,
+        },
+      };
+
+      const missingPh = {
+        ...valid,
+        meta: {
+          name: 'some',
+          pWidth: 10,
+        },
+      };
+
+      const vs = this.files.validator.validateSync.bind(this.files.validator);
+
+      assert(vs('upload', invalidPwh).error.message.match(/data\.meta\.pWidth should be integer, data\.meta\.pHeight should be integer/));
+      assert(vs('upload', missingPh).error
+        .message.match(/data\.meta should have required property 'pHeight', data\.meta should match "then" schema/));
+      assert(vs('upload', missingPw).error.message.match(/data\.meta should have required property 'pWidth', data\.meta should match "then" schema/));
+    });
   });
 });
