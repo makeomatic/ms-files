@@ -1,3 +1,10 @@
+# [15.12.0](https://github.com/makeomatic/ms-files/compare/v15.11.0...v15.12.0) (2021-07-02)
+
+
+### Features
+
+* pHeight pWidth fields ([dabb47c](https://github.com/makeomatic/ms-files/commit/dabb47cd92647208aa637958228586cd699f15f7))
+
 # [15.11.0](https://github.com/makeomatic/ms-files/compare/v15.10.0...v15.11.0) (2021-04-20)
 
 
