@@ -15,7 +15,7 @@ const {
   getInfo,
   meta,
   backgroundData,
-} = require('../helpers/utils.js');
+} = require('../helpers/utils');
 
 const route = 'files.update';
 const username = owner;

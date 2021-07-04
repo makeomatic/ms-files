@@ -10,7 +10,7 @@ const {
   owner,
   bindSend,
   initUpload,
-} = require('../helpers/utils.js');
+} = require('../helpers/utils');
 
 // data
 const route = 'files.sync';

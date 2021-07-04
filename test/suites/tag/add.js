@@ -7,7 +7,7 @@ const {
   owner,
   initUpload,
   inspectPromise,
-} = require('../../helpers/utils.js');
+} = require('../../helpers/utils');
 
 describe('tag.add action', function suite() {
   before('start service', startService);
@@ -23,7 +23,7 @@ describe('tag.add action', function suite() {
       .reflect()
       .then(inspectPromise(false))
       .then((error) => {
-        assert.equal(error.message, 'tag.add validation failed: data.tags should '
+        assert.equal(error.message, 'tag.add validation failed: data/tags should '
           + 'NOT have duplicate items (items ## 2 and 1 are identical)');
       });
   });

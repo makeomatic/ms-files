@@ -1,6 +1,6 @@
 const calcSlot = require('cluster-key-slot');
 
-const { FILES_INDEX_TAGS } = require('../../constant.js');
+const { FILES_INDEX_TAGS } = require('../../constant');
 
 /**
  * Return master node in case of redisCluster to be able to use

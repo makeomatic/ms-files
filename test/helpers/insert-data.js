@@ -11,7 +11,7 @@ const {
   FILES_PUBLIC_FIELD,
   FILES_USER_INDEX_KEY,
   FILES_USER_INDEX_PUBLIC_KEY,
-} = require('../../src/constant.js');
+} = require('../../src/constant');
 
 function createFakeFile({ owners, statuses }) {
   const owner = ld.sample(owners);

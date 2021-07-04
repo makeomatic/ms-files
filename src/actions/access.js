@@ -1,4 +1,4 @@
-const { ActionTransport } = require('@microfleet/core');
+const { ActionTransport } = require('@microfleet/plugin-router');
 const Promise = require('bluebird');
 const handlePipeline = require('../utils/pipeline-error');
 const fetchData = require('../utils/fetch-data');

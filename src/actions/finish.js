@@ -1,4 +1,4 @@
-const { ActionTransport } = require('@microfleet/core');
+const { ActionTransport } = require('@microfleet/plugin-router');
 const Promise = require('bluebird');
 const assert = require('assert');
 const { HttpStatusError } = require('common-errors');
@@ -24,7 +24,7 @@ const {
   FILES_DIRECT_ONLY_FIELD,
   FILES_USER_INDEX_KEY,
   FILES_USER_INDEX_PUBLIC_KEY,
-} = require('../constant.js');
+} = require('../constant');
 
 // cached vars
 const fields = [
@@ -139,7 +139,7 @@ async function completeFileUpload({ params }) {
     pipeline.persist(postActionKey);
   }
 
-  await pipeline.exec().then(handlePipeline);
+  handlePipeline(await pipeline.exec());
 
   if (params.skipProcessing) {
     return 'upload completed, processing skipped';
@@ -150,6 +150,6 @@ async function completeFileUpload({ params }) {
   return amqp[action](route, { uploadId });
 }
 
-completeFileUpload.transports = [ActionTransport.amqp];
+completeFileUpload.transports = [ActionTransport.amqp, ActionTransport.internal];
 
 module.exports = completeFileUpload;

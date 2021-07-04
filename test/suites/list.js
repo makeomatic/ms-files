@@ -13,14 +13,14 @@ const {
   modelData,
   meta,
   owner: username,
-} = require('../helpers/utils.js');
+} = require('../helpers/utils');
 const { insertData } = require('../helpers/insert-data');
 
 const route = 'files.list';
 const updateRoute = 'files.update';
 const {
   STATUS_UPLOADED, STATUS_PROCESSED,
-} = require('../../src/constant.js');
+} = require('../../src/constant');
 
 describe('list suite', function suite() {
   // setup functions

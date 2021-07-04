@@ -1,7 +1,7 @@
 const Promise = require('bluebird');
 const find = require('lodash/find');
 const { HttpStatusError } = require('common-errors');
-const { FILES_OWNER_FIELD, FILES_EXPORT_FIELD } = require('../constant.js');
+const { FILES_OWNER_FIELD, FILES_EXPORT_FIELD } = require('../constant');
 
 module.exports = function uploadPost(props) {
   const { amqp, config } = this;

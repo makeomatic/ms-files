@@ -6,7 +6,7 @@ const { encodeURI } = require('@google-cloud/storage/build/src/util');
 
 function overrideConfig() {
   this.configOverride = {
-    selectTransport: require('../../../../src/custom/cappasity-select-bucket.js'),
+    selectTransport: require('../../../../src/custom/cappasity-select-bucket'),
     transport: [{
       name: 'gce',
       options: {

@@ -6,7 +6,7 @@ const {
   stopService,
   owner,
   bindSend,
-} = require('../helpers/utils.js');
+} = require('../helpers/utils');
 const { insertData } = require('../helpers/insert-data');
 const { STATUS_PROCESSED } = require('../../src/constant');
 

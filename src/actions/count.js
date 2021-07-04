@@ -1,4 +1,4 @@
-const { ActionTransport } = require('@microfleet/core');
+const { ActionTransport } = require('@microfleet/plugin-router');
 const Promise = require('bluebird');
 const { HttpStatusError } = require('common-errors');
 const { FILES_USER_INDEX_KEY, FILES_USER_INDEX_PUBLIC_KEY } = require('../constant');
