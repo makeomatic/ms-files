@@ -12,16 +12,8 @@ class AWSTransport extends AbstractFileTransfer {
   constructor(opts = {}) {
     super();
     this._config = merge({}, AWSTransport.defaultOpts, opts);
-    this._logger = this._config.logger;
+    this.log = this._config.logger;
     this.setupAWS();
-  }
-
-  /**
-   * Returns logger or noop
-   * @return {Bunyan}
-   */
-  get log() {
-    return this._logger;
   }
 
   /**
@@ -39,10 +31,10 @@ class AWSTransport extends AbstractFileTransfer {
     try {
       this._aws = new S3({
         signatureVersion: 'v4',
-        region: this._config.region,
+        region: this._config.aws.credentials.region,
         credentials: {
-          accessKeyId: this._config.awsAccessKeyId,
-          secretAccessKey: this._config.awsSecretAccessKey,
+          accessKeyId: this._config.aws.credentials.accessKeyId,
+          secretAccessKey: this._config.aws.credentials.secretAccessKey,
         },
       });
     } catch (err) {
@@ -54,14 +46,14 @@ class AWSTransport extends AbstractFileTransfer {
    * Creates notification channel
    */
   setupChannel() {
-    this._logger.warn('the method is not implemented yet');
+    this.log.warn('the method is not implemented yet');
   }
 
   /**
    * stops channel
    */
   stopChannel() {
-    this._logger.warn('the method is not implemented yet');
+    this.log.warn('the method is not implemented yet');
   }
 
   /**
@@ -69,7 +61,7 @@ class AWSTransport extends AbstractFileTransfer {
    * @return {Subscription}
    */
   async subscribe() {
-    this._logger.warn('the method is not implemented yet');
+    this.log.warn('the method is not implemented yet');
   }
 
   /**
@@ -79,7 +71,7 @@ class AWSTransport extends AbstractFileTransfer {
    * @return {Promise}
    */
   async createBucket() {
-    // const { bucketName } = this._config;
+    const bucketName = this._config.bucket.name;
 
     const aws = this._aws;
 
@@ -90,20 +82,22 @@ class AWSTransport extends AbstractFileTransfer {
 
     async function handleListBuckets(err, data) {
       if (err) {
-        this._logger.warn('s3 bucket can not be created');
+        this.log.warn('s3 bucket can not be created');
       } else {
         const buckets = data.Buckets;
 
-        const bucketParams = {
-          Bucket: this._config.bucket.name,
-        };
-
-        const isBucketExist = buckets.find((item) => item.name === this._config.bucket.name).length;
+        const isBucketExist = !!buckets.find((item) => {
+          return item.Name === bucketName;
+        });
 
         if (!isBucketExist) {
+          const bucketParams = {
+            Bucket: bucketName,
+          };
+
           await aws.createBucket(bucketParams, function handleCreateBucket(_err) {
             if (_err) {
-              this._logger.warn('s3 bucket can not be created');
+              this.log.warn('s3 bucket can not be created');
             }
           });
         }
@@ -127,12 +121,12 @@ class AWSTransport extends AbstractFileTransfer {
    * @returns {Promise<Void>}
    */
   close() {
-    this._logger.warn('the method is not implemented yet');
+    this.log.warn('the method is not implemented yet');
   }
 
   // @todo interface
   getDownloadUrlSigned(filename, downloadName) {
-    this._logger.warn(`${downloadName} is not implemented yet`);
+    this.log.warn(`${downloadName} is not implemented yet`);
 
     const params = {
       Bucket: this._config.bucketName,
@@ -166,7 +160,7 @@ class AWSTransport extends AbstractFileTransfer {
    * @param  {String} [opts.metadata.contentEncoding] - optional, can be set to gzip
    * @return {Promise}
    */
-  initResumableUpload(opts) {
+  async initResumableUpload(opts) {
     const params = {
       Bucket: this._config.bucket.name,
       Expires: DOWNLOAD_URL_EXPIRES_IN_SEC,
@@ -175,67 +169,72 @@ class AWSTransport extends AbstractFileTransfer {
 
     params.ContentType = opts.contentType;
 
+    // const signedUrl = await this._aws.getSignedUrl('putObject', params);
+
     return new Promise((resolve, reject) => {
       this._aws.getSignedUrl('putObject', params, (err, url) => {
         if (err) {
+          console.log('init resumable upload err', err);
           return reject(err);
         }
+
+        console.log('init resumable upload url', url);
         return resolve(url);
       });
     });
   }
 
   /**
-   * Creates signed URL
-   *
-   * StringToSign = HTTP_Verb + "\n" +
-   *    Content_MD5 + "\n" +
-   *    Content_Type + "\n" +
-   *    Expiration + "\n" +
-   *    Canonicalized_Extension_Headers +
-   *    Canonicalized_Resource
-   *
-   * @param {String="read","write","delete"} action
-   * @param {String} [type]   Content-Type, do not supply for downloads
-   * @param {String} resource `/path/to/objectname/without/bucket`
-   *                          You construct the Canonicalized_Resource portion of the message by concatenating the resource path
-   *                          (bucket and object and subresource) that the request is acting on. To do this, you can use the following process:
-   *                          * Begin with an empty string.
-   *                          * If the bucket name appears in the Host header, add a slash and the bucket name to the string (for example,
-   *                          /example-travel-maps). If the bucket name appears in the path portion of the HTTP request, do nothing.
-   *                          * Add the path portion of the HTTP request to the string, excluding any query string parameters. For example,
-   *                          if the path is /europe/france/paris.jpg?cors and you already added the bucket example-travel-maps to the string,
-   *                          then you need to add /europe/france/paris.jpg to the string.
-   *                          * If the request is scoped to a subresource, such as ?cors, add this subresource to the string, including the
-   *                          question mark.
-   *                          * Be sure to copy the HTTP request path literally: that is, you should include all URL encoding (percent signs)
-   *                          in the string that you create. Also, be sure that you include only query string parameters that designate
-   *                          subresources (such as cors). You should not include query string parameters such as ?prefix,
-   *                          ?max-keys, ?marker, and ?delimiter.
-   * @param {String} [md5] - md5 digest of content - Optional. The MD5 digest value in base64. If you provide this in the string,
-   *                 the client (usually a browser) must provide this HTTP header with this same value in its request.
-   * @param {Number} expires   This is the timestamp (represented as the number of miliseconds since the Unix Epoch
-   *                           of 00:00:00 UTC on January 1, 1970) when the signature expires
-   * @param {String} [extensionHeaders] :
-   *                           You construct the Canonical Extension Headers portion of the message by concatenating all extension
-   *                           (custom) headers that begin with x-goog-. However, you cannot perform a simple concatenation.
-   *                           You must concatenate the headers using the following process:
-   *                           * Make all custom header names lowercase.
-   *                           * Sort all custom headers by header name using a lexicographical sort by code point value.
-   *                           * Eliminate duplicate header names by creating one header name with a comma-separated list of values.
-   *                           Be sure there is no whitespace between the values and be sure that the order of the comma-separated
-   *                           list matches the order that the headers appear in your request. For more information, see RFC 2616 section 4.2.
-   *                           * Replace any folding whitespace or newlines (CRLF or LF) with a single space. For more
-   *                           information about folding whitespace, see RFC 2822 section 2.2.3.
-   *                           * Remove any whitespace around the colon that appears after the header name.
-   *                           * Append a newline (U+000A) to each custom header.
-   *                           * Concatenate all custom headers.
-   *                           Important: You must use both the header name and the header value when you construct the Canonical Extension Headers
-   *                           portion of the query string. Be sure to remove any whitespace around the colon that separates the header name and
-   *                           value. For example, using the custom header x-goog-acl: private without removing the space after the colon will
-   *                           return a 403 Forbidden because the request signature you calculate will not match the signature Google calculates.
-   * @returns {Promise}
-   */
+ * Creates signed URL
+ *
+ * StringToSign = HTTP_Verb + "\n" +
+ *    Content_MD5 + "\n" +
+ *    Content_Type + "\n" +
+ *    Expiration + "\n" +
+ *    Canonicalized_Extension_Headers +
+ *    Canonicalized_Resource
+ *
+ * @param {String="read","write","delete"} action
+ * @param {String} [type]   Content-Type, do not supply for downloads
+ * @param {String} resource `/path/to/objectname/without/bucket`
+ *                          You construct the Canonicalized_Resource portion of the message by concatenating the resource path
+ *                          (bucket and object and subresource) that the request is acting on. To do this, you can use the following process:
+ *                          * Begin with an empty string.
+ *                          * If the bucket name appears in the Host header, add a slash and the bucket name to the string (for example,
+ *                          /example-travel-maps). If the bucket name appears in the path portion of the HTTP request, do nothing.
+ *                          * Add the path portion of the HTTP request to the string, excluding any query string parameters. For example,
+ *                          if the path is /europe/france/paris.jpg?cors and you already added the bucket example-travel-maps to the string,
+ *                          then you need to add /europe/france/paris.jpg to the string.
+ *                          * If the request is scoped to a subresource, such as ?cors, add this subresource to the string, including the
+ *                          question mark.
+ *                          * Be sure to copy the HTTP request path literally: that is, you should include all URL encoding (percent signs)
+ *                          in the string that you create. Also, be sure that you include only query string parameters that designate
+ *                          subresources (such as cors). You should not include query string parameters such as ?prefix,
+ *                          ?max-keys, ?marker, and ?delimiter.
+ * @param {String} [md5] - md5 digest of content - Optional. The MD5 digest value in base64. If you provide this in the string,
+ *                 the client (usually a browser) must provide this HTTP header with this same value in its request.
+ * @param {Number} expires   This is the timestamp (represented as the number of miliseconds since the Unix Epoch
+ *                           of 00:00:00 UTC on January 1, 1970) when the signature expires
+ * @param {String} [extensionHeaders] :
+ *                           You construct the Canonical Extension Headers portion of the message by concatenating all extension
+ *                           (custom) headers that begin with x-goog-. However, you cannot perform a simple concatenation.
+ *                           You must concatenate the headers using the following process:
+ *                           * Make all custom header names lowercase.
+ *                           * Sort all custom headers by header name using a lexicographical sort by code point value.
+ *                           * Eliminate duplicate header names by creating one header name with a comma-separated list of values.
+ *                           Be sure there is no whitespace between the values and be sure that the order of the comma-separated
+ *                           list matches the order that the headers appear in your request. For more information, see RFC 2616 section 4.2.
+ *                           * Replace any folding whitespace or newlines (CRLF or LF) with a single space. For more
+ *                           information about folding whitespace, see RFC 2822 section 2.2.3.
+ *                           * Remove any whitespace around the colon that appears after the header name.
+ *                           * Append a newline (U+000A) to each custom header.
+ *                           * Concatenate all custom headers.
+ *                           Important: You must use both the header name and the header value when you construct the Canonical Extension Headers
+ *                           portion of the query string. Be sure to remove any whitespace around the colon that separates the header name and
+ *                           value. For example, using the custom header x-goog-acl: private without removing the space after the colon will
+ *                           return a 403 Forbidden because the request signature you calculate will not match the signature Google calculates.
+ * @returns {Promise}
+ */
   createSignedURL(opts) {
     const params = {
       Bucket: this._config.bucket.name,
@@ -246,7 +245,9 @@ class AWSTransport extends AbstractFileTransfer {
     params.ContentType = opts.contentType;
 
     return new Promise((resolve, reject) => {
+      console.log('signed url params', params);
       this._aws.getSignedUrl('putObject', params, (err, url) => {
+        console.log('signed url err', err);
         if (err) {
           return reject(err);
         }
@@ -256,68 +257,72 @@ class AWSTransport extends AbstractFileTransfer {
   }
 
   /**
-     * Upload filestream
-     * @param  {String} filename
-     * @param  {Object} opts
-     * @return {Stream}
-     */
+   * Upload filestream
+   * @param  {String} filename
+   * @param  {Object} opts
+   * @return {Stream}
+   */
   writeStream(filename, opts) {
-    this._logger.warn('the method is not implemented yet', { filename, opts });
+    this.log.warn('the method is not implemented yet', { filename, opts });
   }
 
   /**
-     * Makes file publicly accessible
-     * @param  {String} filename
-     * @return {Promise}
-     */
+   * Makes file publicly accessible
+   * @param  {String} filename
+   * @return {Promise}
+   */
   makePublic(filename) {
-    this._logger.warn('the method is not implemented yet', { filename });
+    this.log.warn('the method is not implemented yet', { filename });
   }
 
   /**
-     * Makes file public
-     * @param  {String} filename
-     * @return {Promise}
-     */
+   * Makes file public
+   * @param  {String} filename
+   * @return {Promise}
+   */
   makePrivate(filename, options = {}) {
-    this._logger.warn('the method is not implemented yet', { filename, options });
+    this.log.warn('the method is not implemented yet', { filename, options });
   }
 
   /**
-     * Download file=
-     * @param {String} filename - what do we want to download
-     * @param {Object} opts
-     * @return {Promise}
-     */
+   * Download file=
+   * @param {String} filename - what do we want to download
+   * @param {Object} opts
+   * @return {Promise}
+   */
   readFile(filename, opts) {
-    this._logger.warn('the method is not implemented yet', { filename, opts });
+    this.log.warn('the method is not implemented yet', { filename, opts });
   }
 
   /**
-     * Tells whether file exists or not
-     * @param  {String} filename
-     * @return {Promise}
-     */
+   * Tells whether file exists or not
+   * @param  {String} filename
+   * @return {Promise}
+   */
   async exists(filename) {
     this.log.debug('initiating exists check of %s', filename);
 
+    console.log(`exists method aws for: ${filename}`);
+
     return new Promise((resolve) => {
-      this._aws.headObject({ Key: filename, Bucket: this._config.bucket.name }, (err) => {
+      this._aws.headObject({ Key: filename, Bucket: this._config.bucket.name }, (err, data) => {
         if (err) {
+          console.log('exists err', err);
           return resolve(false);
         }
+        console.log('exists data', data);
         return resolve(true);
       });
     });
   }
 
   /**
-     * Removes file from bucket
-     * @param  {String} filename
-     * @return {Promise}
-     */
+   * Removes file from bucket
+   * @param  {String} filename
+   * @return {Promise}
+   */
   remove(filename) {
-    this._logger.warn('the method is not implemented yet', { filename });
+    this.log.warn('the method is not implemented yet', { filename });
   }
 }
 
@@ -343,7 +348,7 @@ AWSTransport.defaultOpts = {
         token: undefined,
       },
     },
-    metadata: {},
+    mсetadata: {},
   },
 };
 

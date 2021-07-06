@@ -188,7 +188,7 @@ function upload(location, file) {
   });
 }
 
-function uploadSimple(meta, file, isPublic) {
+async function uploadSimple(meta, file, isPublic) {
   const { query: { Expires } } = url.parse(meta.location);
 
   const headers = {
@@ -204,9 +204,10 @@ function uploadSimple(meta, file, isPublic) {
   return request.put({
     url: meta.location,
     body: file,
-    headers,
-    simple: false,
+    // headers,
+    // simple: false,
     resolveWithFullResponse: true,
+    ACL: 'public-read',
   });
 }
 
@@ -222,6 +223,7 @@ function uploadFiles(msg, rsp) {
       const file = files[idx];
       const { location } = part;
       const isSimple = location.indexOf('Signature') !== -1;
+      console.log('isSimple upload', isSimple);
       return isSimple ? uploadSimple(part, file, rsp.public) : upload(location, file);
     });
 }
