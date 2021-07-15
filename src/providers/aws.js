@@ -126,6 +126,7 @@ class AWSTransport extends AbstractFileTransfer {
 
   // @todo interface
   getDownloadUrlSigned(filename, downloadName) {
+    console.log('get download url signed');
     this.log.warn(`${downloadName} is not implemented yet`);
 
     const params = {
@@ -133,6 +134,8 @@ class AWSTransport extends AbstractFileTransfer {
       Expires: DOWNLOAD_URL_EXPIRES_IN_SEC,
       Key: filename,
     };
+
+    console.log('params with Key', params);
 
     return new Promise((resolve, reject) => {
       this._aws.getSignedUrl('putObject', params, (err, url) => {
@@ -161,6 +164,7 @@ class AWSTransport extends AbstractFileTransfer {
    * @return {Promise}
    */
   async initResumableUpload(opts) {
+    console.log('init resumable upload');
     const params = {
       Bucket: this._config.bucket.name,
       Expires: DOWNLOAD_URL_EXPIRES_IN_SEC,
@@ -235,14 +239,16 @@ class AWSTransport extends AbstractFileTransfer {
  *                           return a 403 Forbidden because the request signature you calculate will not match the signature Google calculates.
  * @returns {Promise}
  */
-  createSignedURL(opts) {
+  createSignedURL() {
+    // console.log('createSignedURL opts 2', opts.resource.split('/')[opts.resource.length - 1]);
+    console.log('createSignedURL opts 2');
     const params = {
       Bucket: this._config.bucket.name,
       Expires: DOWNLOAD_URL_EXPIRES_IN_SEC,
-      Key: opts.filename,
+      Key: 'test',
     };
 
-    params.ContentType = opts.contentType;
+    // params.ContentType = opts.contentType;
 
     return new Promise((resolve, reject) => {
       console.log('signed url params', params);

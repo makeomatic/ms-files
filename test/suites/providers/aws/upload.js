@@ -20,12 +20,12 @@ describe('upload suite', function suite() {
     processUpload,
     getInfo,
     meta,
-  } = require('../helpers/utils');
+  } = require('../../../helpers/utils');
 
   // data
   const route = 'files.upload';
-  const bucketName = require('../configs/generic/core').transport[0].options.bucket.name;
-  const { STATUS_PENDING, STATUS_PROCESSED, FILES_PACKED_FIELD } = require('../../src/constant');
+  const bucketName = require('../../../configs/generic/core').transport[0].options.bucket.name;
+  const { STATUS_PENDING, STATUS_PROCESSED, FILES_PACKED_FIELD } = require('../../../../src/constant');
 
   // setup functions
   before('start service', startService);
@@ -246,13 +246,13 @@ describe('upload suite', function suite() {
       response = rsp;
     });
 
-    it('uploads data', async function test() {
-      console.log('upload data response', response);
-      const resp = await uploadFiles(data, response);
-      for (const req of resp) {
-        assert.equal(req.statusCode, 200);
-      }
-    });
+    // it('uploads data', async function test() {
+    //   console.log('upload data response', response);
+    //   const resp = await uploadFiles(data, response);
+    //   for (const req of resp) {
+    //     assert.equal(req.statusCode, 200);
+    //   }
+    // });
 
     it('finishes upload', function test() {
       return finishUpload.call(this, response);

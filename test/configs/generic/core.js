@@ -19,29 +19,7 @@ exports.amqp = {
   },
 };
 
-exports.transport = [
-  //   {
-  //   name: 'gce',
-  //   options: {
-  //     gce: {
-  //       projectId: env.GCLOUD_PROJECT_ID,
-  //       credentials: {
-  //         client_email: env.GCLOUD_PROJECT_EMAIL,
-  //         private_key: env.GCLOUD_PROJECT_PK,
-  //       },
-  //     },
-  //     bucket: {
-  //       name: env.TEST_BUCKET,
-  //       metadata: {
-  //         location: env.GCLOUD_BUCKET_LOCATION || 'EUROPE-WEST1',
-  //         dra: true,
-  //       },
-  //     },
-  //     // test for direct public URLs
-  //   },
-  //   // its not a public name!
-  //   cname: 'gce',
-  // },
+const awsTransport = [
   {
     name: 'aws',
     options: {
@@ -58,7 +36,35 @@ exports.transport = [
     },
     // its not a public name!
     cname: 'aws',
-  }];
+  },
+];
+
+const gceTransport = [
+  {
+    name: 'gce',
+    options: {
+      gce: {
+        projectId: env.GCLOUD_PROJECT_ID,
+        credentials: {
+          client_email: env.GCLOUD_PROJECT_EMAIL,
+          private_key: env.GCLOUD_PROJECT_PK,
+        },
+      },
+      bucket: {
+        name: env.TEST_BUCKET,
+        metadata: {
+          location: env.GCLOUD_BUCKET_LOCATION || 'EUROPE-WEST1',
+          dra: true,
+        },
+      },
+      // test for direct public URLs
+    },
+    // its not a public name!
+    cname: 'gce',
+  },
+];
+
+exports.transport = env.PROVIDER === 'aws' ? awsTransport : gceTransport;
 
 exports.hooks = {
   // return input, assume there are models
