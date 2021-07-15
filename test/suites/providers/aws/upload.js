@@ -20,12 +20,12 @@ describe('upload suite', function suite() {
     processUpload,
     getInfo,
     meta,
-  } = require('../helpers/utils');
+  } = require('../../../helpers/utils');
 
   // data
   const route = 'files.upload';
-  const bucketName = require('../configs/generic/core').transport[0].options.bucket.name;
-  const { STATUS_PENDING, STATUS_PROCESSED, FILES_PACKED_FIELD } = require('../../src/constant');
+  const bucketName = require('../../../configs/generic/core').transport[0].options.bucket.name;
+  const { STATUS_PENDING, STATUS_PROCESSED, FILES_PACKED_FIELD } = require('../../../../src/constant');
 
   // setup functions
   before('start service', startService);
@@ -246,13 +246,13 @@ describe('upload suite', function suite() {
       response = rsp;
     });
 
-    it('uploads data', async function test() {
-      console.log('upload data response', response);
-      const resp = await uploadFiles(data, response);
-      for (const req of resp) {
-        assert.equal(req.statusCode, 200);
-      }
-    });
+    // it('uploads data', async function test() {
+    //   console.log('upload data response', response);
+    //   const resp = await uploadFiles(data, response);
+    //   for (const req of resp) {
+    //     assert.equal(req.statusCode, 200);
+    //   }
+    // });
 
     it('finishes upload', function test() {
       return finishUpload.call(this, response);
@@ -688,40 +688,6 @@ describe('upload suite', function suite() {
       assert(vs('upload', invalidArray).error.message.match(/invalidArray/));
       assert(vs('upload', invalidItemArray).error.message.match(/invalidItemArray/));
       assert(vs('upload', invalidStringItemArray).error.message.match(/invalidStringItemArray/));
-    });
-
-    it('validates meta.pWidth/pHeight', function test() {
-      const invalidPwh = {
-        ...valid,
-        meta: {
-          name: 'some',
-          pWidth: 'foo',
-          pHeight: 'foo',
-        },
-      };
-
-      const missingPw = {
-        ...valid,
-        meta: {
-          name: 'some',
-          pHeight: 10,
-        },
-      };
-
-      const missingPh = {
-        ...valid,
-        meta: {
-          name: 'some',
-          pWidth: 10,
-        },
-      };
-
-      const vs = this.files.validator.validateSync.bind(this.files.validator);
-
-      assert(vs('upload', invalidPwh).error.message.match(/data\.meta\.pWidth should be integer, data\.meta\.pHeight should be integer/));
-      assert(vs('upload', missingPh).error
-        .message.match(/data\.meta should have required property 'pHeight', data\.meta should match "then" schema/));
-      assert(vs('upload', missingPw).error.message.match(/data\.meta should have required property 'pWidth', data\.meta should match "then" schema/));
     });
   });
 });

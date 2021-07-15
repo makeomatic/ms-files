@@ -1,9 +1,11 @@
 const set = require('lodash/set');
 const { transport } = require('../configs/generic/core');
+const { transport: awsTransport } = require('../configs/generic/aws');
 
 exports.enablePubsub = function enablePubsub() {
+  console.log('overrideAwsTransport', awsTransport);
   this.configOverride = {
-    transport: [...transport],
+    transport: [...awsTransport],
   };
 
   set(transport[0], 'options.bucket.channel', {

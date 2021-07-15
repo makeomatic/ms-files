@@ -165,7 +165,7 @@ class Files extends Microfleet {
     await this.initWebhook();
     await Promise.mapSeries(this.providers, (provider) => {
       // @todo
-      if (provider.config.name !== 'gce') return null;
+      if (provider.config.name !== 'gce' || provider.config.name !== 'aws') return null;
       if (!provider.config.bucket.channel.pubsub) return null;
       return provider.subscribe(this.handleUploadNotification.bind(this));
     });

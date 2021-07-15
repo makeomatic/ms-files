@@ -54,6 +54,12 @@ function initProviders(service) {
         factory.getProviderOSS(transport)
       );
     }
+
+    if (transport.name === 'aws') {
+      service.providers.push(
+        factory.getProviderAWS(transport)
+      );
+    }
   }
 
   // create providerByBucket map for fast access

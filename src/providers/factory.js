@@ -57,6 +57,21 @@ class ProviderFactory {
 
     return provider;
   }
+
+  // eslint-disable-next-line class-methods-use-this
+  getProviderAWS(transport) {
+    const ProviderAWS = require('./aws');
+    const bucket = transport.options.bucket.name;
+
+    // delegate logging facility
+    transport.options.logger = this.logger.child({ bucket });
+
+    // init provider
+    debug('passing options %j', transport.options);
+    const provider = new ProviderAWS(transport.options);
+
+    return provider;
+  }
 }
 
 module.exports = ProviderFactory;
