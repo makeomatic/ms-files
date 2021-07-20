@@ -388,7 +388,7 @@
         },
         "contentType": {
           "type": "string",
-          "enum": ["text/plain", "application/pdf"]
+          "enum": ["text/plain", "application/pdf", "text/csv"]
         },
         "contentLength": {
           "type": "integer",
