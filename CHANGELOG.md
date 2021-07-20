@@ -1,3 +1,10 @@
+# [15.13.0](https://github.com/makeomatic/ms-files/compare/v15.12.0...v15.13.0) (2021-07-20)
+
+
+### Features
+
+* added text/csv content type ([adb9a82](https://github.com/makeomatic/ms-files/commit/adb9a822d1a20c21b545cf03bd8c085a98dc00ec))
+
 # [15.12.0](https://github.com/makeomatic/ms-files/compare/v15.11.0...v15.12.0) (2021-07-02)
 
 
