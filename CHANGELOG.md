@@ -1,3 +1,10 @@
+# [15.14.0](https://github.com/makeomatic/ms-files/compare/v15.13.0...v15.14.0) (2021-08-13)
+
+
+### Features
+
+* **embeds:** add new embed parameter ([e6b5ce9](https://github.com/makeomatic/ms-files/commit/e6b5ce9081ce20f2212c349f9da03b4be0461259))
+
 # [15.13.0](https://github.com/makeomatic/ms-files/compare/v15.12.0...v15.13.0) (2021-07-20)
 
 
