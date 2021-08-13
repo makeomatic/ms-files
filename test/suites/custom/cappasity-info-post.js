@@ -38,7 +38,7 @@ describe('cappasity-info-post hook test suite', function suite() {
           + 'embedded?autorun={{ autorun }}&closebutton={{ closebutton }}&logo={{ logo }}'
           + '&analytics={{ analytics }}&uipadx={{ uipadx }}&uipady={{ uipady }}'
           + '&enablestoreurl={{ enablestoreurl }}&storeurl={{ storeurl }}&hidehints={{ hidehints }}'
-          + '&autorotate={{ autorotate }}&autorotatetime={{ autorotatetime }}'
+          + '&language={{ language }}&autorotate={{ autorotate }}&autorotatetime={{ autorotatetime }}'
           + '&autorotatedelay={{ autorotatedelay }}&autorotatedir={{ autorotatedir }}'
           + '&hidefullscreen={{ hidefullscreen }}&hideautorotateopt={{ hideautorotateopt }}'
           + '&hidesettingsbtn={{ hidesettingsbtn }}"')

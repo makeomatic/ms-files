@@ -82,6 +82,11 @@ const corePlayerOpts = Object.setPrototypeOf({
     paid: true,
     reqPlanLevel: 30,
   },
+  language: {
+    type: 'string',
+    default: '',
+    description: 'Player language',
+  },
 }, null);
 
 // version 1.x.x - mesh
