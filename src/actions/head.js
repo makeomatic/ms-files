@@ -1,4 +1,4 @@
-const { ActionTransport } = require('@microfleet/core');
+const { ActionTransport } = require('@microfleet/plugin-router');
 const { HttpStatusError } = require('common-errors');
 const { FILES_USR_ALIAS_PTR } = require('../constant');
 const handlePipeline = require('../utils/pipeline-error');

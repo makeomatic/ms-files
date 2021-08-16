@@ -349,7 +349,7 @@ async function stopService() {
       transport._bucket && transport._bucket.deleteFiles({ force: true })
     ));
   } finally {
-    await service.close().reflect();
+    await service.close();
 
     this.amqp = null;
     this.files = null;

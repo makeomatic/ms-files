@@ -7,7 +7,7 @@ const {
   finishUpload,
   processUpload,
   initUpload,
-} = require('../../helpers/utils.js');
+} = require('../../helpers/utils');
 
 const { FILES_DATA } = require('../../../src/constant');
 const fetchData = require('../../../src/utils/fetch-data');

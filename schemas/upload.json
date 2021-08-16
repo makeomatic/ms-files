@@ -47,7 +47,7 @@
         "update": {
           "allOf": [
             { "$ref": "common#/definitions/meta" },
-            { "minProperties": 1 }
+            { "type": "object", "minProperties": 1 }
           ]
         }
       }
@@ -103,20 +103,20 @@
       "default": false
     }
   },
-  "switch": [{
+  "allOf": [{
     "if": {
       "required": ["resumable"],
       "properties": { "resumable": { "const": false } }
     },
     "then": {
       "not": {
+        "required": ["unlisted", "temp"],
         "properties": {
           "unlisted": { "const": true },
           "temp": { "const": true }
         }
       }
-    },
-    "continue": true
+    }
   }, {
     "if": {
       "required": ["uploadType"],
@@ -125,22 +125,19 @@
     "then": {
       "properties": {
         "files": {
-          "contains": {
-            "allOf": [{
-              "$ref": "common#/definitions/cp-image"
-            }, {
+          "type": "array",
+          "allOf": [{
+            "contains": { "$ref": "common#/definitions/cp-image" }
+          }, {
+            "contains": {
               "type": "object",
-              "properties": {
-                "type": {
-                  "const": "c-preview"
-                }
-              }
-            }]
-          }
+              "required": ["type"],
+              "properties": { "type": { "const": "c-preview" } }
+            }
+          }]
         }
       }
-    },
-    "continue": true
+    }
   }, {
     "if": {
       "required": ["uploadType"],
@@ -154,13 +151,12 @@
           }
         }
       }
-    },
-    "continue": true
+    }
   }, {
     "if": {
       "anyOf": [
-        { "properties": { "unlisted": { "const": true } } },
-        { "properties": { "temp": { "const": true } } }
+        { "required": ["unlisted"], "properties": { "unlisted": { "const": true } } },
+        { "required": ["temp"], "properties": { "temp": { "const": true } } }
       ]
     },
     "then": { "not": { "required": ["postAction"] } }

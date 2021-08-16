@@ -1,6 +1,6 @@
 const is = require('is');
 const { HttpStatusError } = require('common-errors');
-const { STATUS_PROCESSED } = require('../constant.js');
+const { STATUS_PROCESSED } = require('../constant');
 
 module.exports = function isProcessed(data) {
   if (data.status && is.string(data.status) && parseInt(data.status, 10) < parseInt(STATUS_PROCESSED, 10)) {

@@ -11,9 +11,9 @@ exports.amqp = {
     // bind headers
     bindPersistantQueueToHeadersExchange: true,
   },
-  router: {
-    enabled: true,
-  },
+};
+
+exports.routerAmqp = {
   retry: {
     enabled: true,
     min: 100,

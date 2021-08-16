@@ -574,15 +574,15 @@ describe('upload suite', function suite() {
         },
       };
 
-      const vs = this.files.validator.validateSync.bind(this.files.validator);
+      const vs = this.files.validator.ifError.bind(this.files.validator);
 
-      assert(vs('upload', extraProp).error.message.match(/creationInfo should NOT have additional properties/));
-      assert(vs('upload', invalidOs).error.message.match(/creationInfo.os should be equal to one of the allowed values/));
-      assert(vs('upload', invalidOsVersion).error.message.match(/creationInfo.osVersion should NOT be longer than 50 characters/));
-      assert(vs('upload', invalidApplication).error.message.match(/creationInfo.application should NOT be longer than 50 characters/));
-      assert(vs('upload', invalidApplicationNumber).error.message.match(/creationInfo.application should be string/));
-      assert(vs('upload', invalidApplicationVersion).error.message.match(/creationInfo.applicationVersion should NOT be longer than 50 characters/));
-      assert(vs('upload', invalidApplicationVersionNumber).error.message.match(/creationInfo.applicationVersion should be string/));
+      assert.rejects(() => vs('upload', extraProp), /creationInfo should NOT have additional properties/);
+      assert.rejects(() => vs('upload', invalidOs), /creationInfo\/os should be equal to one of the allowed values/);
+      assert.rejects(() => vs('upload', invalidOsVersion), /creationInfo\/osVersion should NOT be longer than 50 characters/);
+      assert.rejects(() => vs('upload', invalidApplication), /creationInfo\/application should NOT be longer than 50 characters/);
+      assert.rejects(() => vs('upload', invalidApplicationNumber), /creationInfo\/application should be string/);
+      assert.rejects(() => vs('upload', invalidApplicationVersion), /creationInfo\/applicationVersion should NOT be longer than 50 characters/);
+      assert.rejects(() => vs('upload', invalidApplicationVersionNumber), /creationInfo\/applicationVersion should be string/);
     });
 
     it('validates meta.ar3dviewProps', function test() {

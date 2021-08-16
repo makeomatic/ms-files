@@ -1,7 +1,7 @@
 const Promise = require('bluebird');
 const identity = require('lodash/identity');
 const { HttpStatusError } = require('common-errors');
-const { FILES_USR_ALIAS_PTR, FILES_OWNER_FIELD } = require('../constant.js');
+const { FILES_USR_ALIAS_PTR, FILES_OWNER_FIELD } = require('../constant');
 
 module.exports = function isAliasTaken(alias, customError) {
   // pass-through

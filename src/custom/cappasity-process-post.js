@@ -1,6 +1,6 @@
 const Promise = require('bluebird');
 const md5 = require('md5');
-const { FILES_OWNER_FIELD } = require('../constant.js');
+const { FILES_OWNER_FIELD } = require('../constant');
 
 const ALLOWED_TYPES = ['c-bin', 'c-texture'];
 

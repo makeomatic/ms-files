@@ -1,11 +1,16 @@
 module.exports = {
-  node: "14.15",
+  node: "14",
   auto_compose: true,
   with_local_compose: true,
   sleep: 35,
   services: ['rabbitmq'],
   nycReport: false,
-  post_exec: 'yarn coverage:report'
+  post_exec: 'yarn coverage:report',
+  extras: {
+    rabbitmq: {
+      
+    }
+  }
 };
 
 switch (process.env.DB) {
