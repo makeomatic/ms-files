@@ -177,37 +177,41 @@ function modelSimpleUpload({
 // upload single file
 //
 function upload(location, file) {
+  console.log('upload location', location);
   return request.put({
     url: location,
     body: file,
-    headers: {
-      'content-length': file.length,
-    },
+    // headers: {
+    //   'content-length': file.length,
+    // },
     simple: false,
     resolveWithFullResponse: true,
   });
 }
 
-function uploadSimple(meta, file, isPublic) {
-  const { query: { Expires } } = url.parse(meta.location);
+async function uploadSimple(meta, file) {
+  // const { query: { Expires } } = url.parse(meta.location);
 
-  const headers = {
-    'Content-MD5': meta.md5Hash,
-    'Cache-Control': `public,max-age=${Expires}`,
-    'Content-Type': meta.contentType,
-  };
+  // const headers = {
+  //   'Content-MD5': meta.md5Hash,
+  //   'Cache-Control': `public,max-age=${Expires}`,
+  //   'Content-Type': meta.contentType,
+  // };
 
-  if (isPublic) {
-    headers['x-goog-acl'] = 'public-read';
-  }
+  // if (isPublic) {
+  //   headers['x-goog-acl'] = 'public-read';
+  // }
 
-  return request.put({
+  const res = request.put({
     url: meta.location,
     body: file,
-    headers,
-    simple: false,
+    // headers,
+    // simple: false,
     resolveWithFullResponse: true,
+    // ACL: 'public-read',
   });
+
+  return res;
 }
 
 //
@@ -222,6 +226,7 @@ function uploadFiles(msg, rsp) {
       const file = files[idx];
       const { location } = part;
       const isSimple = location.indexOf('Signature') !== -1;
+      console.log('isSimple upload', isSimple);
       return isSimple ? uploadSimple(part, file, rsp.public) : upload(location, file);
     });
 }
@@ -245,10 +250,12 @@ function finishMessage(rsp, skipProcessing = true) {
 // Initializes upload
 //
 function initUpload(data) {
+  console.log('init upload data', data);
   return function init() {
     return this.amqp
       .publishAndWait('files.upload', data.message, { timeout: 30000 })
       .tap((rsp) => {
+        console.log('files upload res', rsp);
         this.response = rsp;
       })
       .tap((rsp) => uploadFiles(data, rsp));

@@ -31,6 +31,7 @@ module.exports = function processFile(key, data) {
   return Promise
     .using(acquireLock(this, `postprocess:${key}`), (lock) => {
       const { uploadId } = data;
+      console.log('port srocess uploadId', uploadId);
       const { redis } = this;
 
       return Promise

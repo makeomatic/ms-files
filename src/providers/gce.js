@@ -19,6 +19,7 @@ class GCETransport extends AbstractFileTransfer {
   constructor(opts = {}) {
     super();
     this._config = merge({}, GCETransport.defaultOpts, opts);
+
     this._logger = this._config.logger;
     this.setupGCE();
   }

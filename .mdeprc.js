@@ -8,6 +8,14 @@ module.exports = {
   post_exec: 'yarn coverage:report'
 };
 
+if (process.env.PROVIDER === 'aws') {
+  module.exports.tests = './test/suites/providers/aws/*.js';
+}
+
+if (process.env.PROVIDER !== 'aws') {
+  module.exports.tests = './test/suites/**/!(providers)/*.js';
+}
+
 switch (process.env.DB) {
   case 'sentinel':
     module.exports.services.push('redisSentinel');
