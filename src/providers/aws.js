@@ -2,6 +2,7 @@ const Promise = require('bluebird');
 const AbstractFileTransfer = require('ms-files-transport');
 const { merge } = require('lodash');
 const S3 = require('aws-sdk/clients/s3');
+const SNS = require('aws-sdk/clients/sns');
 
 const DOWNLOAD_URL_EXPIRES_IN_SEC = 60000;
 
@@ -61,7 +62,25 @@ class AWSTransport extends AbstractFileTransfer {
    * @return {Subscription}
    */
   async subscribe() {
-    this.log.warn('the method is not implemented yet');
+    const { Topics: topics } = await new SNS({ region: this._config.aws.credentials.region }).listTopics({}).promise();
+
+    const topicArn = `arn:aws:sns:us-west-2:178085672309:${this._config.aws.credentials.topicName}`;
+
+    const topic = topics.find(
+      (_topic) => _topic.TopicArn === topicArn
+    );
+
+    if (!topic) {
+      await new SNS({ region: this._config.aws.credentials.region }).createTopic({ Name: this._config.aws.credentials.topicName }).promise();
+    }
+
+    const params = {
+      Protocol: 'https',
+      TopicArn: topicArn,
+      Endpoint: 'localhost:443',
+    };
+
+    await new SNS().subscribe(params).promise();
   }
 
   /**
@@ -93,6 +112,7 @@ class AWSTransport extends AbstractFileTransfer {
         if (!isBucketExist) {
           const bucketParams = {
             Bucket: bucketName,
+            region: this._config.aws.credentials.region,
           };
 
           await aws.createBucket(bucketParams, function handleCreateBucket(_err) {
@@ -125,11 +145,9 @@ class AWSTransport extends AbstractFileTransfer {
   }
 
   // @todo interface
-  getDownloadUrlSigned(filename, downloadName) {
-    this.log.warn(`${downloadName} is not implemented yet`);
-
+  getDownloadUrlSigned(filename) {
     const params = {
-      Bucket: this._config.bucketName,
+      Bucket: this.getBucketName(),
       Expires: DOWNLOAD_URL_EXPIRES_IN_SEC,
       Key: filename,
     };
@@ -174,11 +192,9 @@ class AWSTransport extends AbstractFileTransfer {
     return new Promise((resolve, reject) => {
       this._aws.getSignedUrl('putObject', params, (err, url) => {
         if (err) {
-          console.log('init resumable upload err', err);
           return reject(err);
         }
 
-        console.log('init resumable upload url', url);
         return resolve(url);
       });
     });
@@ -239,15 +255,11 @@ class AWSTransport extends AbstractFileTransfer {
     const params = {
       Bucket: this._config.bucket.name,
       Expires: DOWNLOAD_URL_EXPIRES_IN_SEC,
-      Key: opts.filename,
+      Key: opts.resource,
     };
 
-    params.ContentType = opts.contentType;
-
     return new Promise((resolve, reject) => {
-      console.log('signed url params', params);
       this._aws.getSignedUrl('putObject', params, (err, url) => {
-        console.log('signed url err', err);
         if (err) {
           return reject(err);
         }
@@ -305,12 +317,10 @@ class AWSTransport extends AbstractFileTransfer {
     console.log(`exists method aws for: ${filename}`);
 
     return new Promise((resolve) => {
-      this._aws.headObject({ Key: filename, Bucket: this._config.bucket.name }, (err, data) => {
+      this._aws.headObject({ Key: filename, Bucket: this._config.bucket.name }, (err) => {
         if (err) {
-          console.log('exists err', err);
           return resolve(false);
         }
-        console.log('exists data', data);
         return resolve(true);
       });
     });
@@ -322,7 +332,14 @@ class AWSTransport extends AbstractFileTransfer {
    * @return {Promise}
    */
   remove(filename) {
-    this.log.warn('the method is not implemented yet', { filename });
+    return new Promise((resolve) => {
+      this._aws.deleteObject({ Key: filename, Bucket: this._config.bucket.name }, (err) => {
+        if (err) {
+          return resolve(false);
+        }
+        return resolve(true);
+      });
+    });
   }
 }
 
@@ -348,7 +365,7 @@ AWSTransport.defaultOpts = {
         token: undefined,
       },
     },
-    mсetadata: {},
+    metadata: {},
   },
 };
 

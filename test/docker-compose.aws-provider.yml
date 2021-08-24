@@ -1,0 +1,16 @@
+version: '3'
+
+services:
+  tester:
+    volumes:
+      - ${PWD}:/src
+      - ${PWD}/test/configs/generic:/configs/core:ro
+      # - ${PWD}/test/configs/generic:/configs/aws:ro
+      - ${PWD}/test/configs/redis-sentinel:/configs/redis:ro
+    environment:
+      NODE_ENV: "test"
+      DEBUG: "${DEBUG}"
+      TEST_BUCKET: "makeomatic-test"
+      DOTENV_FILE_PATH: "/src/test/.env"
+      NCONF_FILE_PATH: '["/configs/core","/configs/redis"]'
+

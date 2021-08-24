@@ -38,6 +38,7 @@ const {
  * @return {Promise}
  */
 async function initFileUpload({ params }) {
+  console.log('init file upload');
   const {
     files,
     meta,

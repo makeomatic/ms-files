@@ -93,6 +93,7 @@ exports.transport = [{
  * @returns {Provider}
  */
 exports.selectTransport = function selectTransport() {
+  // console.log('my provider 1', this.providers[0]);
   return this.providers[0];
 };
 

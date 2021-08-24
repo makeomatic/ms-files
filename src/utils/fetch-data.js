@@ -102,6 +102,7 @@ async function selectMaster(redis) {
  * @param  {String[]} [fieldsFilter.pick]
  */
 module.exports = function fetchData(key, fieldFilter = {}) {
+  console.log('fetch data for key', key);
   const { redis } = this;
   const timer = perf(`fetchData:${key}`);
 
