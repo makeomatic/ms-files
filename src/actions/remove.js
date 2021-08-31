@@ -42,7 +42,7 @@ function cleanupFileProvider(files, provider, log, opts = { concurrency: 20 }) {
  * @return {Promise}
  */
 async function removeFile({ params }) {
-  const { filename, username } = params;
+  const { filename, username, softDelete } = params;
   const { redis, log } = this;
   const provider = this.provider('remove', params);
   const key = `${FILES_DATA}:${filename}`;
@@ -53,9 +53,11 @@ async function removeFile({ params }) {
     .then(isUnlisted)
     .then(hasAccess(username));
 
-  // we do not track this
-  cleanupFileProvider(data.files, provider, log)
-    .catch((e) => log.fatal({ err: e }, 'failed to cleanup file provider for %s', filename));
+  if (softDelete) {
+    // we do not track this
+    cleanupFileProvider(data.files, provider, log)
+      .catch((e) => log.fatal({ err: e }, 'failed to cleanup file provider for %s', filename));
+  }
 
   // cleanup local database
   const pipeline = redis.pipeline();
