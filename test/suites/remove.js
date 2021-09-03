@@ -70,3 +70,38 @@ describe('remove suite', function suite() {
       });
   });
 });
+
+describe('soft delete', function suite() {
+  // setup functions
+  before('start service', startService);
+  // sets `this.response` to `files.finish` response
+  before('pre-upload file', initAndUpload(modelData));
+  before('helpers', bindSend(route));
+
+  // tear-down
+  after('stop service', stopService);
+
+  it('removes files info from redis but not files', function test() {
+    return this
+      .send({ filename: this.response.uploadId, username: owner, softDelete: true })
+      .reflect()
+      .then(inspectPromise());
+  });
+});
+
+describe('get unbind data files', function suite() {
+  // setup functions
+  before('start service', startService);
+  // sets `this.response` to `files.finish` response
+  before('pre-upload file', initAndUpload(modelData));
+  before('helpers', bindSend('files.data'));
+
+  // tear-down
+  after('stop service', stopService);
+
+  it('get files for removed item from storage', async function test() {
+    const { file } = await this.send({ uploadId: this.response.uploadId });
+
+    assert.equal(file.uploadId, this.response.uploadId);
+  });
+});
