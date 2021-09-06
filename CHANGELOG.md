@@ -1,3 +1,16 @@
+# [15.15.0](https://github.com/makeomatic/ms-files/compare/v15.14.0...v15.15.0) (2021-09-06)
+
+
+### Bug Fixes
+
+* python ([a8036b3](https://github.com/makeomatic/ms-files/commit/a8036b3051f7c67e15533e31904eef2da9dac74e))
+* python version ([6e95ee5](https://github.com/makeomatic/ms-files/commit/6e95ee54eafb23a70f027fa2f212918e786e02ac))
+
+
+### Features
+
+* node 16, adjust timeouts ([33830c8](https://github.com/makeomatic/ms-files/commit/33830c801078247e9c76883afa3e8998ec3a64b1))
+
 # [15.14.0](https://github.com/makeomatic/ms-files/compare/v15.13.0...v15.14.0) (2021-08-13)
 
 
