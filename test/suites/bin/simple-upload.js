@@ -12,7 +12,7 @@ const {
 } = require('../../helpers/utils');
 
 describe('binary: simple-upload', function suite() {
-  const binaryPath = path.resolve(__dirname, '../../../bin/simple-upload.js');
+  const binaryPath = path.resolve(__dirname, '../../../bin/simple-upload');
   const exec = require('../../helpers/exec')(binaryPath, ['-u', owner]);
 
   before('start service', startService);

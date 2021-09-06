@@ -1,6 +1,6 @@
 const Promise = require('bluebird');
 const moment = require('moment');
-const { STATUS_UPLOADED, FILES_OWNER_FIELD } = require('./constant.js');
+const { STATUS_UPLOADED, FILES_OWNER_FIELD } = require('./constant');
 
 /**
  * Invoke this method to start post-processing of all pending files

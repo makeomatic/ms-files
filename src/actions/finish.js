@@ -24,7 +24,7 @@ const {
   FILES_DIRECT_ONLY_FIELD,
   FILES_USER_INDEX_KEY,
   FILES_USER_INDEX_PUBLIC_KEY,
-} = require('../constant.js');
+} = require('../constant');
 
 // cached vars
 const fields = [

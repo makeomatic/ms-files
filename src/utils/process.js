@@ -1,6 +1,6 @@
 const Promise = require('bluebird');
 const omit = require('lodash/omit');
-const stringify = require('./stringify.js');
+const stringify = require('./stringify');
 const acquireLock = require('./acquire-lock');
 const { bustCache } = require('./bust-cache');
 const {
@@ -15,7 +15,7 @@ const {
   FILE_PROCESS_IN_PROGRESS_ERROR,
   FILES_STATUS_FIELD,
   FIELDS_TO_STRINGIFY,
-} = require('../constant.js');
+} = require('../constant');
 
 const STRINGIFY_LIST = [
   ...FIELDS_TO_STRINGIFY,

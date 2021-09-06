@@ -12,11 +12,11 @@ const {
   initAndUpload,
   processUpload,
   resetSinon,
-} = require('../helpers/utils.js');
+} = require('../helpers/utils');
 
 // data
 const route = 'files.process';
-const { STATUS_PROCESSED } = require('../../src/constant.js');
+const { STATUS_PROCESSED } = require('../../src/constant');
 
 describe('process suite', function suite() {
   // setup functions

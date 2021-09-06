@@ -15,8 +15,8 @@ module.exports = function extractMetadata(userId) {
         [audience]: ['alias'],
       },
     }, {
-      timeout: 5000,
-      cache: 60000 * 5, /* 5 minutes */
+      timeout: 15000,
+      cache: 60000 * 30, /* 30 minutes */
     })
     .then((it) => it[audience].alias);
 };

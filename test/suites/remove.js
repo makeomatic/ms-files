@@ -11,7 +11,7 @@ const {
   modelData,
   bindSend,
   initAndUpload,
-} = require('../helpers/utils.js');
+} = require('../helpers/utils');
 
 const route = 'files.remove';
 

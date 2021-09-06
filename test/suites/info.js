@@ -13,14 +13,14 @@ const {
   processUpload,
   initUpload,
   updateAccess,
-} = require('../helpers/utils.js');
+} = require('../helpers/utils');
 
 const route = 'files.info';
 const {
   STATUS_PENDING,
   STATUS_UPLOADED,
   STATUS_PROCESSED,
-} = require('../../src/constant.js');
+} = require('../../src/constant');
 
 describe('info suite', function suite() {
   // setup functions
