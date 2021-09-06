@@ -16,7 +16,7 @@ RUN \
     make \
     git \
     wget \
-    python \
+    python3 \
     linux-headers \
   && rm -rf \
     /tmp/* \
