@@ -53,7 +53,8 @@ async function removeFile({ params }) {
     .then(isUnlisted)
     .then(hasAccess(username));
 
-  if (softDelete) {
+  if (!softDelete) {
+    console.log('hard delete case: ', softDelete);
     // we do not track this
     cleanupFileProvider(data.files, provider, log)
       .catch((e) => log.fatal({ err: e }, 'failed to cleanup file provider for %s', filename));

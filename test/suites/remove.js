@@ -1,3 +1,4 @@
+const { HttpStatusError } = require('@microfleet/validation');
 const Promise = require('bluebird');
 const assert = require('assert');
 const uuid = require('uuid');
@@ -13,6 +14,7 @@ const {
   initAndUpload,
 } = require('../helpers/utils');
 
+const MissingError = new HttpStatusError(404, '404: could not find upload');
 const route = 'files.remove';
 
 describe('remove suite', function suite() {
@@ -87,21 +89,11 @@ describe('soft delete', function suite() {
       .reflect()
       .then(inspectPromise());
   });
-});
 
-describe('get unbind data files', function suite() {
-  // setup functions
-  before('start service', startService);
-  // sets `this.response` to `files.finish` response
-  before('pre-upload file', initAndUpload(modelData));
-  before('helpers', bindSend('files.data'));
-
-  // tear-down
-  after('stop service', stopService);
-
-  it('get files for removed item from storage', async function test() {
-    const { file } = await this.send({ uploadId: this.response.uploadId });
-
-    assert.equal(file.uploadId, this.response.uploadId);
+  it('get files from storage for removed item', async function test() {
+    this.response.files.forEach(async (file) => {
+      const exists = await this.files.providers[0].exists(file.filename);
+      assert.equal(exists, true, MissingError);
+    });
   });
 });
