@@ -8,7 +8,7 @@ WORKDIR /src
 COPY yarn.lock package.json ./
 RUN \
   apk --update upgrade \
-  && apk --update add git ca-certificates openssl g++ make python linux-headers \
+  && apk --update add git ca-certificates openssl g++ make python3 linux-headers \
   && yarn --production --frozen-lockfile \
   && yarn cache clean \
   && apk del \
