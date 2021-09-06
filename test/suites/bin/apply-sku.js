@@ -15,7 +15,7 @@ const {
 } = require('../../helpers/utils');
 
 describe('binary: apply-sku', function suite() {
-  const binaryPath = path.resolve(__dirname, '../../../bin/apply-sku');
+  const binaryPath = path.resolve(__dirname, '../../../bin/apply-sku.js');
   const exec = require('../../helpers/exec')(binaryPath, ['--user', owner]);
 
   before('start service', startService);
