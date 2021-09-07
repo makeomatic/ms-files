@@ -83,17 +83,14 @@ describe('soft delete', function suite() {
   // tear-down
   after('stop service', stopService);
 
-  it('removes files info from redis but not files', function test() {
-    return this
-      .send({ filename: this.response.uploadId, username: owner, softDelete: true })
-      .reflect()
-      .then(inspectPromise());
+  it('removes files info from redis but not files', async function test() {
+    await this.send({ filename: this.response.uploadId, username: owner, softDelete: true });
   });
 
   it('get files from storage for removed item', async function test() {
-    this.response.files.forEach(async (file) => {
+    await Promise.all(this.response.files.map(async (file) => {
       const exists = await this.files.providers[0].exists(file.filename);
       assert.equal(exists, true, MissingError);
-    });
+    }));
   });
 });
