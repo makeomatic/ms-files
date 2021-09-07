@@ -1,3 +1,10 @@
+# [15.16.0](https://github.com/makeomatic/ms-files/compare/v15.15.0...v15.16.0) (2021-09-07)
+
+
+### Features
+
+* **remove:** add soft deletion ([#240](https://github.com/makeomatic/ms-files/issues/240)) ([1d0126e](https://github.com/makeomatic/ms-files/commit/1d0126ed944648263f7c3161a062247e37ffbf0d))
+
 # [15.15.0](https://github.com/makeomatic/ms-files/compare/v15.14.0...v15.15.0) (2021-09-06)
 
 
