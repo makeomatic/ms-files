@@ -10,6 +10,10 @@
         },
         "username": {
             "$ref": "common#/definitions/owner"
+        },
+        "softDelete": {
+            "type": "boolean",
+            "default": false
         }
     }
 }

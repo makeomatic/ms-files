@@ -22,12 +22,15 @@ describe('upload suite', function suite() {
   } = require('../helpers/utils');
 
   // data
+  let bucketName;
   const route = 'files.upload';
-  const bucketName = require('../configs/generic/core').transport[0].options.bucket.name;
   const { STATUS_PENDING, STATUS_PROCESSED, FILES_PACKED_FIELD } = require('../../src/constant');
 
   // setup functions
-  before('start service', startService);
+  before('start service', async function startAll() {
+    const service = await startService.call(this);
+    bucketName = service.config.transport[0].options.bucket.name;
+  });
   after('stop service', stopService);
   before('helpers', bindSend(route));
 

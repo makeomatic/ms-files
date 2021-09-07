@@ -18,10 +18,13 @@ describe('download suite', function suite() {
   } = require('../helpers/utils');
 
   const route = 'files.download';
-  const bucketName = require('../configs/generic/core').transport[0].options.bucket.name;
+  let bucketName;
 
   // setup functions
-  before('start service', startService);
+  before('start service', async function startAll() {
+    const service = await startService.call(this);
+    bucketName = service.config.transport[0].options.bucket.name;
+  });
 
   // sets `this.response` to `files.finish` response
   before('pre-upload file', initAndUpload(modelData));
