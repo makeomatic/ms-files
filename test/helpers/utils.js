@@ -328,6 +328,8 @@ async function startService() {
   this.send = function send(route, msg, timeout = 5500) {
     return amqp.publishAndWait(route, msg, { timeout });
   };
+
+  return service;
 }
 
 //
