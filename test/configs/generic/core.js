@@ -30,7 +30,7 @@ exports.transport = [{
       },
     },
     bucket: {
-      name: env.GCLOUD_PROJECT_BUCKET,
+      name: env.TEST_BUCKET,
       metadata: {
         location: env.GCLOUD_BUCKET_LOCATION || 'EUROPE-WEST1',
         dra: true,
