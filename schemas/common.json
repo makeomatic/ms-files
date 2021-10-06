@@ -654,6 +654,10 @@
           }]
         }
       }]
+    },
+    "embeddedRef": {
+      "type": "string",
+      "format": "uri"
     }
   }
 }

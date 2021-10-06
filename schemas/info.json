@@ -18,6 +18,10 @@
         },
         "username": {
             "$ref": "common#/definitions/owner"
+        },
+        "withEmbeded": {
+            "type": "boolean",
+            "default": false
         }
     }
 }

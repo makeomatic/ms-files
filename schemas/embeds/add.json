@@ -1,0 +1,20 @@
+{
+  "$id": "embeds.add",
+  "type": "object",
+  "required": [
+    "uploadId",
+    "username",
+    "embeddedRef"
+  ],
+  "properties": {
+    "uploadId": {
+      "$ref": "common#/definitions/uploadId"
+    },
+    "username": {
+      "$ref": "common#/definitions/owner"
+    },
+    "embeddedRef": {
+      "$ref": "common#/definitions/embeddedRef"
+    }
+  }
+}

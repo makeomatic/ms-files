@@ -2,7 +2,7 @@ const { ActionTransport } = require('@microfleet/core');
 const Promise = require('bluebird');
 const assert = require('assert');
 const { NotImplementedError, HttpStatusError } = require('common-errors');
-const { FILES_DATA, FILES_OWNER_FIELD } = require('../constant');
+const { FILES_DATA, FILES_OWNER_FIELD, FILES_EMBEDDED_INDEX_KEY } = require('../constant');
 const fetchData = require('../utils/fetch-data');
 const resolveFilename = require('../utils/resolve-filename');
 
@@ -10,12 +10,15 @@ const NOT_IMPLEMENTED_ERROR = new NotImplementedError('files:info:pre hook must 
 
 /**
  * File information
- * @param  {Object} opts.filename
- * @param  {Object} opts.username
+ * @param  {Object}  request
+ * @param  {Object}  request.params
+ * @param  {String}  request.params.filename
+ * @param  {String}  request.params.username
+ * @param  {Boolean} request.params.awaitPostActions
  * @return {Promise}
  */
 async function getFileInfo({ params }) {
-  const { filename: possibleFilename, username: owner } = params;
+  const { filename: possibleFilename, username: owner, withEmbeded } = params;
 
   const [username] = await Promise
     .bind(this, ['files:info:pre', owner])
@@ -35,6 +38,17 @@ async function getFileInfo({ params }) {
   // even in-case with public we want the user to specify username
   if (file[FILES_OWNER_FIELD] !== username) {
     throw new HttpStatusError(401, 'please sign as an owner of this model to access it');
+  }
+
+  if (withEmbeded) {
+    const embeddedRefs = await this.redis.smembers(FILES_EMBEDDED_INDEX_KEY(filename));
+
+    const embedded = {};
+    for (const ref of Object.keys(embeddedRefs)) {
+      embedded[ref] = true;
+    }
+
+    file.embedded = embedded;
   }
 
   // rewire owner to requested username
