@@ -41,14 +41,7 @@ async function getFileInfo({ params }) {
   }
 
   if (withEmbeded) {
-    const embeddedRefs = await this.redis.smembers(FILES_EMBEDDED_INDEX_KEY(filename));
-
-    const embedded = {};
-    for (const ref of Object.keys(embeddedRefs)) {
-      embedded[ref] = true;
-    }
-
-    file.embedded = embedded;
+    file.embedded = await this.redis.hgetall(FILES_EMBEDDED_INDEX_KEY(filename));
   }
 
   // rewire owner to requested username

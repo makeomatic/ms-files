@@ -2,15 +2,11 @@
   "$id": "embeds.remove",
   "type": "object",
   "required": [
-    "uploadId",
-    "username"
+    "uploadId"
   ],
   "properties": {
     "uploadId": {
       "$ref": "common#/definitions/uploadId"
-    },
-    "username": {
-      "$ref": "common#/definitions/owner"
     }
   }
 }
