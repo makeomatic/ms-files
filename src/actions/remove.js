@@ -16,6 +16,8 @@ const {
   FILES_USR_ALIAS_PTR,
   FILES_USER_INDEX_KEY,
   FILES_USER_INDEX_PUBLIC_KEY,
+  FILES_EMBEDDED_INDEX_KEY,
+  FILES_USER_EMBEDDED_INDEX_KEY,
 } = require('../constant');
 const pipelineError = require('../utils/pipeline-error');
 
@@ -65,8 +67,10 @@ async function removeFile({ params }) {
 
   pipeline
     .del(key)
+    .del(FILES_EMBEDDED_INDEX_KEY(filename))
     .srem(FILES_INDEX, filename)
-    .srem(FILES_USER_INDEX_KEY(owner), filename);
+    .srem(FILES_USER_INDEX_KEY(owner), filename)
+    .srem(FILES_USER_EMBEDDED_INDEX_KEY(owner), filename);
 
   if (data[FILES_PUBLIC_FIELD]) {
     pipeline.srem(FILES_INDEX_PUBLIC, filename);

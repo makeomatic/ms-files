@@ -1,14 +1,24 @@
 const { ActionTransport } = require('@microfleet/core');
 
-const { FILES_EMBEDDED_INDEX_KEY } = require('../../constant');
+const handlePipeline = require('../../utils/pipeline-error');
+const {
+  FILES_EMBEDDED_INDEX_KEY,
+  FILES_USER_EMBEDDED_INDEX_KEY,
+} = require('../../constant');
 
-async function addFileEmbed({ params }) {
-  const { uploadId, embeddedRef } = params;
+async function addEmbed({ params }) {
+  const { uploadId, username, embeddedRef } = params;
 
-  await this.redis.hset(FILES_EMBEDDED_INDEX_KEY(uploadId), embeddedRef, true);
+  const pipeline = this.redis.pipeline();
 
-  return true;
+  pipeline.sadd(FILES_USER_EMBEDDED_INDEX_KEY(username), uploadId);
+  pipeline.hset(FILES_EMBEDDED_INDEX_KEY(uploadId), embeddedRef, true);
+
+  return pipeline
+    .exec()
+    .then(handlePipeline)
+    .return(true);
 }
 
-addFileEmbed.transports = [ActionTransport.amqp];
-module.exports = addFileEmbed;
+addEmbed.transports = [ActionTransport.amqp];
+module.exports = addEmbed;
