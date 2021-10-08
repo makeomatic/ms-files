@@ -14,7 +14,7 @@ const NOT_IMPLEMENTED_ERROR = new NotImplementedError('files:info:pre hook must 
  * @param  {Object}  request.params
  * @param  {String}  request.params.filename
  * @param  {String}  request.params.username
- * @param  {Boolean} request.params.awaitPostActions
+ * @param  {Boolean} request.params.withEmbeded
  * @return {Promise}
  */
 async function getFileInfo({ params }) {

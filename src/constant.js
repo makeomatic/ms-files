@@ -19,6 +19,8 @@ module.exports = exports = Object.setPrototypeOf({
 
   PREVIEW_PREFIX: 'preview:',
 
+  FILES_EMBEDDED_POSTFIX: 'embedded',
+
   WEBHOOK_RESOURCE_ID: 'gce:webhook',
 
   // in combination with {owner} generates pointers
@@ -103,5 +105,5 @@ exports.FILES_DATA_INDEX_KEY = (uploadId) => `${exports.FILES_DATA}:${uploadId}`
 exports.FILES_TAGS_INDEX_KEY = (tag) => `${exports.FILES_INDEX_TAGS}:${tag}`;
 exports.FILES_USER_INDEX_KEY = (username) => `${exports.FILES_INDEX}:${username}`;
 exports.FILES_USER_INDEX_PUBLIC_KEY = (username) => `${exports.FILES_INDEX}:${username}:pub`;
-exports.FILES_USER_EMBEDDED_INDEX_KEY = (username) => `${exports.FILES_INDEX}:${username}:embedded`;
-exports.FILES_EMBEDDED_INDEX_KEY = (uploadId) => `${exports.FILES_DATA}:${uploadId}:embedded`;
+exports.FILES_USER_EMBEDDED_INDEX_KEY = (username) => `${exports.FILES_INDEX}:${username}:${exports.FILES_EMBEDDED_POSTFIX}`;
+exports.FILES_EMBEDDED_INDEX_KEY = (uploadId) => `${exports.FILES_DATA}:${uploadId}:${exports.FILES_EMBEDDED_POSTFIX}`;

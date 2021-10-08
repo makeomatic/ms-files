@@ -1,25 +1,22 @@
 const { ActionTransport } = require('@microfleet/core');
 
-const handlePipeline = require('../../utils/pipeline-error');
 const {
-  FILES_EMBEDDED_INDEX_KEY,
+  FILES_DATA,
+  FILES_EMBEDDED_POSTFIX,
   FILES_USER_EMBEDDED_INDEX_KEY,
 } = require('../../constant');
 
 async function removeEmbeds({ params }) {
   const { username } = params;
 
-  const fileNames = await this.redis.smembers(FILES_USER_EMBEDDED_INDEX_KEY(username));
+  await this.redis.removeEmbeds(
+    3,
+    FILES_USER_EMBEDDED_INDEX_KEY(username),
+    FILES_DATA,
+    FILES_EMBEDDED_POSTFIX
+  );
 
-  const pipeline = this.redis.pipeline();
-
-  fileNames.forEach((filename) => pipeline.del(FILES_EMBEDDED_INDEX_KEY(filename)));
-  pipeline.del(FILES_USER_EMBEDDED_INDEX_KEY(username));
-
-  return pipeline
-    .exec()
-    .then(handlePipeline)
-    .return(true);
+  return true;
 }
 
 removeEmbeds.transports = [ActionTransport.amqp];
