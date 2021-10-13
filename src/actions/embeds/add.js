@@ -12,7 +12,7 @@ async function addEmbed({ params }) {
   const pipeline = this.redis.pipeline();
 
   pipeline.sadd(FILES_USER_EMBEDDED_INDEX_KEY(username), uploadId);
-  pipeline.hset(FILES_EMBEDDED_INDEX_KEY(uploadId), embeddedRef, true);
+  pipeline.hset(FILES_EMBEDDED_INDEX_KEY(uploadId), embeddedRef, 'true');
 
   return pipeline
     .exec()

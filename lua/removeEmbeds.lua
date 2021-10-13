@@ -3,7 +3,8 @@
 -- keys
 local userEmbeddedKey = KEYS[1]
 local fileDataKey = KEYS[2]
-local fileEmbeddedPostFix = KEYS[3]
+
+local fileEmbeddedPostFix = ARGV[1]
 
 -- retrieves all filenames with embedded refs in username index
 local fileNames = redis.call('smembers', userEmbeddedKey)

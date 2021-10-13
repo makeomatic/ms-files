@@ -19,7 +19,7 @@
         "username": {
             "$ref": "common#/definitions/owner"
         },
-        "withEmbeded": {
+        "withEmbedded": {
             "type": "boolean",
             "default": false
         }

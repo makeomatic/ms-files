@@ -14,11 +14,11 @@ const NOT_IMPLEMENTED_ERROR = new NotImplementedError('files:info:pre hook must 
  * @param  {Object}  request.params
  * @param  {String}  request.params.filename
  * @param  {String}  request.params.username
- * @param  {Boolean} request.params.withEmbeded
+ * @param  {Boolean} request.params.withEmbedded
  * @return {Promise}
  */
 async function getFileInfo({ params }) {
-  const { filename: possibleFilename, username: owner, withEmbeded } = params;
+  const { filename: possibleFilename, username: owner, withEmbedded } = params;
 
   const [username] = await Promise
     .bind(this, ['files:info:pre', owner])
@@ -40,7 +40,7 @@ async function getFileInfo({ params }) {
     throw new HttpStatusError(401, 'please sign as an owner of this model to access it');
   }
 
-  if (withEmbeded) {
+  if (withEmbedded) {
     file.embedded = await this.redis.hgetall(FILES_EMBEDDED_INDEX_KEY(filename));
   }
 

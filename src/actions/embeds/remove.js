@@ -9,12 +9,10 @@ const {
 async function removeEmbeds({ params }) {
   const { username } = params;
 
-  await this.redis.removeEmbeds(
-    3,
-    FILES_USER_EMBEDDED_INDEX_KEY(username),
-    FILES_DATA,
-    FILES_EMBEDDED_POSTFIX
-  );
+  const removeEmbdesKeys = [FILES_USER_EMBEDDED_INDEX_KEY(username), FILES_DATA];
+  const removeEmbdesArgs = [FILES_EMBEDDED_POSTFIX];
+
+  await this.redis.removeEmbeds(2, removeEmbdesKeys, removeEmbdesArgs);
 
   return true;
 }
