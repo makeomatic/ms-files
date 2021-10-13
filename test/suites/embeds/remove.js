@@ -18,7 +18,7 @@ describe('embeds.remove action', function suite() {
     return addEmbeddedRef.call(this, {
       uploadId: this.response.uploadId,
       username: owner,
-      embeddedRef: 'https://test.embedded.com',
+      embeddedRef: 'test.embedded.com',
     });
   });
 

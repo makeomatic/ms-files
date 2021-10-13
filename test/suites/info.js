@@ -193,7 +193,7 @@ describe('info suite', function suite() {
           return addEmbeddedRef.call(this, {
             uploadId: this.response.uploadId,
             username: owner,
-            embeddedRef: 'https://testref.com',
+            embeddedRef: 'testref.com',
           });
         });
 
@@ -206,7 +206,7 @@ describe('info suite', function suite() {
               assert.equal(rsp.username, owner);
               assert.equal(rsp.file.owner, owner);
               assert.deepStrictEqual(rsp.file.embedded, {
-                'https://testref.com': 'true',
+                'testref.com': 'true',
               });
             });
         });

@@ -16,22 +16,22 @@ describe('embeds.add action', function suite() {
 
   const route = 'files.embeds.add';
 
-  it('400 on if embeddedRef is not url', async function test() {
+  it('400 on if embeddedRef is not hostname of url', async function test() {
     const res = this.send(route, {
       uploadId: this.response.uploadId,
       username: owner,
-      embeddedRef: 'test',
+      embeddedRef: 'wrong.url/path',
     });
 
     await assert.rejects(res, {
       statusCode: 400,
       // eslint-disable-next-line no-useless-escape
-      message: 'embeds.add validation failed: data.embeddedRef should match format \"uri\"',
+      message: 'embeds.add validation failed: data.embeddedRef should match format \"hostname\"',
     });
   });
 
   it('should be able to add embeddedRef to file namespace', async function test() {
-    const embeddedRef = 'https://test.com';
+    const embeddedRef = 'test.com';
 
     const actualFilenames = await this.files.redis.sismember(`files-index:${owner}:embedded`, this.response.uploadId);
     const actualEmbeddedRefs = await this.files.redis.hexists(`files-data:${this.response.uploadId}:embedded`, embeddedRef);

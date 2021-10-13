@@ -657,7 +657,7 @@
     },
     "embeddedRef": {
       "type": "string",
-      "format": "uri"
+      "format": "hostname"
     }
   }
 }
