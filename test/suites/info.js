@@ -13,6 +13,7 @@ const {
   processUpload,
   initUpload,
   updateAccess,
+  addEmbeddedRef,
 } = require('../helpers/utils');
 
 const route = 'files.info';
@@ -131,6 +132,7 @@ describe('info suite', function suite() {
             assert.ifError(rsp.file.public);
 
             assert.ok(rsp.file.files);
+            assert.equal(rsp.file.embedded, undefined);
             rsp.file.files.forEach((file) => {
               assert.ok(file.contentLength);
               if (file.type === 'c-bin') {
@@ -182,6 +184,30 @@ describe('info suite', function suite() {
               });
 
               return null;
+            });
+        });
+      });
+
+      describe('with embedded', function testEmbedded() {
+        before('add embedded ref', function pretest() {
+          return addEmbeddedRef.call(this, {
+            uploadId: this.response.uploadId,
+            username: owner,
+            embeddedRef: 'https://testref.com',
+          });
+        });
+
+        it('returns with embedded field by withEmbedded param', function test() {
+          return this
+            .send({ filename: this.response.uploadId, username: owner, withEmbedded: true })
+            .reflect()
+            .then(inspectPromise())
+            .then((rsp) => {
+              assert.equal(rsp.username, owner);
+              assert.equal(rsp.file.owner, owner);
+              assert.deepStrictEqual(rsp.file.embedded, {
+                'https://testref.com': 'true',
+              });
             });
         });
       });

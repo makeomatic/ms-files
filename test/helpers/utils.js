@@ -317,6 +317,14 @@ function getInfo({ filename, username }) {
 }
 
 //
+// Add embedded ref
+//
+function addEmbeddedRef({ uploadId, username, embeddedRef }) {
+  return this.amqp
+    .publishAndWait('files.embeds.add', { uploadId, username, embeddedRef });
+}
+
+//
 // We want tests to be idempotent, here are the helpers for that
 // start service
 //
@@ -429,6 +437,7 @@ module.exports = exports = {
   processUpload,
   downloadFile,
   getInfo,
+  addEmbeddedRef,
   updateAccess,
   inspectPromise,
   startService,
