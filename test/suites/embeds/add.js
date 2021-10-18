@@ -21,12 +21,13 @@ describe('embeds.add action', function suite() {
       uploadId: this.response.uploadId,
       username: owner,
       embeddedRef: 'wrong.url/path',
+      embeddedLimitType: 'test',
     });
 
     await assert.rejects(res, {
       statusCode: 400,
-      // eslint-disable-next-line no-useless-escape
-      message: 'embeds.add validation failed: data.embeddedRef should match format \"hostname\"',
+      // eslint-disable-next-line no-useless-escape, max-len
+      message: 'embeds.add validation failed: data.embeddedRef should match format \"hostname\", data.embeddedLimitType should be equal to one of the allowed values',
     });
   });
 
@@ -43,6 +44,7 @@ describe('embeds.add action', function suite() {
       uploadId: this.response.uploadId,
       username: owner,
       embeddedRef,
+      embeddedLimitType: '1',
     });
 
     const newFilenames = await this.files.redis.sismember(`files-index:${owner}:embedded`, this.response.uploadId);

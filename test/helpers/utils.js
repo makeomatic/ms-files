@@ -319,9 +319,9 @@ function getInfo({ filename, username }) {
 //
 // Add embedded ref
 //
-function addEmbeddedRef({ uploadId, username, embeddedRef }) {
+function addEmbeddedRef({ uploadId, username, embeddedRef, embeddedLimitType }) {
   return this.amqp
-    .publishAndWait('files.embeds.add', { uploadId, username, embeddedRef });
+    .publishAndWait('files.embeds.add', { uploadId, username, embeddedRef, embeddedLimitType });
 }
 
 //

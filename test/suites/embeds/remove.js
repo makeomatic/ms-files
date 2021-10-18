@@ -19,6 +19,7 @@ describe('embeds.remove action', function suite() {
       uploadId: this.response.uploadId,
       username: owner,
       embeddedRef: 'test.embedded.com',
+      embeddedLimitType: '1',
     });
   });
 

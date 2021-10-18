@@ -189,11 +189,18 @@ describe('info suite', function suite() {
       });
 
       describe('with embedded', function testEmbedded() {
-        before('add embedded ref', function pretest() {
-          return addEmbeddedRef.call(this, {
+        before('add embedded ref', async function pretest() {
+          await addEmbeddedRef.call(this, {
             uploadId: this.response.uploadId,
             username: owner,
             embeddedRef: 'testref.com',
+            embeddedLimitType: '1',
+          });
+          await addEmbeddedRef.call(this, {
+            uploadId: this.response.uploadId,
+            username: owner,
+            embeddedRef: 'testreflimit.com',
+            embeddedLimitType: '2',
           });
         });
 
@@ -206,7 +213,8 @@ describe('info suite', function suite() {
               assert.equal(rsp.username, owner);
               assert.equal(rsp.file.owner, owner);
               assert.deepStrictEqual(rsp.file.embedded, {
-                'testref.com': 'true',
+                'testref.com': '1',
+                'testreflimit.com': '2',
               });
             });
         });

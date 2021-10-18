@@ -4,7 +4,8 @@
   "required": [
     "uploadId",
     "username",
-    "embeddedRef"
+    "embeddedRef",
+    "embeddedLimitType"
   ],
   "properties": {
     "uploadId": {
@@ -15,6 +16,9 @@
     },
     "embeddedRef": {
       "$ref": "common#/definitions/embeddedRef"
+    },
+    "embeddedLimitType": {
+      "$ref": "common#/definitions/embeddedLimitType"
     }
   }
 }
