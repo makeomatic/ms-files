@@ -199,7 +199,7 @@ describe('info suite', function suite() {
           await addEmbeddedRef.call(this, {
             uploadId: this.response.uploadId,
             username: owner,
-            embeddedRef: 'testreflimit.com',
+            embeddedRef: 'testrefoverlimit.com',
             embeddedLimitType: '2',
           });
         });
@@ -214,7 +214,7 @@ describe('info suite', function suite() {
               assert.equal(rsp.file.owner, owner);
               assert.deepStrictEqual(rsp.file.embedded, {
                 'testref.com': '1',
-                'testreflimit.com': '2',
+                'testrefoverlimit.com': '2',
               });
             });
         });
