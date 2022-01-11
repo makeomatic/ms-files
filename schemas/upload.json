@@ -95,7 +95,9 @@
         "background",
         "model",
         "text",
-        "pdf"
+        "pdf",
+        "pano-equirect",
+        "pano-cubemap"
       ]
     },
     "directOnly": {
@@ -164,5 +166,38 @@
       ]
     },
     "then": { "not": { "required": ["postAction"] } }
+  }, {
+    "if": {
+      "required": ["uploadType"],
+      "properties": { "uploadType": { "const": "pano-equirect" } }
+    },
+    "then": {
+      "properties": {
+        "files": {
+          "maxItems": 1,
+          "items": {
+            "$ref": "common#/definitions/pano-equirect-image"
+          }
+        }
+      }
+    },
+    "continue": true
+  }, {
+    "if": {
+      "required": ["uploadType"],
+      "properties": { "uploadType": { "const": "pano-cubemap" } }
+    },
+    "then": {
+      "properties": {
+        "files": {
+          "minItems": 6,
+          "maxItems": 6,
+          "items": {
+            "$ref": "common#/definitions/pano-cubemap-image"
+          }
+        }
+      }
+    },
+    "continue": true
   }]
 }

@@ -654,6 +654,54 @@
           }]
         }
       }]
+    },
+    "pano-equirect-image": {
+      "type": "object",
+      "required": ["type", "contentType", "contentLength", "md5Hash"],
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "type": "string",
+          "const": "pano-equirect-image"
+        },
+        "contentType": {
+          "type": "string",
+          "enum": ["image/jpeg", "image/png"]
+        },
+        "contentLength": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 20971520
+        },
+        "md5Hash": {
+          "type": "string",
+          "pattern": "^[0-9A-Fa-f]{32}$"
+        }
+      }
+    },
+    "pano-cubemap-image": {
+      "type": "object",
+      "required": ["type", "contentType", "contentLength", "md5Hash"],
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "type": "string",
+          "const": "pano-cubemap-image"
+        },
+        "contentType": {
+          "type": "string",
+          "enum": ["image/jpeg", "image/png"]
+        },
+        "contentLength": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 20971520
+        },
+        "md5Hash": {
+          "type": "string",
+          "pattern": "^[0-9A-Fa-f]{32}$"
+        }
+      }
     }
   }
 }
