@@ -925,27 +925,27 @@
     debug "^3.1.0"
     lodash "^4.17.10"
 
-"@microfleet/core-types@^0.2.1":
-  version "0.2.1"
-  resolved "https://registry.yarnpkg.com/@microfleet/core-types/-/core-types-0.2.1.tgz#81bb412c01d0a7f6a56718a5e9ed29cc68e9fbaa"
-  integrity sha512-zrCmIvAeh0zLnj48RKf6pCthCGDduFWf6crznTFVKH9fXAEzApVwYF48+MsevU1VGXSU3r6c7+e6SZX+ZIwgOw==
+"@microfleet/core-types@^0.1.0":
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/@microfleet/core-types/-/core-types-0.1.0.tgz#06c3eb31c1bab70bde04759fc0e437f06d2106ea"
+  integrity sha512-J4G+L641Hm1U0X4N+7ocv5Rxu3YwDEz9oqM9XBhOKTDtMj9tkdw2iJrzr+zVHfAJQGiZSUJY9w8Wo1JcwmKBsw==
   dependencies:
-    "@microfleet/utils" "^0.2.0"
+    "@microfleet/utils" "^0.1.0"
     bluebird "^3.7.2"
     bluebird-retry "^0.11.0"
     eventemitter3 "^4.0.7"
 
-"@microfleet/core@^17.6.0":
-  version "17.8.1"
-  resolved "https://registry.yarnpkg.com/@microfleet/core/-/core-17.8.1.tgz#3148a94d6a9314c7b2c64768e7668f4681740dc0"
-  integrity sha512-J76fLsb+H/ucBec6q8MObsMVfzb9thHK+6dz9GCrJC1s7XZ5mSDC54c9FOJFzGfZM1i/+H3ADj3jO7CeG+mOFw==
+"@microfleet/core@=17.7.0":
+  version "17.7.0"
+  resolved "https://registry.yarnpkg.com/@microfleet/core/-/core-17.7.0.tgz#8e5c55ea99e01735a02347d8da04333b06de96e7"
+  integrity sha512-I13cIKZLsSYxahiXVDYtL1fQt9YXgU9ReGXXSGBOuoCq4HmQbXhPjVm/YH7PL/PkMU3O9jaZ1FBKsbPNaSHChw==
   dependencies:
-    "@microfleet/core-types" "^0.2.1"
-    "@microfleet/utils" "^0.2.0"
+    "@microfleet/core-types" "^0.1.0"
+    "@microfleet/utils" "^0.1.0"
     bluebird "^3.7.2"
     bluebird-retry "^0.11.0"
     eventemitter3 "^4.0.7"
-    yargs-parser "^21.0.0"
+    yargs-parser "^20.2.7"
 
 "@microfleet/transport-amqp@^15.2.8":
   version "15.2.8"
@@ -969,13 +969,13 @@
     sonic-boom "^2.0.1"
     uuid "^8.3.2"
 
-"@microfleet/utils@^0.2.0":
-  version "0.2.0"
-  resolved "https://registry.yarnpkg.com/@microfleet/utils/-/utils-0.2.0.tgz#520667981ea6218c0f6c5fb1be389abefb66964b"
-  integrity sha512-obY9LMucuK94mOle3rio1I77oK54fm1yxJ7wSdwYF1rtMWTcCLoFDVNL9c2K244CT7Rt/NKjwFIgdQyIn1gL/w==
+"@microfleet/utils@^0.1.0":
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/@microfleet/utils/-/utils-0.1.0.tgz#cbe237fbf7015ffa0e48ed16a65c42b44984209d"
+  integrity sha512-JIZBtf4sbmbfGsO8jJxQSf2GDPMNn34930w7je0KFcnl0hWsYZ6kcfLIju8TDXejbQton/vdf7Yk+LxGyo7tyA==
   dependencies:
     lodash "^4.17.21"
-    read-pkg-up "7.x.x"
+    read-pkg-up "7.0.1"
 
 "@microfleet/validation@11.1.1":
   version "11.1.1"
@@ -6842,7 +6842,7 @@ read-package-json@*, read-package-json@^4.1.1:
     normalize-package-data "^3.0.0"
     npm-normalize-package-bin "^1.0.0"
 
-read-pkg-up@7.x.x, read-pkg-up@^7.0.0, read-pkg-up@^7.0.1:
+read-pkg-up@7.0.1, read-pkg-up@^7.0.0, read-pkg-up@^7.0.1:
   version "7.0.1"
   resolved "https://registry.yarnpkg.com/read-pkg-up/-/read-pkg-up-7.0.1.tgz#f3a6135758459733ae2b95638056e1854e7ef507"
   integrity sha512-zK0TB7Xd6JpCLmlLmufqykGE+/TlOePD6qKClNW7hHDKFh/J7/7gCWGR7joEQEW1bKq3a3yUZSObOoWLFQ4ohg==
@@ -8367,7 +8367,7 @@ yargs-parser@^18.1.2:
     camelcase "^5.0.0"
     decamelize "^1.2.0"
 
-yargs-parser@^20.0.0, yargs-parser@^20.2.2, yargs-parser@^20.2.3:
+yargs-parser@^20.0.0, yargs-parser@^20.2.2, yargs-parser@^20.2.3, yargs-parser@^20.2.7:
   version "20.2.9"
   resolved "https://registry.yarnpkg.com/yargs-parser/-/yargs-parser-20.2.9.tgz#2eb7dc3b0289718fc295f362753845c41a0c94ee"
   integrity sha512-y11nGElTIV+CT3Zv9t7VKl+Q3hTQoT9a1Qzezhhl6Rp21gJ/IVTW7Z3y9EWXhuUBC2Shnf+DX0antecpAwSP8w==
