@@ -78,7 +78,7 @@
     "@babel/plugin-proposal-object-rest-spread": "^7.16.7",
     "@babel/plugin-transform-strict-mode": "^7.16.7",
     "@babel/register": "^7.16.9",
-    "@makeomatic/deploy": "^10.4.0",
+    "@makeomatic/deploy": "^11.0.4",
     "@semantic-release/changelog": "^6.0.1",
     "@semantic-release/exec": "^6.0.3",
     "@semantic-release/git": "^10.0.1",
@@ -108,11 +108,5 @@
     "lib/",
     "lua/",
     "bin/"
-  ],
-  "husky": {
-    "hooks": {
-      "commit-msg": "commitlint -e $HUSKY_GIT_PARAMS",
-      "prepare-commit-msg": "./node_modules/@makeomatic/deploy/git-hooks/prepare-commit-msg $HUSKY_GIT_PARAMS"
-    }
-  }
+  ]
 }
