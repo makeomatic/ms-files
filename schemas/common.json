@@ -50,40 +50,65 @@
     },
     "export": {
       "type": "object",
-      "required": ["format", "compression"],
+      "required": [
+        "format",
+        "compression"
+      ],
       "properties": {
         "format": {
           "type": "string",
-          "enum": ["stl", "obj", "wrl"]
+          "enum": [
+            "stl",
+            "obj",
+            "wrl"
+          ]
         },
         "compression": {
           "type": "string",
-          "enum": ["zip", "gz"]
+          "enum": [
+            "zip",
+            "gz"
+          ]
         },
         "meta": {
           "type": "object",
           "additionalProperties": {
-            "anyOf": [{
-              "type": "string"
-            }, {
-              "type": "number"
-            }, {
-              "type": "array",
-              "items": {
-                "oneOf": [{
-                  "type": "string"
-                }, {
-                  "type": "number"
-                }]
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "array",
+                "items": {
+                  "oneOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "number"
+                    }
+                  ]
+                }
               }
-            }]
+            ]
           }
         }
       }
     },
     "cp-binary": {
       "type": "object",
-      "required": ["type", "contentType", "contentLength", "contentEncoding", "md5Hash", "decompressedLength", "source-sha256"],
+      "required": [
+        "type",
+        "contentType",
+        "contentLength",
+        "contentEncoding",
+        "md5Hash",
+        "decompressedLength",
+        "source-sha256"
+      ],
       "additionalProperties": false,
       "properties": {
         "type": {
@@ -125,16 +150,30 @@
     },
     "cp-image": {
       "type": "object",
-      "required": ["type", "contentType", "contentLength", "md5Hash"],
+      "required": [
+        "type",
+        "contentType",
+        "contentLength",
+        "md5Hash"
+      ],
       "additionalProperties": false,
       "properties": {
         "type": {
           "type": "string",
-          "enum": ["c-texture", "c-preview", "c-simple", "c-pack"]
+          "enum": [
+            "c-texture",
+            "c-preview",
+            "c-simple",
+            "c-pack"
+          ]
         },
         "contentType": {
           "type": "string",
-          "enum": ["image/jpeg", "image/png", "image/vnd.cappasity"]
+          "enum": [
+            "image/jpeg",
+            "image/png",
+            "image/vnd.cappasity"
+          ]
         },
         "contentLength": {
           "type": "integer",
@@ -162,7 +201,12 @@
     },
     "cp-pack": {
       "type": "object",
-      "required": ["type", "contentType", "contentLength", "md5Hash"],
+      "required": [
+        "type",
+        "contentType",
+        "contentLength",
+        "md5Hash"
+      ],
       "additionalProperties": false,
       "properties": {
         "type": {
@@ -189,7 +233,12 @@
     },
     "cp-usdz": {
       "type": "object",
-      "required": ["type", "contentType", "contentLength", "md5Hash"],
+      "required": [
+        "type",
+        "contentType",
+        "contentLength",
+        "md5Hash"
+      ],
       "additionalProperties": false,
       "properties": {
         "type": {
@@ -221,7 +270,12 @@
     },
     "cp-gltf": {
       "type": "object",
-      "required": ["type", "contentType", "contentLength", "md5Hash"],
+      "required": [
+        "type",
+        "contentType",
+        "contentLength",
+        "md5Hash"
+      ],
       "additionalProperties": false,
       "properties": {
         "type": {
@@ -230,7 +284,10 @@
         },
         "contentType": {
           "type": "string",
-          "enum": ["model/gltf+json", "model/gltf-binary"]
+          "enum": [
+            "model/gltf+json",
+            "model/gltf-binary"
+          ]
         },
         "contentLength": {
           "type": "integer",
@@ -248,7 +305,12 @@
     },
     "cp-masks": {
       "type": "object",
-      "required": ["type", "contentType", "contentLength", "md5Hash"],
+      "required": [
+        "type",
+        "contentType",
+        "contentLength",
+        "md5Hash"
+      ],
       "additionalProperties": false,
       "properties": {
         "type": {
@@ -275,7 +337,12 @@
     },
     "c-ar-color": {
       "type": "object",
-      "required": ["type", "contentType", "contentLength", "md5Hash"],
+      "required": [
+        "type",
+        "contentType",
+        "contentLength",
+        "md5Hash"
+      ],
       "additionalProperties": false,
       "properties": {
         "type": {
@@ -302,7 +369,12 @@
     },
     "c-ar-masks": {
       "type": "object",
-      "required": ["type", "contentType", "contentLength", "md5Hash"],
+      "required": [
+        "type",
+        "contentType",
+        "contentLength",
+        "md5Hash"
+      ],
       "additionalProperties": false,
       "properties": {
         "type": {
@@ -329,7 +401,12 @@
     },
     "background-image": {
       "type": "object",
-      "required": ["type", "contentType", "contentLength", "md5Hash"],
+      "required": [
+        "type",
+        "contentType",
+        "contentLength",
+        "md5Hash"
+      ],
       "additionalProperties": false,
       "properties": {
         "type": {
@@ -338,7 +415,10 @@
         },
         "contentType": {
           "type": "string",
-          "enum": ["image/jpeg", "image/png"]
+          "enum": [
+            "image/jpeg",
+            "image/png"
+          ]
         },
         "contentLength": {
           "type": "integer",
@@ -353,18 +433,31 @@
     },
     "image": {
       "type": "object",
-      "required": ["type", "contentType", "contentLength", "md5Hash"],
+      "required": [
+        "type",
+        "contentType",
+        "contentLength",
+        "md5Hash"
+      ],
       "additionalProperties": false,
       "properties": {
         "type": {
           "type": "string",
           "not": {
-            "enum": ["c-texture", "c-preview", "c-simple"]
+            "enum": [
+              "c-texture",
+              "c-preview",
+              "c-simple"
+            ]
           }
         },
         "contentType": {
           "type": "string",
-          "enum": ["image/jpeg", "image/png", "image/svg+xml"]
+          "enum": [
+            "image/jpeg",
+            "image/png",
+            "image/svg+xml"
+          ]
         },
         "contentLength": {
           "type": "integer",
@@ -379,7 +472,12 @@
     },
     "arbitrary": {
       "type": "object",
-      "required": ["type", "contentType", "contentLength", "md5Hash"],
+      "required": [
+        "type",
+        "contentType",
+        "contentLength",
+        "md5Hash"
+      ],
       "additionalProperties": false,
       "properties": {
         "type": {
@@ -388,7 +486,11 @@
         },
         "contentType": {
           "type": "string",
-          "enum": ["text/plain", "application/pdf", "text/csv"]
+          "enum": [
+            "text/plain",
+            "application/pdf",
+            "text/csv"
+          ]
         },
         "contentLength": {
           "type": "integer",
@@ -401,13 +503,20 @@
         },
         "contentEncoding": {
           "type": "string",
-          "enum": ["gzip"]
+          "enum": [
+            "gzip"
+          ]
         }
       }
     },
     "video": {
       "type": "object",
-      "required": ["type", "contentType", "contentLength", "md5Hash"],
+      "required": [
+        "type",
+        "contentType",
+        "contentLength",
+        "md5Hash"
+      ],
       "additionalProperties": false,
       "properties": {
         "type": {
@@ -416,7 +525,10 @@
         },
         "contentType": {
           "type": "string",
-          "enum": ["video/mp4", "video/webm"]
+          "enum": [
+            "video/mp4",
+            "video/webm"
+          ]
         },
         "contentLength": {
           "type": "integer",
@@ -435,14 +547,41 @@
       "patternProperties": {
         "^c_[a-z]+$": {
           "anyOf": [
-            { "type": "string", "maxLength": 256 },
-            { "type": "number" }
+            {
+              "type": "string",
+              "maxLength": 256
+            },
+            {
+              "type": "number"
+            }
           ]
         }
       },
       "allOf": [
-        { "if": { "required": ["pWidth"] }, "then": { "required": ["pHeight"] } },
-        { "if": { "required": ["pHeight"] }, "then": { "required": ["pWidth"] } }
+        {
+          "if": {
+            "required": [
+              "pWidth"
+            ]
+          },
+          "then": {
+            "required": [
+              "pHeight"
+            ]
+          }
+        },
+        {
+          "if": {
+            "required": [
+              "pHeight"
+            ]
+          },
+          "then": {
+            "required": [
+              "pWidth"
+            ]
+          }
+        }
       ],
       "properties": {
         "alias": {
@@ -482,13 +621,16 @@
           "$ref": "common#/definitions/fitToSquare"
         },
         "backgroundImage": {
-          "oneOf": [{
-            "type": "string",
-            "format": "uri"
-          }, {
-            "type": "string",
-            "const": ""
-          }]
+          "oneOf": [
+            {
+              "type": "string",
+              "format": "uri"
+            },
+            {
+              "type": "string",
+              "const": ""
+            }
+          ]
         },
         "type": {
           "type": "string",
@@ -530,7 +672,11 @@
           "properties": {
             "rotatemode": {
               "type": "string",
-              "enum": ["loop", "once", "boomerang"]
+              "enum": [
+                "loop",
+                "once",
+                "boomerang"
+              ]
             },
             "ttc": {
               "type": "number",
@@ -566,7 +712,11 @@
             "os": {
               "type": "string",
               "enum": [
-                "macos", "linux", "windows", "android", "ios"
+                "macos",
+                "linux",
+                "windows",
+                "android",
+                "ios"
               ]
             },
             "osVersion": {
@@ -590,8 +740,14 @@
             }
           }
         },
-        "pWidth": { "type": "integer", "description": "Preview/Image width" },
-        "pHeight": { "type": "integer", "description": "Preview/Image height" }
+        "pWidth": {
+          "type": "integer",
+          "description": "Preview/Image width"
+        },
+        "pHeight": {
+          "type": "integer",
+          "description": "Preview/Image height"
+        }
       }
     },
     "filter-props": {
@@ -633,31 +789,44 @@
       }
     },
     "simpleTypes": {
-      "anyOf": [{
-        "type": "string",
-        "minLength": 1,
-        "maxLength": 256
-      }, {
-        "type": "number"
-      }, {
-        "type": "boolean"
-      }, {
-        "type": "array",
-        "maxItems": 32,
-        "items": {
-          "anyOf": [{
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 256
-          }, {
-            "type": "number"
-          }]
+      "anyOf": [
+        {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        {
+          "type": "number"
+        },
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "array",
+          "maxItems": 32,
+          "items": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 256
+              },
+              {
+                "type": "number"
+              }
+            ]
+          }
         }
-      }]
+      ]
     },
     "pano-equirect-image": {
       "type": "object",
-      "required": ["type", "contentType", "contentLength", "md5Hash"],
+      "required": [
+        "type",
+        "contentType",
+        "contentLength",
+        "md5Hash"
+      ],
       "additionalProperties": false,
       "properties": {
         "type": {
@@ -666,7 +835,10 @@
         },
         "contentType": {
           "type": "string",
-          "enum": ["image/jpeg", "image/png"]
+          "enum": [
+            "image/jpeg",
+            "image/png"
+          ]
         },
         "contentLength": {
           "type": "integer",
@@ -681,7 +853,12 @@
     },
     "pano-cubemap-image": {
       "type": "object",
-      "required": ["type", "contentType", "contentLength", "md5Hash"],
+      "required": [
+        "type",
+        "contentType",
+        "contentLength",
+        "md5Hash"
+      ],
       "additionalProperties": false,
       "properties": {
         "type": {
@@ -690,7 +867,10 @@
         },
         "contentType": {
           "type": "string",
-          "enum": ["image/jpeg", "image/png"]
+          "enum": [
+            "image/jpeg",
+            "image/png"
+          ]
         },
         "contentLength": {
           "type": "integer",
@@ -700,6 +880,14 @@
         "md5Hash": {
           "type": "string",
           "pattern": "^[0-9A-Fa-f]{32}$"
+        }
+      }
+    },
+    "c-preview": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "c-preview"
         }
       }
     }

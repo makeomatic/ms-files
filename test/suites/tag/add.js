@@ -23,7 +23,7 @@ describe('tag.add action', function suite() {
       .reflect()
       .then(inspectPromise(false))
       .then((error) => {
-        assert.equal(error.message, 'tag.add validation failed: data.tags should '
+        assert.equal(error.message, 'tag.add validation failed: data/tags must '
           + 'NOT have duplicate items (items ## 2 and 1 are identical)');
       });
   });

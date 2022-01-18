@@ -23,6 +23,11 @@ describe('upload panorama suite', function suite() {
           contentType: 'image/jpeg',
           contentLength: 2452676,
           md5Hash: '8478d2bdfc72bea50f2754615d8b357b',
+          type: 'c-preview',
+        }, {
+          contentType: 'image/jpeg',
+          contentLength: 2452676,
+          md5Hash: '8478d2bdfc72bea50f2754615d8b357b',
           type: 'pano-equirect-image',
         }],
       });
@@ -30,8 +35,8 @@ describe('upload panorama suite', function suite() {
       strictEqual(response.name, 'pano-equirect exmaple');
       strictEqual(response.uploadId !== undefined, true);
       strictEqual(response.startedAt !== undefined, true);
-      strictEqual(response.parts, 1);
-      strictEqual(response.contentLength, 2452676);
+      strictEqual(response.parts, 2);
+      strictEqual(response.contentLength, 4905352);
       strictEqual(response.status, '1');
       strictEqual(response.owner, 'v@makeomatic.ru');
       strictEqual(response.bucket.startsWith('makeomatic-13123'), true);
@@ -41,11 +46,19 @@ describe('upload panorama suite', function suite() {
       strictEqual(response.files[0].contentLength, 2452676);
       strictEqual(response.files[0].md5Hash !== undefined, true);
       strictEqual(response.files[0].bucket.startsWith('makeomatic-13123'), true);
-      strictEqual(response.files[0].type, 'pano-equirect-image');
+      strictEqual(response.files[0].type, 'c-preview');
       strictEqual(response.files[0].filename !== undefined, true);
       strictEqual(response.files[0].location !== undefined, true);
 
-      strictEqual(response.files[1] === undefined, true);
+      strictEqual(response.files[1].contentType, 'image/jpeg');
+      strictEqual(response.files[1].contentLength, 2452676);
+      strictEqual(response.files[1].md5Hash !== undefined, true);
+      strictEqual(response.files[1].bucket.startsWith('makeomatic-13123'), true);
+      strictEqual(response.files[1].type, 'pano-equirect-image');
+      strictEqual(response.files[1].filename !== undefined, true);
+      strictEqual(response.files[1].location !== undefined, true);
+
+      strictEqual(response.files[2] === undefined, true);
     });
 
     it('should be able to return an error if the file type is invalid', async () => {
@@ -58,6 +71,11 @@ describe('upload panorama suite', function suite() {
           name: 'pano-equirect exmaple',
         },
         files: [{
+          contentType: 'image/jpeg',
+          contentLength: 2452676,
+          md5Hash: '8478d2bdfc72bea50f2754615d8b357b',
+          type: 'c-preview',
+        }, {
           contentType: 'image/jpeg',
           contentLength: 2452676,
           md5Hash: '8478d2bdfc72bea50f2754615d8b357b',
@@ -76,6 +94,11 @@ describe('upload panorama suite', function suite() {
           name: 'pano-equirect exmaple',
         },
         files: [{ // invalid count
+          contentType: 'image/jpeg',
+          contentLength: 2452676,
+          md5Hash: '8478d2bdfc72bea50f2754615d8b357b',
+          type: 'c-preview',
+        }, {
           contentType: 'image/jpeg',
           contentLength: 2452676,
           md5Hash: '8478d2bdfc72bea50f2754615d8b357b',
@@ -101,6 +124,11 @@ describe('upload panorama suite', function suite() {
           name: 'pano-cubemap exmaple',
         },
         files: [{
+          contentType: 'image/jpeg',
+          contentLength: 2452676,
+          md5Hash: '8478d2bdfc72bea50f2754615d8b357b',
+          type: 'c-preview',
+        }, {
           contentType: 'image/jpeg',
           contentLength: 2452676,
           md5Hash: '8478d2bdfc72bea50f2754615d8b357b',
@@ -136,8 +164,8 @@ describe('upload panorama suite', function suite() {
       strictEqual(response.name, 'pano-cubemap exmaple');
       strictEqual(response.uploadId !== undefined, true);
       strictEqual(response.startedAt !== undefined, true);
-      strictEqual(response.parts, 6);
-      strictEqual(response.contentLength, 14716056);
+      strictEqual(response.parts, 7);
+      strictEqual(response.contentLength, 17168732);
       strictEqual(response.status, '1');
       strictEqual(response.owner, 'v@makeomatic.ru');
       strictEqual(response.bucket.startsWith('makeomatic-13123'), true);
@@ -147,7 +175,7 @@ describe('upload panorama suite', function suite() {
       strictEqual(response.files[0].contentLength, 2452676);
       strictEqual(response.files[0].md5Hash !== undefined, true);
       strictEqual(response.files[0].bucket.startsWith('makeomatic-13123'), true);
-      strictEqual(response.files[0].type, 'pano-cubemap-image');
+      strictEqual(response.files[0].type, 'c-preview');
       strictEqual(response.files[0].filename !== undefined, true);
       strictEqual(response.files[0].location !== undefined, true);
 
@@ -190,6 +218,16 @@ describe('upload panorama suite', function suite() {
       strictEqual(response.files[5].type, 'pano-cubemap-image');
       strictEqual(response.files[5].filename !== undefined, true);
       strictEqual(response.files[5].location !== undefined, true);
+
+      strictEqual(response.files[6].contentType, 'image/jpeg');
+      strictEqual(response.files[6].contentLength, 2452676);
+      strictEqual(response.files[6].md5Hash !== undefined, true);
+      strictEqual(response.files[6].bucket.startsWith('makeomatic-13123'), true);
+      strictEqual(response.files[6].type, 'pano-cubemap-image');
+      strictEqual(response.files[6].filename !== undefined, true);
+      strictEqual(response.files[6].location !== undefined, true);
+
+      strictEqual(response.files[7] === undefined, true);
     });
 
     it('should be able to return an error if the file type is invalid', async () => {
@@ -202,6 +240,11 @@ describe('upload panorama suite', function suite() {
           name: 'pano-cubemap exmaple',
         },
         files: [{
+          contentType: 'image/jpeg',
+          contentLength: 2452676,
+          md5Hash: '8478d2bdfc72bea50f2754615d8b357b',
+          type: 'c-preview',
+        }, {
           contentType: 'image/jpeg',
           contentLength: 2452676,
           md5Hash: '8478d2bdfc72bea50f2754615d8b357b',
@@ -220,6 +263,11 @@ describe('upload panorama suite', function suite() {
           name: 'pano-cubemap exmaple',
         },
         files: [{ // invalid count
+          contentType: 'image/jpeg',
+          contentLength: 2452676,
+          md5Hash: '8478d2bdfc72bea50f2754615d8b357b',
+          type: 'c-preview',
+        }, {
           contentType: 'image/jpeg',
           contentLength: 2452676,
           md5Hash: '8478d2bdfc72bea50f2754615d8b357b',

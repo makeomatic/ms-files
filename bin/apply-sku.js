@@ -65,7 +65,11 @@ const isNewer = (amqp, newUploadId, existingUploadId) => (
       if (isNew === false) {
         console.info(
           '[warn] overwrite failed: %s older than %s - [%s / %s] by %s',
-          newUploadId, existingUploadId, newData, data, newData - data
+          newUploadId,
+          existingUploadId,
+          newData,
+          data,
+          newData - data
         );
       }
 
