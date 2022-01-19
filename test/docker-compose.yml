@@ -3,7 +3,6 @@ version: '3'
 services:
   tester:
     volumes:
-      - ${PWD}:/src
       - ${PWD}/test/configs/generic:/configs/core:ro
       - ${PWD}/test/configs/redis-cluster:/configs/redis:ro
     environment:

@@ -18,7 +18,8 @@ module.exports = function postProcess(offset = 0, uploadedAt) {
   };
 
   return this.router
-    .dispatch(`${prefix}.list`, {
+    .dispatch({
+      route: `${prefix}.list`,
       headers: {},
       query: {},
       // payload
@@ -33,7 +34,8 @@ module.exports = function postProcess(offset = 0, uploadedAt) {
 
       return Promise.resolve(files).mapSeries((file) => (
         // make sure to call reflect so that we do not interrupt the procedure
-        this.router.dispatch(`${prefix}.process`, {
+        Promise.resolve(this.router.dispatch({
+          route: `${prefix}.process`,
           headers: {},
           query: {},
           // payload
@@ -43,7 +45,7 @@ module.exports = function postProcess(offset = 0, uploadedAt) {
           },
           transport: 'amqp',
           method: 'amqp',
-        })
+        }))
           .reflect()
           .tap((result) => {
             this.log.info({ owner: file[FILES_OWNER_FIELD] }, '%s |', file.id, result.isFulfilled() ? 'processed' : result.reason());
@@ -59,6 +61,6 @@ module.exports = function postProcess(offset = 0, uploadedAt) {
     })
     .then(() => {
       this.log.info('completed files post-processing');
-      return null;
+      return Promise.resolve(null);
     });
 };

@@ -1,4 +1,4 @@
-const { ActionTransport } = require('@microfleet/core');
+const { ActionTransport } = require('@microfleet/plugin-router');
 const Promise = require('bluebird');
 
 const hasAccess = require('../../utils/has-access');

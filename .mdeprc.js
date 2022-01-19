@@ -2,7 +2,7 @@ module.exports = {
   node: "16",
   auto_compose: true,
   with_local_compose: true,
-  sleep: 35,
+  sleep: 5,
   services: ['rabbitmq'],
   nycReport: false,
   post_exec: 'yarn coverage:report'

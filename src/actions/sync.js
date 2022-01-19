@@ -1,4 +1,4 @@
-const { ActionTransport } = require('@microfleet/core');
+const { ActionTransport } = require('@microfleet/plugin-router');
 const Promise = require('bluebird');
 const fsort = require('redis-filtered-sort');
 const moment = require('moment');

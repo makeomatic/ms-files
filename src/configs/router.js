@@ -1,22 +1,16 @@
 const path = require('path');
-const { routerExtension, ActionTransport } = require('@microfleet/core');
-
-const autoSchema = routerExtension('validate/schemaLessAction');
-const metricObservability = routerExtension('audit/metrics');
-const auditLog = routerExtension('audit/log');
+const { Extensions: { auditLog } } = require('@microfleet/plugin-router');
+const { metricObservability } = require('@microfleet/plugin-prometheus/lib/metrics');
 
 exports.router = {
   routes: {
     directory: path.resolve(__dirname, '../actions'),
     prefix: 'files',
-    setTransportsAsDefault: false,
-    transports: [ActionTransport.amqp, ActionTransport.http],
     enabledGenericActions: [
       'health',
     ],
   },
   extensions: {
-    enabled: ['postRequest', 'preRequest', 'preResponse', 'postResponse'],
-    register: [autoSchema, auditLog(), metricObservability()],
+    register: [auditLog(), metricObservability],
   },
 };

@@ -1,4 +1,4 @@
-const { ActionTransport } = require('@microfleet/core');
+const { ActionTransport } = require('@microfleet/plugin-router');
 
 const { FILES_DATA } = require('../constant');
 const fetchData = require('../utils/fetch-data');

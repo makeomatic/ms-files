@@ -1,4 +1,4 @@
-const { ActionTransport } = require('@microfleet/core');
+const { ActionTransport } = require('@microfleet/plugin-router');
 const Promise = require('bluebird');
 const { HttpStatusError } = require('common-errors');
 const { encodeURI } = require('@google-cloud/storage/build/src/util');
