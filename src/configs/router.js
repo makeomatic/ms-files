@@ -1,6 +1,5 @@
 const path = require('path');
 const { Extensions: { auditLog } } = require('@microfleet/plugin-router');
-const { metricObservability } = require('@microfleet/plugin-prometheus/lib/metrics');
 
 exports.router = {
   routes: {
@@ -11,6 +10,6 @@ exports.router = {
     ],
   },
   extensions: {
-    register: [auditLog(), metricObservability],
+    register: [auditLog()],
   },
 };
