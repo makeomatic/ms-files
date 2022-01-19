@@ -1,4 +1,4 @@
-const { resolve } = require('bluebird')
+const { resolve } = require('bluebird');
 const assert = require('assert');
 const uuid = require('uuid');
 
