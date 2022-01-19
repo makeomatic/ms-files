@@ -35,10 +35,10 @@ class Files extends Microfleet {
 
     // 2 different plugin types
     let redisDuplicate;
-    if (config.plugins.includes('redisCluster')) {
+    if (config.plugins.includes('redis-cluster')) {
       this.redisType = 'redisCluster';
       redisDuplicate = () => new RedisCluster(config.redis.hosts, config.redis.options);
-    } else if (config.plugins.includes('redisSentinel')) {
+    } else if (config.plugins.includes('redis-sentinel')) {
       this.redisType = 'redisSentinel';
       redisDuplicate = (redis) => redis.duplicate();
     } else {
@@ -127,7 +127,8 @@ class Files extends Microfleet {
     const route = `${prefix}.finish`;
 
     try {
-      await this.router.dispatch(route, {
+      await this.router.dispatch({
+        route,
         headers: {},
         query: {},
         // payload

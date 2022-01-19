@@ -1,3 +1,4 @@
+const { resolve } = require('bluebird')
 const assert = require('assert');
 const uuid = require('uuid');
 
@@ -81,8 +82,7 @@ describe('access suite', function suite() {
     }));
 
     it('post-processes files', function test() {
-      return this.files
-        .postProcess(0, Date.now())
+      return resolve(this.files.postProcess(0, Date.now()))
         .reflect()
         .then(inspectPromise());
     });

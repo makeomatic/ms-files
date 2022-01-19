@@ -14,10 +14,12 @@ exports.plugins = [
   'validator',
   'logger',
   'opentracing',
-  'router',
   'amqp',
-  'http',
-  'redisCluster',
+  'hapi',
+  'router',
+  'router-amqp',
+  'router-hapi',
+  'redis-cluster',
   'prometheus',
 ];
 
