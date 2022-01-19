@@ -6,7 +6,7 @@ const { STATUS_UPLOADED, FILES_OWNER_FIELD } = require('./constant');
  * Invoke this method to start post-processing of all pending files
  * @return {Promise}
  */
-module.exports = function postProcess(offset = 0, uploadedAt) {
+module.exports = function postProcess(offset, uploadedAt) {
   const { prefix } = this.config.router.routes;
   const filter = {
     status: {
@@ -23,7 +23,7 @@ module.exports = function postProcess(offset = 0, uploadedAt) {
       headers: {},
       query: {},
       // payload
-      params: { filter, limit: 20, offset },
+      params: { filter, limit: 20, offset: offset || 0 },
       transport: 'amqp',
       method: 'amqp',
     })
