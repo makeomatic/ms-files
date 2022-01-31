@@ -21,4 +21,5 @@ exports.plugins = [
   'router-hapi',
   'redis-cluster',
   'prometheus',
+  'dlock',
 ];

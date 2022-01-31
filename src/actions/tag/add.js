@@ -4,7 +4,6 @@ const Promise = require('bluebird');
 const hasAccess = require('../../utils/has-access');
 const handlePipeline = require('../../utils/pipeline-error');
 const fetchData = require('../../utils/fetch-data');
-const getLock = require('../../utils/acquire-lock');
 const stringify = require('../../utils/stringify');
 const {
   LOCK_UPDATE_KEY,
@@ -18,13 +17,14 @@ const { call } = Function.prototype;
 const { toLowerCase } = String.prototype;
 const arrayUniq = (element, index, array) => array.indexOf(element) === index;
 
-async function addTag(params) {
+async function addTag(lock, service, params) {
   const { uploadId, username } = params;
   const tags = params.tags
     .map(call, toLowerCase)
     .filter(arrayUniq);
-  const fileData = await fetchData.call(this, FILES_DATA_INDEX_KEY(uploadId));
-  const pipeline = this.redis.pipeline();
+
+  const fileData = await fetchData.call(service, FILES_DATA_INDEX_KEY(uploadId));
+  const pipeline = service.redis.pipeline();
 
   // it throws error
   hasAccess(username)(fileData);
@@ -46,19 +46,15 @@ async function addTag(params) {
 
   pipeline.hmset(FILES_DATA_INDEX_KEY(uploadId), updateData);
 
-  return pipeline
-    .exec()
-    .then(handlePipeline)
-    .return(true);
+  handlePipeline(await pipeline.exec());
+
+  return true;
 }
 
 async function addTagAction({ params }) {
   const { uploadId } = params;
 
-  return Promise.using(
-    getLock(this, LOCK_UPDATE_KEY(uploadId)),
-    () => addTag.call(this, params)
-  );
+  return Promise.using(this.dlock.acquireLock(LOCK_UPDATE_KEY(uploadId)), this, params, addTag);
 }
 
 addTagAction.transports = [ActionTransport.amqp];

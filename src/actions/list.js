@@ -57,7 +57,7 @@ async function interstore(ctx, username) {
   }
 
   // ensure we only do 1 operation concurrently
-  await ctx.dlock.fanout(interstoreKey, async () => {
+  await ctx.dlock.manager.fanout(interstoreKey, async () => {
     const res = await redis.pipeline()
       .sinterstore(interstoreKey, filesIndex, tagKeys)
       .expire(interstoreKey, ctx.interstoreKeyTTL)
@@ -268,5 +268,5 @@ async function listFiles({ params }) {
   }
 }
 
-listFiles.transports = [ActionTransport.amqp];
+listFiles.transports = [ActionTransport.amqp, ActionTransport.internal];
 module.exports = listFiles;

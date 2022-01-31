@@ -100,5 +100,5 @@ async function postProcessFile({ params }) {
   return response;
 }
 
-postProcessFile.transports = [ActionTransport.amqp];
+postProcessFile.transports = [ActionTransport.amqp, ActionTransport.internal];
 module.exports = postProcessFile;

@@ -12,59 +12,29 @@
       "minItems": 1,
       "items": {
         "anyOf": [
-          {
-            "$ref": "common#/definitions/cp-binary"
-          },
-          {
-            "$ref": "common#/definitions/cp-image"
-          },
-          {
-            "$ref": "common#/definitions/image"
-          },
-          {
-            "$ref": "common#/definitions/background-image"
-          },
-          {
-            "$ref": "common#/definitions/arbitrary"
-          },
-          {
-            "$ref": "common#/definitions/video"
-          },
-          {
-            "$ref": "common#/definitions/cp-pack"
-          },
-          {
-            "$ref": "common#/definitions/cp-masks"
-          },
-          {
-            "$ref": "common#/definitions/cp-gltf"
-          },
-          {
-            "$ref": "common#/definitions/cp-usdz"
-          },
-          {
-            "$ref": "common#/definitions/c-ar-color"
-          },
-          {
-            "$ref": "common#/definitions/c-ar-masks"
-          }
+          { "$ref": "common#/definitions/cp-binary" },
+          { "$ref": "common#/definitions/cp-image" },
+          { "$ref": "common#/definitions/image" },
+          { "$ref": "common#/definitions/background-image" },
+          { "$ref": "common#/definitions/arbitrary" },
+          { "$ref": "common#/definitions/video" },
+          { "$ref": "common#/definitions/cp-pack" },
+          { "$ref": "common#/definitions/cp-masks" },
+          { "$ref": "common#/definitions/cp-gltf" },
+          { "$ref": "common#/definitions/cp-usdz" },
+          { "$ref": "common#/definitions/c-ar-color" },
+          { "$ref": "common#/definitions/c-ar-masks" }
         ]
       }
     },
     "meta": {
       "allOf": [
-        {
-          "$ref": "common#/definitions/meta"
-        },
+        { "$ref": "common#/definitions/meta" },
         {
           "type": "object",
-          "required": [
-            "name"
-          ],
+          "required": ["name"],
           "not": {
-            "required": [
-              "alias"
-            ]
+            "required": ["alias"]
           }
         }
       ]
@@ -76,13 +46,8 @@
       "properties": {
         "update": {
           "allOf": [
-            {
-              "$ref": "common#/definitions/meta"
-            },
-            {
-              "type": "object",
-              "minProperties": 1
-            }
+            { "$ref": "common#/definitions/meta" },
+            { "type": "object", "minProperties": 1 }
           ]
         }
       }
@@ -140,112 +105,63 @@
       "default": false
     }
   },
-  "allOf": [
-    {
-      "if": {
-        "required": [
-          "resumable"
-        ],
+  "allOf": [{
+    "if": {
+      "required": ["resumable"],
+      "properties": { "resumable": { "const": false } }
+    },
+    "then": {
+      "not": {
+        "required": ["unlisted", "temp"],
         "properties": {
-          "resumable": {
-            "const": false
-          }
-        }
-      },
-      "then": {
-        "properties": {
-          "unlisted": {
-            "const": false
-          },
-          "temp": {
-            "const": false
-          }
+          "unlisted": { "const": true },
+          "temp": { "const": true }
         }
       }
+    }
+  }, {
+    "if": {
+      "required": ["uploadType"],
+      "properties": { "uploadType": { "const": "simple" } }
     },
-    {
-      "if": {
-        "anyOf": [
-          {
-            "required": [
-              "unlisted"
-            ],
-            "properties": {
-              "unlisted": {
-                "const": true
-              }
-            }
-          },
-          {
-            "required": [
-              "temp"
-            ],
-            "properties": {
-              "temp": {
-                "const": true
-              }
-            }
-          }
-        ]
-      },
-      "then": {
-        "not": {
-          "required": [
-            "postAction"
-          ]
-        }
-      }
-    },
-    {
-      "if": {
-        "required": [
-          "uploadType"
-        ],
-        "properties": {
-          "uploadType": {
-            "const": "simple"
-          }
-        }
-      },
-      "then": {
-        "properties": {
-          "files": {
-            "type": "array",
+    "then": {
+      "properties": {
+        "files": {
+          "type": "array",
+          "allOf": [{
+            "contains": { "$ref": "common#/definitions/cp-image" }
+          }, {
             "contains": {
-              "allOf": [
-                {
-                  "$ref": "common#/definitions/cp-image"
-                },
-                {
-                  "$ref": "common#/definitions/c-preview"
-                }
-              ]
+              "type": "object",
+              "required": ["type"],
+              "properties": { "type": { "const": "c-preview" } }
             }
-          }
+          }]
         }
       }
+    }
+  }, {
+    "if": {
+      "required": ["uploadType"],
+      "properties": { "uploadType": { "const": "text" } }
     },
-    {
-      "if": {
-        "required": [
-          "uploadType"
-        ],
-        "properties": {
-          "uploadType": {
-            "const": "text"
-          }
-        }
-      },
-      "then": {
-        "properties": {
-          "files": {
-            "type": "array",
-            "items": {
-              "$ref": "common#/definitions/arbitrary"
-            }
+    "then": {
+      "properties": {
+        "files": {
+          "type": "array",
+          "items": {
+            "$ref": "common#/definitions/arbitrary"
           }
         }
       }
     }
-  ]
+  }, {
+    "if": {
+      "anyOf": [
+        { "required": ["unlisted"], "properties": { "unlisted": { "const": true } } },
+        { "required": ["temp"], "properties": { "temp": { "const": true } } }
+      ]
+    },
+    "then": { "not": { "required": ["postAction"] } }
+  }]
 }

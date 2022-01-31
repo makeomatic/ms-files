@@ -2,7 +2,6 @@ const { ActionTransport } = require('@microfleet/plugin-router');
 const Promise = require('bluebird');
 const { HttpStatusError } = require('common-errors');
 const handlePipeline = require('../utils/pipeline-error');
-const getLock = require('../utils/acquire-lock');
 const fetchData = require('../utils/fetch-data');
 const isProcessed = require('../utils/is-processed');
 const isUnlisted = require('../utils/is-unlisted');
@@ -29,18 +28,6 @@ const {
 
 const { call } = Function.prototype;
 const { toLowerCase } = String.prototype;
-
-// init disposer
-function acquireLock(uploadId, alias) {
-  const keys = [LOCK_UPDATE_KEY(uploadId)];
-
-  // if we remove it - we don't care, so both undefined and '' works
-  if (alias) {
-    keys.push(`file:update:alias:${alias}`);
-  }
-
-  return getLock(this, ...keys);
-}
 
 // cache ref
 const { hasOwnProperty } = Object.prototype;
@@ -192,8 +179,16 @@ async function updateMeta(lock, ctx, params) {
 function initFileUpdate({ params }) {
   const { uploadId, meta } = params;
 
+  const keys = [LOCK_UPDATE_KEY(uploadId)];
+  const alias = meta[FILES_ALIAS_FIELD];
+
+  // if we remove it - we don't care, so both undefined and '' works
+  if (alias) {
+    keys.push(`file:update:alias:${alias}`);
+  }
+
   // ensure there are no race-conditions
-  return Promise.using(acquireLock.call(this, uploadId, meta[FILES_ALIAS_FIELD]), this, params, updateMeta);
+  return Promise.using(this.dlock.acquireLock(...keys), this, params, updateMeta);
 }
 
 initFileUpdate.transports = [ActionTransport.amqp];
