@@ -139,7 +139,7 @@ async function completeFileUpload({ params }) {
     pipeline.persist(postActionKey);
   }
 
-  await pipeline.exec().then(handlePipeline);
+  handlePipeline(await pipeline.exec());
 
   if (params.skipProcessing) {
     return 'upload completed, processing skipped';
@@ -150,6 +150,6 @@ async function completeFileUpload({ params }) {
   return amqp[action](route, { uploadId });
 }
 
-completeFileUpload.transports = [ActionTransport.amqp];
+completeFileUpload.transports = [ActionTransport.amqp, ActionTransport.internal];
 
 module.exports = completeFileUpload;

@@ -82,9 +82,7 @@ describe('access suite', function suite() {
     }));
 
     it('post-processes files', function test() {
-      return resolve(this.files.postProcess(0, Date.now()))
-        .reflect()
-        .then(inspectPromise());
+      return resolve(this.files.postProcess(0, Date.now()));
     });
 
     it('rejects to show direct only file without proper username', function test() {

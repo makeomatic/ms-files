@@ -35,3 +35,4 @@ lib
 .nyc_output
 pk.json
 /configs
+.pnpm-store

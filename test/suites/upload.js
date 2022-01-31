@@ -506,7 +506,7 @@ describe('upload suite', function suite() {
       assert.ok(this.files.validator.validateSync('upload', obj).error);
     });
 
-    it('validates meta.creationInfo', function test() {
+    it('validates meta.creationInfo', async function test() {
       const extraProp = {
         ...valid,
         meta: {
@@ -577,15 +577,15 @@ describe('upload suite', function suite() {
         },
       };
 
-      const vs = this.files.validator.validateSync.bind(this.files.validator);
+      const vs = this.files.validator.ifError.bind(this.files.validator);
 
-      assert(vs('upload', extraProp).error.message.match(/creationInfo must NOT have additional properties/));
-      assert(vs('upload', invalidOs).error.message.match(/creationInfo.os must be equal to one of the allowed values/));
-      assert(vs('upload', invalidOsVersion).error.message.match(/creationInfo.osVersion must NOT have more than 50 characters/));
-      assert(vs('upload', invalidApplication).error.message.match(/creationInfo.application must NOT have more than 50 characters/));
-      assert(vs('upload', invalidApplicationNumber).error.message.match(/creationInfo.application must be string/));
-      assert(vs('upload', invalidApplicationVersion).error.message.match(/creationInfo.applicationVersion must NOT have more than 50 characters/));
-      assert(vs('upload', invalidApplicationVersionNumber).error.message.match(/creationInfo.applicationVersion must be string/));
+      assert.throws(() => vs('upload', extraProp), /creationInfo must NOT have additional properties/);
+      assert.throws(() => vs('upload', invalidOs), /creationInfo.os must be equal to one of the allowed values/);
+      assert.throws(() => vs('upload', invalidOsVersion), /creationInfo.osVersion must NOT have more than 50 characters/);
+      assert.throws(() => vs('upload', invalidApplication), /creationInfo.application must NOT have more than 50 characters/);
+      assert.throws(() => vs('upload', invalidApplicationNumber), /creationInfo.application must be string/);
+      assert.throws(() => vs('upload', invalidApplicationVersion), /creationInfo.applicationVersion must NOT have more than 50 characters/);
+      assert.throws(() => vs('upload', invalidApplicationVersionNumber), /creationInfo.applicationVersion must be string/);
     });
 
     it('validates meta.ar3dviewProps', function test() {

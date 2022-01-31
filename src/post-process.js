@@ -1,66 +1,40 @@
-const Promise = require('bluebird');
 const moment = require('moment');
 const { STATUS_UPLOADED, FILES_OWNER_FIELD } = require('./constant');
 
 /**
  * Invoke this method to start post-processing of all pending files
- * @return {Promise}
  */
-module.exports = function postProcess(offset, uploadedAt) {
-  const { prefix } = this.config.router.routes;
+module.exports = async function postProcess(offset = 0, uploadedAt = moment().subtract(1, 'hour').valueOf()) {
   const filter = {
     status: {
       eq: STATUS_UPLOADED,
     },
     uploadedAt: {
-      lte: uploadedAt || moment().subtract(1, 'hour').valueOf(),
+      lte: uploadedAt,
     },
   };
 
-  return this.router
-    .dispatch({
-      route: `${prefix}.list`,
-      headers: {},
-      query: {},
-      // payload
-      params: { filter, limit: 20, offset: offset || 0 },
-      transport: 'amqp',
-      method: 'amqp',
-    })
-    .then((data) => {
-      const {
-        files, cursor, page, pages,
-      } = data;
+  const data = await this.dispatch('list', { params: { filter, limit: 20, offset } });
+  const { files, cursor, page, pages } = data;
 
-      return Promise.resolve(files).mapSeries((file) => (
-        // make sure to call reflect so that we do not interrupt the procedure
-        Promise.resolve(this.router.dispatch({
-          route: `${prefix}.process`,
-          headers: {},
-          query: {},
-          // payload
-          params: {
-            uploadId: file.id,
-            username: file[FILES_OWNER_FIELD],
-          },
-          transport: 'amqp',
-          method: 'amqp',
-        }))
-          .reflect()
-          .tap((result) => {
-            this.log.info({ owner: file[FILES_OWNER_FIELD] }, '%s |', file.id, result.isFulfilled() ? 'processed' : result.reason());
-          })
-      ))
-        .then(() => {
-          if (page < pages) {
-            return postProcess.call(this, cursor, filter.uploadedAt.lte);
-          }
+  for (const file of files.values()) {
+    const params = {
+      uploadId: file.id,
+      username: file[FILES_OWNER_FIELD],
+    };
+    try {
+      // eslint-disable-next-line no-await-in-loop
+      await this.dispatch('process', { params });
+      this.log.info(params, '% processed', file.id);
+    } catch (err) {
+      this.log.warn({ err, ...params }, '%s failed to process', file.id);
+    }
+  }
 
-          return null;
-        });
-    })
-    .then(() => {
-      this.log.info('completed files post-processing');
-      return Promise.resolve(null);
-    });
+  if (page < pages) {
+    return postProcess.call(this, cursor, filter.uploadedAt.lte);
+  }
+
+  this.log.info('completed files post-processing');
+  return null;
 };
