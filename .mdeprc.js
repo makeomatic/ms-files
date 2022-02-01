@@ -1,10 +1,19 @@
+const uid = process.getuid()
+
 module.exports = exports = {
   node: "16",
   auto_compose: true,
   with_local_compose: true,
   services: ['rabbitmq'],
+  test_framework: 'c8 /src/node_modules/.bin/mocha',
+  nycCoverage: false,
   nycReport: false,
-  post_exec: 'yarn coverage:report'
+  extras: {
+    tester: {
+      user: `${uid}:${uid}`
+    }
+  },
+  post_exec: 'pnpm exec -- c8 report -r text -r lcov'
 };
 
 switch (process.env.DB) {
@@ -14,8 +23,4 @@ switch (process.env.DB) {
   case 'cluster':
     exports.services.push('redisCluster')
     break;
-}
-
-if (process.env.CI !== 'true') {
-  exports.arbitrary_exec = 'yarn coverage:clean';
 }
