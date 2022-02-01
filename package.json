@@ -4,9 +4,9 @@
   "main": "./lib/index.js",
   "version": "15.16.0",
   "scripts": {
-    "compile": "rimraf ./lib && babel -d ./lib --copy-files ./src",
+    "compile": "rimraf ./lib && cp -r ./src ./lib",
     "pretest": "pnpm compile",
-    "test": "rimraf ./coverage && pnpm lint && pnpm test:e2e",
+    "test": "pnpm lint && pnpm test:e2e",
     "test:e2e": "pnpm test:e2e:cluster && pnpm test:e2e:sentinel",
     "test:e2e:cluster": "DB=cluster mdep test run",
     "test:e2e:sentinel": "DB=sentinel mdep test run --docker_compose ./test/docker-compose.sentinel.yml",
@@ -16,9 +16,7 @@
     "semantic-release": "semantic-release",
     "docker-release": "mdep docker release",
     "prepare": "mdep install",
-    "release": "pnpm i--frozen-lockfile && pnpm semantic-release",
-    "coverage:clean": "rimraf .nyc_output",
-    "coverage:report": "pnpm nyc report --reporter=lcov"
+    "release": "pnpm i--frozen-lockfile && pnpm semantic-release"
   },
   "publishConfig": {
     "registry": "https://registry.npmjs.org"
@@ -87,18 +85,12 @@
     "@google-cloud/pubsub": "^2.18.4"
   },
   "devDependencies": {
-    "@babel/cli": "^7.16.8",
-    "@babel/core": "^7.16.7",
-    "@babel/plugin-proposal-class-properties": "^7.16.7",
-    "@babel/plugin-proposal-object-rest-spread": "^7.16.7",
-    "@babel/plugin-transform-strict-mode": "^7.16.7",
-    "@babel/register": "^7.16.9",
     "@makeomatic/deploy": "^12.3.1",
     "@microfleet/validation": "^11.1.1",
     "@semantic-release/changelog": "^6.0.1",
     "@semantic-release/exec": "^6.0.3",
     "@semantic-release/git": "^10.0.1",
-    "babel-plugin-istanbul": "^6.1.1",
+    "c8": "^7.11.0",
     "chai": "^4.3.4",
     "codecov": "^3.8.3",
     "cross-env": "^7.0.3",
@@ -110,7 +102,6 @@
     "faker": "^5.5.3",
     "json": "^11.0.0",
     "mocha": "^9.1.4",
-    "nyc": "^15.1.0",
     "rimraf": "^3.0.2",
     "semantic-release": "^19.0.2",
     "sinon": "^13.0.0",

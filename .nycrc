@@ -5,11 +5,6 @@
   "exclude": [
     "src/**/*.spec.js"
   ],
-  "require": [
-    "@babel/register"
-  ],
-  "sourceMap": false,
-  "instrument": false,
   "cache": true,
   "clean": false,
   "reporter": [
