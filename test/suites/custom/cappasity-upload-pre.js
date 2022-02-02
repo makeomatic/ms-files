@@ -1,61 +1,20 @@
 const Promise = require('bluebird');
 const assert = require('assert');
 const sinon = require('sinon');
-const set = require('lodash/set');
 const noop = require('lodash/noop');
-const find = require('lodash/find');
 const reject = require('lodash/reject');
 
 const config = require('../../../src/config').get('/');
 const hook = require('../../../src/custom/cappasity-upload-pre');
-const { inspectPromise } = require('../../helpers/utils');
 const { FILES_USER_INDEX_KEY } = require('../../../src/constant');
 
-const { audience } = config.users;
-
-const users = [
-  { id: '1000000000', alias: 'admin' },
-  { id: '2000000000', alias: 'free' },
-  { id: '3000000000', alias: 'professional' },
-  { id: '4000000000', alias: 'adminLimit' },
-];
-
-const mockPlan = (value) => set({}, 'meta.embeddings.value', value);
-
-const mockMetadata = (alias, attributes) => ({
-  id: find(users, { alias }).id,
-  [audience]: attributes,
-});
-
-const mockInternalData = (alias) => ({
-  id: find(users, { alias }).id,
-});
-
-const plans = {
-  free: mockPlan(1),
-  professional: mockPlan(10),
-};
-
-const metadata = {
-  free: mockMetadata('free', { plan: 'free', roles: [] }),
-  professional: mockMetadata('professional', { plan: 'professional', roles: [] }),
-  admin: mockMetadata('admin', { plan: 'professional', roles: ['admin'] }),
-  adminLimit: mockMetadata('adminLimit', { plan: 'free', roles: ['admin'] }),
-};
-
-const internals = {
-  free: mockInternalData('free'),
-  professional: mockInternalData('professional'),
-  admin: mockInternalData('admin'),
-  adminLimit: mockMetadata('adminLimit'),
-};
-
-const uploadedFiles = {
-  free: 10,
-  professional: 1,
-  admin: 1,
-  adminLimit: 10,
-};
+const {
+  users,
+  plans,
+  metadata,
+  internals,
+  uploadedFiles,
+} = require('../../helpers/mocks');
 
 describe('cappasity-upload-pre hook test suite', function suite() {
   before('add stubs', function stubs() {
@@ -125,27 +84,19 @@ describe('cappasity-upload-pre hook test suite', function suite() {
     };
 
     it('should pass - regular user, limit has not been reached', function test() {
-      return this.boundHook(data)
-        .reflect()
-        .then(inspectPromise());
+      return this.boundHook(data);
     });
 
     it('should fail - regular user, limit has been reached', function test() {
-      return this.boundHook({ ...data, username: 'free' })
-        .reflect()
-        .then(inspectPromise(false));
+      return assert.rejects(this.boundHook({ ...data, username: 'free' }));
     });
 
     it('should pass - admin user, limit has not been reached', function test() {
-      return this.boundHook({ ...data, username: 'admin' })
-        .reflect()
-        .then(inspectPromise());
+      return this.boundHook({ ...data, username: 'admin' });
     });
 
     it('should pass - admin user, limit has been reached', function test() {
-      return this.boundHook({ ...data, username: 'adminLimit' })
-        .reflect()
-        .then(inspectPromise());
+      return this.boundHook({ ...data, username: 'adminLimit' });
     });
 
     it('should fail due to no c-bin files passed', function test() {
@@ -154,9 +105,7 @@ describe('cappasity-upload-pre hook test suite', function suite() {
         files: reject(data.files, { type: 'c-bin' }),
       };
 
-      return this.boundHook(payload)
-        .reflect()
-        .then(inspectPromise(false));
+      return assert.rejects(this.boundHook(payload));
     });
 
     it('should fail due to no temp flag passed along with export flag', function test() {
@@ -167,9 +116,7 @@ describe('cappasity-upload-pre hook test suite', function suite() {
         },
       };
 
-      return this.boundHook(payload)
-        .reflect()
-        .then(inspectPromise(false));
+      return assert.rejects(this.boundHook(payload));
     });
 
     it('should fail when several c-bin files are passed', function test() {
@@ -182,9 +129,7 @@ describe('cappasity-upload-pre hook test suite', function suite() {
         }],
       };
 
-      return this.boundHook(payload)
-        .reflect()
-        .then(inspectPromise(false));
+      return assert.rejects(this.boundHook(payload));
     });
 
     it('should pass when both flags `export` and `temp` are passed', function test() {
@@ -194,9 +139,7 @@ describe('cappasity-upload-pre hook test suite', function suite() {
         temp: true,
       };
 
-      return this.boundHook(payload)
-        .reflect()
-        .then(inspectPromise());
+      return this.boundHook(payload);
     });
 
     it('should fail when several non-model files are passed', function test() {
@@ -209,9 +152,7 @@ describe('cappasity-upload-pre hook test suite', function suite() {
         }],
       };
 
-      return this.boundHook(payload)
-        .reflect()
-        .then(inspectPromise(false));
+      return assert.rejects(this.boundHook(payload));
     });
   });
 
@@ -229,9 +170,7 @@ describe('cappasity-upload-pre hook test suite', function suite() {
     };
 
     it('should pass for cappasity preview', function test() {
-      return this.boundHook(data)
-        .reflect()
-        .then(inspectPromise());
+      return this.boundHook(data);
     });
 
     it('should pass for background image', function test() {
@@ -242,9 +181,7 @@ describe('cappasity-upload-pre hook test suite', function suite() {
         }],
       };
 
-      return this.boundHook(payload)
-        .reflect()
-        .then(inspectPromise());
+      return this.boundHook(payload);
     });
 
     it('should pass for simple model', function test() {
@@ -257,9 +194,7 @@ describe('cappasity-upload-pre hook test suite', function suite() {
         uploadType: 'simple',
       };
 
-      return this.boundHook(payload)
-        .reflect()
-        .then(inspectPromise());
+      return this.boundHook(payload);
     });
 
     it('should pass for packed model and set packed = 1', function test() {
@@ -274,8 +209,6 @@ describe('cappasity-upload-pre hook test suite', function suite() {
       };
 
       return this.boundHook(payload)
-        .reflect()
-        .then(inspectPromise())
         .then(() => {
           assert.equal(payload.meta.packed, '1');
           return null;
@@ -291,9 +224,7 @@ describe('cappasity-upload-pre hook test suite', function suite() {
         resumable: false,
       };
 
-      return this.boundHook(payload)
-        .reflect()
-        .then(inspectPromise(false));
+      return assert.rejects(this.boundHook(payload));
     });
 
     it('should fail when passed a single non-preview, non-background file', function test() {
@@ -304,9 +235,7 @@ describe('cappasity-upload-pre hook test suite', function suite() {
         }],
       };
 
-      return this.boundHook(payload)
-        .reflect()
-        .then(inspectPromise(false));
+      return assert.rejects(this.boundHook(payload));
     });
 
     it('should fail when file is private', function test() {
@@ -317,9 +246,7 @@ describe('cappasity-upload-pre hook test suite', function suite() {
         },
       };
 
-      return this.boundHook(payload)
-        .reflect()
-        .then(inspectPromise(false));
+      return assert.rejects(this.boundHook(payload));
     });
 
     it('should fail when file is listed', function test() {
@@ -328,9 +255,7 @@ describe('cappasity-upload-pre hook test suite', function suite() {
         unlisted: false,
       };
 
-      return this.boundHook(payload)
-        .reflect()
-        .then(inspectPromise(false));
+      return assert.rejects(this.boundHook(payload));
     });
 
     it('should fail when mixed content are passed', function test() {
@@ -343,9 +268,7 @@ describe('cappasity-upload-pre hook test suite', function suite() {
         }],
       };
 
-      return this.boundHook(payload)
-        .reflect()
-        .then(inspectPromise(false));
+      return assert.rejects(this.boundHook(payload));
     });
   });
 });

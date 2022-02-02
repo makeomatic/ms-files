@@ -33,7 +33,7 @@ const performProcessing = async (lock, service, data) => {
 
   let response;
   try {
-    const processedData = await service.hook('files:process:pre', data);
+    const [processedData] = await service.hook('files:process:pre', data);
     await lock.extend();
 
     // omit location, since it's used once during upload

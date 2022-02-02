@@ -147,7 +147,7 @@ async function completeFileUpload({ params }) {
 
   const action = params.await ? 'publishAndWait' : 'publish';
   const route = `${prefix}.process`;
-  return amqp[action](route, { uploadId });
+  return amqp[action](route, { uploadId, awaitPostAction: params.await });
 }
 
 completeFileUpload.transports = [ActionTransport.amqp, ActionTransport.internal];

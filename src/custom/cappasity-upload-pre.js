@@ -33,7 +33,7 @@ function getUserData(alias) {
     }),
   ];
 
-  return Promise.all(promises).spread((userId, attributes) => {
+  return Promise.all(promises).spread(([userId], attributes) => {
     const { roles, plan } = attributes[audience];
 
     // fetch plan data

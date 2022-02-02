@@ -13,6 +13,7 @@ module.exports = exports = {
       user: `${uid}:${uid}`
     }
   },
+  pre: 'rimraf ./coverage/tmp',
   post_exec: 'pnpm exec -- c8 report -r text -r lcov'
 };
 

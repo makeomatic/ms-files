@@ -1,10 +1,11 @@
 const Promise = require('bluebird');
 const { HttpStatusError } = require('common-errors');
+const debug = require('debug')('process-pre');
 const { FILES_OWNER_FIELD, CAPPASITY_TYPE_MAP } = require('../constant');
 
 function parseMeta(data) {
   const parsedFiles = typeof data.files === 'string' ? JSON.parse(data.files) : data.files;
-  const output = {};
+  const output = Object.create(null);
 
   let textures = 0;
   parsedFiles.forEach(({ type, filename }) => {
@@ -25,6 +26,8 @@ function parseMeta(data) {
 
   // so that we don't parse it again later
   data.files = parsedFiles;
+
+  debug('parseMeta -> %j', output);
 
   return output;
 }
