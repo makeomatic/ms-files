@@ -92,8 +92,8 @@ async function postProcessFile({ params }) {
   }
 
   // either wait for action to complete or not
-  const response = await awaitPostActions
-    ? Promise.all(actions)
+  const response = awaitPostActions
+    ? await Promise.all(actions)
     : null;
 
   await this.redis.del(postActionKey);
