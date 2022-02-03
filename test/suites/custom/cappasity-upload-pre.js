@@ -1,8 +1,8 @@
-const Promise = require('bluebird');
 const assert = require('assert');
 const sinon = require('sinon');
 const noop = require('lodash/noop');
 const reject = require('lodash/reject');
+const Bluebird = require('bluebird');
 
 const config = require('../../../src/config').get('/');
 const hook = require('../../../src/custom/cappasity-upload-pre');
@@ -16,32 +16,28 @@ const {
   uploadedFiles,
 } = require('../../helpers/mocks');
 
+const ctx = {
+  amqp: { publishAndWait: noop },
+  redis: { scard: noop },
+  async hook(name, ...args) {
+    if (name === 'files:info:pre') {
+      return Promise.all([require('../../../src/custom/alias-to-user-id-cappasity').apply(ctx, args)]);
+    }
+
+    throw new Error('unexpected hook');
+  },
+};
+
 describe('cappasity-upload-pre hook test suite', function suite() {
   before('add stubs', function stubs() {
-    this.amqp = {
-      publishAndWait: noop,
-    };
-
-    this.redis = {
-      scard: noop,
-    };
-
-    this.hook = (name, ...args) => {
-      if (name === 'files:info:pre') {
-        return require('../../../src/custom/alias-to-user-id-cappasity').apply(this, args);
-      }
-
-      throw new Error('unexpected hook');
-    };
-
-    const amqpStub = sinon.stub(this.amqp, 'publishAndWait');
-    const redisStub = sinon.stub(this.redis, 'scard');
+    const amqpStub = sinon.stub(ctx.amqp, 'publishAndWait').usingPromise(Bluebird);
+    const redisStub = sinon.stub(ctx.redis, 'scard').usingPromise(Bluebird).rejects();
 
     const { planGet } = config.payments;
     const { getMetadata, getInternalData } = config.users;
 
-    this.config = config;
-    this.boundHook = hook.bind(this);
+    ctx.config = config;
+    ctx.boundHook = hook.bind(ctx);
 
     const plansList = [
       'free',
@@ -56,16 +52,16 @@ describe('cappasity-upload-pre hook test suite', function suite() {
 
     users.forEach(({ id, alias }) => {
       amqpStub
-        .withArgs(getMetadata, sinon.match({ username: alias }))
-        .returns(Promise.resolve(metadata[alias]));
+        .withArgs(getMetadata, sinon.match({ username: sinon.match(alias).or(sinon.match(id)) }))
+        .resolves(metadata[alias]);
 
       amqpStub
-        .withArgs(getInternalData, sinon.match({ username: alias }))
-        .returns(Promise.resolve(internals[alias]));
+        .withArgs(getInternalData, sinon.match({ username: sinon.match(alias).or(sinon.match(id)) }))
+        .resolves(internals[alias]);
 
       redisStub
         .withArgs(FILES_USER_INDEX_KEY(id))
-        .returns(Promise.resolve(uploadedFiles[alias]));
+        .resolves(uploadedFiles[alias]);
     });
   });
 
@@ -84,19 +80,19 @@ describe('cappasity-upload-pre hook test suite', function suite() {
     };
 
     it('should pass - regular user, limit has not been reached', function test() {
-      return this.boundHook(data);
+      return ctx.boundHook(data);
     });
 
     it('should fail - regular user, limit has been reached', function test() {
-      return assert.rejects(this.boundHook({ ...data, username: 'free' }));
+      return assert.rejects(ctx.boundHook({ ...data, username: 'free' }));
     });
 
     it('should pass - admin user, limit has not been reached', function test() {
-      return this.boundHook({ ...data, username: 'admin' });
+      return ctx.boundHook({ ...data, username: 'admin' });
     });
 
     it('should pass - admin user, limit has been reached', function test() {
-      return this.boundHook({ ...data, username: 'adminLimit' });
+      return ctx.boundHook({ ...data, username: 'adminLimit' });
     });
 
     it('should fail due to no c-bin files passed', function test() {
@@ -105,7 +101,7 @@ describe('cappasity-upload-pre hook test suite', function suite() {
         files: reject(data.files, { type: 'c-bin' }),
       };
 
-      return assert.rejects(this.boundHook(payload));
+      return assert.rejects(ctx.boundHook(payload));
     });
 
     it('should fail due to no temp flag passed along with export flag', function test() {
@@ -116,7 +112,7 @@ describe('cappasity-upload-pre hook test suite', function suite() {
         },
       };
 
-      return assert.rejects(this.boundHook(payload));
+      return assert.rejects(ctx.boundHook(payload));
     });
 
     it('should fail when several c-bin files are passed', function test() {
@@ -129,7 +125,7 @@ describe('cappasity-upload-pre hook test suite', function suite() {
         }],
       };
 
-      return assert.rejects(this.boundHook(payload));
+      return assert.rejects(ctx.boundHook(payload));
     });
 
     it('should pass when both flags `export` and `temp` are passed', function test() {
@@ -139,7 +135,7 @@ describe('cappasity-upload-pre hook test suite', function suite() {
         temp: true,
       };
 
-      return this.boundHook(payload);
+      return ctx.boundHook(payload);
     });
 
     it('should fail when several non-model files are passed', function test() {
@@ -152,7 +148,7 @@ describe('cappasity-upload-pre hook test suite', function suite() {
         }],
       };
 
-      return assert.rejects(this.boundHook(payload));
+      return assert.rejects(ctx.boundHook(payload));
     });
   });
 
@@ -170,7 +166,7 @@ describe('cappasity-upload-pre hook test suite', function suite() {
     };
 
     it('should pass for cappasity preview', function test() {
-      return this.boundHook(data);
+      return ctx.boundHook(data);
     });
 
     it('should pass for background image', function test() {
@@ -181,7 +177,7 @@ describe('cappasity-upload-pre hook test suite', function suite() {
         }],
       };
 
-      return this.boundHook(payload);
+      return ctx.boundHook(payload);
     });
 
     it('should pass for simple model', function test() {
@@ -194,7 +190,7 @@ describe('cappasity-upload-pre hook test suite', function suite() {
         uploadType: 'simple',
       };
 
-      return this.boundHook(payload);
+      return ctx.boundHook(payload);
     });
 
     it('should pass for packed model and set packed = 1', function test() {
@@ -208,7 +204,7 @@ describe('cappasity-upload-pre hook test suite', function suite() {
         uploadType: 'simple',
       };
 
-      return this.boundHook(payload)
+      return ctx.boundHook(payload)
         .then(() => {
           assert.equal(payload.meta.packed, '1');
           return null;
@@ -224,7 +220,7 @@ describe('cappasity-upload-pre hook test suite', function suite() {
         resumable: false,
       };
 
-      return assert.rejects(this.boundHook(payload));
+      return assert.rejects(ctx.boundHook(payload));
     });
 
     it('should fail when passed a single non-preview, non-background file', function test() {
@@ -235,7 +231,7 @@ describe('cappasity-upload-pre hook test suite', function suite() {
         }],
       };
 
-      return assert.rejects(this.boundHook(payload));
+      return assert.rejects(ctx.boundHook(payload));
     });
 
     it('should fail when file is private', function test() {
@@ -246,7 +242,7 @@ describe('cappasity-upload-pre hook test suite', function suite() {
         },
       };
 
-      return assert.rejects(this.boundHook(payload));
+      return assert.rejects(ctx.boundHook(payload));
     });
 
     it('should fail when file is listed', function test() {
@@ -255,7 +251,7 @@ describe('cappasity-upload-pre hook test suite', function suite() {
         unlisted: false,
       };
 
-      return assert.rejects(this.boundHook(payload));
+      return assert.rejects(ctx.boundHook(payload));
     });
 
     it('should fail when mixed content are passed', function test() {
@@ -268,7 +264,7 @@ describe('cappasity-upload-pre hook test suite', function suite() {
         }],
       };
 
-      return assert.rejects(this.boundHook(payload));
+      return assert.rejects(ctx.boundHook(payload));
     });
   });
 });
