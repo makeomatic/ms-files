@@ -25,7 +25,7 @@ global_job_config:
       - cache store node-$(checksum pnpm-lock.yaml) ~/.pnpm-store
 
 blocks:
-  - name: test
+  - name: tests
     dependencies: []
     task:
       secrets:
