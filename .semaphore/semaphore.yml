@@ -28,13 +28,13 @@ blocks:
   - name: test
     dependencies: []
     task:
+      secrets:
+      - name: gcs-oss-keys
       jobs:
+      matrix:
+      - env_var: DB
+        values: ["redisSentinel", "redisCluster"]
       - name: build typescript project
-        secrets:
-        - name: gcs-oss-keys
-        matrix:
-        - env_var: TEST_WORKSPACE_NAME
-          values: ["redisSentinel", "redisCluster"]
         commands:
         - cp ~/.env.files ./test/.env
         - pnpm test
