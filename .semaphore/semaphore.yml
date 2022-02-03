@@ -1,0 +1,52 @@
+version: v1.0
+name: makeomatic/files
+agent:
+  machine:
+    type: e1-standard-2
+    os_image: ubuntu2004
+
+fail_fast:
+  stop:
+    when: "branch != 'master'"
+
+auto_cancel:
+  running:
+    when: "branch != 'master'"
+
+global_job_config:
+  prologue:
+    commands:
+      - set -e
+      - sem-version node 16
+      - curl -f https://get.pnpm.io/v6.16.js | node - add --global pnpm@6
+      - checkout
+      - cache restore node-$(checksum pnpm-lock.yaml)
+      - pnpm i --frozen-lockfile --prefer-offline --ignore-scripts
+      - cache store node-$(checksum pnpm-lock.yaml) ~/.pnpm-store
+
+blocks:
+  - name: test
+    dependencies: []
+    task:
+      jobs:
+      - name: build typescript project
+        secrets:
+        - name: gcs-oss-keys
+        matrix:
+        - env_var: TEST_WORKSPACE_NAME
+          values: ["redisSentinel", "redisCluster"]
+        commands:
+        - cp ~/.env.files ./test/.env
+        - pnpm test
+
+  - name: release
+    dependencies: ["tests"]
+    skip:
+      when: "branch != 'master'"
+    task:
+      secrets:
+        - name: semantic-release
+      jobs:
+      - name: release
+        commands:
+          - pnpm run release
