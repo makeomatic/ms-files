@@ -31,10 +31,10 @@ blocks:
       secrets:
       - name: gcs-oss-keys
       jobs:
-      matrix:
-      - env_var: DB
-        values: ["redisSentinel", "redisCluster"]
       - name: build typescript project
+        matrix:
+        - env_var: DB
+          values: ["redisSentinel", "redisCluster"]
         commands:
         - cp ~/.env.files ./test/.env
         - pnpm test
