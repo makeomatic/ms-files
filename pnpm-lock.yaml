@@ -4,20 +4,20 @@ specifiers:
   '@google-cloud/pubsub': ^2.18.5
   '@google-cloud/storage': 5.18.1
   '@hapi/hapi': ^20.2.1
-  '@makeomatic/deploy': ^12.3.1
-  '@microfleet/core': ^17.11.2
-  '@microfleet/plugin-amqp': ^0.2.2
-  '@microfleet/plugin-dlock': ^0.2.2
-  '@microfleet/plugin-hapi': ^0.2.2
-  '@microfleet/plugin-logger': ^0.10.2
-  '@microfleet/plugin-opentracing': ^0.5.2
-  '@microfleet/plugin-prometheus': ^0.5.2
-  '@microfleet/plugin-redis-cluster': ^0.5.2
-  '@microfleet/plugin-redis-sentinel': ^0.5.2
-  '@microfleet/plugin-router': ^0.3.2
-  '@microfleet/plugin-router-amqp': ^0.2.2
-  '@microfleet/plugin-router-hapi': ^0.2.2
-  '@microfleet/plugin-validator': ^0.5.2
+  '@makeomatic/deploy': ^12.5.0
+  '@microfleet/core': ^17.11.4
+  '@microfleet/plugin-amqp': ^0.2.4
+  '@microfleet/plugin-dlock': ^0.2.4
+  '@microfleet/plugin-hapi': ^0.2.4
+  '@microfleet/plugin-logger': ^0.10.4
+  '@microfleet/plugin-opentracing': ^0.5.4
+  '@microfleet/plugin-prometheus': ^0.5.4
+  '@microfleet/plugin-redis-cluster': ^0.5.4
+  '@microfleet/plugin-redis-sentinel': ^0.5.4
+  '@microfleet/plugin-router': ^0.3.4
+  '@microfleet/plugin-router-amqp': ^0.2.4
+  '@microfleet/plugin-router-hapi': ^0.2.4
+  '@microfleet/plugin-validator': ^0.5.4
   '@microfleet/transport-amqp': ^15.2.8
   '@microfleet/validation': ^11.1.1
   '@semantic-release/changelog': ^6.0.1
@@ -75,19 +75,19 @@ specifiers:
 dependencies:
   '@google-cloud/storage': 5.18.1
   '@hapi/hapi': 20.2.1
-  '@microfleet/core': 17.11.2_f2b95e5744fddd81ab434f7f695cc8e6
-  '@microfleet/plugin-amqp': 0.2.2_40d4f8947518764d8e2651a61cc0e471
-  '@microfleet/plugin-dlock': 0.2.2_@microfleet+core@17.11.2
-  '@microfleet/plugin-hapi': 0.2.2_7a58bf28508bf96ddb3a3e6a0781617c
-  '@microfleet/plugin-logger': 0.10.2_7a58bf28508bf96ddb3a3e6a0781617c
-  '@microfleet/plugin-opentracing': 0.5.2_7a58bf28508bf96ddb3a3e6a0781617c
-  '@microfleet/plugin-prometheus': 0.5.2_7a58bf28508bf96ddb3a3e6a0781617c
-  '@microfleet/plugin-redis-cluster': 0.5.2_7a58bf28508bf96ddb3a3e6a0781617c
-  '@microfleet/plugin-redis-sentinel': 0.5.2_26bf9751a771dabe04f1c593db4bbc35
-  '@microfleet/plugin-router': 0.3.2_7a58bf28508bf96ddb3a3e6a0781617c
-  '@microfleet/plugin-router-amqp': 0.2.2_903649efef2347666bf14188ca25075f
-  '@microfleet/plugin-router-hapi': 0.2.2_7a58bf28508bf96ddb3a3e6a0781617c
-  '@microfleet/plugin-validator': 0.5.2_@microfleet+core@17.11.2
+  '@microfleet/core': 17.11.4_f2b95e5744fddd81ab434f7f695cc8e6
+  '@microfleet/plugin-amqp': 0.2.4_f1d629e74025f63ea1bc861e0997522f
+  '@microfleet/plugin-dlock': 0.2.4_@microfleet+core@17.11.4
+  '@microfleet/plugin-hapi': 0.2.4_e769a991650714ee8aba8f724c2980c5
+  '@microfleet/plugin-logger': 0.10.4_e769a991650714ee8aba8f724c2980c5
+  '@microfleet/plugin-opentracing': 0.5.4_e769a991650714ee8aba8f724c2980c5
+  '@microfleet/plugin-prometheus': 0.5.4_e769a991650714ee8aba8f724c2980c5
+  '@microfleet/plugin-redis-cluster': 0.5.4_e769a991650714ee8aba8f724c2980c5
+  '@microfleet/plugin-redis-sentinel': 0.5.4_25b7f2cfaf809e9f9587ab350550dd8d
+  '@microfleet/plugin-router': 0.3.4_e769a991650714ee8aba8f724c2980c5
+  '@microfleet/plugin-router-amqp': 0.2.4_eadc656fd25d6e49c2d42981d2d84edd
+  '@microfleet/plugin-router-hapi': 0.2.4_e769a991650714ee8aba8f724c2980c5
+  '@microfleet/plugin-validator': 0.5.4_@microfleet+core@17.11.4
   '@microfleet/transport-amqp': 15.2.8
   '@sentry/node': 6.17.4
   ali-oss: 6.16.0_co@4.6.0
@@ -126,7 +126,7 @@ optionalDependencies:
   '@google-cloud/pubsub': 2.18.5
 
 devDependencies:
-  '@makeomatic/deploy': 12.3.1
+  '@makeomatic/deploy': 12.5.0
   '@microfleet/validation': 11.1.1
   '@semantic-release/changelog': 6.0.1_semantic-release@19.0.2
   '@semantic-release/exec': 6.0.3_semantic-release@19.0.2
@@ -744,8 +744,8 @@ packages:
       joi: 17.6.0
       yargs: 16.0.3
 
-  /@makeomatic/deploy/12.3.1:
-    resolution: {integrity: sha512-Fm2ViRorV1hPsXrKQv6QQgcw2GNmFiDvsYZrHw9v5FMY52CjdPsyrmAWLtCX9yZDvZSL9dKUty9uuXKYFTkTYw==}
+  /@makeomatic/deploy/12.5.0:
+    resolution: {integrity: sha512-62GuzrJ9hmUAm2rEfkMq24rmSBtkVmFtUGfPIkHRTTJeAQOFnOdf7VHhaPvgSaqVs9exk34O5TzhJ/4c1loGyQ==}
     hasBin: true
     dependencies:
       '@commitlint/cli': 16.1.0_@types+node@17.0.14
@@ -809,25 +809,25 @@ packages:
       - supports-color
     dev: false
 
-  /@microfleet/core-types/0.5.2:
-    resolution: {integrity: sha512-TnYzZzP2cNqM1SjFVTMZ6p2iAJZ9j9NA6c84khU/dvvtjmK28GZfzabXa+D2C3L4FaaVZHX7o+KlLSzIiDGK/w==}
+  /@microfleet/core-types/0.5.4:
+    resolution: {integrity: sha512-ppVmBLPPG3zfBsFfy1GuWl6cyf/J2QRzYbE7unf+n1zfEbB7995rV/vG/fVuuyDq/yJCRTKzHNZp3ex+puDNCA==}
     dependencies:
-      '@microfleet/utils': 0.5.2
+      '@microfleet/utils': 0.5.4
       bluebird: 3.7.2
       bluebird-retry: 0.11.0_bluebird@3.7.2
       eventemitter3: 4.0.7
     dev: false
 
-  /@microfleet/core/17.11.2_f2b95e5744fddd81ab434f7f695cc8e6:
-    resolution: {integrity: sha512-nivAEq4N1NMz258GVxmD2uaGUfS+amrNwdYimHlTolZZ4KADyzG89MDkTeqpObOW4hf12aWizVrksMcpFgXgNA==}
+  /@microfleet/core/17.11.4_f2b95e5744fddd81ab434f7f695cc8e6:
+    resolution: {integrity: sha512-Y2Vx5f4V5FIxi6nhykdgVmtdYXwXH9kUfKGWATf68v9GrO+v/Q8rry1GynKd3jle50P4hNAm564iHCjkDtJfQA==}
     engines: {node: '>= 12.14.0', npm: '>= 4.0.0'}
     hasBin: true
     peerDependencies:
       '@microfleet/validation': ^11.1.1
       common-errors: ^1.x.x
     dependencies:
-      '@microfleet/core-types': 0.5.2
-      '@microfleet/utils': 0.5.2
+      '@microfleet/core-types': 0.5.4
+      '@microfleet/utils': 0.5.4
       '@microfleet/validation': 11.1.1
       bluebird: 3.7.2
       bluebird-retry: 0.11.0_bluebird@3.7.2
@@ -836,13 +836,13 @@ packages:
       yargs-parser: 21.0.0
     dev: false
 
-  /@microfleet/dlock/13.1.0_ioredis@4.28.4:
-    resolution: {integrity: sha512-jrVIdpMJ7DmMhxSTS+aBsb6SDG/7NcI6iT9q5RlkapaGKHEs6k+7CnNZjpIluPJsaQkJA9A0UdmZiXjOMeMS3g==}
+  /@microfleet/dlock/14.0.0_ioredis@4.28.4:
+    resolution: {integrity: sha512-XQSsal28ApblUF8HCEBWHaAowAXeObzSbvzRqF/MUP/msrUjII+1mpTv288e2KnZxsjglWOzfOjjEl+8Y+ioEA==}
     peerDependencies:
       ioredis: ~4.x.x
     dependencies:
       '@microfleet/callback-queue': 4.0.2
-      '@microfleet/ioredis-lock': 5.0.4_ioredis@4.28.4
+      '@microfleet/ioredis-lock': 5.1.0_ioredis@4.28.4
       bluebird: 3.7.2
       denque: 2.0.1
       ioredis: 4.28.4
@@ -854,8 +854,8 @@ packages:
       - supports-color
     dev: false
 
-  /@microfleet/ioredis-lock/5.0.4_ioredis@4.28.4:
-    resolution: {integrity: sha512-W7/FfD5dDnY+2qtJlmAtHODvRv4E3iyqPS9XwKpMYM8U3hgMPeCdWSvWc1dflDENetm1BHBtdnMfigUlcz66Fg==}
+  /@microfleet/ioredis-lock/5.1.0_ioredis@4.28.4:
+    resolution: {integrity: sha512-PcDqu3t3ZlVKyxKHb+kn4mdHkHq8o3Z4eQxRyGd8JdbNmII8YYp/08yuqnUMOquAhUgFWOWuZ0CfOlwgakeVxQ==}
     peerDependencies:
       ioredis: ~4.x.x
     dependencies:
@@ -864,20 +864,20 @@ packages:
       uuid: 8.3.2
     dev: false
 
-  /@microfleet/plugin-amqp/0.2.2_40d4f8947518764d8e2651a61cc0e471:
-    resolution: {integrity: sha512-XGX2SAw8LEGR2QHRmSCOlQmKOBky39sQkU4NOVkudAhR5mr/XYok6waCWW+/2uUukkGdlo/F9a3ZxmOle/oCbw==}
+  /@microfleet/plugin-amqp/0.2.4_f1d629e74025f63ea1bc861e0997522f:
+    resolution: {integrity: sha512-lcu+CL80D3CtcfOSTxeO/u4C2lRA7kffDBpMni8RzvTkjRfvevGoc8EyGrfl8+sPgnJCzJgY6qU/34KxuEiogA==}
     engines: {node: '>= 12.14.0', npm: '>= 4.0.0'}
     peerDependencies:
-      '@microfleet/core': ^17.11.2
-      '@microfleet/plugin-logger': ^0.10.2
-      '@microfleet/plugin-router': ^0.3.2
-      '@microfleet/plugin-validator': ^0.5.2
+      '@microfleet/core': ^17.11.4
+      '@microfleet/plugin-logger': ^0.10.4
+      '@microfleet/plugin-router': ^0.3.4
+      '@microfleet/plugin-validator': ^0.5.4
       common-errors: ~1.x.x
     dependencies:
-      '@microfleet/core': 17.11.2_f2b95e5744fddd81ab434f7f695cc8e6
-      '@microfleet/plugin-logger': 0.10.2_7a58bf28508bf96ddb3a3e6a0781617c
-      '@microfleet/plugin-router': 0.3.2_7a58bf28508bf96ddb3a3e6a0781617c
-      '@microfleet/plugin-validator': 0.5.2_@microfleet+core@17.11.2
+      '@microfleet/core': 17.11.4_f2b95e5744fddd81ab434f7f695cc8e6
+      '@microfleet/plugin-logger': 0.10.4_e769a991650714ee8aba8f724c2980c5
+      '@microfleet/plugin-router': 0.3.4_e769a991650714ee8aba8f724c2980c5
+      '@microfleet/plugin-validator': 0.5.4_@microfleet+core@17.11.4
       '@microfleet/transport-amqp': 15.2.8
       bluebird: 3.7.2
       common-errors: 1.2.0
@@ -885,18 +885,18 @@ packages:
       - supports-color
     dev: false
 
-  /@microfleet/plugin-dlock/0.2.2_@microfleet+core@17.11.2:
-    resolution: {integrity: sha512-nUFxFCaEpwwhGxJP5RcHeAmnxhvAATE5zqpUNBfer6k4CW8cXxMq5gRGutX4jXzYW2wOmeGzvHVgYBkQmJLQGQ==}
+  /@microfleet/plugin-dlock/0.2.4_@microfleet+core@17.11.4:
+    resolution: {integrity: sha512-y5G8yFvbyPQCXDsG0NALd3V+KBlnmSmb7NZtrBmvcwqshHAGEUv1u4CZReAxbTnP35pbQWR3R4ecANcyeeZeLQ==}
     engines: {node: '>= 12.14.0', npm: '>= 4.0.0'}
     peerDependencies:
-      '@microfleet/core': ^17.11.2
+      '@microfleet/core': ^17.11.4
     dependencies:
-      '@microfleet/core': 17.11.2_f2b95e5744fddd81ab434f7f695cc8e6
-      '@microfleet/core-types': 0.5.2
-      '@microfleet/dlock': 13.1.0_ioredis@4.28.4
-      '@microfleet/ioredis-lock': 5.0.4_ioredis@4.28.4
-      '@microfleet/plugin-validator': 0.5.2_@microfleet+core@17.11.2
-      '@microfleet/utils': 0.5.2
+      '@microfleet/core': 17.11.4_f2b95e5744fddd81ab434f7f695cc8e6
+      '@microfleet/core-types': 0.5.4
+      '@microfleet/dlock': 14.0.0_ioredis@4.28.4
+      '@microfleet/ioredis-lock': 5.1.0_ioredis@4.28.4
+      '@microfleet/plugin-validator': 0.5.4_@microfleet+core@17.11.4
+      '@microfleet/utils': 0.5.4
       bluebird: 3.7.2
       common-errors: 1.2.0
       ioredis: 4.28.4
@@ -904,21 +904,21 @@ packages:
       - supports-color
     dev: false
 
-  /@microfleet/plugin-hapi/0.2.2_7a58bf28508bf96ddb3a3e6a0781617c:
-    resolution: {integrity: sha512-guGOkOF0m7FycyMHhHplrLCGCJx9DwZvjygQJmYMNHlX7QoE+cjUkx8ejLSL/dtTWbj2Y3cVVatfnm+ZLScJjg==}
+  /@microfleet/plugin-hapi/0.2.4_e769a991650714ee8aba8f724c2980c5:
+    resolution: {integrity: sha512-+5dNebUZPaM+hB5HG+brpnOf+ZSUuFq1bUCZc791rqwmPnEa10aQOZeRm1wrPbYLAE6G2L8h8p6CPwMUY1TYnQ==}
     engines: {node: '>= 12.14.0', npm: '>= 4.0.0'}
     peerDependencies:
-      '@microfleet/core': ^17.11.2
+      '@microfleet/core': ^17.11.4
       common-errors: ~1.x.x
     dependencies:
       '@hapi/hapi': 20.2.1
       '@hapi/vision': 6.1.0
-      '@microfleet/core': 17.11.2_f2b95e5744fddd81ab434f7f695cc8e6
-      '@microfleet/core-types': 0.5.2
-      '@microfleet/plugin-logger': 0.10.2_7a58bf28508bf96ddb3a3e6a0781617c
-      '@microfleet/plugin-router': 0.3.2_7a58bf28508bf96ddb3a3e6a0781617c
-      '@microfleet/plugin-socketio': 0.2.2_7a58bf28508bf96ddb3a3e6a0781617c
-      '@microfleet/plugin-validator': 0.5.2_@microfleet+core@17.11.2
+      '@microfleet/core': 17.11.4_f2b95e5744fddd81ab434f7f695cc8e6
+      '@microfleet/core-types': 0.5.4
+      '@microfleet/plugin-logger': 0.10.4_e769a991650714ee8aba8f724c2980c5
+      '@microfleet/plugin-router': 0.3.4_e769a991650714ee8aba8f724c2980c5
+      '@microfleet/plugin-socketio': 0.2.4_e769a991650714ee8aba8f724c2980c5
+      '@microfleet/plugin-validator': 0.5.4_@microfleet+core@17.11.4
       common-errors: 1.2.0
       joi: 17.6.0
     transitivePeerDependencies:
@@ -927,17 +927,17 @@ packages:
       - utf-8-validate
     dev: false
 
-  /@microfleet/plugin-logger/0.10.2_7a58bf28508bf96ddb3a3e6a0781617c:
-    resolution: {integrity: sha512-Tj6/5peeCZKXK1MzvIr/oNu5iIWmY+knQhB6x+ZnAL8rrNF4D4bOfo7vVTihp/yangf4Hgf6Rgkt0bGf0l1xxw==}
+  /@microfleet/plugin-logger/0.10.4_e769a991650714ee8aba8f724c2980c5:
+    resolution: {integrity: sha512-Iwu76P8vdFEtzmdbfHPENg5miLgRapMWc/sX3BTg+AymnZ8q7kS7oyZJwe5c7NU3vTZu5fL41RHQJt6byfaM9Q==}
     engines: {node: '>= 12.15.0', npm: '>= 4.0.0'}
     peerDependencies:
-      '@microfleet/core': ^17.11.2
+      '@microfleet/core': ^17.11.4
       common-errors: ~1.x.x
     dependencies:
-      '@microfleet/core': 17.11.2_f2b95e5744fddd81ab434f7f695cc8e6
-      '@microfleet/core-types': 0.5.2
-      '@microfleet/plugin-validator': 0.5.2_@microfleet+core@17.11.2
-      '@microfleet/utils': 0.5.2
+      '@microfleet/core': 17.11.4_f2b95e5744fddd81ab434f7f695cc8e6
+      '@microfleet/core-types': 0.5.4
+      '@microfleet/plugin-validator': 0.5.4_@microfleet+core@17.11.4
+      '@microfleet/utils': 0.5.4
       common-errors: 1.2.0
       lsmod: 1.0.0
       pino: 7.6.5
@@ -948,51 +948,51 @@ packages:
       - supports-color
     dev: false
 
-  /@microfleet/plugin-opentracing/0.5.2_7a58bf28508bf96ddb3a3e6a0781617c:
-    resolution: {integrity: sha512-gJyUOECrYBh31VrzsUxfNTytpsbkwuzCk3kCjYAcD6Ks7gOM4OVRWUq/Q/9hF4tYMqR4vglL14EJibQsODW7FA==}
+  /@microfleet/plugin-opentracing/0.5.4_e769a991650714ee8aba8f724c2980c5:
+    resolution: {integrity: sha512-GihA4KWKrtQ9jZZYNU4Zshu8xI6SOkuiN60XMmY+3ZE2whSeaDFwQUDPfiw1Zl7kofkoT4S3KupW1HD8vFkaeQ==}
     engines: {node: '>= 12.15.0', npm: '>= 4.0.0'}
     peerDependencies:
-      '@microfleet/core': ^17.11.2
+      '@microfleet/core': ^17.11.4
       common-errors: ~1.x.x
     dependencies:
-      '@microfleet/core': 17.11.2_f2b95e5744fddd81ab434f7f695cc8e6
-      '@microfleet/core-types': 0.5.2
-      '@microfleet/plugin-logger': 0.10.2_7a58bf28508bf96ddb3a3e6a0781617c
-      '@microfleet/plugin-validator': 0.5.2_@microfleet+core@17.11.2
-      '@microfleet/utils': 0.5.2
+      '@microfleet/core': 17.11.4_f2b95e5744fddd81ab434f7f695cc8e6
+      '@microfleet/core-types': 0.5.4
+      '@microfleet/plugin-logger': 0.10.4_e769a991650714ee8aba8f724c2980c5
+      '@microfleet/plugin-validator': 0.5.4_@microfleet+core@17.11.4
+      '@microfleet/utils': 0.5.4
       common-errors: 1.2.0
       jaeger-client: 3.19.0
     transitivePeerDependencies:
       - supports-color
     dev: false
 
-  /@microfleet/plugin-prometheus/0.5.2_7a58bf28508bf96ddb3a3e6a0781617c:
-    resolution: {integrity: sha512-wW8NYaVxCseCoiELEIXuWTv7oFATE2rRyo23ddFvMredBUPS5Ry0iVhkhr66GV5x3leKZNn1sfgwmLkh6hJxBQ==}
+  /@microfleet/plugin-prometheus/0.5.4_e769a991650714ee8aba8f724c2980c5:
+    resolution: {integrity: sha512-h4w542fqSjRu9uN6JmEKjmjjSXPzSsrXqf+dzqaz80De0+jWRWX538sg25xxCChei6be++p3JnZt493yTGeAzw==}
     engines: {node: '>= 12.15.0', npm: '>= 4.0.0'}
     peerDependencies:
-      '@microfleet/core': ^17.11.2
+      '@microfleet/core': ^17.11.4
       common-errors: ~1.x.x
     dependencies:
-      '@microfleet/core': 17.11.2_f2b95e5744fddd81ab434f7f695cc8e6
-      '@microfleet/core-types': 0.5.2
-      '@microfleet/utils': 0.5.2
+      '@microfleet/core': 17.11.4_f2b95e5744fddd81ab434f7f695cc8e6
+      '@microfleet/core-types': 0.5.4
+      '@microfleet/utils': 0.5.4
       common-errors: 1.2.0
       prom-client: 14.0.1
       semver: 7.3.5
     dev: false
 
-  /@microfleet/plugin-redis-cluster/0.5.2_7a58bf28508bf96ddb3a3e6a0781617c:
-    resolution: {integrity: sha512-wHknzeVsxcTo7YeZoLOmhzCbjYiG4HprdrQZ5KXJ3WgkJ8zwtakB96fzitqMZjyTICpfCADk+q+Nm4jTnvRSbw==}
+  /@microfleet/plugin-redis-cluster/0.5.4_e769a991650714ee8aba8f724c2980c5:
+    resolution: {integrity: sha512-LiQYP4t1jn4PnXdhY3y8jsBeHC/rxf3G/s8xofi61p//i4ANooR8vynqmwJHLXsqGcKiryJeX2OCIDknqcRh9A==}
     engines: {node: '>= 12.15.0', npm: '>= 4.0.0'}
     peerDependencies:
-      '@microfleet/core': ^17.11.2
+      '@microfleet/core': ^17.11.4
       common-errors: ^1.2.0
     dependencies:
-      '@microfleet/core': 17.11.2_f2b95e5744fddd81ab434f7f695cc8e6
-      '@microfleet/core-types': 0.5.2
-      '@microfleet/plugin-redis-core': 0.5.2_26bf9751a771dabe04f1c593db4bbc35
-      '@microfleet/plugin-validator': 0.5.2_@microfleet+core@17.11.2
-      '@microfleet/utils': 0.5.2
+      '@microfleet/core': 17.11.4_f2b95e5744fddd81ab434f7f695cc8e6
+      '@microfleet/core-types': 0.5.4
+      '@microfleet/plugin-redis-core': 0.5.4_25b7f2cfaf809e9f9587ab350550dd8d
+      '@microfleet/plugin-validator': 0.5.4_@microfleet+core@17.11.4
+      '@microfleet/utils': 0.5.4
       bluebird: 3.7.2
       common-errors: 1.2.0
       debug: 4.3.3
@@ -1003,15 +1003,15 @@ packages:
       - supports-color
     dev: false
 
-  /@microfleet/plugin-redis-core/0.5.2_26bf9751a771dabe04f1c593db4bbc35:
-    resolution: {integrity: sha512-AiyrQAMjctXvwej9hutcIw+pFskGaapgbjfITeQFcKvfGOTsTUwdpcacxRpJBhvXD6H3ioPrsBo/c1/B4EXVAg==}
+  /@microfleet/plugin-redis-core/0.5.4_25b7f2cfaf809e9f9587ab350550dd8d:
+    resolution: {integrity: sha512-oLrOHodFc30XBqA2xrwRgg8tYN8HTKDmXXn0lBYma0Pgfcz93Aykt4BvvET9JzawuEAaSTbnL6i1EAuXkWllEA==}
     engines: {node: '>= 12.15.0', npm: '>= 4.0.0'}
     peerDependencies:
       common-errors: ^1.2.0
       ioredis: ^4.0.0
     dependencies:
-      '@microfleet/core-types': 0.5.2
-      '@microfleet/plugin-logger': 0.10.2_7a58bf28508bf96ddb3a3e6a0781617c
+      '@microfleet/core-types': 0.5.4
+      '@microfleet/plugin-logger': 0.10.4_e769a991650714ee8aba8f724c2980c5
       common-errors: 1.2.0
       debug: 4.3.3
       glob: 7.2.0
@@ -1022,19 +1022,19 @@ packages:
       - supports-color
     dev: false
 
-  /@microfleet/plugin-redis-sentinel/0.5.2_26bf9751a771dabe04f1c593db4bbc35:
-    resolution: {integrity: sha512-Dh5MR8zGun6CImZcopWzpLsNfeQvIxIxcQFnFPTEToXQEsISOTjC2kml89NOJhOeZx6yYDw0bODq+LTJZUbLOA==}
+  /@microfleet/plugin-redis-sentinel/0.5.4_25b7f2cfaf809e9f9587ab350550dd8d:
+    resolution: {integrity: sha512-R6xYEfjAWJel7GA2FSBls1gp5eoeOMRnW0D+NByVOpGSEw91Vy/DG2wZFt1/ip+dFJy9rH//mlZ9nymiq2ekJQ==}
     engines: {node: '>= 12.15.0', npm: '>= 4.0.0'}
     peerDependencies:
-      '@microfleet/core': ^17.11.2
+      '@microfleet/core': ^17.11.4
       common-errors: ^1.2.0
       ioredis: '=4.28.3'
     dependencies:
-      '@microfleet/core': 17.11.2_f2b95e5744fddd81ab434f7f695cc8e6
-      '@microfleet/core-types': 0.5.2
-      '@microfleet/plugin-redis-core': 0.5.2_26bf9751a771dabe04f1c593db4bbc35
-      '@microfleet/plugin-validator': 0.5.2_@microfleet+core@17.11.2
-      '@microfleet/utils': 0.5.2
+      '@microfleet/core': 17.11.4_f2b95e5744fddd81ab434f7f695cc8e6
+      '@microfleet/core-types': 0.5.4
+      '@microfleet/plugin-redis-core': 0.5.4_25b7f2cfaf809e9f9587ab350550dd8d
+      '@microfleet/plugin-validator': 0.5.4_@microfleet+core@17.11.4
+      '@microfleet/utils': 0.5.4
       bluebird: 3.7.2
       common-errors: 1.2.0
       debug: 4.3.3
@@ -1044,18 +1044,18 @@ packages:
       - supports-color
     dev: false
 
-  /@microfleet/plugin-router-amqp/0.2.2_903649efef2347666bf14188ca25075f:
-    resolution: {integrity: sha512-/3ZZc2hKKgb19LD9u/h+dy1urBQQMiUeIYbmLA84LhJ2U7mHpOnndTzTWFyb0Y7ewxkAPhbXhXSTIFrotaYAPg==}
+  /@microfleet/plugin-router-amqp/0.2.4_eadc656fd25d6e49c2d42981d2d84edd:
+    resolution: {integrity: sha512-EU5lY6yFour3+suxxam8HvinLMJSzy9ew27jSQ3nhJbVcp7WpE62xDthxDDYcUw9SAYhrcwhvl4e9CBNJEWu9w==}
     engines: {node: '>= 12.14.0', npm: '>= 4.0.0'}
     peerDependencies:
-      '@microfleet/core': ^17.11.2
+      '@microfleet/core': ^17.11.4
       common-errors: ~1.x.x
     dependencies:
-      '@microfleet/core': 17.11.2_f2b95e5744fddd81ab434f7f695cc8e6
-      '@microfleet/core-types': 0.5.2
-      '@microfleet/plugin-amqp': 0.2.2_40d4f8947518764d8e2651a61cc0e471
-      '@microfleet/plugin-logger': 0.10.2_7a58bf28508bf96ddb3a3e6a0781617c
-      '@microfleet/plugin-router': 0.3.2_7a58bf28508bf96ddb3a3e6a0781617c
+      '@microfleet/core': 17.11.4_f2b95e5744fddd81ab434f7f695cc8e6
+      '@microfleet/core-types': 0.5.4
+      '@microfleet/plugin-amqp': 0.2.4_f1d629e74025f63ea1bc861e0997522f
+      '@microfleet/plugin-logger': 0.10.4_e769a991650714ee8aba8f724c2980c5
+      '@microfleet/plugin-router': 0.3.4_e769a991650714ee8aba8f724c2980c5
       '@microfleet/transport-amqp': 15.2.8
       bluebird: 3.7.2
       common-errors: 1.2.0
@@ -1066,20 +1066,20 @@ packages:
       - supports-color
     dev: false
 
-  /@microfleet/plugin-router-hapi/0.2.2_7a58bf28508bf96ddb3a3e6a0781617c:
-    resolution: {integrity: sha512-X/9dt1aH0u73/JQqeLpivl6pH2S07vtyHt1pTuQZycRrpaAjzBPKd+twdBm3ILNETE1vzZHtLZfkiStJBAdA6A==}
+  /@microfleet/plugin-router-hapi/0.2.4_e769a991650714ee8aba8f724c2980c5:
+    resolution: {integrity: sha512-N2DMP4Ub9eQVmvU8rMReZEWgJzfxBHrjipkQfuatNRJOair95OTnE+zj7ZYCrGH1F5+8DrzgeLRBYf57c6l0oA==}
     engines: {node: '>= 12.14.0', npm: '>= 4.0.0'}
     peerDependencies:
-      '@microfleet/core': ^17.11.2
+      '@microfleet/core': ^17.11.4
       common-errors: ~1.x.x
     dependencies:
       '@hapi/boom': 9.1.4
       '@hapi/hapi': 20.2.1
-      '@microfleet/core': 17.11.2_f2b95e5744fddd81ab434f7f695cc8e6
-      '@microfleet/plugin-hapi': 0.2.2_7a58bf28508bf96ddb3a3e6a0781617c
-      '@microfleet/plugin-opentracing': 0.5.2_7a58bf28508bf96ddb3a3e6a0781617c
-      '@microfleet/plugin-router': 0.3.2_7a58bf28508bf96ddb3a3e6a0781617c
-      '@microfleet/plugin-validator': 0.5.2_@microfleet+core@17.11.2
+      '@microfleet/core': 17.11.4_f2b95e5744fddd81ab434f7f695cc8e6
+      '@microfleet/plugin-hapi': 0.2.4_e769a991650714ee8aba8f724c2980c5
+      '@microfleet/plugin-opentracing': 0.5.4_e769a991650714ee8aba8f724c2980c5
+      '@microfleet/plugin-router': 0.3.4_e769a991650714ee8aba8f724c2980c5
+      '@microfleet/plugin-validator': 0.5.4_@microfleet+core@17.11.4
       '@microfleet/validation': 11.1.1
       common-errors: 1.2.0
       get-value: 3.0.1
@@ -1091,19 +1091,19 @@ packages:
       - utf-8-validate
     dev: false
 
-  /@microfleet/plugin-router/0.3.2_7a58bf28508bf96ddb3a3e6a0781617c:
-    resolution: {integrity: sha512-QOYHu8FrExgRoT/8v6E8VMkK5CdfmiJ6jzrEnNEgrMtJOm/YftX+zw4A7PBgpHvZ+ehJBPVkTbR7c8ZTscPLvg==}
+  /@microfleet/plugin-router/0.3.4_e769a991650714ee8aba8f724c2980c5:
+    resolution: {integrity: sha512-4Rp5yj6wG8qtXEEoWyl0KIxcTw70gFJRLYTeNuY2274qy9GHRZBhn41rysFE+vLj0Aa2UixhyYdBLlw0vYBv1g==}
     engines: {node: '>= 12.14.0', npm: '>= 4.0.0'}
     peerDependencies:
-      '@microfleet/core': ^17.11.2
+      '@microfleet/core': ^17.11.4
       common-errors: ~1.x.x
     dependencies:
       '@hapi/boom': 9.1.4
-      '@microfleet/core': 17.11.2_f2b95e5744fddd81ab434f7f695cc8e6
-      '@microfleet/core-types': 0.5.2
-      '@microfleet/plugin-logger': 0.10.2_7a58bf28508bf96ddb3a3e6a0781617c
+      '@microfleet/core': 17.11.4_f2b95e5744fddd81ab434f7f695cc8e6
+      '@microfleet/core-types': 0.5.4
+      '@microfleet/plugin-logger': 0.10.4_e769a991650714ee8aba8f724c2980c5
       '@microfleet/transport-amqp': 15.2.8
-      '@microfleet/utils': 0.5.2
+      '@microfleet/utils': 0.5.4
       '@microfleet/validation': 11.1.1
       common-errors: 1.2.0
       glob: 7.2.0
@@ -1116,20 +1116,20 @@ packages:
       - supports-color
     dev: false
 
-  /@microfleet/plugin-socketio/0.2.2_7a58bf28508bf96ddb3a3e6a0781617c:
-    resolution: {integrity: sha512-KvUTwTq8O7CFOq+R/GeWYwhSYJU1SrSrt0F6UP7sLHOXaMO6/Nv9m+eieVBSlZmb83idzBGkesCZIGGtEkh+hw==}
+  /@microfleet/plugin-socketio/0.2.4_e769a991650714ee8aba8f724c2980c5:
+    resolution: {integrity: sha512-vkbAAiowzDYvr1FrKU3LqjeRorG0fvFiH3+zEJYJjE4cHJBga82+EQiO9RN721gfPswCXggRHV2iOG8f8IxoZQ==}
     engines: {node: '>= 12.14.0', npm: '>= 4.0.0'}
     peerDependencies:
-      '@microfleet/core': ^17.11.2
+      '@microfleet/core': ^17.11.4
       common-errors: ~1.x.x
     dependencies:
-      '@microfleet/core': 17.11.2_f2b95e5744fddd81ab434f7f695cc8e6
-      '@microfleet/core-types': 0.5.2
-      '@microfleet/plugin-logger': 0.10.2_7a58bf28508bf96ddb3a3e6a0781617c
-      '@microfleet/plugin-router': 0.3.2_7a58bf28508bf96ddb3a3e6a0781617c
-      '@microfleet/plugin-validator': 0.5.2_@microfleet+core@17.11.2
+      '@microfleet/core': 17.11.4_f2b95e5744fddd81ab434f7f695cc8e6
+      '@microfleet/core-types': 0.5.4
+      '@microfleet/plugin-logger': 0.10.4_e769a991650714ee8aba8f724c2980c5
+      '@microfleet/plugin-router': 0.3.4_e769a991650714ee8aba8f724c2980c5
+      '@microfleet/plugin-validator': 0.5.4_@microfleet+core@17.11.4
       '@microfleet/transport-amqp': 15.2.8
-      '@microfleet/utils': 0.5.2
+      '@microfleet/utils': 0.5.4
       common-errors: 1.2.0
       ms-socket.io-adapter-amqp: 8.1.2_8c3dc566b9ddf2b44f6ff9ecb544a781
       socket.io: 4.4.1
@@ -1139,15 +1139,15 @@ packages:
       - utf-8-validate
     dev: false
 
-  /@microfleet/plugin-validator/0.5.2_@microfleet+core@17.11.2:
-    resolution: {integrity: sha512-wpPWmBHEEnonrvvs5K8hV2Dz7JR5rM5F1RLPjdfjorCo/kjRarN3KmRHjoE3bZkxqAry7vzwQxcm/LAflfh0zQ==}
+  /@microfleet/plugin-validator/0.5.4_@microfleet+core@17.11.4:
+    resolution: {integrity: sha512-/bRVeH1wvJFBXbi/XS3VaJaCssvl8a06aBY7Xv2o1toFNysQhTboO6lRyhC/wRoC9/3+MUk972zieAIB1MqzMg==}
     engines: {node: '>= 12.15.0', npm: '>= 4.0.0'}
     peerDependencies:
-      '@microfleet/core': ^17.11.2
+      '@microfleet/core': ^17.11.4
     dependencies:
-      '@microfleet/core': 17.11.2_f2b95e5744fddd81ab434f7f695cc8e6
-      '@microfleet/core-types': 0.5.2
-      '@microfleet/utils': 0.5.2
+      '@microfleet/core': 17.11.4_f2b95e5744fddd81ab434f7f695cc8e6
+      '@microfleet/core-types': 0.5.4
+      '@microfleet/utils': 0.5.4
       '@microfleet/validation': 11.1.1
       callsite: 1.0.0
       common-errors: 1.2.0
@@ -1180,8 +1180,8 @@ packages:
       - supports-color
     dev: false
 
-  /@microfleet/utils/0.5.2:
-    resolution: {integrity: sha512-ir+8TC1EV6+HKQWUDjEZi11QrIbh2nzMKz8jxcUsc2QIqOEyfeY7RmX6m+SLmmn0rXeRMyLMkJcFFtIXxQ1fyg==}
+  /@microfleet/utils/0.5.4:
+    resolution: {integrity: sha512-0xdUvT6KGMLCka96vtW6Ap808/8/y2rg7nQLRF8fFco0DoLZ0tFFOlenpd9wXQqsMcyUGuU7olHVwPlqwj922w==}
     engines: {node: '>= 12.15.0', npm: '>= 4.0.0'}
     dependencies:
       lodash: 4.17.21
@@ -4426,7 +4426,7 @@ packages:
       bluebird: 3.7.2
       ioredis: 4.28.4
       lodash.defaults: 4.2.0
-      uuid: 3.3.2
+      uuid: 3.4.0
     dev: false
 
   /ioredis/4.28.4:
@@ -7349,6 +7349,12 @@ packages:
 
   /uuid/3.3.2:
     resolution: {integrity: sha512-yXJmeNaw3DnnKAOKJE51sL/ZaYfWJRl1pK9dr19YFCu0ObS231AB1/LbqTKRAQ5kw8A90rA6fr4riOUpTZvQZA==}
+    deprecated: Please upgrade  to version 7 or higher.  Older versions may use Math.random() in certain circumstances, which is known to be problematic.  See https://v8.dev/blog/math-random for details.
+    hasBin: true
+    dev: false
+
+  /uuid/3.4.0:
+    resolution: {integrity: sha512-HjSDRw6gZE5JMggctHBcjVak08+KEVhSIiDzFnT9S9aegmp85S/bReBVTb4QTFaRNptJ9kuYaNhnbNEOkbKb/A==}
     deprecated: Please upgrade  to version 7 or higher.  Older versions may use Math.random() in certain circumstances, which is known to be problematic.  See https://v8.dev/blog/math-random for details.
     hasBin: true
     dev: false
