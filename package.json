@@ -16,7 +16,7 @@
     "semantic-release": "semantic-release",
     "docker-release": "mdep docker release",
     "prepare": "mdep install",
-    "release": "pnpm i--frozen-lockfile && pnpm run semantic-release"
+    "release": "pnpm i && pnpm run semantic-release"
   },
   "publishConfig": {
     "registry": "https://registry.npmjs.org"
