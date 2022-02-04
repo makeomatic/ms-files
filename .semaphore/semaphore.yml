@@ -33,11 +33,13 @@ blocks:
       jobs:
       - name: build typescript project
         matrix:
-        - env_var: DB
-          values: ["redisSentinel", "redisCluster"]
+        - env_var: flavour
+          values: ["cluster", "sentinel"]
         commands:
         - cp ~/.env.files ./test/.env
-        - pnpm test
+        - pnpm lint
+        - pnpm compile
+        - pnpm test:e2e:${flavour}
 
   - name: release
     dependencies: ["tests"]
