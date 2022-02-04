@@ -86,6 +86,7 @@
   },
   "devDependencies": {
     "@makeomatic/deploy": "^12.5.0",
+    "@microfleet/ioredis-lock": "^5.1.0",
     "@microfleet/validation": "^11.1.1",
     "@semantic-release/changelog": "^6.0.1",
     "@semantic-release/exec": "^6.0.3",
