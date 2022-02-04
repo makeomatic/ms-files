@@ -37,8 +37,8 @@ blocks:
           values: ["cluster", "sentinel"]
         commands:
         - cp ~/.env.files ./test/.env
-        - pnpm lint
         - pnpm compile
+        - pnpm lint
         - pnpm test:e2e:${flavour}
 
   - name: release
