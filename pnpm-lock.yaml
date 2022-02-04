@@ -6,6 +6,7 @@ specifiers:
   '@hapi/hapi': ^20.2.1
   '@makeomatic/deploy': ^12.5.0
   '@microfleet/core': ^17.11.4
+  '@microfleet/ioredis-lock': ^5.1.0
   '@microfleet/plugin-amqp': ^0.2.4
   '@microfleet/plugin-dlock': ^0.2.4
   '@microfleet/plugin-hapi': ^0.2.4
@@ -127,6 +128,7 @@ optionalDependencies:
 
 devDependencies:
   '@makeomatic/deploy': 12.5.0
+  '@microfleet/ioredis-lock': 5.1.0_ioredis@4.28.4
   '@microfleet/validation': 11.1.1
   '@semantic-release/changelog': 6.0.1_semantic-release@19.0.2
   '@semantic-release/exec': 6.0.3_semantic-release@19.0.2
@@ -862,7 +864,6 @@ packages:
       bluebird: 3.7.2
       ioredis: 4.28.4
       uuid: 8.3.2
-    dev: false
 
   /@microfleet/plugin-amqp/0.2.4_f1d629e74025f63ea1bc861e0997522f:
     resolution: {integrity: sha512-lcu+CL80D3CtcfOSTxeO/u4C2lRA7kffDBpMni8RzvTkjRfvevGoc8EyGrfl8+sPgnJCzJgY6qU/34KxuEiogA==}

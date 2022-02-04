@@ -1,3 +1,9 @@
+/**
+ * @typedef { import('@microfleet/core-types').Microfleet } Microfleet
+ * @typedef { import('@microfleet/ioredis-lock').Lock } Lock
+ * @typedef { import('@microfleet/plugin-dlock') }
+ */
+
 const { ActionTransport } = require('@microfleet/plugin-router');
 const Promise = require('bluebird');
 const fsort = require('redis-filtered-sort');
@@ -10,8 +16,9 @@ const filter = fsort.filter({ status: { eq: STATUS_PENDING } });
 
 /**
  * Iterates over files with pending state and tries
- * @param  {Object} lock
- * @param  {Object} opts
+ * @param  {Microfleet} service
+ * @param  {Lock} lock
+ * @param  {{ offset: number, limit: number }} opts
  * @return {Promise}
  */
 async function iterateOverUploadedFiles(service, lock, opts = {}) {
@@ -66,6 +73,7 @@ async function iterateOverUploadedFiles(service, lock, opts = {}) {
 
 /**
  * Performs sync of state for pending uploads
+ * @this Microfleet
  */
 module.exports = function sync() {
   return Promise
