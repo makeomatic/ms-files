@@ -11,6 +11,11 @@ const {
   FILES_PUBLIC_FIELD,
   FILES_USER_INDEX_KEY,
   FILES_USER_INDEX_PUBLIC_KEY,
+  FILES_UPLOADED_AT_FIELD,
+  FILES_INDEX_UAT,
+  FILES_INDEX_UAT_PUBLIC,
+  FILES_USER_INDEX_UAT_KEY,
+  FILES_USER_INDEX_UAT_PUBLIC_KEY,
 } = require('../../src/constant');
 
 function createFakeFile({ owners, statuses }) {
@@ -21,7 +26,7 @@ function createFakeFile({ owners, statuses }) {
     uploadId: uuid.v4(),
     status: ld.sample(statuses),
     startedAt,
-    uploadedAt: startedAt + 1000,
+    [FILES_UPLOADED_AT_FIELD]: startedAt + 1000,
     name: faker.commerce.productName(),
     files: JSON.stringify([]), // can insert real files, but dont care
     contentLength: ld.random(1, 2132311),
@@ -43,6 +48,11 @@ function insertFile(file) {
     file[FILES_PUBLIC_FIELD] = 1;
     pipeline.sadd(FILES_INDEX_PUBLIC, id);
     pipeline.sadd(FILES_USER_INDEX_PUBLIC_KEY(file.owner), id);
+
+    pipeline.zadd(FILES_INDEX_UAT, file[FILES_UPLOADED_AT_FIELD], id);
+    pipeline.zadd(FILES_INDEX_UAT_PUBLIC, file[FILES_UPLOADED_AT_FIELD], id);
+    pipeline.zadd(FILES_USER_INDEX_UAT_KEY(file.owner), file[FILES_UPLOADED_AT_FIELD], id);
+    pipeline.zadd(FILES_USER_INDEX_UAT_PUBLIC_KEY(file.owner), file[FILES_UPLOADED_AT_FIELD], id);
   }
 
   pipeline.hmset(`${FILES_DATA}:${id}`, file);

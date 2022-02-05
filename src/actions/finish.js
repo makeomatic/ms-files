@@ -24,6 +24,11 @@ const {
   FILES_DIRECT_ONLY_FIELD,
   FILES_USER_INDEX_KEY,
   FILES_USER_INDEX_PUBLIC_KEY,
+  FILES_UPLOADED_AT_FIELD,
+  FILES_INDEX_UAT,
+  FILES_INDEX_UAT_PUBLIC,
+  FILES_USER_INDEX_UAT_KEY,
+  FILES_USER_INDEX_UAT_PUBLIC_KEY,
 } = require('../constant');
 
 // cached vars
@@ -101,11 +106,12 @@ async function completeFileUpload({ params }) {
   }
 
   const pipeline = redis.pipeline();
+  const uploadedAt = Date.now();
 
   // update key
   pipeline.hmset(uploadKey, {
-    status: STATUS_UPLOADED,
-    uploadedAt: Date.now(),
+    [FILES_STATUS_FIELD]: STATUS_UPLOADED,
+    [FILES_UPLOADED_AT_FIELD]: uploadedAt,
   });
 
   // remove reference
@@ -119,11 +125,17 @@ async function completeFileUpload({ params }) {
       pipeline.sadd(FILES_INDEX, uploadId);
       pipeline.sadd(FILES_USER_INDEX_KEY(username), uploadId);
 
+      pipeline.zadd(FILES_INDEX_UAT, uploadedAt, uploadId);
+      pipeline.zadd(FILES_USER_INDEX_UAT_KEY(username), uploadedAt, uploadId);
+
       // convert 1 or undef to Boolean
       // if `isDirectOnly` is truthy, we won't publish this in the public index
       if (isPublic && !isDirectOnly) {
         pipeline.sadd(FILES_INDEX_PUBLIC, uploadId);
         pipeline.sadd(FILES_USER_INDEX_PUBLIC_KEY(username), uploadId);
+
+        pipeline.zadd(FILES_INDEX_UAT_PUBLIC, uploadedAt, uploadId);
+        pipeline.zadd(FILES_USER_INDEX_UAT_PUBLIC_KEY(username), uploadedAt, uploadId);
       }
 
       // push to tags index
