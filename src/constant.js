@@ -11,6 +11,8 @@ module.exports = exports = Object.setPrototypeOf({
   FILES_INDEX: 'files-index',
   FILES_INDEX_PUBLIC: 'files-index-pub',
   FILES_INDEX_TAGS: 'files-index-tags',
+  FILES_INDEX_UAT: 'files-index-uat',
+  FILES_INDEX_UAT_PUBLIC: 'files-index-uat-pub',
 
   FILES_LIST: 'files-list',
   FILES_DATA: 'files-data',
@@ -43,6 +45,7 @@ module.exports = exports = Object.setPrototypeOf({
   FILES_BACKGROUND_IMAGE_FIELD: 'backgroundImage',
   FILES_BACKGROUND_COLOR_FIELD: 'backgroundColor',
   FILES_CONTENT_LENGTH_FIELD: 'contentLength',
+  FILES_UPLOADED_AT_FIELD: 'uploadedAt',
 
   // metatype of file
   FILES_TYPE_FIELD: 'type',
@@ -103,3 +106,5 @@ exports.FILES_DATA_INDEX_KEY = (uploadId) => `${exports.FILES_DATA}:${uploadId}`
 exports.FILES_TAGS_INDEX_KEY = (tag) => `${exports.FILES_INDEX_TAGS}:${tag}`;
 exports.FILES_USER_INDEX_KEY = (username) => `${exports.FILES_INDEX}:${username}`;
 exports.FILES_USER_INDEX_PUBLIC_KEY = (username) => `${exports.FILES_INDEX}:${username}:pub`;
+exports.FILES_USER_INDEX_UAT_KEY = (username) => `${exports.FILES_INDEX_UAT}:${username}`;
+exports.FILES_USER_INDEX_UAT_PUBLIC_KEY = (username) => `${exports.FILES_USER_INDEX_UAT_KEY(username)}:pub`;

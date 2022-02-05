@@ -1,12 +1,12 @@
 const assert = require('assert');
 const faker = require('faker');
 const ld = require('lodash');
+const moment = require('moment');
 
 // helpers
 const {
   startService,
   stopService,
-  inspectPromise,
   bindSend,
   initAndUpload,
   processUpload,
@@ -19,7 +19,9 @@ const { insertData } = require('../helpers/insert-data');
 const route = 'files.list';
 const updateRoute = 'files.update';
 const {
-  STATUS_UPLOADED, STATUS_PROCESSED,
+  STATUS_UPLOADED,
+  STATUS_PROCESSED,
+  FILES_UPLOADED_AT_FIELD,
 } = require('../../src/constant');
 
 describe('list suite', function suite() {
@@ -83,8 +85,6 @@ describe('list suite', function suite() {
         offset: 30,
         limit: 10,
       })
-        .reflect()
-        .then(inspectPromise())
         .then((data) => {
           assert.ok(data.files);
           ascSortFilename(data.files);
@@ -123,8 +123,6 @@ describe('list suite', function suite() {
         offset: 30,
         limit: 10,
       })
-        .reflect()
-        .then(inspectPromise())
         .then((data) => {
           assert.ok(data.files);
           descSortFilename(data.files);
@@ -147,8 +145,6 @@ describe('list suite', function suite() {
         limit: 10,
         criteria: 'startedAt',
       })
-        .reflect()
-        .then(inspectPromise())
         .then((data) => {
           assert.ok(data.files);
           ascSortStartAt(data.files);
@@ -171,8 +167,6 @@ describe('list suite', function suite() {
         limit: 10,
         criteria: 'startedAt',
       })
-        .reflect()
-        .then(inspectPromise())
         .then((data) => {
           assert.ok(data.files);
           descSortStartAt(data.files);
@@ -198,8 +192,6 @@ describe('list suite', function suite() {
         offset: 30,
         limit: 10,
       })
-        .reflect()
-        .then(inspectPromise())
         .then((data) => {
           assert.ok(data.files);
           ascSortFilename(data.files);
@@ -226,8 +218,6 @@ describe('list suite', function suite() {
         offset: 30,
         limit: 10,
       })
-        .reflect()
-        .then(inspectPromise())
         .then((data) => {
           assert.ok(data.files);
           descSortFilename(data.files);
@@ -253,8 +243,6 @@ describe('list suite', function suite() {
         offset: 30,
         limit: 10,
       })
-        .reflect()
-        .then(inspectPromise())
         .then((data) => {
           assert.ok(data.files);
           ascSortFilename(data.files);
@@ -271,8 +259,6 @@ describe('list suite', function suite() {
         offset: 30,
         limit: 10,
       })
-        .reflect()
-        .then(inspectPromise())
         .then((data) => {
           assert.ok(data.files);
           descSortFilename(data.files);
@@ -290,8 +276,6 @@ describe('list suite', function suite() {
         limit: 10,
         criteria: 'startedAt',
       })
-        .reflect()
-        .then(inspectPromise())
         .then((data) => {
           assert.ok(data.files);
           ascSortStartAt(data.files);
@@ -309,8 +293,6 @@ describe('list suite', function suite() {
         limit: 10,
         criteria: 'startedAt',
       })
-        .reflect()
-        .then(inspectPromise())
         .then((data) => {
           assert.ok(data.files);
           descSortStartAt(data.files);
@@ -331,8 +313,6 @@ describe('list suite', function suite() {
         offset: 30,
         limit: 10,
       })
-        .reflect()
-        .then(inspectPromise())
         .then((data) => {
           assert.ok(data.files);
           ascSortFilename(data.files);
@@ -357,8 +337,6 @@ describe('list suite', function suite() {
         offset: 30,
         limit: 10,
       })
-        .reflect()
-        .then(inspectPromise())
         .then((data) => {
           assert.ok(data.files);
           descSortFilename(data.files);
@@ -378,8 +356,6 @@ describe('list suite', function suite() {
         order: 'DESC',
         limit: 10,
       })
-        .reflect()
-        .then(inspectPromise())
         .then((data) => {
           assert.ok(data.files);
           descSortFilename(data.files);
@@ -400,8 +376,6 @@ describe('list suite', function suite() {
         order: 'DESC',
         limit: 10,
       })
-        .reflect()
-        .then(inspectPromise())
         .then((data) => {
           assert.ok(data.files);
           descSortFilename(data.files);
@@ -414,6 +388,40 @@ describe('list suite', function suite() {
           });
         });
     });
+  });
+
+  const monthAgo = moment().subtract(1, 'month');
+  const dayAgo = moment().subtract(1, 'day');
+
+  const cases = [
+    [{ gte: monthAgo.valueOf() }, [['isSameOrAfter', monthAgo]]],
+    [{ lte: dayAgo.valueOf() }, [['isSameOrBefore', dayAgo]]],
+    [{ gte: monthAgo.valueOf(), lte: dayAgo.valueOf() }, [['isSameOrAfter', monthAgo], ['isSameOrBefore', dayAgo]]],
+  ];
+
+  describe('use of uploadedAt index', function testSuite() {
+    for (const order of ['ASC', 'DESC'].values()) {
+      for (const [uploadedAt, verification] of cases.values()) {
+        it(`(${order}) returns files sorted by their filename: ${JSON.stringify(uploadedAt)}`, async function test() {
+          const data = await this.amqp.publishAndWait('files.list', {
+            filter: { uploadedAt },
+            owner: username,
+            order,
+            offset: 0,
+            limit: 10,
+          });
+
+          assert.ok(data.files);
+
+          data.files.forEach((file) => {
+            assert.equal(file.owner, username);
+            for (const [fn, compare] of verification.values()) {
+              assert(moment(+file[FILES_UPLOADED_AT_FIELD])[fn](compare));
+            }
+          });
+        });
+      }
+    }
   });
 
   describe('tags-based list', function testSuite() {
@@ -437,8 +445,6 @@ describe('list suite', function suite() {
         offset: 0,
         limit: 10,
       })
-        .reflect()
-        .then(inspectPromise())
         .then((data) => {
           assert.ok(data.files);
           assert.equal(data.cursor, 10);
@@ -461,8 +467,6 @@ describe('list suite', function suite() {
         offset: 0,
         limit: 10,
       })
-        .reflect()
-        .then(inspectPromise())
         .then((data) => {
           assert.ok(data.files);
 
@@ -471,6 +475,33 @@ describe('list suite', function suite() {
             assert.deepEqual(file.tags, meta.tags);
           });
         });
+    });
+
+    describe('(tags) use uploadedAt index', function tests() {
+      for (const order of ['ASC', 'DESC'].values()) {
+        for (const [uploadedAt, verification] of cases.values()) {
+          it(`(${order}) returns files sorted by their filename and tags: ${JSON.stringify(uploadedAt)}`, async function test() {
+            const data = await this.amqp.publishAndWait('files.list', {
+              filter: { uploadedAt },
+              tags: meta.tags,
+              owner: username,
+              order,
+              offset: 0,
+              limit: 10,
+            });
+
+            assert.ok(data.files);
+
+            data.files.forEach((file) => {
+              assert.equal(file.owner, username);
+              assert.deepEqual(file.tags, meta.tags);
+              for (const [fn, compare] of verification.values()) {
+                assert(moment(+file[FILES_UPLOADED_AT_FIELD])[fn](compare));
+              }
+            });
+          });
+        }
+      }
     });
   });
 });

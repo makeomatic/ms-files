@@ -50,5 +50,11 @@ blocks:
         - name: semantic-release
       jobs:
       - name: release
+        env_vars:
+          - name: DOCKER_CLI_EXPERIMENTAL
+            value: enabled
         commands:
+          - sudo chmod -R 0777 /etc/docker
+          - echo '{"experimental":true}' > /etc/docker/daemon.json
+          - sudo service docker restart
           - pnpm run release

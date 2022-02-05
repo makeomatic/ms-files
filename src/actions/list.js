@@ -1,7 +1,6 @@
 const { ActionTransport } = require('@microfleet/plugin-router');
 const Promise = require('bluebird');
 const fsort = require('redis-filtered-sort');
-const is = require('is');
 const perf = require('ms-perf');
 const handlePipeline = require('../utils/pipeline-error');
 const fetchData = require('../utils/fetch-data').batch;
@@ -14,13 +13,19 @@ const {
   FILES_LIST,
   FILES_USER_INDEX_KEY,
   FILES_USER_INDEX_PUBLIC_KEY,
+  FILES_INDEX_UAT,
+  FILES_INDEX_UAT_PUBLIC,
+  FILES_USER_INDEX_UAT_KEY,
+  FILES_USER_INDEX_UAT_PUBLIC_KEY,
 } = require('../constant');
+
+const k404Error = new Error('ELIST404');
 
 /**
  * Internal functions
  */
 async function interstore(ctx, username) {
-  const { isPublic, temp, tags, redis, hasTags } = ctx;
+  const { isPublic, temp, tags, redis, hasTags, uploadedAt, order } = ctx;
   ctx.username = username;
 
   // choose which set to use
@@ -37,23 +42,77 @@ async function interstore(ctx, username) {
     filesIndex = FILES_INDEX;
   }
 
-  if (!hasTags) {
+  let uploadedAtIndex;
+  let uploadedAtIndexInterstore;
+  let uploadedAtRequest;
+  if (uploadedAt) {
+    if (isPublic && username) {
+      uploadedAtIndex = FILES_USER_INDEX_UAT_PUBLIC_KEY(username);
+    } else if (username) {
+      uploadedAtIndex = FILES_USER_INDEX_UAT_KEY(username);
+    } else if (isPublic) {
+      uploadedAtIndex = FILES_INDEX_UAT_PUBLIC;
+    } else {
+      uploadedAtIndex = FILES_INDEX_UAT;
+    }
+
+    const lte = typeof uploadedAt.lte === 'number' ? uploadedAt.lte : '+inf';
+    const gte = typeof uploadedAt.gte === 'number' ? uploadedAt.gte : '-inf';
+    uploadedAtRequest = order === 'DESC'
+      ? ['zrevrangebyscore', uploadedAtIndex, lte, gte]
+      : ['zrangebyscore', uploadedAtIndex, gte, lte];
+    uploadedAtIndexInterstore = `${uploadedAtIndex}!${order}!${lte}!${gte}`;
+  }
+
+  if (!hasTags && !uploadedAtIndex) {
     return filesIndex;
   }
 
-  const tagKeys = [];
   let interstoreKey = `${FILES_LIST}:${filesIndex}`;
+  const tagKeys = [];
 
-  for (const tag of tags.sort().values()) {
-    const tagKey = `${FILES_INDEX_TAGS}:${tag}`;
-    tagKeys.push(tagKey);
-    interstoreKey = `${interstoreKey}:${tagKey}`;
+  if (hasTags) {
+    for (const tag of tags.sort().values()) {
+      const tagKey = `${FILES_INDEX_TAGS}:${tag}`;
+      tagKeys.push(tagKey);
+      interstoreKey = `${interstoreKey}:${tagKey}`;
+    }
+  }
+
+  if (uploadedAtIndex) {
+    interstoreKey = `${interstoreKey}:${uploadedAtIndexInterstore}`;
+    tagKeys.push(uploadedAtIndexInterstore);
   }
 
   const result = await redis.pttl(interstoreKey);
-
   if (result > ctx.interstoreKeyMinTimeleft) {
     return interstoreKey;
+  }
+
+  // convert zset -> set
+  if (uploadedAtIndexInterstore) {
+    await ctx.dlock.manager.fanout(uploadedAtIndexInterstore, async () => {
+      const ttl = await redis.pttl(uploadedAtIndexInterstore);
+      if (ttl > ctx.interstoreKeyMinTimeleft) {
+        return uploadedAtIndexInterstore;
+      }
+
+      const [cmd, ...args] = uploadedAtRequest;
+      const ids = await redis[cmd](...args);
+
+      if (ids.length === 0) {
+        throw k404Error;
+      }
+
+      const res = await redis
+        .pipeline()
+        .sadd(uploadedAtIndexInterstore, ids)
+        .expire(uploadedAtIndexInterstore, ctx.interstoreKeyTTL)
+        .exec();
+
+      handlePipeline(res);
+      return uploadedAtIndexInterstore;
+    });
   }
 
   // ensure we only do 1 operation concurrently
@@ -210,10 +269,13 @@ async function listFiles({ params }) {
     avoidTagCache,
   } = config;
 
+  let {
+    filter = Object.create(null),
+  } = params;
+
   const {
     without,
     owner,
-    filter,
     public: isPublic,
     offset,
     limit,
@@ -224,7 +286,16 @@ async function listFiles({ params }) {
     expiration = 30000,
   } = params;
 
-  const strFilter = is.string(filter) ? filter : fsort.filter(filter || {});
+  const nonStringFilter = typeof filter === 'string' ? JSON.parse(filter) : filter;
+  const { uploadedAt } = nonStringFilter;
+
+  if (uploadedAt && !temp) {
+    filter = { ...nonStringFilter, uploadedAt: undefined };
+  }
+
+  const strFilter = typeof filter === 'string'
+    ? filter
+    : fsort.filter(filter);
 
   const ctx = {
     // context
@@ -249,6 +320,7 @@ async function listFiles({ params }) {
     temp,
     expiration,
     strFilter,
+    uploadedAt: temp ? null : uploadedAt,
     hasTags: Array.isArray(tags) && tags.length > 0,
     avoidTagCache,
   };
@@ -263,8 +335,19 @@ async function listFiles({ params }) {
     const data = await fetchExtraData(ctx, ids);
     timer('fetch');
     return await prepareResponse(ctx, data);
-  } finally {
-    timer();
+  } catch (e) {
+    if (e.message === k404Error.message) {
+      return {
+        files: [],
+        cursor: 0,
+        page: 0,
+        pages: 0,
+        time: timer(),
+      };
+    }
+
+    this.log.warn({ timer: timer(), err: e }, 'list search failed');
+    throw e;
   }
 }
 

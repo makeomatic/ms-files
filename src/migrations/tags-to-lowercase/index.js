@@ -1,27 +1,10 @@
-const calcSlot = require('cluster-key-slot');
-
+const { getRedisMasterNode } = require('../../utils/get-redis-master-node');
 const { FILES_INDEX_TAGS } = require('../../constant');
 
-/**
- * Return master node in case of redisCluster to be able to use
- * specific commands like `keys`. We can use usual redis instance in
- * other cases.
- */
-function getRedisMasterNode(redis, config) {
-  if (!config.plugins.includes('redisCluster')) {
-    return redis;
-  }
+async function tagsToLowercase(service) {
+  const { redis, config, log } = service;
   const { keyPrefix } = config.redis.options;
-  const slot = calcSlot(keyPrefix);
-  const nodeKeys = redis.slots[slot];
-  const masters = redis.connectionPool.nodes.master;
-
-  return nodeKeys.reduce((node, key) => node || masters[key], null);
-}
-
-async function tagsToLowercase({ redis, config, log }) {
-  const { keyPrefix } = config.redis.options;
-  const masterNode = getRedisMasterNode(redis, config);
+  const masterNode = getRedisMasterNode(redis, service);
   const pipeline = redis.pipeline();
 
   return masterNode

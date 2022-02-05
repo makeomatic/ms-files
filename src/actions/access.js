@@ -11,10 +11,13 @@ const {
   FILES_PUBLIC_FIELD,
   FILES_DIRECT_ONLY_FIELD,
   FILES_INDEX_PUBLIC,
+  FILES_INDEX_UAT_PUBLIC,
   FILES_USER_INDEX_PUBLIC_KEY,
+  FILES_USER_INDEX_UAT_PUBLIC_KEY,
+  FILES_UPLOADED_AT_FIELD,
 } = require('../constant');
 
-async function addToPublic(filename, data) {
+async function addToPublic(uploadId, data) {
   const { provider, redis } = this;
   const { files } = data;
   const owner = data[FILES_OWNER_FIELD];
@@ -23,7 +26,7 @@ async function addToPublic(filename, data) {
   // in case this is a directOnly file,
   // we must not add it to public
   const index = FILES_USER_INDEX_PUBLIC_KEY(owner);
-  const id = `${FILES_DATA}:${filename}`;
+  const id = `${FILES_DATA}:${uploadId}`;
 
   // get transport
   const transport = provider('access', data);
@@ -37,14 +40,16 @@ async function addToPublic(filename, data) {
     .hset(id, FILES_PUBLIC_FIELD, 1);
 
   if (!isDirectOnly) {
-    pipeline.sadd(index, filename);
-    pipeline.sadd(FILES_INDEX_PUBLIC, filename);
+    pipeline.sadd(index, uploadId);
+    pipeline.sadd(FILES_INDEX_PUBLIC, uploadId);
+    pipeline.zadd(FILES_INDEX_UAT_PUBLIC, data[FILES_UPLOADED_AT_FIELD], uploadId);
+    pipeline.zadd(FILES_USER_INDEX_UAT_PUBLIC_KEY(owner), data[FILES_UPLOADED_AT_FIELD], uploadId);
   }
 
-  return pipeline.exec().then(handlePipeline);
+  return handlePipeline(await pipeline.exec());
 }
 
-async function removeFromPublic(filename, data) {
+async function removeFromPublic(uploadId, data) {
   const { provider, redis } = this;
   const { files } = data;
   const owner = data[FILES_OWNER_FIELD];
@@ -52,7 +57,7 @@ async function removeFromPublic(filename, data) {
   // in case of removal we don't care if it's direct only
   // or not - it must not be in the public index
   const index = FILES_USER_INDEX_PUBLIC_KEY(owner);
-  const id = `${FILES_DATA}:${filename}`;
+  const id = `${FILES_DATA}:${uploadId}`;
 
   // get transport
   const transport = provider('access', data);
@@ -61,13 +66,16 @@ async function removeFromPublic(filename, data) {
     transport.makePrivate(file.filename)
   ));
 
-  return redis
-    .pipeline()
-    .srem(index, filename)
-    .srem(FILES_INDEX_PUBLIC, filename)
-    .hdel(id, FILES_PUBLIC_FIELD)
-    .exec()
-    .then(handlePipeline);
+  return handlePipeline(
+    await redis
+      .pipeline()
+      .srem(index, uploadId)
+      .srem(FILES_INDEX_PUBLIC, uploadId)
+      .zrem(FILES_INDEX_UAT_PUBLIC, uploadId)
+      .zrem(FILES_USER_INDEX_UAT_PUBLIC_KEY(owner), uploadId)
+      .hdel(id, FILES_PUBLIC_FIELD)
+      .exec()
+  );
 }
 
 async function adjustAccess({ params }) {
