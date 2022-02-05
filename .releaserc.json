@@ -7,7 +7,7 @@
   "prepare": [
     "@semantic-release/changelog",
     "@semantic-release/npm",
-    { "path": "@semantic-release/exec", "cmd": "yarn docker-release" },
+    { "path": "@semantic-release/exec", "cmd": "pnpm run docker-release" },
     "@semantic-release/git"
   ],
   "publish": [

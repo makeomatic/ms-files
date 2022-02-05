@@ -48,13 +48,12 @@ blocks:
     task:
       secrets:
         - name: semantic-release
+        - name: docker-hub
       jobs:
       - name: release
-        env_vars:
-          - name: DOCKER_CLI_EXPERIMENTAL
-            value: enabled
         commands:
           - sudo chmod -R 0777 /etc/docker
           - echo '{"experimental":true}' > /etc/docker/daemon.json
           - sudo service docker restart
+          - echo $DOCKER_PASSWORD | docker login --username $DOCKER_USERNAME --password-stdin
           - pnpm run release
