@@ -47,7 +47,12 @@ describe('migrations testing suite', function suite() {
     const keys = await redis.keys(`${keyPrefix}${FILES_INDEX_UAT}*`);
     assert(keys.length > 0, `no keys found - ${keyPrefix} ~ ${FILES_INDEX_UAT}`);
     ctx.files.log.warn({ keys }, 'retrieved keys');
-    ctx.files.log.warn('erased %d keys', (await redis.del(keys).length));
+    const eraseKeys = redis.options.keyPrefix
+      ? keys.map((key) => key.substring(redis.options.keyPrefix.length))
+      : keys;
+    ctx.files.log.warn('erasing %j', eraseKeys);
+    const removed = await redis.del(eraseKeys);
+    ctx.files.log.warn('erased %d keys', removed);
     assert.equal((await redis.keys(`${keyPrefix}${FILES_INDEX_UAT}*`)).length, 0);
   });
 

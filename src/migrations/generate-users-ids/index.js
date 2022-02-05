@@ -19,14 +19,14 @@ function generateUsersIds({
 
   return redis
     .smembers(FILES_INDEX)
-    .tap((filesNames) => log.info('files count:', filesNames.length))
+    .tap((filesNames) => log.info('files count: %d', filesNames.length))
     .map((fileName) => redis.hmget(`${FILES_DATA}:${fileName}`, 'owner', 'uploadId'))
     .map(
       ([owner, fileName]) => {
         if (resolvedUsers.has(owner) === true) {
-          log.info(owner, 'already resolved:', resolvedUsers.get(owner));
+          log.info({ owner }, 'already resolved: %s', resolvedUsers.get(owner));
         } else {
-          log.info('need resolve for', owner);
+          log.info('need resolve for %s', owner);
         }
 
         return Promise.join(
@@ -51,11 +51,11 @@ function generateUsersIds({
     )
     .each(([fileName, owner, user]) => {
       if (user === null) {
-        log.info('user not found for', fileName, 'owner', owner);
+        log.info('user not found for %s, owner %s', fileName, owner);
         return;
       }
 
-      log.info('set id', user.id, 'instead of', owner, 'for', fileName);
+      log.info('set id %s instead of %s for %s', user.id, owner, fileName);
       pipeline.hset(`${FILES_DATA}:${fileName}`, 'owner', user.id);
     })
     .return(resolvedUsers)
