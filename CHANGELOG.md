@@ -1,3 +1,22 @@
+# [15.17.0](https://github.com/makeomatic/ms-files/compare/v15.16.0...v15.17.0) (2022-02-05)
+
+
+### Bug Fixes
+
+* hooks destructuring ([fc5a09a](https://github.com/makeomatic/ms-files/commit/fc5a09a5745a6bc7f9e128999f9f6fbd40bc1661))
+* incorporate dlock plugin, pnpm, latest microfleet ([4ce39f8](https://github.com/makeomatic/ms-files/commit/4ce39f896c974e4aac97c749c7f0d375a8c4fb8d))
+* linter error ([ec0e1a8](https://github.com/makeomatic/ms-files/commit/ec0e1a8bee849bf9389f1e10acc2a27a31089d4e))
+* remove metricObservability from router config ([1b66095](https://github.com/makeomatic/ms-files/commit/1b6609560cc25484f9e5a55f877753fb45772061))
+* update deps ([2b1fa16](https://github.com/makeomatic/ms-files/commit/2b1fa161ad0216212e089310eaba623a87a33266))
+* upgrade deps ([b5c5704](https://github.com/makeomatic/ms-files/commit/b5c5704f9170fcbaca0d876400c0c09267bc03f6))
+
+
+### Features
+
+* c8 for native cov, no babel ([a31e459](https://github.com/makeomatic/ms-files/commit/a31e45939876801e0ae3d703a140149b67fc2ba0))
+* introduces uploadedAt index for faster search ([#249](https://github.com/makeomatic/ms-files/issues/249)) ([ce1a138](https://github.com/makeomatic/ms-files/commit/ce1a13845eaa9137a4193e6a8f218bce550a50b6))
+* upgrade microfleet to 17.9.0 ([4313682](https://github.com/makeomatic/ms-files/commit/43136827cc4a9181b1019c677794ede3daf41a10))
+
 # [15.16.0](https://github.com/makeomatic/ms-files/compare/v15.15.0...v15.16.0) (2021-09-07)
 
 
