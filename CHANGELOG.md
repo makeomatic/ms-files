@@ -1,3 +1,10 @@
+## [15.17.1](https://github.com/makeomatic/ms-files/compare/v15.17.0...v15.17.1) (2022-02-06)
+
+
+### Bug Fixes
+
+* upgrade deps ([c38316e](https://github.com/makeomatic/ms-files/commit/c38316ece96fc053f825c69394f415b02991381b))
+
 # [15.17.0](https://github.com/makeomatic/ms-files/compare/v15.16.0...v15.17.0) (2022-02-05)
 
 
