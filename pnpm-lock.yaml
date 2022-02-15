@@ -60,6 +60,7 @@ specifiers:
   ms-files-transport: ^1.0.2
   ms-perf: ^2.1.0
   opentracing-js-ioredis: 2.1.2
+  pnpm: ^6.31.0
   prom-client: ^14.0.1
   raven: ^2.6.4
   redis-filtered-sort: ^2.4.0
@@ -145,6 +146,7 @@ devDependencies:
   faker: 5.5.3
   json: 11.0.0
   mocha: 9.2.0
+  pnpm: 6.31.0
   rimraf: 3.0.2
   semantic-release: 19.0.2
   sinon: 13.0.1
@@ -5976,6 +5978,12 @@ packages:
   /pluralize/8.0.0:
     resolution: {integrity: sha512-Nc3IT5yHzflTfbjgqWcCPpo7DaKy4FnpB0l/zCAW0Tc7jxAiuqSxHasntB3D7887LSrA93kDJ9IXovxJYxyLCA==}
     engines: {node: '>=4'}
+    dev: true
+
+  /pnpm/6.31.0:
+    resolution: {integrity: sha512-YUCyLI2J2wQsHWgcRYR8wUrTWsE0E8GX46XKtdXcUiE0GJJYi5saRy2Y8BMfLtlDHshHLs2U/KO1e5gsftJTFA==}
+    engines: {node: '>=12.17'}
+    hasBin: true
     dev: true
 
   /prelude-ls/1.1.2:
