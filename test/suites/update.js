@@ -456,6 +456,40 @@ describe('update suite', function suite() {
     });
   });
 
+  describe('update nft', function emptyDescription() {
+    it('update nft fields', async function test() {
+      const { uploadId } = this.response;
+      meta.nft = {
+        price: '1',
+        supply: 1,
+        image: 'http://website.com/image.jpeg',
+        attributes: [{
+          title: 'test',
+          url: 'http://test.com',
+        }],
+      };
+
+      await this.send({
+        uploadId,
+        username,
+        meta,
+      }, 45000);
+
+      const fileInfo = await getInfo.call(this, {
+        filename: uploadId,
+        username,
+      });
+
+      assert.equal(fileInfo.file.nft.price, '1');
+      assert.equal(fileInfo.file.nft.supply, 1);
+      assert.equal(fileInfo.file.nft.image, 'http://website.com/image.jpeg');
+      assert.equal(fileInfo.file.nft.attributes[0], {
+        title: 'test',
+        url: 'http://test.com',
+      });
+    });
+  });
+
   describe('update background image', function afterUpdateSuite() {
     before('upload background image', function upload() {
       return initAndUpload(backgroundData, false).call(this)
