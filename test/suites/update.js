@@ -483,10 +483,8 @@ describe('update suite', function suite() {
       assert.equal(fileInfo.file.nft.price, '1');
       assert.equal(fileInfo.file.nft.supply, 1);
       assert.equal(fileInfo.file.nft.image, 'http://website.com/image.jpeg');
-      assert.equal(fileInfo.file.nft.attributes[0], {
-        title: 'test',
-        url: 'http://test.com',
-      });
+      assert.equal(fileInfo.file.nft.attributes[0].title, 'test');
+      assert.equal(fileInfo.file.nft.attributes[0].url, 'http://test.com');
     });
   });
 
