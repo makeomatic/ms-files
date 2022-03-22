@@ -345,6 +345,7 @@ describe('update suite', function suite() {
   describe('Description trim and empty', function emptyDescription() {
     it('permits empty description', async function test() {
       const { uploadId } = this.response;
+
       meta.description = '';
 
       await this.send({
