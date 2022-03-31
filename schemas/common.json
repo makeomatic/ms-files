@@ -886,6 +886,9 @@
     },
     "c-preview": {
       "type": "object",
+      "required": [
+        "type"
+      ],
       "properties": {
         "type": {
           "const": "c-preview"
