@@ -1,3 +1,10 @@
+## [15.17.2](https://github.com/makeomatic/ms-files/compare/v15.17.1...v15.17.2) (2022-03-31)
+
+
+### Bug Fixes
+
+* panorama upload ([#250](https://github.com/makeomatic/ms-files/issues/250)) ([6c122a4](https://github.com/makeomatic/ms-files/commit/6c122a43318d5cbece28c7702ff964d8d0ff50ac))
+
 ## [15.17.1](https://github.com/makeomatic/ms-files/compare/v15.17.0...v15.17.1) (2022-02-06)
 
 
