@@ -14,7 +14,7 @@ module.exports = exports = {
     }
   },
   pre: 'rimraf ./coverage/tmp',
-  post_exec: './node_modules/.bin/pnpm exec -- c8 report -r text -r lcov'
+  post_exec: 'pnpm exec -- c8 report -r text -r lcov'
 };
 
 switch (process.env.DB) {
