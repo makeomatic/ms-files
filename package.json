@@ -67,7 +67,7 @@
     "lodash": "^4.17.21",
     "md5": "^2.3.0",
     "mime-types": "^2.1.34",
-    "moment": "^2.29.1",
+    "moment": "^2.29.2",
     "ms-conf": "^7.0.2",
     "ms-files-transport": "^1.0.2",
     "ms-perf": "^2.1.0",
