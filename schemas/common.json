@@ -748,6 +748,44 @@
         "pHeight": {
           "type": "integer",
           "description": "Preview/Image height"
+        },
+        "nft": {
+          "type": "object",
+          "required": [
+            "price",
+            "supply",
+            "image"
+          ],
+          "properties": {
+            "price": {
+              "type": "string"
+            },
+            "supply": {
+              "type": "number"
+            },
+            "image": {
+              "type": "string",
+              "format": "uri"
+            },
+            "attributes": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "title",
+                  "url"
+                ],
+                "properties": {
+                  "title": {
+                    "type": "string"
+                  },
+                  "url": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
         }
       }
     },
