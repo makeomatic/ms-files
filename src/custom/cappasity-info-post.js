@@ -11,6 +11,8 @@ const {
   STATUS_FAILED,
 
   CAPPASITY_IMAGE_MODEL,
+  UPLOAD_TYPE_PANO_EQUIRECT,
+  UPLOAD_TYPE_PANO_CUBEMAP,
 } = require('../constant');
 
 /*
@@ -291,7 +293,7 @@ const getPlayerOpts = (id, { uploadType, c_ver: modelVersion, packed }, apiDomai
   // if upload type isn't simple - means we have old mesh upload
   // generally c_ver -> 1.x.x
   // eslint-disable-next-line no-nested-ternary
-  const version = uploadType !== CAPPASITY_IMAGE_MODEL
+  const version = ![CAPPASITY_IMAGE_MODEL, UPLOAD_TYPE_PANO_EQUIRECT, UPLOAD_TYPE_PANO_CUBEMAP].includes(uploadType)
     ? MESH_TYPE
     // if it's not a new .pack format -> it would be old images in 2.x.x format
     // next one is 3.x.x with old packs, doesn't have zoom either
