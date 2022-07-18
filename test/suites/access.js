@@ -1,4 +1,3 @@
-const { resolve } = require('bluebird');
 const assert = require('assert');
 const uuid = require('uuid');
 
@@ -7,7 +6,6 @@ describe('access suite', function suite() {
   const {
     startService,
     stopService,
-    inspectPromise,
     owner,
     modelData,
     bindSend,
@@ -33,40 +31,26 @@ describe('access suite', function suite() {
   after('stop service', stopService);
 
   // tests
-  it('returns 404 on a missing file', function test() {
-    return updateAccess
-      .call(this, uuid.v4(), owner, true)
-      .reflect()
-      .then(inspectPromise(false))
-      .then((err) => {
-        assert(err.statusCode, 404);
-        return null;
-      });
+  it('returns 404 on a missing file', async function test() {
+    await assert.rejects(updateAccess.call(this, uuid.v4(), owner, true), {
+      statusCode: 404,
+    });
   });
 
-  it('returns 403 on non-matching owner', function test() {
-    return updateAccess
-      .call(this, this.response.uploadId, 'martial@arts.com', true)
-      .reflect()
-      .then(inspectPromise(false))
-      .then((err) => {
-        assert(err.statusCode, 403);
-        return null;
-      });
+  it('returns 403 on non-matching owner', async function test() {
+    await assert.rejects(updateAccess.call(this, this.response.uploadId, 'martial@arts.com', true), {
+      statusCode: 403,
+    });
   });
 
   it('sets file to public', function test() {
     return updateAccess
-      .call(this, this.response.uploadId, owner, true)
-      .reflect()
-      .then(inspectPromise());
+      .call(this, this.response.uploadId, owner, true);
   });
 
   it('sets file to private', function test() {
     return updateAccess
-      .call(this, this.response.uploadId, owner, false)
-      .reflect()
-      .then(inspectPromise());
+      .call(this, this.response.uploadId, owner, false);
   });
 
   describe('direct upload', function directUploadSuite() {
@@ -82,45 +66,33 @@ describe('access suite', function suite() {
     }));
 
     it('post-processes files', function test() {
-      return resolve(this.files.postProcess(0, Date.now()));
+      return this.files.postProcess(0, Date.now());
     });
 
-    it('rejects to show direct only file without proper username', function test() {
-      return downloadFile
-        .call(this, { uploadId: this.response.uploadId })
-        .reflect()
-        .then(inspectPromise(false));
+    it('rejects to show direct only file without proper username', async function test() {
+      await assert.rejects(downloadFile.call(this, { uploadId: this.response.uploadId }));
     });
 
     it('set to public', function test() {
       return updateAccess
-        .call(this, this.response.uploadId, owner, true)
-        .reflect()
-        .then(inspectPromise());
+        .call(this, this.response.uploadId, owner, true);
     });
 
     it('allows to show direct only file without proper username', function test() {
       return downloadFile
-        .call(this, { uploadId: this.response.uploadId })
-        .reflect()
-        .then(inspectPromise());
+        .call(this, { uploadId: this.response.uploadId });
     });
 
-    it('public list does not return direct only file', function test() {
-      return this
+    it('public list does not return direct only file', async function test() {
+      const { files } = await this
         .amqp
         .publishAndWait('files.list', {
           public: true,
           username: owner,
-        })
-        .reflect()
-        .then(inspectPromise())
-        .get('files')
-        .then((response) => {
-          const directUpload = response.find((it) => it.id === this.response.uploadId);
-          assert.ifError(directUpload, 'direct upload was returned from public list');
-          return null;
         });
+
+      const directUpload = files.find((it) => it.id === this.response.uploadId);
+      assert.ifError(directUpload, 'direct upload was returned from public list');
     });
   });
 });

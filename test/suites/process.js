@@ -6,7 +6,6 @@ const uuid = require('uuid');
 const {
   startService,
   stopService,
-  inspectPromise,
   modelData,
   bindSend,
   initAndUpload,
@@ -32,21 +31,14 @@ describe('process suite', function suite() {
   after('stop service', stopService);
 
   it('returns 404 on a missing upload id', function test() {
-    return processUpload
-      .call(this, { uploadId: uuid.v4() })
-      .reflect()
-      .then(inspectPromise(false))
-      .then((err) => {
-        assert.equal(err.statusCode, 404);
-        return null;
-      });
+    return assert.rejects(processUpload.call(this, { uploadId: uuid.v4() }), {
+      statusCode: 404,
+    });
   });
 
   it('processes file', function test() {
     return processUpload
       .call(this, this.response)
-      .reflect()
-      .then(inspectPromise())
       .then((rsp) => {
         assert.equal(rsp.status, STATUS_PROCESSED);
         assert.ok(rsp.files);
@@ -55,17 +47,12 @@ describe('process suite', function suite() {
   });
 
   it('returns 412 when we try to work on an already processed file', function test() {
-    return processUpload
-      .call(this, this.response)
-      .reflect()
-      .then(inspectPromise(false))
-      .then((err) => {
-        assert.equal(err.statusCode, 412);
-        return null;
-      });
+    return assert.rejects(processUpload.call(this, this.response), {
+      statusCode: 412,
+    });
   });
 
-  it('exports processed file', function test() {
+  it('exports processed file', async function test() {
     const message = {
       uploadId: this.response.uploadId,
       export: {
@@ -77,18 +64,14 @@ describe('process suite', function suite() {
       },
     };
 
-    return Promise
-      .all([
-        this.send(message).reflect().then(inspectPromise()),
-        this.send(message).reflect().then(inspectPromise(false)),
-      ])
-      .spread((res, err) => {
-        assert.ok(this.files.config.hooks['files:process:post'].calledOnce);
-        assert.ok(res.export);
-        assert.ok(res.obj);
+    const [res] = await Promise.all([
+      this.send(message),
+      assert.rejects(this.send(message), { statusCode: 409 }),
+    ]);
 
-        assert.equal(err.statusCode, 409);
-      });
+    assert.ok(this.files.config.hooks['files:process:post'].calledOnce);
+    assert.ok(res.export);
+    assert.ok(res.obj);
   });
 
   it('denies to export processed file with same format, but diff compression', function test() {
@@ -100,14 +83,9 @@ describe('process suite', function suite() {
       },
     };
 
-    return this
-      .send(message)
-      .reflect()
-      .then(inspectPromise(false))
-      .then((err) => {
-        assert.equal(err.statusCode, 418);
-        return null;
-      });
+    return assert.rejects(this.send(message), {
+      statusCode: 418,
+    });
   });
 
   describe('internal process failure', function suiteFailure() {
@@ -124,13 +102,9 @@ describe('process suite', function suite() {
     });
 
     it('fails due to post-processing issue', function test() {
-      return processUpload
-        .call(this, this.response)
-        .reflect()
-        .then(inspectPromise(false))
-        .then((err) => {
-          return assert.equal(err.message, 'could not process file');
-        });
+      return assert.rejects(processUpload.call(this, this.response), {
+        message: 'could not process file',
+      });
     });
 
     it('wait for 2 seconds to ensure that requeue worked', function test() {
@@ -141,15 +115,9 @@ describe('process suite', function suite() {
     });
 
     it('next time it wont process because it reached max attempts', function test() {
-      return processUpload
-        .call(this, this.response)
-        .reflect()
-        .then(inspectPromise(false))
-        .then((err) => {
-          assert.equal(err.message, 'could not process file');
-          assert.equal(err.statusCode, 422);
-          return null;
-        });
+      return assert.rejects(processUpload.call(this, this.response), {
+        message: 'could not process file',
+      });
     });
   });
 });

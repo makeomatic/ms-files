@@ -92,7 +92,7 @@ async function adjustAccess({ params }) {
   return Promise
     .bind(this, [uploadId, data])
     .spread(setPublic ? addToPublic : removeFromPublic)
-    .tap(bustCache(redis, data, true));
+    .tap(bustCache(redis, data, true, true));
 }
 
 adjustAccess.transports = [ActionTransport.amqp];

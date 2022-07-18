@@ -1,11 +1,11 @@
 const assert = require('assert');
 const uuid = require('uuid');
-const faker = require('faker');
+const { faker } = require('@faker-js/faker');
+const clone = require('rfdc')();
 
 const {
   startService,
   stopService,
-  inspectPromise,
   owner,
   modelData,
   bindSend,
@@ -13,15 +13,18 @@ const {
   processUpload,
   downloadFile,
   getInfo,
-  meta,
+  meta: _meta,
   backgroundData,
 } = require('../helpers/utils');
 
+const meta = clone(_meta);
 const route = 'files.update';
 const username = owner;
 
 describe('update suite', function suite() {
-  before('start service', startService);
+  before('start service', async function startAll() {
+    await startService.call(this);
+  });
   before('pre-upload file', initAndUpload({
     ...modelData,
     message: {
@@ -38,26 +41,16 @@ describe('update suite', function suite() {
   before('helpers', bindSend(route));
   after('stop service', stopService);
 
-  it('returns 404 when file not found', function test() {
-    return this
-      .send({ uploadId: uuid.v4(), username, meta })
-      .reflect()
-      .then(inspectPromise(false))
-      .then((err) => {
-        assert.equal(err.statusCode, 404);
-        return null;
-      });
+  it('returns 404 when file not found', async function test() {
+    await assert.rejects(this.send({ uploadId: uuid.v4(), username, meta }), {
+      statusCode: 404,
+    });
   });
 
-  it('returns 412 when file is not processed', function test() {
-    return this
-      .send({ uploadId: this.response.uploadId, username, meta }, 45000)
-      .reflect()
-      .then(inspectPromise(false))
-      .then((err) => {
-        assert.equal(err.statusCode, 412);
-        return null;
-      });
+  it('returns 412 when file is not processed', async function test() {
+    await assert.rejects(this.send({ uploadId: this.response.uploadId, username, meta }, 45000), {
+      statusCode: 412,
+    });
   });
 
   describe('process update', function processedSuite() {
@@ -68,8 +61,6 @@ describe('update suite', function suite() {
     it('initiates update and returns correct response format', function test() {
       return this
         .send({ uploadId: this.response.uploadId, username, meta }, 45000)
-        .reflect()
-        .then(inspectPromise())
         .then((result) => {
           assert.equal(result, true);
           return null;
@@ -83,8 +74,6 @@ describe('update suite', function suite() {
         filename: this.response.uploadId,
         username,
       })
-        .reflect()
-        .then(inspectPromise())
         .then((result) => {
           assert.equal(result.username, username);
           assert.equal(result.file.uploadId, this.response.uploadId);
@@ -103,33 +92,25 @@ describe('update suite', function suite() {
     it('creates new alias', function test() {
       return this
         .send({ uploadId: this.response.uploadId, username, meta: { alias: 'sku' } }, 15000)
-        .reflect()
-        .then(inspectPromise())
-        .then((result) => {
+        .then(async (result) => {
           assert.equal(result, true);
 
-          return getInfo.call(this, {
+          const verifyResult = await getInfo.call(this, {
             filename: 'sku',
             username,
-          })
-            .tap((verifyResult) => {
-              assert.equal(verifyResult.file.alias, 'sku');
-              assert.equal(verifyResult.file.uploadId, this.response.uploadId);
-            });
+          });
+
+          assert.equal(verifyResult.file.alias, 'sku');
+          assert.equal(verifyResult.file.uploadId, this.response.uploadId);
         });
     });
 
-    it('rejects on conflict', function test() {
+    it('rejects on conflict', async function test() {
       // even-though we update the same model to the same alias, 409 is correct
       // and is sufficient, since it makes no sense to do noop update here
-      return this
-        .send({ uploadId: this.response.uploadId, username, meta: { alias: 'sku' } }, 15000)
-        .reflect()
-        .then(inspectPromise(false))
-        .then((error) => {
-          assert.equal(error.statusCode, 409);
-          return null;
-        });
+      await assert.rejects(this.send({ uploadId: this.response.uploadId, username, meta: { alias: 'sku' } }, 15000), {
+        statusCode: 409,
+      });
     });
 
     it('allows to update to another alias', function test() {
@@ -137,19 +118,16 @@ describe('update suite', function suite() {
       // and is sufficient, since it makes no sense to do noop update here
       return this
         .send({ uploadId: this.response.uploadId, username, meta: { alias: 'skubidoo' } }, 15000)
-        .reflect()
-        .then(inspectPromise())
-        .then((result) => {
+        .then(async (result) => {
           assert.equal(result, true);
 
-          return getInfo.call(this, {
+          const verifyResult = await getInfo.call(this, {
             filename: 'skubidoo',
             username,
-          })
-            .tap((verifyResult) => {
-              assert.equal(verifyResult.file.alias, 'skubidoo');
-              assert.equal(verifyResult.file.uploadId, this.response.uploadId);
-            });
+          });
+
+          assert.equal(verifyResult.file.alias, 'skubidoo');
+          assert.equal(verifyResult.file.uploadId, this.response.uploadId);
         });
     });
 
@@ -194,20 +172,15 @@ describe('update suite', function suite() {
       // and is sufficient, since it makes no sense to do noop update here
       return this
         .send({ uploadId: this.response.uploadId, username, meta: { alias: '' } }, 15000)
-        .reflect()
-        .then(inspectPromise())
         .then((result) => {
           assert.equal(result, true);
 
-          return getInfo.call(this, {
+          return assert.rejects(getInfo.call(this, {
             filename: 'skubidoo',
             username,
-          })
-            .reflect()
-            .then(inspectPromise(false))
-            .tap((error) => {
-              assert.equal(error.statusCode, 404);
-            });
+          }), {
+            statusCode: 404,
+          });
         });
     });
 
@@ -216,19 +189,16 @@ describe('update suite', function suite() {
       // and is sufficient, since it makes no sense to do noop update here
       return this
         .send({ uploadId: this.response.uploadId, username, meta: { alias: 'skubidoo' } }, 15000)
-        .reflect()
-        .then(inspectPromise())
-        .then((result) => {
+        .then(async (result) => {
           assert.equal(result, true);
 
-          return getInfo.call(this, {
+          const verifyResult = await getInfo.call(this, {
             filename: 'skubidoo',
             username,
-          })
-            .tap((verifyResult) => {
-              assert.equal(verifyResult.file.alias, 'skubidoo');
-              assert.equal(verifyResult.file.uploadId, this.response.uploadId);
-            });
+          });
+
+          assert.equal(verifyResult.file.alias, 'skubidoo');
+          assert.equal(verifyResult.file.uploadId, this.response.uploadId);
         });
     });
   });
@@ -239,18 +209,15 @@ describe('update suite', function suite() {
 
       return this
         .send({ uploadId: this.response.uploadId, username, meta }, 45000)
-        .reflect()
-        .then(inspectPromise())
-        .then((result) => {
+        .then(async (result) => {
           assert.equal(result, true);
 
-          return getInfo.call(this, {
+          const verifyResult = await getInfo.call(this, {
             filename: this.response.uploadId,
             username,
-          })
-            .tap((verifyResult) => {
-              assert.deepEqual(verifyResult.file.tags, meta.tags);
-            });
+          });
+
+          assert.deepEqual(verifyResult.file.tags, meta.tags);
         });
     });
 
@@ -259,36 +226,28 @@ describe('update suite', function suite() {
 
       return this
         .send({ uploadId: this.response.uploadId, username, meta }, 45000)
-        .reflect()
-        .then(inspectPromise())
-        .then((result) => {
+        .then(async (result) => {
           assert.equal(result, true);
 
-          return getInfo.call(this, {
+          const verifyResult = await getInfo.call(this, {
             filename: this.response.uploadId,
             username,
-          })
-            .tap((verifyResult) => {
-              assert.equal(verifyResult.file.backgroundColor, meta.backgroundColor);
-            });
+          });
+
+          assert.equal(verifyResult.file.backgroundColor, meta.backgroundColor);
         });
     });
   });
 
   describe('directOnly update', function directOnlySuite() {
-    it('returns public from a list', function test() {
-      return this.amqp.publishAndWait('files.list', {
+    it('returns public from a list', async function test() {
+      const { files } = await this.amqp.publishAndWait('files.list', {
         public: true,
         username,
-      })
-        .reflect()
-        .then(inspectPromise())
-        .get('files')
-        .then((response) => {
-          const directUpload = response.find((it) => it.id === this.response.uploadId);
-          assert.ok(directUpload, 'upload was not found');
-          return null;
-        });
+      });
+
+      const directUpload = files.find((it) => it.id === this.response.uploadId);
+      assert.ok(directUpload, 'upload was not found');
     });
 
     it('update and set it to directOnly', function test() {
@@ -296,24 +255,17 @@ describe('update suite', function suite() {
         username,
         uploadId: this.response.uploadId,
         directOnly: true,
-      })
-        .reflect()
-        .then(inspectPromise());
+      });
     });
 
-    it('does not return direct from a public list', function test() {
-      return this.amqp.publishAndWait('files.list', {
+    it('does not return direct from a public list', async function test() {
+      const { files } = await this.amqp.publishAndWait('files.list', {
         public: true,
         username,
-      })
-        .reflect()
-        .then(inspectPromise())
-        .get('files')
-        .then((response) => {
-          const directUpload = response.find((it) => it.id === this.response.uploadId);
-          assert.ifError(directUpload, 'direct upload was returned from public list');
-          return null;
-        });
+      });
+
+      const directUpload = files.find((it) => it.id === this.response.uploadId);
+      assert.ifError(directUpload, 'direct upload was returned from public list');
     });
 
     it('update and set it back to default', function test() {
@@ -321,24 +273,17 @@ describe('update suite', function suite() {
         username,
         uploadId: this.response.uploadId,
         directOnly: false,
-      })
-        .reflect()
-        .then(inspectPromise());
+      });
     });
 
-    it('returns public from a list once again', function test() {
-      return this.amqp.publishAndWait('files.list', {
+    it('returns public from a list once again', async function test() {
+      const { files } = await this.amqp.publishAndWait('files.list', {
         public: true,
         username,
-      })
-        .reflect()
-        .then(inspectPromise())
-        .get('files')
-        .then((response) => {
-          const directUpload = response.find((it) => it.id === this.response.uploadId);
-          assert.ok(directUpload, 'upload was not found');
-          return null;
-        });
+      });
+
+      const directUpload = files.find((it) => it.id === this.response.uploadId);
+      assert.ok(directUpload, 'upload was not found');
     });
   });
 
@@ -469,18 +414,15 @@ describe('update suite', function suite() {
     it('update background image', function test() {
       return this
         .send({ uploadId: this.response.uploadId, username, meta }, 45000)
-        .reflect()
-        .then(inspectPromise())
-        .then((result) => {
+        .then(async (result) => {
           assert.equal(result, true);
 
-          return getInfo.call(this, {
+          const verifyResult = await getInfo.call(this, {
             filename: this.response.uploadId,
             username,
-          })
-            .tap((verifyResult) => {
-              assert.equal(verifyResult.file.backgroundImage, meta.backgroundImage);
-            });
+          });
+
+          assert.equal(verifyResult.file.backgroundImage, meta.backgroundImage);
         });
     });
 
@@ -488,31 +430,23 @@ describe('update suite', function suite() {
       meta.backgroundImage = '';
       return this
         .send({ uploadId: this.response.uploadId, username, meta }, 45000)
-        .reflect()
-        .then(inspectPromise())
-        .then((result) => {
+        .then(async (result) => {
           assert.equal(result, true);
 
-          return getInfo.call(this, {
+          const verifyResult = await getInfo.call(this, {
             filename: this.response.uploadId,
             username,
-          })
-            .tap((verifyResult) => {
-              assert.equal(verifyResult.file.backgroundImage, meta.backgroundImage);
-            });
+          });
+
+          assert.equal(verifyResult.file.backgroundImage, meta.backgroundImage);
         });
     });
 
     it('failed to update background image due to wrong origin', function test() {
       meta.backgroundImage = faker.image.imageUrl();
-      return this
-        .send({ uploadId: this.response.uploadId, username, meta }, 45000)
-        .reflect()
-        .then(inspectPromise(false))
-        .then((err) => {
-          assert.equal(err.statusCode, 412);
-          return null;
-        });
+      return assert.rejects(this.send({ uploadId: this.response.uploadId, username, meta }, 45000), {
+        statusCode: 412,
+      });
     });
   });
 });

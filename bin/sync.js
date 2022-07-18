@@ -12,7 +12,6 @@ const { argv } = require('yargs')
   .help('h');
 
 // Deps
-const Promise = require('bluebird');
 const AMQPTransport = require('@microfleet/transport-amqp');
 const omit = require('lodash/omit');
 const config = require('../lib/config').get('/', { env: process.env.NODE_ENV });
@@ -23,8 +22,7 @@ const { prefix } = config.router.routes;
 
 // App level code
 const getTransport = () => {
-  console.info('establishing connection to amqp with %j', amqpConfig);
-  return AMQPTransport.connect({ ...amqpConfig, debug: false }).disposer((amqp) => amqp.close());
+  return AMQPTransport.connect({ ...amqpConfig, debug: false });
 };
 
 // perform update
@@ -45,4 +43,11 @@ const performSync = (amqp) => {
     });
 };
 
-Promise.using(getTransport(), performSync);
+(async () => {
+  const transport = await getTransport();
+  try {
+    await performSync(transport);
+  } finally {
+    await transport.close();
+  }
+})();

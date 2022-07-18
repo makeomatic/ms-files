@@ -162,7 +162,7 @@ async function updateMeta(lock, ctx, params) {
   handlePipeline(await pipeline.exec());
 
   if (directOnly !== undefined) {
-    await bustCache(redis, data, true);
+    await bustCache(redis, data, true, true);
   }
 
   return true;

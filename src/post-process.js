@@ -11,6 +11,7 @@ module.exports = async function postProcess(offset = 0, uploadedAt = moment().su
     },
     uploadedAt: {
       lte: uploadedAt,
+      gte: uploadedAt - this.config.listMaxInterval,
     },
   };
 

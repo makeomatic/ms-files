@@ -1,6 +1,6 @@
 const ld = require('lodash');
 const Promise = require('bluebird');
-const faker = require('faker');
+const { faker } = require('@faker-js/faker');
 const uuid = require('uuid');
 const {
   STATUS_PROCESSED,

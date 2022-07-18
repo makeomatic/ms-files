@@ -101,21 +101,29 @@ async function selectMaster(redis) {
  * @param  {String[]} [fieldsFilter.omit]
  * @param  {String[]} [fieldsFilter.pick]
  */
-module.exports = function fetchData(key, fieldFilter = {}) {
+module.exports = async function fetchData(key, fieldFilter = {}) {
   const { redis } = this;
-  const timer = perf(`fetchData:${key}`);
+  const timer = perf(`fetchData:${key}`, { thunk: false });
 
-  return redis
-    .fetchData(1, key, JSON.stringify(fieldFilter))
-    .tap(timer('redis'))
-    .catchThrow(missingError, FILE_MISSING_ERROR)
-    .spread(reserializeData)
-    .tap(timer('remapping'))
-    .finally(timer);
+  try {
+    const data = await redis.fetchData(1, key, JSON.stringify(fieldFilter));
+    timer('redis');
+    const remapped = reserializeData(...data);
+    timer('remapping');
+    return remapped;
+  } catch (err) {
+    if (missingError(err)) {
+      throw FILE_MISSING_ERROR;
+    }
+
+    throw err;
+  } finally {
+    debug({ fetchData: timer() });
+  }
 };
 
 module.exports.batch = async function fetchDataBatch(keys, fieldFilter = {}) {
-  const timer = perf('fetchData:batch');
+  const timer = perf('fetchData:batch', { thunk: false });
   const { redis, service: { redisType } } = this;
 
   const masterNode = redisType === 'redisCluster'
@@ -129,9 +137,9 @@ module.exports.batch = async function fetchDataBatch(keys, fieldFilter = {}) {
 
   try {
     const data = await pipeline.exec();
-    timer('pipeline')();
+    timer('pipeline');
     return await Promise.map(data, deserializePipeline);
   } finally {
-    timer();
+    debug({ fetchDataBatch: timer() });
   }
 };

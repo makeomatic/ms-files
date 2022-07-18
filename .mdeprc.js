@@ -4,8 +4,10 @@ module.exports = exports = {
   node: "16",
   auto_compose: true,
   with_local_compose: true,
+  in_one: true,
+  http: true,
   services: ['rabbitmq'],
-  test_framework: 'c8 /src/node_modules/.bin/mocha',
+  test_framework: 'mocha',
   nycCoverage: false,
   nycReport: false,
   extras: {
@@ -13,8 +15,8 @@ module.exports = exports = {
       user: `${uid}:${uid}`
     }
   },
-  pre: 'rimraf ./coverage/tmp',
-  post_exec: 'pnpm exec -- c8 report -r text -r lcov'
+  pre: 'rimraf ./coverage/*',
+  post_exec: './node_modules/.bin/c8 report -r text -r lcov'
 };
 
 switch (process.env.DB) {

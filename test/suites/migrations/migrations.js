@@ -1,4 +1,3 @@
-const Bluebird = require('bluebird');
 const sinon = require('sinon');
 const { strict: assert } = require('assert');
 const { resolve } = require('path');
@@ -24,7 +23,6 @@ describe('migrations testing suite', function suite() {
 
     const amqpStub = sinon
       .stub(ctx.files.amqp, 'publishAndWait')
-      .usingPromise(Bluebird)
       .callThrough();
 
     amqpStub
@@ -34,11 +32,13 @@ describe('migrations testing suite', function suite() {
   after('stop service', stopService.bind(ctx));
 
   it('pre-upload files', async () => {
-    await Promise.all(
-      Array
-        .from({ length: 20 })
-        .map(initAndUpload(modelData, false).bind(ctx))
-    );
+    const uploads = [];
+    for (let i = 0; i < 20; i += 1) {
+      uploads.push(initAndUpload(modelData, false).call({
+        ...ctx,
+      }));
+    }
+    await Promise.all(uploads);
   });
 
   it('erase migration keys', async () => {

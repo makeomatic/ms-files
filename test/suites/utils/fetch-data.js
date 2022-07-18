@@ -40,8 +40,7 @@ describe('util fetch-data suite', () => {
       },
     };
 
-    const uploadFn = initUpload.call(this, myModelData);
-    await uploadFn.call(this);
+    await initUpload(myModelData).call(this);
     await finishUpload.call(this, this.response);
     await processUpload.call(this, this.response);
 

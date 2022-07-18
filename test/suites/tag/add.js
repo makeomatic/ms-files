@@ -6,7 +6,6 @@ const {
   modelData,
   owner,
   initUpload,
-  inspectPromise,
 } = require('../../helpers/utils');
 
 describe('tag.add action', function suite() {
@@ -15,17 +14,13 @@ describe('tag.add action', function suite() {
   after('stop service', stopService);
 
   it('should be able to return error if duplicate tags in request', function test() {
-    return this.amqp
-      .publishAndWait('files.tag.add', {
-        uploadId: this.response.uploadId,
-        username: owner,
-        tags: ['PERCHIK', 'FAT', 'FAT'] })
-      .reflect()
-      .then(inspectPromise(false))
-      .then((error) => {
-        assert.equal(error.message, 'tag.add validation failed: data/tags must '
-          + 'NOT have duplicate items (items ## 2 and 1 are identical)');
-      });
+    return assert.rejects(this.amqp.publishAndWait('files.tag.add', {
+      uploadId: this.response.uploadId,
+      username: owner,
+      tags: ['PERCHIK', 'FAT', 'FAT'] }), {
+      message: 'tag.add validation failed: data/tags must '
+               + 'NOT have duplicate items (items ## 2 and 1 are identical)',
+    });
   });
 
   it('should be able to update tags', async function test() {

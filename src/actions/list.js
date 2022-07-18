@@ -2,6 +2,7 @@ const { ActionTransport } = require('@microfleet/plugin-router');
 const Promise = require('bluebird');
 const fsort = require('redis-filtered-sort');
 const perf = require('ms-perf');
+const { HttpStatusError } = require('common-errors');
 const handlePipeline = require('../utils/pipeline-error');
 const fetchData = require('../utils/fetch-data').batch;
 const {
@@ -25,7 +26,7 @@ const k404Error = new Error('ELIST404');
  * Internal functions
  */
 async function interstore(ctx, username) {
-  const { isPublic, temp, tags, redis, hasTags, uploadedAt, order } = ctx;
+  const { isPublic, temp, tags, redis, hasTags, uploadedAt, order, maxInterval } = ctx;
   ctx.username = username;
 
   // choose which set to use
@@ -58,6 +59,21 @@ async function interstore(ctx, username) {
 
     const lte = typeof uploadedAt.lte === 'number' ? uploadedAt.lte : '+inf';
     const gte = typeof uploadedAt.gte === 'number' ? uploadedAt.gte : '-inf';
+    const now = Date.now();
+
+    // validation section to ensure we have interval that arent too large
+    if (lte === '+inf' && gte === '-inf') {
+      throw new HttpStatusError(400, `uploadedAt.lte & uploadedAt.gte need to have a specific interval no more than ${maxInterval} ms`);
+    } else if (gte >= now) {
+      throw new HttpStatusError(400, 'uploadedAt.gte needs to be in the past');
+    } else if (lte === '+inf' && now - gte > maxInterval) {
+      throw new HttpStatusError(400, `uploadedAt.gte needs to be greater than Now() - ${maxInterval} ms`);
+    } else if (gte === '-inf') {
+      throw new HttpStatusError(400, 'do not use unbound uploadedAt.lte');
+    } else if (lte - gte > maxInterval) {
+      throw new HttpStatusError(400, `uploadedAt.lte - uploadedAt.gte must be less than ${maxInterval}`);
+    }
+
     uploadedAtRequest = order === 'DESC'
       ? ['zrevrangebyscore', uploadedAtIndex, lte, gte]
       : ['zrangebyscore', uploadedAtIndex, gte, lte];
@@ -306,6 +322,7 @@ async function listFiles({ params }) {
     interstoreKeyMinTimeleft,
     timer,
     service: this,
+    maxInterval: config.listMaxInterval,
 
     // our params
     without,

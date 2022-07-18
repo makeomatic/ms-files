@@ -5,7 +5,6 @@ const uuid = require('uuid');
 const {
   startService,
   stopService,
-  inspectPromise,
   owner,
   modelData,
   bindSend,
@@ -34,32 +33,20 @@ describe('info suite', function suite() {
   after('stop service', stopService);
 
   it('404 on missing filename/upload-id', function test() {
-    return this
-      .send({ filename: uuid.v4(), username: owner })
-      .reflect()
-      .then(inspectPromise(false))
-      .then((err) => {
-        assert.equal(err.statusCode, 404);
-        return null;
-      });
+    return assert.rejects(this.send({ filename: uuid.v4(), username: owner }), {
+      statusCode: 404,
+    });
   });
 
   it('401 on valid upload id, invalid user', function test() {
-    return this
-      .send({ filename: this.response.uploadId, username: 'martial@arts.com' })
-      .reflect()
-      .then(inspectPromise(false))
-      .then((err) => {
-        assert.equal(err.statusCode, 401);
-        return null;
-      });
+    return assert.rejects(this.send({ filename: this.response.uploadId, username: 'martial@arts.com' }), {
+      statusCode: 401,
+    });
   });
 
   it('STATUS_PENDING on valid upload id', function test() {
     return this
       .send({ filename: this.response.uploadId, username: owner })
-      .reflect()
-      .then(inspectPromise())
       .then((rsp) => {
         assert.equal(rsp.username, owner);
         assert.deepEqual(rsp.file, this.response);
@@ -75,21 +62,14 @@ describe('info suite', function suite() {
     });
 
     it('401 on invalid user id', function test() {
-      return this
-        .send({ filename: this.response.uploadId, username: 'martial@arts.com' })
-        .reflect()
-        .then(inspectPromise(false))
-        .then((err) => {
-          assert.equal(err.statusCode, 401);
-          return null;
-        });
+      return assert.rejects(this.send({ filename: this.response.uploadId, username: 'martial@arts.com' }), {
+        statusCode: 401,
+      });
     });
 
     it('STATUS_UPLOADED on valid user id', function test() {
       return this
         .send({ filename: this.response.uploadId, username: owner })
-        .reflect()
-        .then(inspectPromise())
         .then((rsp) => {
           assert.equal(rsp.username, owner);
           assert.equal(rsp.file.status, STATUS_UPLOADED);
@@ -103,21 +83,14 @@ describe('info suite', function suite() {
       });
 
       it('returns 401 on invalid user id', function test() {
-        return this
-          .send({ filename: this.response.uploadId, username: 'martial@arts.com' })
-          .reflect()
-          .then(inspectPromise(false))
-          .then((err) => {
-            assert.equal(err.statusCode, 401);
-            return null;
-          });
+        return assert.rejects(this.send({ filename: this.response.uploadId, username: 'martial@arts.com' }), {
+          statusCode: 401,
+        });
       });
 
       it('returns correct STATUS_PROCESSED', function test() {
         return this
           .send({ filename: this.response.uploadId, username: owner })
-          .reflect()
-          .then(inspectPromise())
           .then((rsp) => {
             assert.equal(rsp.username, owner);
             assert.equal(rsp.file.status, STATUS_PROCESSED);
@@ -164,8 +137,6 @@ describe('info suite', function suite() {
         it('returns info when file is public', function test() {
           return this
             .send({ filename: this.response.uploadId, username: owner })
-            .reflect()
-            .then(inspectPromise())
             .then((rsp) => {
               assert.equal(rsp.username, owner);
               assert.equal(rsp.file.owner, owner);

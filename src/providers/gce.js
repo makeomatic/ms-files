@@ -128,7 +128,7 @@ class GCETransport extends AbstractFileTransfer {
     // first find if we have an existing subscription
     // NOTE: will throw if not created before
     const [topic] = await Pubsub.topic(pubsub.topic).get();
-    this.log.info({ topic: pubsub.topic }, 'retreived topic');
+    this.log.info({ topic: pubsub.topic }, 'retrieved topic');
 
     // prepare Subscription object
     const Subscription = topic.subscription(name, {

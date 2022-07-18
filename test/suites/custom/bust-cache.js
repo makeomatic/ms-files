@@ -16,9 +16,9 @@ const {
 
 const { getIndiciesList } = mod;
 
-function tester(file, expectedList) {
+function tester(file, accessChanged, expectedList) {
   return () => {
-    assert.deepStrictEqual(getIndiciesList(file), expectedList);
+    assert.deepStrictEqual(getIndiciesList(file, accessChanged), expectedList);
   };
 }
 
@@ -39,14 +39,14 @@ describe('bustCache utils suite', function suite() {
 
     it('should produce an empty list of indicies if file is unlisted', tester({
       [FILES_UNLISTED_FIELD]: 1,
-    }, []));
+    }, false, []));
 
-    it('should produce a list of default indicies', tester(file, BASIC_INDICIES));
+    it('should produce a list of default indicies', tester(file, false, BASIC_INDICIES));
 
     it('should produce a list of indicies for public file', tester({
       ...file,
       [FILES_PUBLIC_FIELD]: 1,
-    }, [
+    }, false, [
       ...BASIC_INDICIES,
       FILES_INDEX_PUBLIC,
       FILES_INDEX_USER_PUB,
@@ -55,8 +55,25 @@ describe('bustCache utils suite', function suite() {
     it('should produce a list of indicies for temp file', tester({
       ...file,
       [FILES_TEMP_FIELD]: 1,
-    }, [
+    }, false, [
       FILES_INDEX_TEMP,
+    ]));
+
+    it('should produce a list of indices for a file after it was changed to private', tester({
+      ...file,
+    }, true, [
+      ...BASIC_INDICIES,
+      FILES_INDEX_PUBLIC,
+      FILES_INDEX_USER_PUB,
+    ]));
+
+    it('should produce a list of indices for a file after it was changed to public', tester({
+      ...file,
+      [FILES_PUBLIC_FIELD]: 1,
+    }, true, [
+      ...BASIC_INDICIES,
+      FILES_INDEX_PUBLIC,
+      FILES_INDEX_USER_PUB,
     ]));
   });
 });

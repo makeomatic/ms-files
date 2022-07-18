@@ -149,6 +149,12 @@ exports.uploadTTL = 60 * 60 * 24;
 exports.maxTries = Number.MAX_SAFE_INTEGER;
 
 /**
+ * Max search interval
+ * @type {number}
+ */
+exports.listMaxInterval = 31 * 24 * 60 * 60 * 1e3; // 1 month by default
+
+/**
  * API Domain
  * @type {String}
  */

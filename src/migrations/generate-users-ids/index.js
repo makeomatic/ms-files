@@ -1,6 +1,5 @@
 const AMQPTransport = require('@microfleet/transport-amqp');
 const omit = require('lodash/omit');
-const Promise = require('bluebird');
 const {
   FILES_INDEX,
   FILES_DATA,
@@ -9,7 +8,7 @@ const {
   FILES_USER_INDEX_PUBLIC_KEY,
 } = require('../../constant');
 
-const getTransport = (amqpConfig) => AMQPTransport.connect(amqpConfig).disposer((amqp) => amqp.close());
+const getTransport = (amqpConfig) => AMQPTransport.connect(amqpConfig);
 
 function generateUsersIds({
   amqp, config, redis, log,
@@ -70,16 +69,14 @@ function generateUsersIds({
     .catch((e) => log.error(e));
 }
 
-function migrate({ config, redis, log }) {
+async function migrate({ config, redis, log }) {
   const amqpConfig = omit(config.amqp.transport, ['queue', 'listen', 'neck', 'onComplete']);
-
-  return Promise
-    .using(
-      getTransport(amqpConfig),
-      (amqp) => generateUsersIds({
-        amqp, config, redis, log,
-      })
-    );
+  const amqp = await getTransport(amqpConfig);
+  try {
+    return await generateUsersIds({ amqp, config, redis, log });
+  } finally {
+    await amqp.close();
+  }
 }
 
 module.exports = {

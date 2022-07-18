@@ -9,6 +9,7 @@ const sinon = require(`${cwd}/node_modules/sinon`);
 
 exports.amqp = {
   transport: {
+    debug: false,
     connection: {
       host: 'rabbitmq',
       port: 5672,
@@ -20,6 +21,11 @@ exports.routerAmqp = {
   retry: {
     predicate: sinon.spy(originalPredicate),
   },
+};
+
+exports.logger = {
+  defaultLogger: false,
+  debug: false,
 };
 
 exports.transport = [{

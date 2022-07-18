@@ -1,5 +1,5 @@
 const assert = require('assert');
-const faker = require('faker');
+const { faker } = require('@faker-js/faker');
 const ld = require('lodash');
 const moment = require('moment');
 
@@ -395,8 +395,15 @@ describe('list suite', function suite() {
 
   const cases = [
     [{ gte: monthAgo.valueOf() }, [['isSameOrAfter', monthAgo]]],
-    [{ lte: dayAgo.valueOf() }, [['isSameOrBefore', dayAgo]]],
     [{ gte: monthAgo.valueOf(), lte: dayAgo.valueOf() }, [['isSameOrAfter', monthAgo], ['isSameOrBefore', dayAgo]]],
+    [{ gte: monthAgo.clone().add(1, 'day').valueOf(), lte: dayAgo.valueOf() }, [['isSameOrBefore', dayAgo]]],
+  ];
+
+  const errors = [
+    {},
+    { gte: moment().subtract(32, 'days').valueOf() }, // 32 days
+    { lte: dayAgo.valueOf() }, // -inf -> lte
+    { gte: monthAgo.clone().subtract(1, 'month').valueOf(), lte: dayAgo.valueOf() }, // 2 months - 1 day
   ];
 
   describe('use of uploadedAt index', function testSuite() {
@@ -416,9 +423,21 @@ describe('list suite', function suite() {
           data.files.forEach((file) => {
             assert.equal(file.owner, username);
             for (const [fn, compare] of verification.values()) {
-              assert(moment(+file[FILES_UPLOADED_AT_FIELD])[fn](compare));
+              assert(moment(+file[FILES_UPLOADED_AT_FIELD])[fn](compare), `${compare} ${fn} ${moment(+file[FILES_UPLOADED_AT_FIELD])}`);
             }
           });
+        });
+      }
+
+      for (const uploadedAt of errors.values()) {
+        it(`(${order}) errors out due to invalid interval: ${JSON.stringify(uploadedAt)}`, async function test() {
+          await assert.rejects(this.amqp.publishAndWait('files.list', {
+            filter: { uploadedAt },
+            owner: username,
+            order,
+            offset: 0,
+            limit: 10,
+          }));
         });
       }
     }

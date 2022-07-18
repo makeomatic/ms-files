@@ -5,7 +5,6 @@ const assert = require('assert');
 const {
   startService,
   stopService,
-  inspectPromise,
   modelData,
   owner,
   getInfo,
@@ -35,14 +34,9 @@ describe('finish upload suite with pubsub for hooks', function suite() {
   // tear-down
   after('stop service', stopService);
 
-  it('completes file upload', function test() {
-    return uploadFiles(modelData, this.response)
-      .reflect()
-      .then(inspectPromise())
-      .map((resp) => {
-        assert.equal(resp.statusCode, 200);
-        return null;
-      });
+  it('completes file upload', async function test() {
+    const responses = await uploadFiles(modelData, this.response);
+    assert(responses.every(({ status }) => status === 200));
   });
 
   it('verify that upload was processed', function test() {
@@ -51,8 +45,6 @@ describe('finish upload suite with pubsub for hooks', function suite() {
 
     return getInfo
       .call(this, { filename: this.response.uploadId, username: owner })
-      .reflect()
-      .then(inspectPromise())
       .then((rsp) => {
         try {
           assert.equal(rsp.file.status, STATUS_PROCESSED);

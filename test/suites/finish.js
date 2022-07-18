@@ -1,3 +1,4 @@
+/* eslint-disable no-await-in-loop */
 const Promise = require('bluebird');
 const assert = require('assert');
 const md5 = require('md5');
@@ -7,7 +8,6 @@ const uuid = require('uuid');
 const {
   startService,
   stopService,
-  inspectPromise,
   modelData,
   owner,
   bindSend,
@@ -28,89 +28,61 @@ describe('finish upload suite', function suite() {
 
   // tests
   it('return 400 on invalid filename', function test() {
-    return this
-      .send({ filename: 'random name' })
-      .reflect()
-      .then(inspectPromise(false))
-      .then((err) => {
-        assert.equal(err.name, 'HttpStatusError');
-        assert.equal(err.statusCode, 400);
-        return null;
-      });
+    return assert.rejects(this.send({ filename: 'random name' }), {
+      name: 'HttpStatusError',
+      statusCode: 400,
+    });
   });
 
   it('returns 200: 404 on missing filename', function test() {
-    return this
-      .send({ filename: [md5(owner), uuid.v4(), uuid.v4()].join('/') })
-      .reflect()
-      .then(inspectPromise(false))
-      .then((err) => {
+    return assert.rejects(this.send({ filename: [md5(owner), uuid.v4(), uuid.v4()].join('/') }), (err) => {
+      try {
         assert.equal(err.statusCode, 200);
         assert.ok(/^404: /.test(err.message));
-        return null;
-      });
+      } catch (_) {
+        return false;
+      }
+      return true;
+    });
   });
 
   it('returns progress and 409 on repeated notification', function test() {
     const [file] = this.response.files;
     return Promise.mapSeries([file, file], (_, idx) => {
-      return this.send({ filename: file.filename })
-        .reflect()
-        .then(inspectPromise(false))
-        .then((err) => {
-          if (idx === 0) {
-            assert.equal(err.statusCode, 202);
-            assert.equal(err.message, `1/${this.response.files.length} uploaded`);
-          } else {
-            assert.equal(err.statusCode, 200);
-            assert.equal(err.message, '412: upload was already processed');
-          }
-
-          return null;
-        });
+      return assert.rejects(this.send({ filename: file.filename }), idx === 0 ? {
+        statusCode: 202,
+        message: `1/${this.response.files.length} uploaded`,
+      } : {
+        statusCode: 200,
+        message: '412: upload was already processed',
+      });
     });
   });
 
   it('returns progress until all files have uploaded', function test() {
     const files = this.response.files.slice(1, 3);
-    return Promise
-      .resolve(files)
-      .mapSeries((file, idx) => {
-        return this
-          .send({ filename: file.filename })
-          .reflect()
-          .then(inspectPromise(false))
-          .then((err) => {
-            assert.equal(err.statusCode, 202);
-            assert.equal(err.message, `${idx + 2}/${this.response.files.length} uploaded`);
-            return null;
-          });
+    return Promise.mapSeries(files, async (file, idx) => {
+      await assert.rejects(this.send({ filename: file.filename }), {
+        statusCode: 202,
+        message: `${idx + 2}/${this.response.files.length} uploaded`,
       });
+    });
   });
 
   it('returns "upload was already processed" for subsequent messages', function test() {
     const files = this.response.files.slice(0, 3);
-    return Promise
-      .resolve(files)
-      .mapSeries((file) => {
-        return this
-          .send({ filename: file.filename })
-          .reflect()
-          .then(inspectPromise(false))
-          .then((err) => {
-            assert.equal(err.statusCode, 200);
-            assert.ok(/^412: /.test(err.message));
-            return null;
-          });
+    return Promise.mapSeries(files, (file) => {
+      return assert.rejects(this.send({ filename: file.filename }), {
+        statusCode: 200,
+        message: /^412: /,
       });
+    });
   });
 
   it('returns "upload completed, processing skipped" on final part', function test() {
     const file = this.response.files[3];
     return this
       .send({ filename: file.filename, skipProcessing: true })
-      .reflect()
-      .then(inspectPromise())
       .then((response) => {
         assert.equal(response, 'upload completed, processing skipped');
         return null;
@@ -126,50 +98,35 @@ describe('finish upload suite', function suite() {
       },
     }));
 
-    it('finishes upload', function test() {
+    it('finishes upload', async function test() {
       const total = this.response.files.length;
-      return Promise
-        .resolve(this.response.files)
-        .mapSeries((file, idx) => (
-          this
-            .send({ filename: file.filename, await: true })
-            .reflect()
-            .then(inspectPromise(idx === total - 1))
-        ));
+      for (const [idx, file] of this.response.files.entries()) {
+        if (idx !== total - 1) {
+          await assert.rejects(this.send({ filename: file.filename, await: true }));
+        } else {
+          await this.send({ filename: file.filename, await: true });
+        }
+      }
     });
 
-    it('list does not return this file from public list', function test() {
-      return this
-        .amqp
-        .publishAndWait('files.list', {
-          public: true,
-          username: modelData.message.username,
-        })
-        .reflect()
-        .then(inspectPromise())
-        .get('files')
-        .then((response) => {
-          const directUpload = response.find((it) => it.id === this.response.uploadId);
-          assert.ifError(directUpload, 'direct upload was returned from public list');
-          return null;
-        });
+    it('list does not return this file from public list', async function test() {
+      const { files: response } = await this.amqp.publishAndWait('files.list', {
+        public: true,
+        username: modelData.message.username,
+      });
+
+      const directUpload = response.find((it) => it.id === this.response.uploadId);
+      assert.ifError(directUpload, 'direct upload was returned from public list');
     });
 
-    it('list returns this file for private list', function test() {
-      return this
-        .amqp
-        .publishAndWait('files.list', {
-          public: false,
-          username: modelData.message.username,
-        })
-        .reflect()
-        .then(inspectPromise())
-        .get('files')
-        .then((response) => {
-          const directUpload = response.find((it) => it.id === this.response.uploadId);
-          assert.ok(directUpload, 'direct upload was correctly returned');
-          return null;
-        });
+    it('list returns this file for private list', async function test() {
+      const { files: response } = await this.amqp.publishAndWait('files.list', {
+        public: false,
+        username: modelData.message.username,
+      });
+
+      const directUpload = response.find((it) => it.id === this.response.uploadId);
+      assert.ok(directUpload, 'direct upload was correctly returned');
     });
 
     it('report endpoint returns stats for public & private models', function test() {
@@ -179,8 +136,6 @@ describe('finish upload suite', function suite() {
           username: modelData.message.username,
           includeStorage: true,
         })
-        .reflect()
-        .then(inspectPromise())
         .then((response) => {
           assert.equal(response.total, 2);
           assert.equal(response.public, 0);

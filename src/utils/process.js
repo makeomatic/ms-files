@@ -90,7 +90,7 @@ const performProcessing = async (lock, service, data) => {
     throw err;
   }
 
-  await bustCache(redis, data, true);
+  await bustCache(redis, data, false, true);
   return response;
 };
 

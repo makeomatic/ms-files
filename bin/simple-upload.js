@@ -65,24 +65,25 @@ const { argv } = require('yargs')
 
 // deps
 const Promise = require('bluebird');
+const { Readable } = require('node:stream');
 const fs = Promise.promisifyAll(require('fs'));
-const request = require('request-promise');
+const { fetch } = require('undici');
 const glob = require('glob');
 const md5 = require('md5');
 const path = require('path');
 const omit = require('lodash/omit');
 const AMQPTransport = require('@microfleet/transport-amqp');
+const { strict: assert } = require('node:assert');
 const config = require('../lib/config').get('/', { env: process.env.NODE_ENV });
 
 // AMQP adapter
 const amqpConfig = omit(config.amqp.transport, ['queue', 'listen', 'neck', 'onComplete']);
 const { prefix } = config.router.routes;
 const getTransport = () => {
-  console.info('establishing connection to amqp with %j', amqpConfig);
-  return AMQPTransport.connect({
-    ...amqpConfig,
-    debug: false,
-  }).disposer((amqp) => amqp.close());
+  if (process.env.NODE_ENV === 'test') {
+    console.info('establishing connection to amqp with %j', amqpConfig);
+  }
+  return AMQPTransport.connect({ ...amqpConfig, debug: false });
 };
 
 // prepare upload
@@ -150,7 +151,7 @@ if (argv.d) {
 /**
  * Uploads File to GCS
  */
-function uploadFile(meta, idx) {
+async function uploadFile(meta, idx) {
   // upload file
   const fileBuffer = uploadMessage.files[idx].file;
   const headers = {
@@ -162,44 +163,56 @@ function uploadFile(meta, idx) {
     headers['x-goog-acl'] = 'public-read';
   }
 
-  return request.put({
-    uri: meta.location,
-    body: fileBuffer,
+  const res = await fetch(meta.location, {
+    method: 'PUT',
+    body: Readable.from([fileBuffer], { objectMode: false }),
     headers,
+    keepalive: false,
   });
+
+  await res.text();
+  assert.equal(res.status, 200);
 }
 
 /**
  * Reports success of upload
  */
-function reportSuccess(meta) {
+async function reportSuccess(amqp, meta) {
   process.stdout.write('.');
-  return this
-    .publishAndWait(`${prefix}.finish`, { filename: meta.filename })
-    .catchReturn((e) => [200, 202].indexOf(e.statusCode) >= 0, 'ok');
+  try {
+    return await amqp.publishAndWait(`${prefix}.finish`, { filename: meta.filename });
+  } catch (e) {
+    if ([200, 202].indexOf(e.statusCode) >= 0) {
+      return 'ok';
+    }
+
+    throw e;
+  }
 }
 
 /**
  * Inits upload, sends stuff to GCS, reports finish
  */
-const uploadFiles = (amqp) => (
-  amqp
-    .publishAndWait(`${prefix}.upload`, uploadMessage)
-    .then((data) => Promise.props({
-      data,
-      uploadFiles: Promise
-        .bind(amqp, data.files)
-        .map(uploadFile, { concurrency: 20 })
-        .return(data.files)
-        .map(reportSuccess),
-    }))
-    .get('data')
-    .get('uploadId')
-    .then((id) => console.info(`\n${id}`))
-);
+const uploadFiles = async (amqp) => {
+  const data = await amqp.publishAndWait(`${prefix}.upload`, uploadMessage);
+
+  await Promise.map(data.files, async (file, idx) => {
+    await uploadFile(file, idx);
+    await reportSuccess(amqp, file);
+  }, { concurrency: 20 });
+
+  console.info(`\n${data.uploadId}`);
+};
 
 if (argv.confirm) {
-  Promise.using(getTransport(), uploadFiles);
+  (async () => {
+    const transport = await getTransport();
+    try {
+      await uploadFiles(transport);
+    } finally {
+      await transport.close();
+    }
+  })();
 } else {
   // print upload message
   console.info('Dry run, printing prepared message:\n\n');
