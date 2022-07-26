@@ -44,7 +44,7 @@ const corePlayerOpts = Object.setPrototypeOf({
     default: 1,
     description: 'Show logo',
     paid: true,
-    reqPlanLevel: 20,
+    reqPlanLevel: 5,
   },
   analytics: {
     type: 'boolean',
