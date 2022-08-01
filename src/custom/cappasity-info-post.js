@@ -198,7 +198,8 @@ const arPlayerOpts = Object.setPrototypeOf({
     type: 'boolean',
     default: 1,
     description: 'AR button',
-    paid: false,
+    paid: true,
+    reqPlanLevel: 40,
   },
 }, null);
 
