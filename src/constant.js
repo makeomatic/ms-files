@@ -77,6 +77,7 @@ exports.FILES_ARPROPS_FIELD = 'ar3dviewProps';
 exports.FILES_CREATION_INFO_FIELD = 'creationInfo';
 exports.FILES_PLAYER_SETTINGS_FIELD = 'playerSettings';
 exports.FILES_PLAYER_FRAMES_CYCLE_FIELD = 'cycle';
+exports.FILES_NFT_FIELD = 'nft';
 
 exports.FIELDS_TO_STRINGIFY = [
   exports.FILES_TAGS_FIELD,
@@ -88,6 +89,7 @@ exports.FIELDS_TO_STRINGIFY = [
   exports.FILES_CREATION_INFO_FIELD,
   exports.FILES_PLAYER_SETTINGS_FIELD,
   exports.FILES_PLAYER_FRAMES_CYCLE_FIELD,
+  exports.FILES_NFT_FIELD,
 ];
 
 exports.CAPPASITY_3D_MODEL = 'model';
