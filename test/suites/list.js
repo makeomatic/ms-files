@@ -12,6 +12,7 @@ const {
   processUpload,
   modelData,
   meta,
+  nftMeta,
   owner: username,
 } = require('../helpers/utils');
 const { insertData } = require('../helpers/insert-data');
@@ -502,6 +503,67 @@ describe('list suite', function suite() {
           });
         }
       }
+    });
+  });
+
+  describe('use modelType filter for files with nft meta', function testSuite() {
+    before('update', function pretest() {
+      return this.amqp.publishAndWait(updateRoute, {
+        uploadId: this.response.uploadId,
+        username,
+        meta: nftMeta,
+      });
+    });
+
+    it('returns files without modelType meta', function test() {
+      return this.amqp.publishAndWait('files.list', {
+        filter: {},
+        order: 'ASC',
+        offset: 0,
+        limit: 10,
+      })
+        .then((data) => {
+          assert.equal(data.pages, 51);
+        });
+    });
+
+    it('returns files for 3d', function test() {
+      return this.amqp.publishAndWait('files.list', {
+        filter: {},
+        order: 'ASC',
+        offset: 0,
+        limit: 10,
+        modelType: '3d',
+      })
+        .then((data) => {
+          assert.equal(data.pages, 50);
+        });
+    });
+
+    it('returns files for modelType nft', function test() {
+      return this.amqp.publishAndWait('files.list', {
+        filter: {},
+        order: 'ASC',
+        offset: 0,
+        limit: 10,
+        modelType: 'nft',
+      })
+        .then((data) => {
+          assert.equal(data.pages, 1);
+        });
+    });
+
+    it('returns no files for modelType void', function test() {
+      return this.amqp.publishAndWait('files.list', {
+        filter: {},
+        order: 'ASC',
+        offset: 0,
+        limit: 10,
+        modelType: 'void',
+      })
+        .then((data) => {
+          assert.equal(data.pages, 0);
+        });
     });
   });
 });

@@ -282,6 +282,7 @@ async function listFiles({ params }) {
     order,
     criteria,
     tags,
+    modelType,
     temp,
     expiration = 30000,
   } = params;
@@ -291,6 +292,18 @@ async function listFiles({ params }) {
 
   if (uploadedAt && !temp) {
     filter = { ...nonStringFilter, uploadedAt: undefined };
+  }
+
+  const nftFilters = {
+    nft: { nft: { exists: '1' } },
+    '3d': { nft: { isempty: '1' } },
+    void: { void: { exists: '1' } },
+  };
+
+  const nftFilter = nftFilters[modelType];
+
+  if (nftFilter) {
+    filter = { ...filter, ...nftFilter };
   }
 
   const strFilter = typeof filter === 'string'
