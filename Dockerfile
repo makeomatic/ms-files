@@ -13,7 +13,7 @@ COPY package.json ./
 RUN \
   apk --update upgrade \
   && apk --update add git ca-certificates openssl g++ make python3 linux-headers \
-  && pnpm install -r --offline --prod \
+  && pnpm install -r --offline --prod --frozen-lockfile \
   && apk del \
     g++ \
     make \
@@ -33,3 +33,4 @@ RUN  chown -R node /src
 USER node
 
 EXPOSE 8080
+CMD ./node_modules/.bin/mfleet
