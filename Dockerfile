@@ -13,7 +13,7 @@ COPY package.json ./
 RUN \
   apk --update upgrade \
   && apk --update add git ca-certificates openssl g++ make python3 linux-headers \
-  && pnpm install -r --offline --prod --frozen-lockfile \
+  && pnpm install -r --offline --prod \
   && apk del \
     g++ \
     make \
