@@ -15,7 +15,7 @@
     "prepublishOnly": "pnpm compile",
     "semantic-release": "semantic-release",
     "docker-release": "mdep docker release",
-    "prepare": "mdep install",
+    "prepare": "mdep install || true",
     "release": "pnpm i && pnpm run semantic-release"
   },
   "publishConfig": {
