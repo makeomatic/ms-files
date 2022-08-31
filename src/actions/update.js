@@ -24,6 +24,7 @@ const {
   FILES_TAGS_INDEX_KEY,
   FILES_USER_INDEX_PUBLIC_KEY,
   FILES_PLAYER_SETTINGS_FIELD,
+  FILES_VERSION_FIELD,
 } = require('../constant');
 
 const { call } = Function.prototype;
@@ -100,6 +101,9 @@ async function updateMeta(lock, ctx, params) {
   const aliasPTRs = `${FILES_USR_ALIAS_PTR}:${owner}`;
   const userPublicIndex = FILES_USER_INDEX_PUBLIC_KEY(owner);
   const isPublic = data[FILES_PUBLIC_FIELD];
+
+  // update version
+  pipeline.hincrby(key, FILES_VERSION_FIELD, 1);
 
   if (alias) {
     pipeline.hset(aliasPTRs, alias, uploadId);

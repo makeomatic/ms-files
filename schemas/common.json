@@ -598,6 +598,9 @@
           "minLength": 0,
           "maxLength": 2000
         },
+        "version": {
+          "type": "string"
+        },
         "cycle": {
           "type": "boolean"
         },
@@ -779,8 +782,7 @@
               "type": "number"
             },
             "image": {
-              "type": "string",
-              "format": "uri"
+              "type": "string"
             },
             "attributes": {
               "type": "array",

@@ -46,6 +46,7 @@ module.exports = exports = Object.setPrototypeOf({
   FILES_BACKGROUND_COLOR_FIELD: 'backgroundColor',
   FILES_CONTENT_LENGTH_FIELD: 'contentLength',
   FILES_UPLOADED_AT_FIELD: 'uploadedAt',
+  FILES_VERSION_FIELD: 'version',
 
   // metatype of file
   FILES_TYPE_FIELD: 'type',
