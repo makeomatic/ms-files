@@ -75,7 +75,7 @@ async function updateMeta(lock, ctx, params) {
   const meta = preProcessMetadata(params.meta);
   const alias = meta[FILES_ALIAS_FIELD];
 
-  const data = await Promise
+  const    = await Promise
     .bind(ctx, meta)
     // do some extra validation
     .tap(isValidBackgroundOrigin)
@@ -104,7 +104,7 @@ async function updateMeta(lock, ctx, params) {
   const isPublic = data[FILES_PUBLIC_FIELD];
 
   // update version
-  if (meta[FILES_NFT_FIELD].image !== data[FILES_NFT_FIELD].image) {
+  if (meta?.nft.image !== data?.nft.image) {
     pipeline.hincrby(key, FILES_VERSION_FIELD, 1);
   }
 
