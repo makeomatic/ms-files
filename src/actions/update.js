@@ -25,6 +25,7 @@ const {
   FILES_USER_INDEX_PUBLIC_KEY,
   FILES_PLAYER_SETTINGS_FIELD,
   FILES_VERSION_FIELD,
+  FILES_NFT_FIELD,
 } = require('../constant');
 
 const { call } = Function.prototype;
@@ -103,7 +104,9 @@ async function updateMeta(lock, ctx, params) {
   const isPublic = data[FILES_PUBLIC_FIELD];
 
   // update version
-  pipeline.hincrby(key, FILES_VERSION_FIELD, 1);
+  if (data[FILES_NFT_FIELD].image) {
+    pipeline.hincrby(key, FILES_VERSION_FIELD, 1);
+  }
 
   if (alias) {
     pipeline.hset(aliasPTRs, alias, uploadId);
