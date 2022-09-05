@@ -104,7 +104,7 @@ async function updateMeta(lock, ctx, params) {
   const isPublic = data[FILES_PUBLIC_FIELD];
 
   // update version
-  if (data[FILES_NFT_FIELD].image) {
+  if (meta[FILES_NFT_FIELD].image !== data[FILES_NFT_FIELD].image) {
     pipeline.hincrby(key, FILES_VERSION_FIELD, 1);
   }
 
