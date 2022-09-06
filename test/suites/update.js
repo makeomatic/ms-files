@@ -342,19 +342,6 @@ describe('update suite', function suite() {
     });
   });
 
-  describe('Version field is present', function emptyDescription() {
-    it('file info returns version field', async function test() {
-      const { uploadId } = this.response;
-
-      const fileInfo = await getInfo.call(this, {
-        filename: uploadId,
-        username,
-      });
-
-      assert.strictEqual(fileInfo.file.version, '10', 'File should has version field');
-    });
-  });
-
   describe('Description trim and empty', function emptyDescription() {
     it('permits empty description', async function test() {
       const { uploadId } = this.response;
@@ -504,6 +491,19 @@ describe('update suite', function suite() {
       assert.equal(fileInfo.file.nft.image, 'http://website.com/image.jpeg');
       assert.equal(fileInfo.file.nft.attributes[0].title, 'test');
       assert.equal(fileInfo.file.nft.attributes[0].imageUrl, 'http://test.com');
+    });
+  });
+
+  describe('Version field is present', function emptyDescription() {
+    it('file info returns version field', async function test() {
+      const { uploadId } = this.response;
+
+      const fileInfo = await getInfo.call(this, {
+        filename: uploadId,
+        username,
+      });
+
+      assert.strictEqual(fileInfo.file.version, '1', 'File should has version field');
     });
   });
 
