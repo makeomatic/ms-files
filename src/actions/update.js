@@ -25,7 +25,6 @@ const {
   FILES_USER_INDEX_PUBLIC_KEY,
   FILES_PLAYER_SETTINGS_FIELD,
   FILES_VERSION_FIELD,
-  FILES_NFT_FIELD,
 } = require('../constant');
 
 const { call } = Function.prototype;
