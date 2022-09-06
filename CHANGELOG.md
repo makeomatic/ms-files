@@ -1,3 +1,10 @@
+# [15.19.0](https://github.com/makeomatic/ms-files/compare/v15.18.0...v15.19.0) (2022-09-06)
+
+
+### Features
+
+* add version field ([#271](https://github.com/makeomatic/ms-files/issues/271)) ([ad5de71](https://github.com/makeomatic/ms-files/commit/ad5de71021aedaae43e0683c1d6e09863592e15a))
+
 # [15.18.0](https://github.com/makeomatic/ms-files/compare/v15.17.2...v15.18.0) (2022-08-24)
 
 
