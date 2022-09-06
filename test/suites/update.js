@@ -494,6 +494,19 @@ describe('update suite', function suite() {
     });
   });
 
+  describe('Version field is present', function emptyDescription() {
+    it('file info returns version field', async function test() {
+      const { uploadId } = this.response;
+
+      const fileInfo = await getInfo.call(this, {
+        filename: uploadId,
+        username,
+      });
+
+      assert.strictEqual(fileInfo.file.version, '1', 'File should has version field');
+    });
+  });
+
   describe('update background image', function afterUpdateSuite() {
     before('upload background image', function upload() {
       return initAndUpload(backgroundData, false).call(this)
