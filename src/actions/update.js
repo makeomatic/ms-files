@@ -170,7 +170,7 @@ async function updateMeta(lock, ctx, params) {
 
   handlePipeline(await pipeline.exec());
 
-  if (directOnly !== undefined) {
+  if (directOnly !== undefined || (meta.nft && !data.nft)) {
     await bustCache(redis, data, true);
   }
 
