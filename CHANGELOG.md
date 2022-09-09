@@ -1,3 +1,10 @@
+## [15.19.1](https://github.com/makeomatic/ms-files/compare/v15.19.0...v15.19.1) (2022-09-09)
+
+
+### Bug Fixes
+
+* reset caches when nft created ([#273](https://github.com/makeomatic/ms-files/issues/273)) ([7a5e972](https://github.com/makeomatic/ms-files/commit/7a5e972a966792f074adf4bacbcfb4a52a1c313f))
+
 # [15.19.0](https://github.com/makeomatic/ms-files/compare/v15.18.0...v15.19.0) (2022-09-06)
 
 
