@@ -85,5 +85,5 @@ exports.hooks = {
 exports.maxTries = 1;
 
 exports.migrations = {
-  enabled: true,
+  enabled: false,
 };

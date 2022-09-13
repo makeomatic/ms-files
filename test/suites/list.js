@@ -33,6 +33,9 @@ for (const redisSearchEnabled of [false, true].values()) {
         redisSearch: {
           enabled: redisSearchEnabled,
         },
+        migrations: {
+          enabled: true,
+        },
       };
     });
     before('start service', startService);
