@@ -1,4 +1,5 @@
-const AMQPTransport = require('@microfleet/transport-amqp');
+const { connect } = require('@microfleet/transport-amqp');
+const Promise = require('bluebird');
 const omit = require('lodash/omit');
 const {
   FILES_INDEX,
@@ -10,7 +11,7 @@ const {
   FILES_OWNER_FIELD,
 } = require('../../constant');
 
-const getTransport = (amqpConfig) => AMQPTransport.connect(amqpConfig);
+const getTransport = (amqpConfig) => connect(amqpConfig);
 
 function generateUsersIds({
   amqp, config, redis, log,
@@ -30,13 +31,13 @@ function generateUsersIds({
           log.info('need resolve for %s', owner);
         }
 
-        return Promise.join(
-          fileName,
-          owner,
-          resolvedUsers.has(owner)
-            ? { id: resolvedUsers.get(owner) }
-            : amqp
-              .publishAndWait(config.users.getInternalData, { username: owner, fields: ['id'] })
+        const work = [fileName, owner];
+        if (resolvedUsers.has(owner)) {
+          work.push({ id: resolvedUsers.get(owner) });
+        } else {
+          work.push(
+            Promise
+              .resolve(amqp.publishAndWait(config.users.getInternalData, { username: owner, fields: ['id'] }))
               .tap(({ id }) => {
                 if (resolvedUsers.has(owner) === false) {
                   resolvedUsers.set(owner, id);
@@ -46,7 +47,10 @@ function generateUsersIds({
                 log.error({ err: e }, 'failed to find user during migration');
                 return null;
               })
-        );
+          );
+        }
+
+        return Promise.all(work);
       },
       { concurrency: 20 }
     )
