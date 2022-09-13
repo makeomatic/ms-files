@@ -1,6 +1,6 @@
 const { ActionTransport } = require('@microfleet/plugin-router');
 
-const { FILES_DATA } = require('../constant');
+const { FILES_DATA, FILES_ID_FIELD } = require('../constant');
 const fetchData = require('../utils/fetch-data');
 
 /**
@@ -11,7 +11,7 @@ const fetchData = require('../utils/fetch-data');
  */
 async function getFileData({ params }) {
   const { uploadId, fields } = params;
-  const fieldsToQuery = ['uploadId', ...fields];
+  const fieldsToQuery = [FILES_ID_FIELD, ...fields];
 
   const file = await fetchData.call(this, `${FILES_DATA}:${uploadId}`, { pick: fieldsToQuery });
 

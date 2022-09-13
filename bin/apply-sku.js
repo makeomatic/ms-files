@@ -18,6 +18,7 @@ const { argv } = require('yargs')
 const AMQPTransport = require('@microfleet/transport-amqp');
 const omit = require('lodash/omit');
 const config = require('../lib/config').get('/', { env: process.env.NODE_ENV });
+const { FILES_UPLOAD_STARTED_AT_FIELD } = require('../lib/constant');
 
 // Configuration
 const amqpConfig = omit(config.amqp.transport, ['queue', 'listen', 'neck', 'onComplete']);
@@ -27,7 +28,7 @@ const iterator = {
   offset: 0,
   limit: 20,
   owner: argv.user,
-  criteria: 'startedAt',
+  criteria: FILES_UPLOAD_STARTED_AT_FIELD,
   order: 'ASC',
   filter: {
     alias: {

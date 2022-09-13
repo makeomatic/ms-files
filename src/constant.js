@@ -42,10 +42,12 @@ module.exports = exports = Object.setPrototypeOf({
   FILES_CONTROLS_FIELD: 'controlsData',
   FILES_EXPORT_FIELD: 'export',
   FILES_DIRECT_ONLY_FIELD: 'direct',
+  FILES_ID_FIELD: 'uploadId',
   FILES_BACKGROUND_IMAGE_FIELD: 'backgroundImage',
   FILES_BACKGROUND_COLOR_FIELD: 'backgroundColor',
   FILES_CONTENT_LENGTH_FIELD: 'contentLength',
   FILES_UPLOADED_AT_FIELD: 'uploadedAt',
+  FILES_UPLOAD_STARTED_AT_FIELD: 'startedAt',
 
   // metatype of file
   FILES_TYPE_FIELD: 'type',

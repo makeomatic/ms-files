@@ -16,6 +16,9 @@ const {
   FILES_INDEX_UAT_PUBLIC,
   FILES_USER_INDEX_UAT_KEY,
   FILES_USER_INDEX_UAT_PUBLIC_KEY,
+  FILES_UPLOAD_STARTED_AT_FIELD,
+  FILES_ID_FIELD,
+  FILES_CONTENT_LENGTH_FIELD,
 } = require('../../src/constant');
 
 function createFakeFile({ owners, statuses }) {
@@ -23,13 +26,13 @@ function createFakeFile({ owners, statuses }) {
   const startedAt = faker.date.past().getTime();
 
   return {
-    uploadId: uuid.v4(),
+    [FILES_ID_FIELD]: uuid.v4(),
     status: ld.sample(statuses),
-    startedAt,
+    [FILES_UPLOAD_STARTED_AT_FIELD]: startedAt,
     [FILES_UPLOADED_AT_FIELD]: startedAt + 1000,
     name: faker.commerce.productName(),
     files: JSON.stringify([]), // can insert real files, but dont care
-    contentLength: ld.random(1, 2132311),
+    [FILES_CONTENT_LENGTH_FIELD]: ld.random(1, 2132311),
     parts: ld.random(1, 4),
     [FILES_OWNER_FIELD]: owner,
   };

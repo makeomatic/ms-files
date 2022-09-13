@@ -6,6 +6,8 @@ const {
   FILES_USR_ALIAS_PTR,
   FILES_USER_INDEX_KEY,
   FILES_USER_INDEX_PUBLIC_KEY,
+  FILES_ID_FIELD,
+  FILES_OWNER_FIELD,
 } = require('../../constant');
 
 const getTransport = (amqpConfig) => AMQPTransport.connect(amqpConfig);
@@ -19,7 +21,7 @@ function generateUsersIds({
   return redis
     .smembers(FILES_INDEX)
     .tap((filesNames) => log.info('files count: %d', filesNames.length))
-    .map((fileName) => redis.hmget(`${FILES_DATA}:${fileName}`, 'owner', 'uploadId'))
+    .map((fileName) => redis.hmget(`${FILES_DATA}:${fileName}`, FILES_OWNER_FIELD, FILES_ID_FIELD))
     .map(
       ([owner, fileName]) => {
         if (resolvedUsers.has(owner) === true) {

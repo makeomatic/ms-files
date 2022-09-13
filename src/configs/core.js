@@ -152,7 +152,7 @@ exports.maxTries = Number.MAX_SAFE_INTEGER;
  * Max search interval
  * @type {number}
  */
-exports.listMaxInterval = 31 * 24 * 60 * 60 * 1e3; // 1 month by default
+exports.listMaxInterval = 32 * 24 * 60 * 60 * 1e3; // 32 days by default
 
 /**
  * API Domain
@@ -162,4 +162,11 @@ exports.apiDomain = {
   $filter: 'env',
   $default: 'set-your-hostname',
   production: 'set-your-hostname',
+};
+
+/**
+ * Controls if redis search is available
+ */
+exports.redisSearch = {
+  enabled: false,
 };

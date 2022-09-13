@@ -18,6 +18,12 @@ const {
   FILES_INDEX_UAT_PUBLIC,
   FILES_USER_INDEX_UAT_KEY,
   FILES_USER_INDEX_UAT_PUBLIC_KEY,
+  FILES_OWNER_FIELD,
+  FILES_PUBLIC_FIELD,
+  FILES_TEMP_FIELD,
+  FILES_TAGS_FIELD,
+  FILES_UPLOADED_AT_FIELD,
+  FILES_ID_FIELD,
 } = require('../constant');
 
 const k404Error = new Error('ELIST404');
@@ -25,9 +31,8 @@ const k404Error = new Error('ELIST404');
 /**
  * Internal functions
  */
-async function interstore(ctx, username) {
-  const { isPublic, temp, tags, redis, hasTags, uploadedAt, order, maxInterval } = ctx;
-  ctx.username = username;
+async function interstore(ctx) {
+  const { isPublic, temp, tags, redis, hasTags, uploadedAt, order, maxInterval, username } = ctx;
 
   // choose which set to use
   let filesIndex;
@@ -208,28 +213,32 @@ function omitErrors(result, promise, idx) {
  * Prepares filenames
  */
 const prepareFilenames = (filename) => `${FILES_DATA}:${filename}`;
+const omitPrefix = (prefix) => (filename) => filename.slice(prefix.length);
 
 /**
  * Fetch extra data from redis based on IDS
  */
-function fetchExtraData(ctx, filenames) {
-  const length = +filenames.pop();
-  if (length === 0 || filenames.length === 0) {
+function fetchExtraData(ctx, filenames, { total, redisSearchEnabled }) {
+  if (total === 0 || filenames.length === 0) {
     return {
       filenames,
       props: [],
-      length,
+      length: total,
     };
   }
 
-  const mapped = filenames.map(prepareFilenames);
+  const transform = redisSearchEnabled
+    ? omitPrefix(ctx.service.config.redis.options.keyPrefix)
+    : prepareFilenames;
+
+  const mapped = filenames.map(transform);
   const pipeline = Promise
     .bind(ctx, [mapped, { omit: ctx.without }])
     .spread(fetchData)
     .bind({ log: ctx.log, filenames: mapped })
     .reduce(omitErrors, []);
 
-  return Promise.props({ filenames, props: pipeline, length });
+  return Promise.props({ filenames, props: pipeline, length: total });
 }
 
 /**
@@ -263,6 +272,106 @@ async function prepareResponse(ctx, data) {
     pages: Math.ceil(length / limit),
     time: timer(),
   };
+}
+
+/**
+ * Performs search using redis search extension
+ */
+async function redisSearch(ctx) {
+  // 1. build query
+  const indexName = `${ctx.service.config.redis.options.keyPrefix}:files-list`;
+  const args = ['FT.SEARCH', indexName];
+  const query = [];
+  const params = [];
+
+  if (ctx.username) {
+    query.push(`@${FILES_OWNER_FIELD}:{ $username }`);
+    params.push('username', ctx.username);
+  }
+
+  if (ctx.isPublic) {
+    query.push(`@${FILES_PUBLIC_FIELD}:{1}`);
+  }
+
+  if (ctx.temp) {
+    query.push(`@${FILES_TEMP_FIELD}:{1}`);
+  }
+
+  if (ctx.hasTags) {
+    const tagQuery = [];
+    for (const [idx, tag] of ctx.tags.sort().entries()) {
+      tagQuery.push(`$tag${idx}`);
+      params.push(`tag${idx}`, tag);
+    }
+
+    query.push(`@${FILES_TAGS_FIELD}:(${tagQuery.join('|')})`);
+  }
+
+  if (ctx.uploadedAt) {
+    const lte = typeof ctx.uploadedAt.lte === 'number' ? ctx.uploadedAt.lte : '+inf';
+    const gte = typeof ctx.uploadedAt.gte === 'number' ? ctx.uploadedAt.gte : '-inf';
+    query.push('FILTER', FILES_UPLOADED_AT_FIELD, gte, lte);
+  }
+
+  const { filter } = ctx;
+  console.log(filter);
+  for (const [propName, actionTypeOrValue] of Object.entries(filter)) {
+    if (actionTypeOrValue === undefined) {
+      // skip
+    } else if (typeof actionTypeOrValue === 'string') {
+      query.push(`@${propName}:{ $f_${propName} }`);
+      params.push(`f_${propName}`, actionTypeOrValue);
+    } else if (actionTypeOrValue.gte || actionTypeOrValue.lte) {
+      const lowerRange = actionTypeOrValue.gte || '-inf';
+      const upperRange = actionTypeOrValue.lte || '+inf';
+      query.push(`@${propName}:[${lowerRange} ${upperRange}]`);
+    } else if (actionTypeOrValue.exists !== undefined) {
+      query.push(`-@${propName}:""`);
+    } else if (actionTypeOrValue.isempty !== undefined) {
+      query.push(`@${propName}:""`);
+    } else if (actionTypeOrValue.eq) {
+      query.push(`@${propName}:{ $f_${propName}_eq }`);
+      params.push(`f_${propName}_eq`, actionTypeOrValue.eq);
+    } else if (actionTypeOrValue.ne) {
+      query.push(`-@${propName}:{ $f_${propName}_ne }`);
+      params.push(`f_${propName}_ne`, actionTypeOrValue.ne);
+    } else if (actionTypeOrValue.match) {
+      // TODO: verify correctness of this
+      query.push(`@${propName}:(*$f_${propName}_match*)`);
+      params.push(`$f_${propName}_match`, actionTypeOrValue.match);
+    }
+  }
+
+  if (query.length > 0) {
+    args.push(query.join(' '));
+  } else {
+    args.push('*');
+  }
+
+  if (params.length > 0) {
+    args.push('PARAMS', params.length.toString(), ...params);
+    args.push('DIALECT', '2');
+  }
+
+  // sort the response
+  if (ctx.criteria) {
+    args.push('SORTBY', ctx.criteria, ctx.order);
+  } else {
+    args.push('SORTBY', FILES_ID_FIELD, ctx.order);
+  }
+
+  // limits
+  args.push('LIMIT', ctx.offset, ctx.limit);
+
+  // we'll fetch the data later
+  args.push('NOCONTENT');
+
+  // [total, [ids]]
+  console.info(...args);
+
+  const [total, ...ids] = await ctx.redis.call(...args);
+
+  return { total, ids };
 }
 
 /**
@@ -340,16 +449,27 @@ async function listFiles({ params }) {
     uploadedAt: temp ? null : uploadedAt,
     hasTags: Array.isArray(tags) && tags.length > 0,
     avoidTagCache,
+    username: '',
   };
 
   try {
     const [username] = await this.hook('files:info:pre', owner);
     timer('files:info:pre');
-    const stored = await interstore(ctx, username);
-    timer('interstore');
-    const ids = await fetchFromRedis(ctx, stored);
-    timer('fsort');
-    const data = await fetchExtraData(ctx, ids);
+    ctx.username = username;
+
+    let ids;
+    let total;
+    if (config.redisSearch.enabled) {
+      ({ total, ids } = await redisSearch(ctx, username));
+    } else {
+      const stored = await interstore(ctx, username);
+      timer('interstore');
+      ids = await fetchFromRedis(ctx, stored);
+      total = +ids.pop();
+      timer('fsort');
+    }
+
+    const data = await fetchExtraData(ctx, ids, { total, redisSearchEnabled: config.redisSearch.enabled });
     timer('fetch');
     return await prepareResponse(ctx, data);
   } catch (e) {
