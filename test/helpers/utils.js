@@ -441,6 +441,23 @@ const meta = {
     os: 'macos',
   },
 };
+
+const nftMeta = {
+  ...meta,
+  nft: {
+    price: '1',
+    asset: 'asset',
+    story: 'story',
+    currency: 'usd',
+    supply: 1,
+    image: 'http://website.com/image.jpeg',
+    attributes: [{
+      title: 'test',
+      imageUrl: 'http://test.com',
+    }],
+  },
+};
+
 const background = readFile('background');
 const backgroundData = modelBackgroundImageMessage(background, owner);
 const simple = readFile('simple');
@@ -477,5 +494,6 @@ module.exports = exports = {
   bindSend,
   initAndUpload,
   meta,
+  nftMeta,
   resetSinon,
 };

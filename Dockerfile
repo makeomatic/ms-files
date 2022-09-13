@@ -24,3 +24,4 @@ COPY --chown=node:node . /src
 USER node
 
 EXPOSE 8080
+CMD ./node_modules/.bin/mfleet

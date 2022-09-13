@@ -124,6 +124,10 @@
                 "minLength": 1,
                 "maxLength": 50
             }
+        },
+        "modelType": {
+            "type": "string",
+            "enum": ["3d", "nft"]
         }
     }
 }

@@ -1,3 +1,25 @@
+## [15.19.1](https://github.com/makeomatic/ms-files/compare/v15.19.0...v15.19.1) (2022-09-09)
+
+
+### Bug Fixes
+
+* reset caches when nft created ([#273](https://github.com/makeomatic/ms-files/issues/273)) ([7a5e972](https://github.com/makeomatic/ms-files/commit/7a5e972a966792f074adf4bacbcfb4a52a1c313f))
+
+# [15.19.0](https://github.com/makeomatic/ms-files/compare/v15.18.0...v15.19.0) (2022-09-06)
+
+
+### Features
+
+* add version field ([#271](https://github.com/makeomatic/ms-files/issues/271)) ([ad5de71](https://github.com/makeomatic/ms-files/commit/ad5de71021aedaae43e0683c1d6e09863592e15a))
+
+# [15.18.0](https://github.com/makeomatic/ms-files/compare/v15.17.2...v15.18.0) (2022-08-24)
+
+
+### Features
+
+* add cappacity nft meta fields ([ab0fd49](https://github.com/makeomatic/ms-files/commit/ab0fd49e3678af7669e929453e3230a37f44e2aa))
+* add modelType filter to list action ([da3eaf1](https://github.com/makeomatic/ms-files/commit/da3eaf1adaabc48b7c1773c39682b032782e7853))
+
 ## [15.17.2](https://github.com/makeomatic/ms-files/compare/v15.17.1...v15.17.2) (2022-03-31)
 
 

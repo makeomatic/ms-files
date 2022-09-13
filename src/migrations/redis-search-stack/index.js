@@ -14,6 +14,7 @@ const {
   FILES_ID_FIELD,
   FILES_UPLOAD_STARTED_AT_FIELD,
   FILES_CONTENT_LENGTH_FIELD,
+  FILES_HAS_NFT,
 } = require('../../constant');
 
 const FIELD_TO_TYPE = [
@@ -31,6 +32,8 @@ const FIELD_TO_TYPE = [
   [FILES_UPLOADED_AT_FIELD, 'NUMERIC', 'SORTABLE'],
   [FILES_UPLOAD_STARTED_AT_FIELD, 'NUMERIC', 'SORTABLE'],
   [FILES_CONTENT_LENGTH_FIELD, 'NUMERIC', 'SORTABLE'],
+  [FILES_HAS_NFT, 'NUMERIC', 'SORTABLE'],
+  [FILES_TEMP_FIELD, 'NUMERIC', 'SORTABLE'],
 ];
 
 // https://redis.io/docs/stack/search/reference/aggregations/#filter-expressions
@@ -41,11 +44,13 @@ async function createSearchIndex(service) {
   await redis.call(
     'FT.CREATE',
     `${keyPrefix}:files-list`,
+    'ON',
+    'HASH',
     'PREFIX',
     '1',
     `${keyPrefix}${FILES_DATA}:`,
     'FILTER',
-    `@${FILES_TEMP_FIELD} != '1'`,
+    `@${FILES_TEMP_FIELD} != 1`,
     'SCHEMA',
     ...FIELD_TO_TYPE.flatMap((x) => x)
   );

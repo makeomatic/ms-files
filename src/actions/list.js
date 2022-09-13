@@ -24,6 +24,7 @@ const {
   FILES_TAGS_FIELD,
   FILES_UPLOADED_AT_FIELD,
   FILES_ID_FIELD,
+  FILES_HAS_NFT,
 } = require('../constant');
 
 const k404Error = new Error('ELIST404');
@@ -293,10 +294,6 @@ async function redisSearch(ctx) {
     query.push(`@${FILES_PUBLIC_FIELD}:{1}`);
   }
 
-  if (ctx.temp) {
-    query.push(`@${FILES_TEMP_FIELD}:{1}`);
-  }
-
   if (ctx.hasTags) {
     const tagQuery = [];
     for (const [idx, tag] of ctx.tags.sort().entries()) {
@@ -307,17 +304,26 @@ async function redisSearch(ctx) {
     query.push(`@${FILES_TAGS_FIELD}:(${tagQuery.join('|')})`);
   }
 
+  if (ctx.modelType) {
+    query.push(`${ctx.modelType === '3d' ? '-' : ''}@${FILES_HAS_NFT}:[1 1]`);
+  }
+
   if (ctx.uploadedAt) {
     const lte = typeof ctx.uploadedAt.lte === 'number' ? ctx.uploadedAt.lte : '+inf';
     const gte = typeof ctx.uploadedAt.gte === 'number' ? ctx.uploadedAt.gte : '-inf';
     query.push('FILTER', FILES_UPLOADED_AT_FIELD, gte, lte);
   }
 
+  if (ctx.temp) {
+    query.push('FILTER', FILES_TEMP_FIELD, '1', '1');
+  }
+
   const { filter } = ctx;
   console.log(filter);
   for (const [propName, actionTypeOrValue] of Object.entries(filter)) {
-    if (actionTypeOrValue === undefined) {
-      // skip
+    if (actionTypeOrValue === undefined || propName === 'nft') {
+      // skip empty attributes
+      // or nft cause it uses special index
     } else if (typeof actionTypeOrValue === 'string') {
       query.push(`@${propName}:{ $f_${propName} }`);
       params.push(`f_${propName}`, actionTypeOrValue);
@@ -337,7 +343,7 @@ async function redisSearch(ctx) {
       params.push(`f_${propName}_ne`, actionTypeOrValue.ne);
     } else if (actionTypeOrValue.match) {
       // TODO: verify correctness of this
-      query.push(`@${propName}:(*$f_${propName}_match*)`);
+      query.push(`@${propName}:($f_${propName}_match)`);
       params.push(`$f_${propName}_match`, actionTypeOrValue.match);
     }
   }
@@ -407,6 +413,7 @@ async function listFiles({ params }) {
     order,
     criteria,
     tags,
+    modelType,
     temp,
     expiration = 30000,
   } = params;
@@ -416,6 +423,17 @@ async function listFiles({ params }) {
 
   if (uploadedAt && !temp) {
     filter = { ...nonStringFilter, uploadedAt: undefined };
+  }
+
+  const nftFilters = {
+    nft: { nft: { exists: '1' } },
+    '3d': { nft: { isempty: '1' } },
+  };
+
+  const nftFilter = nftFilters[modelType];
+
+  if (nftFilter) {
+    filter = { ...filter, ...nftFilter };
   }
 
   const strFilter = typeof filter === 'string'
@@ -450,6 +468,7 @@ async function listFiles({ params }) {
     hasTags: Array.isArray(tags) && tags.length > 0,
     avoidTagCache,
     username: '',
+    modelType,
   };
 
   try {

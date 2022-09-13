@@ -401,6 +401,57 @@ describe('update suite', function suite() {
     });
   });
 
+  describe('update nft', function emptyDescription() {
+    it('update nft fields', async function test() {
+      const { uploadId } = this.response;
+      meta.nft = {
+        price: '1',
+        asset: 'asset',
+        story: 'story',
+        currency: 'usd',
+        supply: 1,
+        image: 'http://website.com/image.jpeg',
+        attributes: [{
+          title: 'test',
+          imageUrl: 'http://test.com',
+        }],
+      };
+
+      await this.send({
+        uploadId,
+        username,
+        meta,
+      }, 45000);
+
+      const fileInfo = await getInfo.call(this, {
+        filename: uploadId,
+        username,
+      });
+
+      assert.equal(fileInfo.file.nft.price, '1');
+      assert.equal(fileInfo.file.nft.asset, 'asset');
+      assert.equal(fileInfo.file.nft.story, 'story');
+      assert.equal(fileInfo.file.nft.currency, 'usd');
+      assert.equal(fileInfo.file.nft.supply, 1);
+      assert.equal(fileInfo.file.nft.image, 'http://website.com/image.jpeg');
+      assert.equal(fileInfo.file.nft.attributes[0].title, 'test');
+      assert.equal(fileInfo.file.nft.attributes[0].imageUrl, 'http://test.com');
+    });
+  });
+
+  describe('Version field is present', function emptyDescription() {
+    it('file info returns version field', async function test() {
+      const { uploadId } = this.response;
+
+      const fileInfo = await getInfo.call(this, {
+        filename: uploadId,
+        username,
+      });
+
+      assert.strictEqual(fileInfo.file.version, '1', 'File should has version field');
+    });
+  });
+
   describe('update background image', function afterUpdateSuite() {
     before('upload background image', function upload() {
       return initAndUpload(backgroundData, false).call(this)

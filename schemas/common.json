@@ -598,6 +598,9 @@
           "minLength": 0,
           "maxLength": 2000
         },
+        "version": {
+          "type": "string"
+        },
         "cycle": {
           "type": "boolean"
         },
@@ -748,6 +751,61 @@
         "pHeight": {
           "type": "integer",
           "description": "Preview/Image height"
+        },
+        "nft": {
+          "type": "object",
+          "required": [
+            "price",
+            "currency",
+            "supply",
+            "image"
+          ],
+          "properties": {
+            "price": {
+              "type": "string"
+            },
+            "asset": {
+              "type": "string"
+            },
+            "story": {
+              "type": "string"
+            },
+            "currency": {
+              "type": "string",
+              "enum": [
+                "usd",
+                "eur",
+                "capp"
+              ]
+            },
+            "supply": {
+              "type": "number"
+            },
+            "image": {
+              "type": "string"
+            },
+            "attributes": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "title",
+                  "imageUrl"
+                ],
+                "properties": {
+                  "title": {
+                    "type": "string"
+                  },
+                  "imageUrl": {
+                    "type": "string"
+                  },
+                  "url": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
         }
       }
     },
