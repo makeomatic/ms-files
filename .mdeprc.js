@@ -5,7 +5,7 @@ module.exports = exports = {
   auto_compose: true,
   with_local_compose: true,
   in_one: process.env.CI !== 'true',
-  http: true,
+  http: false,
   services: ['rabbitmq'],
   test_framework: 'mocha',
   nycCoverage: false,
