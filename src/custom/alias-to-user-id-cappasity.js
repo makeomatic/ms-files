@@ -8,7 +8,7 @@ module.exports = async function extractMetadata(alias) {
   }
 
   // aliases can't change unless they are deleted, so just cache them internally
-  const { id } = await amqp.publishAndWait(route, { username: alias, fields: ['id'] }, { timeout: 15000, cache: 60000 * 30 })
-  
+  const { id } = await amqp.publishAndWait(route, { username: alias, fields: ['id'] }, { timeout: 15000, cache: 60000 * 30 });
+
   return id;
 };
