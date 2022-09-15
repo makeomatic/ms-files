@@ -20,6 +20,7 @@ const {
   FILES_USER_INDEX_UAT_PUBLIC_KEY,
   FILES_OWNER_FIELD,
   FILES_PUBLIC_FIELD,
+  FILES_UNLISTED_FIELD,
   FILES_TEMP_FIELD,
   FILES_TAGS_FIELD,
   FILES_UPLOADED_AT_FIELD,
@@ -317,6 +318,9 @@ async function redisSearch(ctx) {
   if (ctx.temp) {
     query.push('FILTER', FILES_TEMP_FIELD, '1', '1');
   }
+
+  // skip unlisted files
+  query.push(`-@${FILES_UNLISTED_FIELD}:{1,1}`);
 
   const { filter } = ctx;
   console.log(filter);
