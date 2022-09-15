@@ -320,7 +320,7 @@ async function redisSearch(ctx) {
   }
 
   // skip unlisted files
-  query.push(`-@${FILES_UNLISTED_FIELD}:{1,1}`);
+  query.push(`-@${FILES_UNLISTED_FIELD}:[1 1]`);
 
   const { filter } = ctx;
   console.log(filter);
