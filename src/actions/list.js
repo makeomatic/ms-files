@@ -20,6 +20,7 @@ const {
   FILES_USER_INDEX_UAT_PUBLIC_KEY,
   FILES_OWNER_FIELD,
   FILES_PUBLIC_FIELD,
+  FILES_DIRECT_ONLY_FIELD,
   FILES_UNLISTED_FIELD,
   FILES_TEMP_FIELD,
   FILES_TAGS_FIELD,
@@ -293,6 +294,7 @@ async function redisSearch(ctx) {
 
   if (ctx.isPublic) {
     query.push(`@${FILES_PUBLIC_FIELD}:{1}`);
+    query.push(`-@${FILES_DIRECT_ONLY_FIELD}:[1 1]`);
   }
 
   if (ctx.hasTags) {
