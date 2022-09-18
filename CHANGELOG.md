@@ -1,3 +1,30 @@
+# [16.0.0](https://github.com/makeomatic/ms-files/compare/v15.19.1...v16.0.0) (2022-09-18)
+
+
+### Features
+
+* redis-search, latest microfleet/amqp/pino ([#267](https://github.com/makeomatic/ms-files/issues/267)) ([2c115d9](https://github.com/makeomatic/ms-files/commit/2c115d9163a4347b2dfb021881007aa0c9e78510))
+
+
+### BREAKING CHANGES
+
+* includes new mode of operation for list action with redis-search, introduces a migration that creates indices in redis-search, this requires redis to have loaded appropriate modules. It still has backward compatibility in a sense that you can disable redis-search from being used, but you have to disable migrations as well. On top of it new versions of microfleet/amqp/pino are used - they are associated with performance gains, but configuration must be checked to be updated and compatible
+
+* feat: upgrade deps
+* chore: disable in_one on ci
+* feat: working redis-search
+* chore: adduser doesnt work on ci
+* chore: test ordering / migrations
+* fix: bluebird promises
+* chore: run all tests in 1 process
+* fix: broken custom hooks
+* fix: lint
+* fix: redisearch skip unlisted files
+* fix: unlisted query
+* fix: hide direct only files in list
+
+Co-authored-by: pajgo <51755949+pajgo@users.noreply.github.com>
+
 ## [15.19.1](https://github.com/makeomatic/ms-files/compare/v15.19.0...v15.19.1) (2022-09-09)
 
 
