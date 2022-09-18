@@ -3,17 +3,19 @@
 // and generating metadata for them
 //
 
-const { inspectPromise } = require('@makeomatic/deploy');
 const Promise = require('bluebird');
+const assert = require('node:assert');
+// const log = require('why-is-node-running');
 const fs = require('fs');
 const path = require('path');
 const md5 = require('md5');
-const request = require('request-promise');
 const partial = require('lodash/partial');
 const values = require('lodash/values');
 const zlib = require('zlib');
 const url = require('url');
 const is = require('is');
+const { fetch, getGlobalDispatcher, setGlobalDispatcher, Agent } = require('undici');
+const { Readable } = require('node:stream');
 const Files = require('../../src');
 
 // helpers
@@ -176,19 +178,28 @@ function modelSimpleUpload({
 //
 // upload single file
 //
-function upload(location, file) {
-  return request.put({
-    url: location,
-    body: file,
-    headers: {
-      'content-length': file.length,
-    },
-    simple: false,
-    resolveWithFullResponse: true,
-  });
+async function upload(location, file) {
+  try {
+    const res = await fetch(location, {
+      method: 'PUT',
+      keepalive: false,
+      body: Readable.from([file], { objectMode: false }),
+    });
+
+    await res.text();
+    assert(res.status >= 200 && res.status < 300);
+
+    return res;
+  } catch (e) {
+    if (!e.cause) {
+      throw e;
+    }
+
+    throw e.cause;
+  }
 }
 
-function uploadSimple(meta, file, isPublic) {
+async function uploadSimple(meta, file, isPublic) {
   const { query: { Expires } } = url.parse(meta.location);
 
   const headers = {
@@ -201,13 +212,25 @@ function uploadSimple(meta, file, isPublic) {
     headers['x-goog-acl'] = 'public-read';
   }
 
-  return request.put({
-    url: meta.location,
-    body: file,
-    headers,
-    simple: false,
-    resolveWithFullResponse: true,
-  });
+  try {
+    const res = await fetch(meta.location, {
+      method: 'PUT',
+      body: Readable.from([file], { objectMode: false }),
+      headers,
+      keepalive: false,
+    });
+
+    await res.text();
+    assert(res.status >= 200 && res.status < 300);
+
+    return res;
+  } catch (e) {
+    if (!e.cause) {
+      throw e;
+    }
+
+    throw e.cause;
+  }
 }
 
 //
@@ -245,13 +268,10 @@ function finishMessage(rsp, skipProcessing = true) {
 // Initializes upload
 //
 function initUpload(data) {
-  return function init() {
-    return this.amqp
-      .publishAndWait('files.upload', data.message, { timeout: 30000 })
-      .tap((rsp) => {
-        this.response = rsp;
-      })
-      .tap((rsp) => uploadFiles(data, rsp));
+  return async function init() {
+    this.response = await this.amqp.publishAndWait('files.upload', data.message, { timeout: 30000 });
+    await uploadFiles(data, this.response);
+    return this.response;
   };
 }
 
@@ -262,10 +282,13 @@ function initUpload(data) {
 function finishUpload(rsp, skipProcessing = true) {
   const messages = finishMessage(rsp, skipProcessing);
   const { amqp } = this;
-  return Promise.map(messages, (it) => {
-    return amqp
-      .publishAndWait('files.finish', it)
-      .catch({ statusCode: 202 }, (err) => err.message);
+  return Promise.map(messages, async (it) => {
+    try {
+      return await amqp.publishAndWait('files.finish', it);
+    } catch (err) {
+      if (err.statusCode === 202 || err.statusCode === 200) return err.message;
+      throw err;
+    }
   });
 }
 
@@ -273,9 +296,10 @@ function finishUpload(rsp, skipProcessing = true) {
 // initializes file upload, pushes files to gce and then notifies about file upload
 //
 function initAndUpload(data, skipProcessing = true) {
-  return function uploader() {
-    return initUpload(data).call(this)
-      .tap((rsp) => finishUpload.call(this, rsp, skipProcessing));
+  return async function uploader() {
+    const rsp = await initUpload(data).call(this);
+    await finishUpload.call(this, rsp, skipProcessing);
+    return rsp;
   };
 }
 
@@ -329,6 +353,14 @@ async function startService() {
     return amqp.publishAndWait(route, msg, { timeout });
   };
 
+  const agent = new Agent({
+    keepAliveTimeout: 10,
+    keepAliveMaxTimeout: 10,
+    headersTimeout: 1e3,
+    bodyTimeout: 1e3,
+  });
+  setGlobalDispatcher(agent);
+
   return service;
 }
 
@@ -350,13 +382,23 @@ async function stopService() {
     await Promise.map(service.providers, (transport) => (
       transport._bucket && transport._bucket.deleteFiles({ force: true })
     ));
-  } finally {
-    await service.close();
-
-    this.amqp = null;
-    this.files = null;
-    this.send = null;
+  } catch (err) {
+    // ignore err
+    service.log.warn({ err }, 'err deleting files');
   }
+
+  // force gc
+  this.amqp = null;
+  this.files = null;
+  this.send = null;
+
+  // close everything
+  await Promise.all([
+    service.close(),
+    getGlobalDispatcher().close(),
+  ]);
+
+  // log();
 }
 
 // resets sinon
@@ -447,7 +489,6 @@ module.exports = exports = {
   downloadFile,
   getInfo,
   updateAccess,
-  inspectPromise,
   startService,
   stopService,
   bindSend,

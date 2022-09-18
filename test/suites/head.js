@@ -1,8 +1,7 @@
-const assert = require('assert');
+const { strict: assert } = require('assert');
 const {
   bindSend,
   initAndUpload,
-  inspectPromise,
   modelData,
   owner,
   processUpload,
@@ -32,20 +31,14 @@ describe('header suite', function suite() {
   it('should be able to return files ids', function test() {
     return this
       .send({ aliases: ['skubidoo', 'yesmomihadeaten'], username: owner })
-      .reflect()
-      .then(inspectPromise())
       .then((response) => {
         assert.deepEqual(response, [this.response.uploadId, null]);
       });
   });
 
   it('should be able to return array of nulls if user does not exists', function test() {
-    return this
-      .send({ aliases: ['skubidoo', 'yesmomihadeaten'], username: 'iamnotexist' })
-      .reflect()
-      .then(inspectPromise(false))
-      .then((error) => {
-        assert.equal(error.statusCode, 404);
-      });
+    return assert.rejects(this.send({ aliases: ['skubidoo', 'yesmomihadeaten'], username: 'iamnotexist' }), {
+      statusCode: 404,
+    });
   });
 });

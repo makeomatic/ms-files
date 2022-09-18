@@ -87,7 +87,7 @@ async function removeFile({ params }) {
   // execute pipeline and bustCache right after
   return pipeline
     .exec()
-    .tap(bustCache(redis, data))
+    .tap(bustCache(redis, data, false))
     .then(pipelineError);
 }
 

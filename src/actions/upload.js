@@ -23,6 +23,8 @@ const {
   FILES_POST_ACTION,
   FILES_DIRECT_ONLY_FIELD,
   FILES_CONTENT_LENGTH_FIELD,
+  FILES_ID_FIELD,
+  FILES_UPLOAD_STARTED_AT_FIELD,
 } = require('../constant');
 
 /**
@@ -138,8 +140,8 @@ async function initFileUpload({ params }) {
   const fileData = {
     ...meta,
     ...serialized,
-    uploadId,
-    startedAt: Date.now(),
+    [FILES_ID_FIELD]: uploadId,
+    [FILES_UPLOAD_STARTED_AT_FIELD]: Date.now(),
     files: JSON.stringify(parts),
     parts: files.length,
     [FILES_CONTENT_LENGTH_FIELD]: sumBy(parts, 'contentLength'),

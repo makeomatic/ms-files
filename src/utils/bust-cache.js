@@ -10,6 +10,7 @@ const {
   FILES_TEMP_FIELD,
   FILES_OWNER_FIELD,
   FILES_UNLISTED_FIELD,
+  FILES_USER_INDEX_PUBLIC_KEY,
 } = require('../constant');
 
 function isUnlisted(file) {
@@ -24,7 +25,7 @@ function isPublic(file) {
   return file[FILES_PUBLIC_FIELD];
 }
 
-function getIndiciesList(file) {
+function getIndiciesList(file, accessChanged) {
   // unlisted file is not indexed
   if (isUnlisted(file)) {
     return [];
@@ -44,24 +45,24 @@ function getIndiciesList(file) {
     FILES_INDEX_USER,
   ];
 
-  if (isPublic(file)) {
+  if (isPublic(file) || accessChanged) {
     INDICIES.push(
       FILES_INDEX_PUBLIC,
-      `${FILES_INDEX_USER}:pub`
+      FILES_USER_INDEX_PUBLIC_KEY(username)
     );
   }
 
   return INDICIES;
 }
 
-function bustCache(redis, file, wait = false) {
+function bustCache(redis, file, accessChanged, wait = false) {
   const now = Date.now();
 
   if (isUnlisted(file)) {
     return Promise.resolve(null);
   }
 
-  const indicies = getIndiciesList(file);
+  const indicies = getIndiciesList(file, accessChanged);
   const pipeline = Promise.map(indicies, (index) => redis.fsortBust(index, now));
 
   if (wait) {

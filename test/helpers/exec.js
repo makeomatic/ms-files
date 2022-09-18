@@ -16,11 +16,15 @@ module.exports = (binaryPath, extraArgs = []) => function exec(args = []) {
       cwd: process.cwd(),
     }, (err, stdout, stderr) => {
       if (err) {
+        // eslint-disable-next-line no-console
+        console.info(stdout.split('\n'));
         return next(err);
       }
 
       try {
         assert.equal(stderr, '');
+        // eslint-disable-next-line no-console
+        console.info(stdout.split('\n'));
       } catch (e) {
         return next(e);
       }

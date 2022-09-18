@@ -1,7 +1,7 @@
 const assert = require('assert');
 const md5 = require('md5');
 const url = require('url');
-const request = require('request-promise');
+const { fetch } = require('undici');
 const clone = require('lodash/cloneDeep');
 
 describe('upload suite', function suite() {
@@ -99,7 +99,7 @@ describe('upload suite', function suite() {
     it('upload is possible based on the returned data', async function test() {
       const resp = await uploadFiles(modelData, this.response);
       for (const body of resp) {
-        assert.equal(body.statusCode, 200);
+        assert.equal(body.status, 200);
       }
     });
 
@@ -149,13 +149,17 @@ describe('upload suite', function suite() {
     it('upload is possible based on the returned data: public', async function test() {
       const resp = await uploadFiles(modelData, this.response);
       for (const req of resp) {
-        assert.equal(req.statusCode, 200);
+        assert.equal(req.status, 200);
       }
     });
 
-    it('able to download public files right away', function test() {
+    it('able to download public files right away', async function test() {
       const [file] = this.response.files;
-      return request.get(`https://storage.googleapis.com/${bucketName}/${file.filename}`);
+      const res = await fetch(`https://storage.googleapis.com/${bucketName}/${file.filename}`, {
+        keepalive: false,
+      });
+      await res.arrayBuffer();
+      assert.equal(res.status, 200);
     });
   });
 
@@ -208,12 +212,12 @@ describe('upload suite', function suite() {
     it('uploads data', async function test() {
       const resp = await uploadFiles(data, response);
       for (const req of resp) {
-        assert.equal(req.statusCode, 200);
+        assert.equal(req.status, 200);
       }
     });
 
-    it('finishes upload', function test() {
-      return finishUpload.call(this, response);
+    it('finishes upload', async function test() {
+      await finishUpload.call(this, response);
     });
 
     it('processes upload and invokes post-action', function test() {
@@ -286,7 +290,7 @@ describe('upload suite', function suite() {
     it('able to upload files', async function test() {
       const resp = await uploadFiles(simpleData, response);
       for (const req of resp) {
-        assert.equal(req.statusCode, 200);
+        assert.equal(req.status, 200);
       }
     });
 

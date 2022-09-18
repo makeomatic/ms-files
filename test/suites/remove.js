@@ -7,7 +7,6 @@ const uuid = require('uuid');
 const {
   startService,
   stopService,
-  inspectPromise,
   owner,
   modelData,
   bindSend,
@@ -29,47 +28,32 @@ describe('remove suite', function suite() {
 
   //
   it('404 on missing filename/upload-id', function test() {
-    return this
-      .send({ filename: uuid.v4(), username: owner })
-      .reflect()
-      .then(inspectPromise(false))
-      .then((err) => {
-        assert.equal(err.name, 'HttpStatusError');
-        assert.equal(err.statusCode, 404);
-      });
+    return assert.rejects(this.send({ filename: uuid.v4(), username: owner }), {
+      name: 'HttpStatusError',
+      statusCode: 404,
+    });
   });
 
   it('403 on invalid user id', function test() {
-    return this
-      .send({
-        filename: this.response.uploadId,
-        username: 'martial@arts.com',
-      })
-      .reflect()
-      .then(inspectPromise(false))
-      .then((err) => {
-        assert.equal(err.name, 'HttpStatusError');
-        assert.equal(err.statusCode, 403);
-      });
+    return assert.rejects(this.send({
+      filename: this.response.uploadId,
+      username: 'martial@arts.com',
+    }), {
+      name: 'HttpStatusError',
+      statusCode: 403,
+    });
   });
 
   it('removes file data', function test() {
-    return this
-      .send({ filename: this.response.uploadId, username: owner })
-      .reflect()
-      .then(inspectPromise());
+    return this.send({ filename: this.response.uploadId, username: owner });
   });
 
   it('waits a bit.... 3seconds', () => Promise.delay(3000));
 
   it('404 on subsequent remove', function test() {
-    return this
-      .send({ filename: this.response.uploadId, username: owner })
-      .reflect()
-      .then(inspectPromise(false))
-      .then((err) => {
-        assert.equal(err.statusCode, 404);
-      });
+    return assert.rejects(this.send({ filename: this.response.uploadId, username: owner }), {
+      statusCode: 404,
+    });
   });
 });
 

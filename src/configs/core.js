@@ -149,6 +149,12 @@ exports.uploadTTL = 60 * 60 * 24;
 exports.maxTries = Number.MAX_SAFE_INTEGER;
 
 /**
+ * Max search interval
+ * @type {number}
+ */
+exports.listMaxInterval = 32 * 24 * 60 * 60 * 1e3; // 32 days by default
+
+/**
  * API Domain
  * @type {String}
  */
@@ -156,4 +162,11 @@ exports.apiDomain = {
   $filter: 'env',
   $default: 'set-your-hostname',
   production: 'set-your-hostname',
+};
+
+/**
+ * Controls if redis search is available
+ */
+exports.redisSearch = {
+  enabled: false,
 };

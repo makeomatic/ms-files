@@ -5,13 +5,13 @@ ENV NCONF_NAMESPACE=MS_FILES \
 
 WORKDIR /src
 
-COPY --chown=node:node pnpm-lock.yaml package.json ./
+# pnpm fetch does require only lockfile
+COPY --chown=node:node package.json pnpm-lock.yaml ./
 RUN \
   apk --update upgrade \
-  && apk add ca-certificates openssl \
-  && apk add --virtual .buildDeps git g++ make python3 linux-headers \
+  && apk --update add --virtual .buildDeps git ca-certificates openssl g++ make python3 linux-headers \
   && chown node:node /src \
-  && su node -c 'cd /src && pnpm install --frozen-lockfile --prod' \
+  && su node -c 'pnpm install --prod' \
   && apk del .buildDeps \
   && rm -rf \
     /tmp/* \

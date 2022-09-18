@@ -126,7 +126,8 @@
             }
         },
         "modelType": {
-            "type": "string"
+            "type": "string",
+            "enum": ["3d", "nft"]
         }
     }
 }

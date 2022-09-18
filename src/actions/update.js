@@ -25,6 +25,8 @@ const {
   FILES_USER_INDEX_PUBLIC_KEY,
   FILES_PLAYER_SETTINGS_FIELD,
   FILES_VERSION_FIELD,
+  FILES_NFT_FIELD,
+  FILES_HAS_NFT,
 } = require('../constant');
 
 const { call } = Function.prototype;
@@ -165,13 +167,18 @@ async function updateMeta(lock, ctx, params) {
 
   // make sure it's not an empty object
   if (hasProperties(meta)) {
+    // to index using this property with redis-search
+    if (meta[FILES_NFT_FIELD]) {
+      meta[FILES_HAS_NFT] = '1';
+    }
+
     pipeline.hmset(key, meta);
   }
 
   handlePipeline(await pipeline.exec());
 
   if (directOnly !== undefined || (meta.nft && !data.nft)) {
-    await bustCache(redis, data, true);
+    await bustCache(redis, data, true, true);
   }
 
   return true;

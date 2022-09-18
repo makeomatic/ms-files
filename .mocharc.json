@@ -1,6 +1,6 @@
 {
-  "timeout": 60000,
+  "timeout": 15000,
   "bail": true,
   "report": "spec",
-  "forbid-only": true
+  "forbid-only": false
 }

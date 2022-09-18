@@ -1,7 +1,7 @@
 const { strictEqual } = require('assert');
 const OSSTransport = require('../../../src/providers/oss');
 
-describe('util fetch-data suite', () => {
+describe('oss transport', () => {
   it('should be able to create instance', () => {
     const provider = new OSSTransport({
       options: {

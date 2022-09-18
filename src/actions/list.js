@@ -2,6 +2,7 @@ const { ActionTransport } = require('@microfleet/plugin-router');
 const Promise = require('bluebird');
 const fsort = require('redis-filtered-sort');
 const perf = require('ms-perf');
+const { HttpStatusError } = require('common-errors');
 const handlePipeline = require('../utils/pipeline-error');
 const fetchData = require('../utils/fetch-data').batch;
 const {
@@ -17,6 +18,15 @@ const {
   FILES_INDEX_UAT_PUBLIC,
   FILES_USER_INDEX_UAT_KEY,
   FILES_USER_INDEX_UAT_PUBLIC_KEY,
+  FILES_OWNER_FIELD,
+  FILES_PUBLIC_FIELD,
+  FILES_DIRECT_ONLY_FIELD,
+  FILES_UNLISTED_FIELD,
+  FILES_TEMP_FIELD,
+  FILES_TAGS_FIELD,
+  FILES_UPLOADED_AT_FIELD,
+  FILES_ID_FIELD,
+  FILES_HAS_NFT,
 } = require('../constant');
 
 const k404Error = new Error('ELIST404');
@@ -24,9 +34,8 @@ const k404Error = new Error('ELIST404');
 /**
  * Internal functions
  */
-async function interstore(ctx, username) {
-  const { isPublic, temp, tags, redis, hasTags, uploadedAt, order } = ctx;
-  ctx.username = username;
+async function interstore(ctx) {
+  const { isPublic, temp, tags, redis, hasTags, uploadedAt, order, maxInterval, username } = ctx;
 
   // choose which set to use
   let filesIndex;
@@ -58,6 +67,21 @@ async function interstore(ctx, username) {
 
     const lte = typeof uploadedAt.lte === 'number' ? uploadedAt.lte : '+inf';
     const gte = typeof uploadedAt.gte === 'number' ? uploadedAt.gte : '-inf';
+    const now = Date.now();
+
+    // validation section to ensure we have interval that arent too large
+    if (lte === '+inf' && gte === '-inf') {
+      throw new HttpStatusError(400, `uploadedAt.lte & uploadedAt.gte need to have a specific interval no more than ${maxInterval} ms`);
+    } else if (gte >= now) {
+      throw new HttpStatusError(400, 'uploadedAt.gte needs to be in the past');
+    } else if (lte === '+inf' && now - gte > maxInterval) {
+      throw new HttpStatusError(400, `uploadedAt.gte needs to be greater than Now() - ${maxInterval} ms`);
+    } else if (gte === '-inf') {
+      throw new HttpStatusError(400, 'do not use unbound uploadedAt.lte');
+    } else if (lte - gte > maxInterval) {
+      throw new HttpStatusError(400, `uploadedAt.lte - uploadedAt.gte must be less than ${maxInterval}`);
+    }
+
     uploadedAtRequest = order === 'DESC'
       ? ['zrevrangebyscore', uploadedAtIndex, lte, gte]
       : ['zrangebyscore', uploadedAtIndex, gte, lte];
@@ -192,28 +216,32 @@ function omitErrors(result, promise, idx) {
  * Prepares filenames
  */
 const prepareFilenames = (filename) => `${FILES_DATA}:${filename}`;
+const omitPrefix = (prefix) => (filename) => filename.slice(prefix.length);
 
 /**
  * Fetch extra data from redis based on IDS
  */
-function fetchExtraData(ctx, filenames) {
-  const length = +filenames.pop();
-  if (length === 0 || filenames.length === 0) {
+function fetchExtraData(ctx, filenames, { total, redisSearchEnabled }) {
+  if (total === 0 || filenames.length === 0) {
     return {
       filenames,
       props: [],
-      length,
+      length: total,
     };
   }
 
-  const mapped = filenames.map(prepareFilenames);
+  const transform = redisSearchEnabled
+    ? omitPrefix(ctx.service.config.redis.options.keyPrefix)
+    : prepareFilenames;
+
+  const mapped = filenames.map(transform);
   const pipeline = Promise
     .bind(ctx, [mapped, { omit: ctx.without }])
     .spread(fetchData)
     .bind({ log: ctx.log, filenames: mapped })
     .reduce(omitErrors, []);
 
-  return Promise.props({ filenames, props: pipeline, length });
+  return Promise.props({ filenames, props: pipeline, length: total });
 }
 
 /**
@@ -247,6 +275,115 @@ async function prepareResponse(ctx, data) {
     pages: Math.ceil(length / limit),
     time: timer(),
   };
+}
+
+/**
+ * Performs search using redis search extension
+ */
+async function redisSearch(ctx) {
+  // 1. build query
+  const indexName = `${ctx.service.config.redis.options.keyPrefix}:files-list`;
+  const args = ['FT.SEARCH', indexName];
+  const query = [];
+  const params = [];
+
+  if (ctx.username) {
+    query.push(`@${FILES_OWNER_FIELD}:{ $username }`);
+    params.push('username', ctx.username);
+  }
+
+  if (ctx.isPublic) {
+    query.push(`@${FILES_PUBLIC_FIELD}:{1}`);
+    query.push(`-@${FILES_DIRECT_ONLY_FIELD}:[1 1]`);
+  }
+
+  if (ctx.hasTags) {
+    const tagQuery = [];
+    for (const [idx, tag] of ctx.tags.sort().entries()) {
+      tagQuery.push(`$tag${idx}`);
+      params.push(`tag${idx}`, tag);
+    }
+
+    query.push(`@${FILES_TAGS_FIELD}:(${tagQuery.join('|')})`);
+  }
+
+  if (ctx.modelType) {
+    query.push(`${ctx.modelType === '3d' ? '-' : ''}@${FILES_HAS_NFT}:[1 1]`);
+  }
+
+  if (ctx.uploadedAt) {
+    const lte = typeof ctx.uploadedAt.lte === 'number' ? ctx.uploadedAt.lte : '+inf';
+    const gte = typeof ctx.uploadedAt.gte === 'number' ? ctx.uploadedAt.gte : '-inf';
+    query.push('FILTER', FILES_UPLOADED_AT_FIELD, gte, lte);
+  }
+
+  if (ctx.temp) {
+    query.push('FILTER', FILES_TEMP_FIELD, '1', '1');
+  }
+
+  // skip unlisted files
+  query.push(`-@${FILES_UNLISTED_FIELD}:[1 1]`);
+
+  const { filter } = ctx;
+  console.log(filter);
+  for (const [propName, actionTypeOrValue] of Object.entries(filter)) {
+    if (actionTypeOrValue === undefined || propName === 'nft') {
+      // skip empty attributes
+      // or nft cause it uses special index
+    } else if (typeof actionTypeOrValue === 'string') {
+      query.push(`@${propName}:{ $f_${propName} }`);
+      params.push(`f_${propName}`, actionTypeOrValue);
+    } else if (actionTypeOrValue.gte || actionTypeOrValue.lte) {
+      const lowerRange = actionTypeOrValue.gte || '-inf';
+      const upperRange = actionTypeOrValue.lte || '+inf';
+      query.push(`@${propName}:[${lowerRange} ${upperRange}]`);
+    } else if (actionTypeOrValue.exists !== undefined) {
+      query.push(`-@${propName}:""`);
+    } else if (actionTypeOrValue.isempty !== undefined) {
+      query.push(`@${propName}:""`);
+    } else if (actionTypeOrValue.eq) {
+      query.push(`@${propName}:{ $f_${propName}_eq }`);
+      params.push(`f_${propName}_eq`, actionTypeOrValue.eq);
+    } else if (actionTypeOrValue.ne) {
+      query.push(`-@${propName}:{ $f_${propName}_ne }`);
+      params.push(`f_${propName}_ne`, actionTypeOrValue.ne);
+    } else if (actionTypeOrValue.match) {
+      // TODO: verify correctness of this
+      query.push(`@${propName}:($f_${propName}_match)`);
+      params.push(`$f_${propName}_match`, actionTypeOrValue.match);
+    }
+  }
+
+  if (query.length > 0) {
+    args.push(query.join(' '));
+  } else {
+    args.push('*');
+  }
+
+  if (params.length > 0) {
+    args.push('PARAMS', params.length.toString(), ...params);
+    args.push('DIALECT', '2');
+  }
+
+  // sort the response
+  if (ctx.criteria) {
+    args.push('SORTBY', ctx.criteria, ctx.order);
+  } else {
+    args.push('SORTBY', FILES_ID_FIELD, ctx.order);
+  }
+
+  // limits
+  args.push('LIMIT', ctx.offset, ctx.limit);
+
+  // we'll fetch the data later
+  args.push('NOCONTENT');
+
+  // [total, [ids]]
+  console.info(...args);
+
+  const [total, ...ids] = await ctx.redis.call(...args);
+
+  return { total, ids };
 }
 
 /**
@@ -297,7 +434,6 @@ async function listFiles({ params }) {
   const nftFilters = {
     nft: { nft: { exists: '1' } },
     '3d': { nft: { isempty: '1' } },
-    void: { void: { exists: '1' } },
   };
 
   const nftFilter = nftFilters[modelType];
@@ -319,6 +455,7 @@ async function listFiles({ params }) {
     interstoreKeyMinTimeleft,
     timer,
     service: this,
+    maxInterval: config.listMaxInterval,
 
     // our params
     without,
@@ -336,16 +473,28 @@ async function listFiles({ params }) {
     uploadedAt: temp ? null : uploadedAt,
     hasTags: Array.isArray(tags) && tags.length > 0,
     avoidTagCache,
+    username: '',
+    modelType,
   };
 
   try {
     const [username] = await this.hook('files:info:pre', owner);
     timer('files:info:pre');
-    const stored = await interstore(ctx, username);
-    timer('interstore');
-    const ids = await fetchFromRedis(ctx, stored);
-    timer('fsort');
-    const data = await fetchExtraData(ctx, ids);
+    ctx.username = username;
+
+    let ids;
+    let total;
+    if (config.redisSearch.enabled) {
+      ({ total, ids } = await redisSearch(ctx, username));
+    } else {
+      const stored = await interstore(ctx, username);
+      timer('interstore');
+      ids = await fetchFromRedis(ctx, stored);
+      total = +ids.pop();
+      timer('fsort');
+    }
+
+    const data = await fetchExtraData(ctx, ids, { total, redisSearchEnabled: config.redisSearch.enabled });
     timer('fetch');
     return await prepareResponse(ctx, data);
   } catch (e) {
