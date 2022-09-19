@@ -140,7 +140,7 @@ for (const redisSearchEnabled of [false, true].values()) {
         });
       });
 
-      it('returns files filtered by their SKU', async function test() {
+      it('returns files filtered by their id', async function test() {
         const id = ld.sample(Array.from(ids));
         const data = await this.amqp.publishAndWait('files.list', {
           filter: { '#': id },
@@ -160,7 +160,8 @@ for (const redisSearchEnabled of [false, true].values()) {
             assert.equal(typeof file.embed.code, 'string');
             assert.notEqual(file.embed.code.length, 0);
             assert.ok(file.embed.params);
-            assert.equal(file.uploadId, id);
+
+            assert(file.uploadId.includes(id), `cant find ${id} in ${file.uploadId}`);
 
             Object.keys(file.embed.params).forEach((key) => {
               const param = file.embed.params[key];
