@@ -282,7 +282,7 @@ async function prepareResponse(ctx, data) {
  */
 async function redisSearch(ctx) {
   // 1. build query
-  const indexName = `${ctx.service.config.redis.options.keyPrefix}:files-list`;
+  const indexName = `${ctx.service.config.redis.options.keyPrefix}:files-list-v2`;
   const args = ['FT.SEARCH', indexName];
   const query = [];
   const params = [];
@@ -298,13 +298,10 @@ async function redisSearch(ctx) {
   }
 
   if (ctx.hasTags) {
-    const tagQuery = [];
     for (const [idx, tag] of ctx.tags.sort().entries()) {
-      tagQuery.push(`$tag${idx}`);
+      query.push(`@${FILES_TAGS_FIELD}:($tag${idx})`);
       params.push(`tag${idx}`, tag);
     }
-
-    query.push(`@${FILES_TAGS_FIELD}:(${tagQuery.join('|')})`);
   }
 
   if (ctx.modelType) {
@@ -325,8 +322,18 @@ async function redisSearch(ctx) {
   query.push(`-@${FILES_UNLISTED_FIELD}:[1 1]`);
 
   const { filter } = ctx;
-  console.log(filter);
-  for (const [propName, actionTypeOrValue] of Object.entries(filter)) {
+  for (const [_propName, actionTypeOrValue] of Object.entries(filter)) {
+    let propName = _propName;
+    if (propName === '#') {
+      propName = FILES_ID_FIELD;
+    } else if (propName === '#multi') {
+      propName = actionTypeOrValue.fields.join('|');
+    } else if (propName === 'alias') {
+      propName = 'alias_tag';
+    }
+
+    console.log(_propName, propName, actionTypeOrValue);
+
     if (actionTypeOrValue === undefined || propName === 'nft') {
       // skip empty attributes
       // or nft cause it uses special index
@@ -349,8 +356,9 @@ async function redisSearch(ctx) {
       params.push(`f_${propName}_ne`, actionTypeOrValue.ne);
     } else if (actionTypeOrValue.match) {
       // TODO: verify correctness of this
-      query.push(`@${propName}:($f_${propName}_match)`);
-      params.push(`$f_${propName}_match`, actionTypeOrValue.match);
+      const varName = `f_${propName.replace(/\|/g, '_')}_m`;
+      query.push(`@${propName}:($${varName})`);
+      params.push(varName, actionTypeOrValue.match);
     }
   }
 

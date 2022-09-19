@@ -15,12 +15,15 @@ const {
   FILES_UPLOAD_STARTED_AT_FIELD,
   FILES_CONTENT_LENGTH_FIELD,
   FILES_HAS_NFT,
+  FILES_NAME_FIELD,
+  FILES_DESCRIPTION_FIELD,
+  FILES_WEBSITE_FIELD,
 } = require('../../constant');
 
 const FIELD_TO_TYPE = [
   [FILES_ID_FIELD, 'TAG', 'SORTABLE'],
-  [FILES_ALIAS_FIELD, 'AS', 'alias_text', 'TEXT', 'SORTABLE'],
-  [FILES_ALIAS_FIELD, 'TAG', 'SORTABLE'],
+  [FILES_ALIAS_FIELD, 'TEXT', 'SORTABLE'],
+  [FILES_ALIAS_FIELD, 'AS', 'alias_tag', 'TAG', 'SORTABLE'],
   [FILES_OWNER_FIELD, 'TAG', 'SORTABLE'],
   [FILES_PUBLIC_FIELD, 'TAG', 'SORTABLE'],
   [FILES_PACKED_FIELD, 'TAG', 'SORTABLE'],
@@ -34,6 +37,9 @@ const FIELD_TO_TYPE = [
   [FILES_CONTENT_LENGTH_FIELD, 'NUMERIC', 'SORTABLE'],
   [FILES_HAS_NFT, 'NUMERIC', 'SORTABLE'],
   [FILES_TEMP_FIELD, 'NUMERIC', 'SORTABLE'],
+  [FILES_NAME_FIELD, 'TEXT', 'SORTABLE'],
+  [FILES_DESCRIPTION_FIELD, 'TEXT', 'SORTABLE'],
+  [FILES_WEBSITE_FIELD, 'TEXT', 'SORTABLE'],
 ];
 
 // https://redis.io/docs/stack/search/reference/aggregations/#filter-expressions
@@ -43,7 +49,7 @@ async function createSearchIndex(service) {
 
   await redis.call(
     'FT.CREATE',
-    `${keyPrefix}:files-list`,
+    `${keyPrefix}:files-list-v2`,
     'ON',
     'HASH',
     'PREFIX',
@@ -59,5 +65,5 @@ async function createSearchIndex(service) {
 module.exports = {
   script: createSearchIndex,
   min: 1,
-  final: 5,
+  final: 6,
 };

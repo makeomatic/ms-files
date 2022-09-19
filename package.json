@@ -32,7 +32,7 @@
   },
   "homepage": "https://github.com/makeomatic/ms-files#readme",
   "dependencies": {
-    "@google-cloud/storage": "6.4.2",
+    "@google-cloud/storage": "6.5.0",
     "@hapi/hapi": "^20.2.2",
     "@microfleet/core": "^17.29.2",
     "@microfleet/core-types": "^0.23.2",
@@ -50,7 +50,7 @@
     "@microfleet/plugin-validator": "^0.23.2",
     "@microfleet/transport-amqp": "^17.3.0",
     "@microfleet/utils": "^0.23.2",
-    "@sentry/node": "^7.12.1",
+    "@sentry/node": "^7.13.0",
     "ali-oss": "^6.17.1",
     "bl": "^5.0.0",
     "bluebird": "^3.7.2",
