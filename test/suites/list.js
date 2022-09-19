@@ -121,6 +121,11 @@ for (const redisSearchEnabled of [false, true].values()) {
             assert.equal(typeof file.embed.code, 'string');
             assert.notEqual(file.embed.code.length, 0);
             assert.ok(file.embed.params);
+
+            assert([file.alias, file.name, file.description, file.website, file.owner].some((datum) => {
+              return datum.toLowerCase().contains(sku.toLowerCase());
+            }), `cant find ${sku} in ${JSON.stringify(file)}`);
+
             assert.equal(file.alias, sku);
 
             Object.keys(file.embed.params).forEach((key) => {

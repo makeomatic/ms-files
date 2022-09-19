@@ -56,8 +56,8 @@ function createFakeFile({ owners, statuses }) {
     parts: ld.random(1, 4),
     [FILES_OWNER_FIELD]: owner,
     [FILES_ALIAS_FIELD]: sku,
-    [FILES_DESCRIPTION_FIELD]: sku, // so it doesn't product unexpected results
-    [FILES_WEBSITE_FIELD]: `https://${sku}.com`,
+    [FILES_DESCRIPTION_FIELD]: faker.commerce.productDescription(), // so it doesn't product unexpected results
+    [FILES_WEBSITE_FIELD]: `https://${faker.internet.domainName()}`,
   };
 }
 
