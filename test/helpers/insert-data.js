@@ -42,8 +42,11 @@ function createFakeFile({ owners, statuses }) {
     }
   }
 
+  const id = uuid.v4();
+  ids.add(id);
+
   return {
-    [FILES_ID_FIELD]: uuid.v4(),
+    [FILES_ID_FIELD]: id,
     status: ld.sample(statuses),
     [FILES_UPLOAD_STARTED_AT_FIELD]: startedAt,
     [FILES_UPLOADED_AT_FIELD]: startedAt + 1000,

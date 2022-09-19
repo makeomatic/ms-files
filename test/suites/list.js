@@ -15,7 +15,7 @@ const {
   nftMeta,
   owner: username,
 } = require('../helpers/utils');
-const { insertData, skus } = require('../helpers/insert-data');
+const { insertData, skus, ids } = require('../helpers/insert-data');
 
 const route = 'files.list';
 const updateRoute = 'files.update';
@@ -85,6 +85,7 @@ for (const redisSearchEnabled of [false, true].values()) {
     before('insert data', function insertFiles() {
       // we upload an extra file later
       skus.clear();
+      ids.clear();
       return insertData.call(this, { times: 499, owners, statuses: statusValues });
     });
 
@@ -135,20 +136,9 @@ for (const redisSearchEnabled of [false, true].values()) {
       });
 
       it('returns files filtered by their SKU', async function test() {
-        const sku = ld.sample(Array.from(skus));
+        const id = ld.sample(Array.from(ids));
         const data = await this.amqp.publishAndWait('files.list', {
-          filter: {
-            '#multi': {
-              fields: [
-                'name',
-                'description',
-                'website',
-                'owner',
-                'alias',
-              ],
-              match: sku,
-            },
-          },
+          filter: { '#': id },
           order: 'DESC',
         });
 
@@ -165,7 +155,7 @@ for (const redisSearchEnabled of [false, true].values()) {
             assert.equal(typeof file.embed.code, 'string');
             assert.notEqual(file.embed.code.length, 0);
             assert.ok(file.embed.params);
-            assert.equal(file.alias, sku);
+            assert.equal(file.uploadId, id);
 
             Object.keys(file.embed.params).forEach((key) => {
               const param = file.embed.params[key];
