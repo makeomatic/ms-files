@@ -50,6 +50,9 @@ module.exports = exports = Object.setPrototypeOf({
   FILES_UPLOAD_STARTED_AT_FIELD: 'startedAt',
   FILES_VERSION_FIELD: 'version',
   FILES_HAS_NFT: 'hn',
+  FILES_NAME_FIELD: 'name',
+  FILES_DESCRIPTION_FIELD: 'description',
+  FILES_WEBSITE_FIELD: 'website',
 
   // metatype of file
   FILES_TYPE_FIELD: 'type',

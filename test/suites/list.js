@@ -15,7 +15,7 @@ const {
   nftMeta,
   owner: username,
 } = require('../helpers/utils');
-const { insertData } = require('../helpers/insert-data');
+const { insertData, skus, ids } = require('../helpers/insert-data');
 
 const route = 'files.list';
 const updateRoute = 'files.update';
@@ -83,7 +83,95 @@ for (const redisSearchEnabled of [false, true].values()) {
     const descSortStartAt = sort(-1, 'numeric', 'startedAt');
 
     before('insert data', function insertFiles() {
-      return insertData.call(this, { times: 500, owners, statuses: statusValues });
+      // we upload an extra file later
+      skus.clear();
+      ids.clear();
+      return insertData.call(this, { times: 499, owners, statuses: statusValues });
+    });
+
+    describe('multi-field search, name search', function testSuite() {
+      it('returns files filtered by their SKU', async function test() {
+        const sku = ld.sample(Array.from(skus));
+        const data = await this.amqp.publishAndWait('files.list', {
+          filter: {
+            '#multi': {
+              fields: [
+                'name',
+                'description',
+                'website',
+                'owner',
+                'alias',
+              ],
+              match: sku,
+            },
+          },
+          order: 'DESC',
+        });
+
+        assert.ok(data.files);
+        descSortFilename(data.files);
+        assert.equal(data.cursor, 10);
+        assert.equal(data.page, 1);
+        assert.ok(data.pages);
+
+        data.files.forEach((file) => {
+          if (file.status === STATUS_PROCESSED) {
+            assert.ok(file.embed);
+            assert.ok(file.embed.code);
+            assert.equal(typeof file.embed.code, 'string');
+            assert.notEqual(file.embed.code.length, 0);
+            assert.ok(file.embed.params);
+
+            assert([file.alias, file.name, file.description, file.website, file.owner].some((datum) => {
+              return datum.toLowerCase().includes(sku.toLowerCase());
+            }), `cant find ${sku} in ${JSON.stringify(file)}`);
+
+            Object.keys(file.embed.params).forEach((key) => {
+              const param = file.embed.params[key];
+              assert.ok(param.type);
+              assert.notStrictEqual(param.default, undefined);
+              assert.ok(param.description);
+            });
+          } else {
+            assert.equal(file.embed, undefined);
+          }
+        });
+      });
+
+      it('returns files filtered by their id', async function test() {
+        const id = ld.sample(Array.from(ids));
+        const data = await this.amqp.publishAndWait('files.list', {
+          filter: { '#': id },
+          order: 'DESC',
+        });
+
+        assert.ok(data.files);
+        descSortFilename(data.files);
+        assert.equal(data.cursor, 10);
+        assert.equal(data.page, 1);
+        assert.ok(data.pages);
+
+        data.files.forEach((file) => {
+          if (file.status === STATUS_PROCESSED) {
+            assert.ok(file.embed);
+            assert.ok(file.embed.code);
+            assert.equal(typeof file.embed.code, 'string');
+            assert.notEqual(file.embed.code.length, 0);
+            assert.ok(file.embed.params);
+
+            assert(file.uploadId.includes(id), `cant find ${id} in ${file.uploadId}`);
+
+            Object.keys(file.embed.params).forEach((key) => {
+              const param = file.embed.params[key];
+              assert.ok(param.type);
+              assert.notStrictEqual(param.default, undefined);
+              assert.ok(param.description);
+            });
+          } else {
+            assert.equal(file.embed, undefined);
+          }
+        });
+      });
     });
 
     describe('owner-based list', function testSuite() {
@@ -458,19 +546,35 @@ for (const redisSearchEnabled of [false, true].values()) {
     });
 
     describe('tags-based list', function testSuite() {
-      before('upload', function pretest() {
-        return processUpload.call(this, this.response);
-      });
+      before('upload', async function pretest() {
+        await processUpload.call(this, this.response);
 
-      before('update', function pretest() {
+        const tags = [...meta.tags];
+        tags[1] = 'tagMew';
+
+        // this file should not be returned by search as tag search is using `AND`
         return this.amqp.publishAndWait(updateRoute, {
           uploadId: this.response.uploadId,
+          username,
+          meta: {
+            ...meta,
+            tags,
+          },
+        });
+      });
+
+      before('pre-upload file #2', async function pretest() {
+        const { uploadId } = await initAndUpload(modelData, false).call(this);
+
+        // this file should not be returned by search as tag search is using `AND`
+        return this.amqp.publishAndWait(updateRoute, {
+          uploadId,
           username,
           meta,
         });
       });
 
-      it('returns files sorted by their tags', function test() {
+      it('returns files filtered by their tags', function test() {
         return this.amqp.publishAndWait('files.list', {
           filter: {},
           tags: meta.tags,
@@ -480,14 +584,14 @@ for (const redisSearchEnabled of [false, true].values()) {
         })
           .then((data) => {
             assert.ok(data.files);
-            assert.equal(data.cursor, 10);
-            assert.equal(data.page, 1);
-            assert.ok(data.pages);
-
             data.files.forEach((file) => {
               assert.equal(file.owner, username);
               assert.deepEqual(file.tags, meta.tags);
             });
+            assert.equal(data.files.length, 1);
+            assert.equal(data.cursor, 10);
+            assert.equal(data.page, 1);
+            assert.ok(data.pages);
           });
       });
 
