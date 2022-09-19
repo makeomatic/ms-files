@@ -1,3 +1,10 @@
+## [16.0.1](https://github.com/makeomatic/ms-files/compare/v16.0.0...v16.0.1) (2022-09-19)
+
+
+### Bug Fixes
+
+* search with tags, #multi, # ([#274](https://github.com/makeomatic/ms-files/issues/274)) ([f8d6034](https://github.com/makeomatic/ms-files/commit/f8d603485d384d47adfeb20002557068b2d052c6))
+
 # [16.0.0](https://github.com/makeomatic/ms-files/compare/v15.19.1...v16.0.0) (2022-09-18)
 
 
