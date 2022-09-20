@@ -1,3 +1,10 @@
+## [16.0.5](https://github.com/makeomatic/ms-files/compare/v16.0.4...v16.0.5) (2022-09-20)
+
+
+### Bug Fixes
+
+* multi-word tags search ([f78b4b6](https://github.com/makeomatic/ms-files/commit/f78b4b6848c485453bfa4971c83442d241246c7e))
+
 ## [16.0.4](https://github.com/makeomatic/ms-files/compare/v16.0.3...v16.0.4) (2022-09-20)
 
 
