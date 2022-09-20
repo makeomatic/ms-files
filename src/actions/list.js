@@ -357,7 +357,7 @@ async function redisSearch(ctx) {
   }
 
   if (!ctx.temp) {
-    query.push('FILTER', FILES_TEMP_FIELD, '1', '1');
+    query.push(`-@${FILES_TEMP_FIELD}:[1 1]`);
   }
 
   if (query.length > 0) {
@@ -385,7 +385,7 @@ async function redisSearch(ctx) {
   args.push('NOCONTENT');
 
   // [total, [ids]]
-  // console.info(...args);
+  ctx.service.log.info({ search: args }, 'search query');
 
   const [total, ...ids] = await ctx.redis.call(...args);
 
