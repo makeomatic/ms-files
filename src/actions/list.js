@@ -355,7 +355,7 @@ async function redisSearch(ctx) {
     } else if (actionTypeOrValue.match) {
       // TODO: verify correctness of this
       const varName = `f_${propName.replace(/\|/g, '_')}_m`;
-      query.push(`@${propName}:(*$${varName}*)`);
+      query.push(`@${propName}:($${varName}*)`);
       params.push(varName, actionTypeOrValue.match);
     }
   }
