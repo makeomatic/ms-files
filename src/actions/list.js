@@ -314,9 +314,6 @@ async function redisSearch(ctx) {
     query.push('FILTER', FILES_UPLOADED_AT_FIELD, gte, lte);
   }
 
-  // skip unlisted files
-  query.push(`-@${FILES_UNLISTED_FIELD}:[1 1]`);
-
   const { filter } = ctx;
   for (const [_propName, actionTypeOrValue] of Object.entries(filter)) {
     let propName = _propName;
@@ -359,6 +356,10 @@ async function redisSearch(ctx) {
   if (!ctx.temp) {
     query.push(`-@${FILES_TEMP_FIELD}:[1 1]`);
   }
+
+  // skip unlisted files
+  // NOTE: there is a bug if this appear as first in the query all models are returned instead
+  query.push(`-@${FILES_UNLISTED_FIELD}:[1 1]`);
 
   if (query.length > 0) {
     args.push(query.join(' '));
