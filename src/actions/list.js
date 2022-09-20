@@ -26,6 +26,7 @@ const {
   FILES_UPLOADED_AT_FIELD,
   FILES_ID_FIELD,
   FILES_HAS_NFT,
+  FILES_TEMP_FIELD,
 } = require('../constant');
 
 const k404Error = new Error('ELIST404');
@@ -281,7 +282,7 @@ async function prepareResponse(ctx, data) {
  */
 async function redisSearch(ctx) {
   // 1. build query
-  const indexName = `${ctx.service.config.redis.options.keyPrefix}:files-list-v2`;
+  const indexName = `${ctx.service.config.redis.options.keyPrefix}:files-list-v3`;
   const args = ['FT.SEARCH', indexName];
   const query = [];
   const params = [];
@@ -353,6 +354,10 @@ async function redisSearch(ctx) {
       query.push(`@${propName}:($${varName})`);
       params.push(varName, actionTypeOrValue.match);
     }
+  }
+
+  if (!ctx.temp) {
+    query.push('FILTER', FILES_TEMP_FIELD, '1', '1');
   }
 
   if (query.length > 0) {
