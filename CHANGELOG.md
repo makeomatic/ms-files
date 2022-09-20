@@ -1,3 +1,10 @@
+## [16.0.4](https://github.com/makeomatic/ms-files/compare/v16.0.3...v16.0.4) (2022-09-20)
+
+
+### Bug Fixes
+
+* negative query at the start applies to everything in the query ([294850c](https://github.com/makeomatic/ms-files/commit/294850c81cee2a4d63325f728ce52b3a45308e01))
+
 ## [16.0.3](https://github.com/makeomatic/ms-files/compare/v16.0.2...v16.0.3) (2022-09-20)
 
 
