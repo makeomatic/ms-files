@@ -1,3 +1,11 @@
+## [16.0.3](https://github.com/makeomatic/ms-files/compare/v16.0.2...v16.0.3) (2022-09-20)
+
+
+### Bug Fixes
+
+* correct temp filtering ([8c58047](https://github.com/makeomatic/ms-files/commit/8c58047493fadd8c83ec0a95715c85ed9dbad55d))
+* do not ignore temp files ([e52b09d](https://github.com/makeomatic/ms-files/commit/e52b09d43f70e199aa77b690400a35d9c204dbe3))
+
 ## [16.0.2](https://github.com/makeomatic/ms-files/compare/v16.0.1...v16.0.2) (2022-09-20)
 
 
