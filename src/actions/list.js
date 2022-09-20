@@ -22,7 +22,6 @@ const {
   FILES_PUBLIC_FIELD,
   FILES_DIRECT_ONLY_FIELD,
   FILES_UNLISTED_FIELD,
-  FILES_TEMP_FIELD,
   FILES_TAGS_FIELD,
   FILES_UPLOADED_AT_FIELD,
   FILES_ID_FIELD,
@@ -314,10 +313,6 @@ async function redisSearch(ctx) {
     query.push('FILTER', FILES_UPLOADED_AT_FIELD, gte, lte);
   }
 
-  if (ctx.temp) {
-    query.push('FILTER', FILES_TEMP_FIELD, '1', '1');
-  }
-
   // skip unlisted files
   query.push(`-@${FILES_UNLISTED_FIELD}:[1 1]`);
 
@@ -331,8 +326,6 @@ async function redisSearch(ctx) {
     } else if (propName === 'alias') {
       propName = 'alias_tag';
     }
-
-    console.log(_propName, propName, actionTypeOrValue);
 
     if (actionTypeOrValue === undefined || propName === 'nft') {
       // skip empty attributes
@@ -387,7 +380,7 @@ async function redisSearch(ctx) {
   args.push('NOCONTENT');
 
   // [total, [ids]]
-  console.info(...args);
+  // console.info(...args);
 
   const [total, ...ids] = await ctx.redis.call(...args);
 

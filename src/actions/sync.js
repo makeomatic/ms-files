@@ -6,13 +6,11 @@
 
 const { ActionTransport } = require('@microfleet/plugin-router');
 const Promise = require('bluebird');
-const fsort = require('redis-filtered-sort');
 const moment = require('moment');
-const list = require('./list');
-const { STATUS_PENDING, FILES_INDEX_TEMP } = require('../constant');
+const { STATUS_PENDING, FILES_INDEX_TEMP, FILES_STATUS_FIELD } = require('../constant');
 
 // cached filter
-const filter = fsort.filter({ status: { eq: STATUS_PENDING } });
+const filter = { [FILES_STATUS_FIELD]: { gte: +STATUS_PENDING, lte: +STATUS_PENDING } };
 
 /**
  * Iterates over files with pending state and tries
@@ -30,7 +28,7 @@ async function iterateOverUploadedFiles(service, lock, opts = {}) {
   await lock.extend();
 
   const params = { offset, limit, filter, temp: true, expiration: 10000 };
-  const data = await Promise.bind(service, { params }).then(list);
+  const data = await service.dispatch('list', { params });
 
   // ensure we still have lock
   await lock.extend();
@@ -77,7 +75,7 @@ async function iterateOverUploadedFiles(service, lock, opts = {}) {
  */
 module.exports = function sync() {
   return Promise
-    .using(this, this.dlock.acquireLock(this, 'bucket-sync'), iterateOverUploadedFiles);
+    .using(this, this.dlock.acquireLock('bucket-sync'), iterateOverUploadedFiles);
 };
 
 module.exports.transports = [ActionTransport.amqp];

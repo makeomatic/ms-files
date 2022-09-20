@@ -15,27 +15,43 @@ const {
 // data
 const route = 'files.sync';
 
-describe('finish upload suite', function suite() {
-  // setup functions
-  before('start service', startService);
-  before('prepare upload', initUpload(modelData));
-  before('helpers', bindSend(route));
+for (const redisSearchEnabled of [false, true].values()) {
+  describe(`sync suite, redisSearchEnabled: ${redisSearchEnabled}`, function suite() {
+    // setup functions
+    before('override config', function overrideConfig() {
+      this.configOverride = {
+        redisSearch: {
+          enabled: redisSearchEnabled,
+        },
+        migrations: {
+          enabled: true,
+        },
+      };
+    });
 
-  // tear-down
-  after('stop service', stopService);
+    describe('finish upload suite', function finishSuite() {
+      // setup functions
+      before('start service', startService);
+      before('prepare upload', initUpload(modelData));
+      before('helpers', bindSend(route));
 
-  it('...wait while upload completes', () => Promise.delay(10000));
+      // tear-down
+      after('stop service', stopService);
 
-  it('runs sync service', function test() {
-    return this.send({}, 15000);
+      it('...wait while upload completes', () => Promise.delay(10000));
+
+      it('runs sync service', function test() {
+        return this.send({}, 15000);
+      });
+
+      it('...waits for a couple of seconds', () => Promise.delay(10000));
+
+      it('returns correct STATUS_PROCESSED', async function test() {
+        const rsp = await this.amqp
+          .publishAndWait('files.info', { filename: this.response.uploadId, username: owner });
+
+        assert.ok(rsp.file.status === STATUS_PROCESSED, JSON.stringify(rsp.file));
+      });
+    });
   });
-
-  it('...waits for a couple of seconds', () => Promise.delay(10000));
-
-  it('returns correct STATUS_PROCESSED', async function test() {
-    const rsp = await this.amqp
-      .publishAndWait('files.info', { filename: this.response.uploadId, username: owner });
-
-    assert.ok(rsp.file.status === STATUS_PROCESSED, JSON.stringify(rsp.file));
-  });
-});
+}
