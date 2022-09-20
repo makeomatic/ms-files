@@ -425,7 +425,7 @@ const modelData = modelMessage(model, textures, preview, owner);
 const meta = {
   name: 'name',
   description: 'description',
-  tags: ['tag1', 'tag2', 'tag3'],
+  tags: ['tag1', 'tag2', 'tag3', 'one-piece garment', 'several words'],
   cycle: true,
   website: 'http://website.com',
   playerSettings: {

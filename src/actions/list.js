@@ -277,6 +277,8 @@ async function prepareResponse(ctx, data) {
   };
 }
 
+const punctuation = /[,.<>{}[\]"':;!@#$%^&*()\-+=~]+/g;
+
 /**
  * Performs search using redis search extension
  */
@@ -299,8 +301,13 @@ async function redisSearch(ctx) {
 
   if (ctx.hasTags) {
     for (const [idx, tag] of ctx.tags.sort().entries()) {
-      query.push(`@${FILES_TAGS_FIELD}:($tag${idx})`);
-      params.push(`tag${idx}`, tag);
+      // multi-word or tags containing punctuation will be broken into pieces
+      const normalizedTags = tag.replace(punctuation, ' ').split(/\s/);
+      for (const [idx2, subTag] of normalizedTags.entries()) {
+        const varName = `tag_${idx}_${idx2}`;
+        query.push(`@${FILES_TAGS_FIELD}:$${varName}`);
+        params.push(varName, subTag);
+      }
     }
   }
 
@@ -348,7 +355,7 @@ async function redisSearch(ctx) {
     } else if (actionTypeOrValue.match) {
       // TODO: verify correctness of this
       const varName = `f_${propName.replace(/\|/g, '_')}_m`;
-      query.push(`@${propName}:($${varName})`);
+      query.push(`@${propName}:($${varName}*)`);
       params.push(varName, actionTypeOrValue.match);
     }
   }
