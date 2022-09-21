@@ -1,3 +1,11 @@
+## [16.0.6](https://github.com/makeomatic/ms-files/compare/v16.0.5...v16.0.6) (2022-09-21)
+
+
+### Bug Fixes
+
+* allow searching by infix, too ([130dfdc](https://github.com/makeomatic/ms-files/commit/130dfdc67cd976d6824687a3041ec846faef83a1))
+* revert suffix search ([4797bff](https://github.com/makeomatic/ms-files/commit/4797bffa9a3555700113cbdd21f509d17a98371b))
+
 ## [16.0.5](https://github.com/makeomatic/ms-files/compare/v16.0.4...v16.0.5) (2022-09-20)
 
 
