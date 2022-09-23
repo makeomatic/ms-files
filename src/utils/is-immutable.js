@@ -18,6 +18,8 @@ function assertNotImmutable(data) {
   if (isImmutable(data)) {
     throw new HttpStatusError(400, 'should not be immutable object');
   }
+
+  return data;
 }
 
 module.exports = {
