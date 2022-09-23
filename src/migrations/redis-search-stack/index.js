@@ -21,6 +21,7 @@ const {
   FILES_PARENT_FIELD,
   FILES_CLONED_AT_FIELD,
   FILES_IMMUTABLE_FIELD,
+  FILES_HAS_CLONES_FIELD,
 } = require('../../constant');
 
 const FIELD_TO_TYPE = [
@@ -46,6 +47,8 @@ const FIELD_TO_TYPE = [
   [FILES_PARENT_FIELD, 'TAG', 'SORTABLE'],
   [FILES_CLONED_AT_FIELD, 'NUMERIC', 'SORTABLE'],
   [FILES_IMMUTABLE_FIELD, 'TAG', 'SORTABLE'],
+  [FILES_CLONED_AT_FIELD, 'NUMERIC', 'SORTABLE'],
+  [FILES_HAS_CLONES_FIELD, 'NUMERIC', 'SORTABLE'],
 ];
 
 // https://redis.io/docs/stack/search/reference/aggregations/#filter-expressions

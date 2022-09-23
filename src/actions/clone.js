@@ -23,13 +23,15 @@ const {
   FILES_INDEX_UAT,
   FILES_USER_INDEX_UAT_KEY,
   FILES_CLONED_AT,
-  LOCK_CLONE_KEY,
   FILES_PARENT_FIELD,
   FILES_ID_FIELD,
+  FILES_HAS_CLONES_FIELD,
+  LOCK_CLONE_KEY,
+  LOCK_UPDATE_KEY,
 } = require('../constant');
 
 /**
- * Create data copy of the selected file. Do not copies files in the bucket
+ * Create data clone of the selected file. Do not copies files in the buckets
  * @param  {Object} params.uploadId
  * @param  {Object} params.owner
  * @return {Promise}
@@ -37,10 +39,10 @@ const {
 async function cloneFile(lock, ctx, params) {
   const { uploadId, username } = params;
   const { redis } = ctx;
-
+  const modelKey = FILES_DATA_INDEX_KEY(uploadId);
   const data = await Promise
     .bind(ctx)
-    .return(FILES_DATA_INDEX_KEY(uploadId))
+    .return(modelKey)
     .then(fetchData)
     .then(isProcessed)
     .then(isUnlisted)
@@ -79,6 +81,9 @@ async function cloneFile(lock, ctx, params) {
     pipeline.sadd(newOwnerPublicIndex, newUploadId);
   }
 
+  // add mark to the original file
+  pipeline.hset(modelKey, FILES_HAS_CLONES_FIELD, 1);
+
   pipeline.hmset(newModelKey, data);
 
   handlePipeline(await pipeline.exec());
@@ -94,7 +99,7 @@ async function cloneFile(lock, ctx, params) {
 function cloneFileAction({ params }) {
   const { uploadId } = params;
 
-  const keys = [LOCK_CLONE_KEY(uploadId)];
+  const keys = [LOCK_CLONE_KEY(uploadId), LOCK_UPDATE_KEY(uploadId)];
 
   return Promise.using(this.dlock.acquireLock(...keys), this, params, cloneFile);
 }
