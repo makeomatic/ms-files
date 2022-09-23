@@ -53,6 +53,9 @@ module.exports = exports = Object.setPrototypeOf({
   FILES_NAME_FIELD: 'name',
   FILES_DESCRIPTION_FIELD: 'description',
   FILES_WEBSITE_FIELD: 'website',
+  FILES_IMMUTABLE_FIELD: 'immutable',
+  FILES_PARENT_FIELD: 'parent',
+  FILES_CLONED_AT: 'clonedAt',
 
   // metatype of file
   FILES_TYPE_FIELD: 'type',
@@ -111,6 +114,8 @@ exports.CAPPASITY_TYPE_MAP = Object.setPrototypeOf({
 }, null);
 
 exports.LOCK_UPDATE_KEY = (uploadId) => `file:update:${uploadId}`;
+exports.LOCK_CLONE_KEY = (uploadId) => `file:clone:${uploadId}`;
+
 exports.FILES_DATA_INDEX_KEY = (uploadId) => `${exports.FILES_DATA}:${uploadId}`;
 exports.FILES_TAGS_INDEX_KEY = (tag) => `${exports.FILES_INDEX_TAGS}:${tag}`;
 exports.FILES_USER_INDEX_KEY = (username) => `${exports.FILES_INDEX}:${username}`;
