@@ -6,7 +6,7 @@ const fetchData = require('../utils/fetch-data');
 const isProcessed = require('../utils/is-processed');
 const isUnlisted = require('../utils/is-unlisted');
 const { assertImmutable } = require('../utils/is-immutable');
-
+const { bustCache } = require('../utils/bust-cache');
 const handlePipeline = require('../utils/pipeline-error');
 
 const {
@@ -29,7 +29,7 @@ const {
 } = require('../constant');
 
 /**
- * Create copy of the selected file
+ * Create data copy of the selected file. Do not copies files in the bucket
  * @param  {Object} params.uploadId
  * @param  {Object} params.owner
  * @return {Promise}
@@ -65,7 +65,7 @@ async function cloneFile(lock, ctx, params) {
   data[FILES_CLONED_AT] = Date.now();
 
   // add model to user and global indexes
-  pipeline.sadd(FILES_USER_INDEX_KEY, newUploadId);
+  pipeline.sadd(FILES_USER_INDEX_KEY(username), newUploadId);
   pipeline.sadd(FILES_INDEX, newUploadId);
   pipeline.zadd(FILES_INDEX_UAT, uploadedAt, newUploadId);
   pipeline.zadd(FILES_USER_INDEX_UAT_KEY(username), uploadedAt, newUploadId);
@@ -74,18 +74,21 @@ async function cloneFile(lock, ctx, params) {
     data[FILES_TAGS_FIELD].forEach((tag) => pipeline.sadd(FILES_TAGS_INDEX_KEY(tag), newUploadId));
   }
 
-  if (data[FILES_DIRECT_ONLY_FIELD]) {
-    if (isPublic) {
-      pipeline.sadd(FILES_INDEX_PUBLIC, newUploadId);
-      pipeline.sadd(newOwnerPublicIndex, newUploadId);
-    }
+  if (!data[FILES_DIRECT_ONLY_FIELD] && isPublic) {
+    pipeline.sadd(FILES_INDEX_PUBLIC, newUploadId);
+    pipeline.sadd(newOwnerPublicIndex, newUploadId);
   }
 
   pipeline.hmset(newModelKey, data);
 
   handlePipeline(await pipeline.exec());
 
-  return { uploadId: newUploadId };
+  await bustCache(redis, data, true, true);
+
+  return {
+    uploadId: newUploadId,
+    username,
+  };
 }
 
 function cloneFileAction({ params }) {

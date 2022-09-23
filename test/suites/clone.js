@@ -50,58 +50,85 @@ describe('clone file suite', function suite() {
     );
   });
 
+  it('should check whether model is immutable', async function test() {
+    await assert.rejects(
+      this.send({ uploadId: file.uploadId, username: owner }),
+      /should be immutable object/
+    );
+  });
+
   it('should clone model', async function test() {
+    await this.amqp.publishAndWait('files.update', {
+      uploadId: file.uploadId,
+      username: owner,
+      immutable: true,
+      meta: {},
+    });
     const response = await this.send({
       uploadId: file.uploadId,
       username: owner,
     });
 
-    console.debug('== clone response', response);
+    assert.ok(response.uploadId);
+    assert.strictEqual(response.username, owner);
 
-    const clonedModel = await this.amqp.publishAndWait('files.info', {
+    const { file: copy } = await this.amqp.publishAndWait('files.info', {
       filename: response.uploadId,
       username: file.owner,
     });
 
-    console.debug('=== orig model', file);
-    console.debug('=== cloned model', clonedModel.file);
+    assert.ok(copy.clonedAt);
+    assert.strictEqual(copy.owner, owner);
+    assert.strictEqual(copy.parentId, file.uploadId);
   });
 
-  describe.skip('directOnly upload public model', function directOnlySuite() {
-    it('list does not return this file from public list', async function test() {
-      const { files: response } = await this.amqp.publishAndWait('files.list', {
-        public: true,
-        username: modelData.message.username,
+  it('lists public cloned models', async function checkListSuite() {
+    const { files: response } = await this.amqp.publishAndWait('files.list', {
+      public: true,
+      username: file.owner,
+    });
+
+    assert.strictEqual(response.length, 0);
+  });
+
+  it('lists public cloned models', async function checkListSuite() {
+    const { files: response } = await this.amqp.publishAndWait('files.list', {
+      public: false,
+      username: file.owner,
+    });
+
+    assert.strictEqual(response.length, 2);
+  });
+
+  it('lists all cloned models', async function checkListSuite() {
+    const { files: response } = await this.amqp.publishAndWait('files.list', {
+      public: false,
+    });
+
+    assert.strictEqual(response.length, 2);
+  });
+
+  it('lists all cloned models', async function checkListSuite() {
+    const { files: response } = await this.amqp.publishAndWait('files.list', {
+      public: true,
+    });
+
+    assert.strictEqual(response.length, 0);
+  });
+
+  it('report endpoint returns stats for public & private models', function test() {
+    return this
+      .amqp
+      .publishAndWait('files.report', {
+        username: file.owner,
+        includeStorage: true,
+      })
+      .then((response) => {
+        assert.equal(response.total, 2);
+        assert.equal(response.public, 0);
+        assert.equal(response.totalContentLength, 1901153 * 2);
+        assert.equal(response.publicContentLength, 0);
+        return null;
       });
-
-      const directUpload = response.find((it) => it.id === this.response.uploadId);
-      assert.ifError(directUpload, 'direct upload was returned from public list');
-    });
-
-    it('list returns this file for private list', async function test() {
-      const { files: response } = await this.amqp.publishAndWait('files.list', {
-        public: false,
-        username: modelData.message.username,
-      });
-
-      const directUpload = response.find((it) => it.id === this.response.uploadId);
-      assert.ok(directUpload, 'direct upload was correctly returned');
-    });
-
-    it('report endpoint returns stats for public & private models', function test() {
-      return this
-        .amqp
-        .publishAndWait('files.report', {
-          username: modelData.message.username,
-          includeStorage: true,
-        })
-        .then((response) => {
-          assert.equal(response.total, 1);
-          assert.equal(response.public, 0);
-          assert.equal(response.totalContentLength, 1901153);
-          assert.equal(response.publicContentLength, 0);
-          return null;
-        });
-    });
   });
 });

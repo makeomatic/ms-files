@@ -7,7 +7,7 @@ function isImmutable(data) {
 }
 
 function assertImmutable(data) {
-  if (isImmutable(data)) {
+  if (!isImmutable(data)) {
     throw new HttpStatusError(400, 'should be immutable object');
   }
 

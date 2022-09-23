@@ -806,9 +806,6 @@
               }
             }
           }
-        },
-        "immutable": {
-          "type": "boolean"
         }
       }
     },

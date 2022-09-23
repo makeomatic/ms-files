@@ -28,6 +28,7 @@ const {
   FILES_VERSION_FIELD,
   FILES_NFT_FIELD,
   FILES_HAS_NFT,
+  FILES_IMMUTABLE_FIELD,
 } = require('../constant');
 
 const { call } = Function.prototype;
@@ -71,7 +72,7 @@ function preProcessMetadata(data) {
 }
 
 async function updateMeta(lock, ctx, params) {
-  const { uploadId, username, directOnly } = params;
+  const { uploadId, username, directOnly, immutable } = params;
   const { redis } = ctx;
   const key = FILES_DATA_INDEX_KEY(uploadId);
   const meta = preProcessMetadata(params.meta);
@@ -161,6 +162,10 @@ async function updateMeta(lock, ctx, params) {
       pipeline.srem(FILES_INDEX_PUBLIC, uploadId);
       pipeline.srem(userPublicIndex, uploadId);
     }
+  }
+
+  if (immutable === true) {
+    pipeline.hset(key, FILES_IMMUTABLE_FIELD, '1');
   }
 
   for (const field of FIELDS_TO_STRINGIFY.values()) {

@@ -5,6 +5,8 @@ const fetchData = require('../utils/fetch-data');
 const hasAccess = require('../utils/has-access');
 const isProcessed = require('../utils/is-processed');
 const { bustCache } = require('../utils/bust-cache');
+const { isImmutable } = require('../utils/is-immutable');
+
 const {
   FILES_DATA,
   FILES_OWNER_FIELD,
@@ -59,12 +61,14 @@ async function removeFromPublic(uploadId, data) {
   const index = FILES_USER_INDEX_PUBLIC_KEY(owner);
   const id = `${FILES_DATA}:${uploadId}`;
 
-  // get transport
-  const transport = provider('access', data);
-
-  await Promise.map(files, (file) => (
-    transport.makePrivate(file.filename)
-  ));
+  // if file is cloned and it's an nft, do not update access rights
+  if (!isImmutable(data) && data.nft) {
+    // get transport
+    const transport = provider('access', data);
+    await Promise.map(files, (file) => (
+      transport.makePrivate(file.filename)
+    ));
+  }
 
   return handlePipeline(
     await redis
