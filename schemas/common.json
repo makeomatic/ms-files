@@ -421,7 +421,7 @@
         "contentLength": {
           "type": "integer",
           "minimum": 1,
-          "maximum": 20000000
+          "maximum": 100000000
         },
         "md5Hash": {
           "type": "string",
