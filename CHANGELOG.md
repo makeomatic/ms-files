@@ -1,3 +1,10 @@
+## [16.0.7](https://github.com/makeomatic/ms-files/compare/v16.0.6...v16.0.7) (2022-09-27)
+
+
+### Bug Fixes
+
+* up max video file size to 100mb ([#277](https://github.com/makeomatic/ms-files/issues/277)) ([9d67c3c](https://github.com/makeomatic/ms-files/commit/9d67c3cf4347b84a25e5cd0cd6fe0b9fa61ad4db))
+
 ## [16.0.6](https://github.com/makeomatic/ms-files/compare/v16.0.5...v16.0.6) (2022-09-21)
 
 
