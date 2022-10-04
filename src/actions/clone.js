@@ -7,6 +7,7 @@ const isProcessed = require('../utils/is-processed');
 const isUnlisted = require('../utils/is-unlisted');
 const { assertImmutable } = require('../utils/is-immutable');
 const { bustCache } = require('../utils/bust-cache');
+const stringify = require('../utils/stringify');
 const handlePipeline = require('../utils/pipeline-error');
 
 const {
@@ -28,6 +29,7 @@ const {
   FILES_HAS_CLONES_FIELD,
   LOCK_CLONE_KEY,
   LOCK_UPDATE_KEY,
+  FIELDS_TO_STRINGIFY,
 } = require('../constant');
 
 /**
@@ -74,6 +76,10 @@ async function cloneFile(lock, ctx, params) {
 
   if (uploadData[FILES_TAGS_FIELD]) {
     uploadData[FILES_TAGS_FIELD].forEach((tag) => pipeline.sadd(FILES_TAGS_INDEX_KEY(tag), newUploadId));
+  }
+
+  for (const field of FIELDS_TO_STRINGIFY.values()) {
+    stringify(uploadData, field);
   }
 
   if (!uploadData[FILES_DIRECT_ONLY_FIELD] && isPublic) {
