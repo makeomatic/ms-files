@@ -57,6 +57,7 @@ module.exports = exports = Object.setPrototypeOf({
   FILES_PARENT_FIELD: 'parentId',
   FILES_HAS_CLONES_FIELD: 'hasClones',
   FILES_CLONED_AT_FIELD: 'clonedAt',
+  FILES_FILES_FIELD: 'files',
 
   // metatype of file
   FILES_TYPE_FIELD: 'type',

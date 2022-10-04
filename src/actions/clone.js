@@ -30,6 +30,7 @@ const {
   LOCK_CLONE_KEY,
   LOCK_UPDATE_KEY,
   FIELDS_TO_STRINGIFY,
+  FILES_FILES_FIELD,
 } = require('../constant');
 
 /**
@@ -78,7 +79,7 @@ async function cloneFile(lock, ctx, params) {
     uploadData[FILES_TAGS_FIELD].forEach((tag) => pipeline.sadd(FILES_TAGS_INDEX_KEY(tag), newUploadId));
   }
 
-  for (const field of FIELDS_TO_STRINGIFY.values()) {
+  for (const field of [...FIELDS_TO_STRINGIFY.values(), FILES_FILES_FIELD]) {
     stringify(uploadData, field);
   }
 
