@@ -31,6 +31,7 @@ const {
   LOCK_UPDATE_KEY,
   FIELDS_TO_STRINGIFY,
   FILES_FILES_FIELD,
+  FILES_OWNER_FIELD,
 } = require('../constant');
 
 /**
@@ -67,6 +68,7 @@ async function cloneFile(lock, ctx, params) {
   // copy generic info
   uploadData[FILES_PARENT_FIELD] = uploadId;
   uploadData[FILES_ID_FIELD] = newUploadId;
+  uploadData[FILES_OWNER_FIELD] = username;
   uploadData[FILES_CLONED_AT_FIELD] = Date.now();
 
   // add model to user and global indexes
