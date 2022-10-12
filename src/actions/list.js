@@ -284,7 +284,7 @@ const punctuation = /[,.<>{}[\]"':;!@#$%^&*()\-+=~]+/g;
  */
 async function redisSearch(ctx) {
   // 1. build query
-  const indexName = `${ctx.service.config.redis.options.keyPrefix}:files-list-v3`;
+  const indexName = `${ctx.service.config.redis.options.keyPrefix}:files-list-v4`;
   const args = ['FT.SEARCH', indexName];
   const query = [];
   const params = [];
@@ -322,6 +322,7 @@ async function redisSearch(ctx) {
   }
 
   const { filter } = ctx;
+
   for (const [_propName, actionTypeOrValue] of Object.entries(filter)) {
     let propName = _propName;
     if (propName === '#') {
@@ -336,8 +337,12 @@ async function redisSearch(ctx) {
       // skip empty attributes
       // or nft cause it uses special index
     } else if (typeof actionTypeOrValue === 'string') {
-      query.push(`@${propName}:{ $f_${propName} }`);
-      params.push(`f_${propName}`, actionTypeOrValue);
+      if (Number.isNaN(parseInt(actionTypeOrValue, 10))) {
+        query.push(`@${propName}:{ $f_${propName} }`);
+        params.push(`f_${propName}`, actionTypeOrValue);
+      } else {
+        query.push(`@${propName}:[${actionTypeOrValue} ${actionTypeOrValue}]`);
+      }
     } else if (actionTypeOrValue.gte || actionTypeOrValue.lte) {
       const lowerRange = actionTypeOrValue.gte || '-inf';
       const upperRange = actionTypeOrValue.lte || '+inf';

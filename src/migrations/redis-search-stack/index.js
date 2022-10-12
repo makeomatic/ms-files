@@ -22,6 +22,7 @@ const {
   FILES_CLONED_AT_FIELD,
   FILES_IMMUTABLE_FIELD,
   FILES_HAS_CLONES_FIELD,
+  FILES_IS_CLONE_FIELD,
 } = require('../../constant');
 
 const FIELD_TO_TYPE = [
@@ -48,6 +49,7 @@ const FIELD_TO_TYPE = [
   [FILES_CLONED_AT_FIELD, 'NUMERIC', 'SORTABLE'],
   [FILES_IMMUTABLE_FIELD, 'TAG', 'SORTABLE'],
   [FILES_HAS_CLONES_FIELD, 'NUMERIC', 'SORTABLE'],
+  [FILES_IS_CLONE_FIELD, 'NUMERIC', 'SORTABLE'],
 ];
 
 // https://redis.io/docs/stack/search/reference/aggregations/#filter-expressions
@@ -57,7 +59,7 @@ async function createSearchIndex(service) {
 
   await redis.call(
     'FT.CREATE',
-    `${keyPrefix}:files-list-v3`,
+    `${keyPrefix}:files-list-v4`,
     'ON',
     'HASH',
     'PREFIX',

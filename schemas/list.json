@@ -90,6 +90,9 @@
                 "hasClones": {
                     "$ref": "common#/definitions/filter-props"
                 },
+                "isClone": {
+                    "$ref": "common#/definitions/filter-props"
+                },
                 "clonedAt": {
                     "$ref": "common#/definitions/filter-props"
                 },

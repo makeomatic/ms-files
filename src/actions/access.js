@@ -17,7 +17,6 @@ const {
   FILES_USER_INDEX_PUBLIC_KEY,
   FILES_USER_INDEX_UAT_PUBLIC_KEY,
   FILES_UPLOADED_AT_FIELD,
-  FILES_HAS_CLONES_FIELD,
 } = require('../constant');
 
 async function addToPublic(uploadId, data) {
@@ -62,8 +61,8 @@ async function removeFromPublic(uploadId, data) {
   const index = FILES_USER_INDEX_PUBLIC_KEY(owner);
   const id = `${FILES_DATA}:${uploadId}`;
 
-  // if file is cloned and it's an nft, do not update access rights
-  if (!isImmutable(data) && data[FILES_HAS_CLONES_FIELD]) {
+  // if is immutable do not allow to hide it
+  if (!isImmutable(data)) {
     // get transport
     const transport = provider('access', data);
     await Promise.map(files, (file) => (

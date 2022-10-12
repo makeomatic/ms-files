@@ -32,6 +32,7 @@ const {
   FIELDS_TO_STRINGIFY,
   FILES_FILES_FIELD,
   FILES_OWNER_FIELD,
+  FILES_IS_CLONE_FIELD,
 } = require('../constant');
 
 /**
@@ -70,6 +71,9 @@ async function cloneFile(lock, ctx, params) {
   uploadData[FILES_ID_FIELD] = newUploadId;
   uploadData[FILES_OWNER_FIELD] = username;
   uploadData[FILES_CLONED_AT_FIELD] = Date.now();
+  uploadData[FILES_IS_CLONE_FIELD] = '1';
+
+  delete uploadData[FILES_HAS_CLONES_FIELD];
 
   // add model to user and global indexes
   pipeline.sadd(FILES_USER_INDEX_KEY(username), newUploadId);

@@ -18,6 +18,17 @@ const route = 'files.clone';
 describe('clone file suite', function suite() {
   let file;
 
+  before('override config', function overrideConfig() {
+    this.configOverride = {
+      redisSearch: {
+        enabled: true,
+      },
+      migrations: {
+        enabled: true,
+      },
+    };
+  });
+
   before('start service', startService);
 
   before('upload', async function uploadFile() {
@@ -114,6 +125,26 @@ describe('clone file suite', function suite() {
     });
 
     assert.strictEqual(response.length, 0);
+  });
+
+  it('able to find models by `hasClones`', async function checkListSuite() {
+    const { files: response } = await this.amqp.publishAndWait('files.list', {
+      filter: {
+        hasClones: '1',
+      },
+    });
+
+    assert.strictEqual(response.length, 1);
+  });
+
+  it('able to find models by `isClone`', async function checkListSuite() {
+    const { files: response } = await this.amqp.publishAndWait('files.list', {
+      filter: {
+        isClone: '1',
+      },
+    });
+
+    assert.strictEqual(response.length, 1);
   });
 
   it('report endpoint returns stats for public & private models', function test() {

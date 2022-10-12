@@ -56,6 +56,7 @@ module.exports = exports = Object.setPrototypeOf({
   FILES_IMMUTABLE_FIELD: 'immutable',
   FILES_PARENT_FIELD: 'parentId',
   FILES_HAS_CLONES_FIELD: 'hasClones',
+  FILES_IS_CLONE_FIELD: 'isClone',
   FILES_CLONED_AT_FIELD: 'clonedAt',
   FILES_FILES_FIELD: 'files',
 
