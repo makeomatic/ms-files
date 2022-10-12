@@ -91,6 +91,7 @@ describe('clone file suite', function suite() {
     assert.ok(copy.clonedAt);
     assert.strictEqual(copy.owner, owner);
     assert.strictEqual(copy.parentId, file.uploadId);
+    assert.strictEqual(copy.isClone, '1');
   });
 
   it('lists public cloned models', async function checkListSuite() {
@@ -135,6 +136,7 @@ describe('clone file suite', function suite() {
     });
 
     assert.strictEqual(response.length, 1);
+    assert.strictEqual(response[0].hasClones, '1');
   });
 
   it('able to find models by `isClone`', async function checkListSuite() {
@@ -145,6 +147,7 @@ describe('clone file suite', function suite() {
     });
 
     assert.strictEqual(response.length, 1);
+    assert.strictEqual(response[0].isClone, '1');
   });
 
   it('report endpoint returns stats for public & private models', function test() {

@@ -337,7 +337,7 @@ async function redisSearch(ctx) {
       // skip empty attributes
       // or nft cause it uses special index
     } else if (typeof actionTypeOrValue === 'string') {
-      if (Number.isNaN(parseInt(actionTypeOrValue, 10))) {
+      if (Number.isNaN(+actionTypeOrValue)) {
         query.push(`@${propName}:{ $f_${propName} }`);
         params.push(`f_${propName}`, actionTypeOrValue);
       } else {
