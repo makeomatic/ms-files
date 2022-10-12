@@ -5,7 +5,7 @@ const fetchData = require('../utils/fetch-data');
 const hasAccess = require('../utils/has-access');
 const isProcessed = require('../utils/is-processed');
 const { bustCache } = require('../utils/bust-cache');
-const { isImmutable } = require('../utils/is-immutable');
+const { assertNotImmutable } = require('../utils/is-immutable');
 
 const {
   FILES_DATA,
@@ -61,14 +61,11 @@ async function removeFromPublic(uploadId, data) {
   const index = FILES_USER_INDEX_PUBLIC_KEY(owner);
   const id = `${FILES_DATA}:${uploadId}`;
 
-  // if is immutable do not allow to hide it
-  if (!isImmutable(data)) {
-    // get transport
-    const transport = provider('access', data);
-    await Promise.map(files, (file) => (
-      transport.makePrivate(file.filename)
-    ));
-  }
+  // get transport
+  const transport = provider('access', data);
+  await Promise.map(files, (file) => (
+    transport.makePrivate(file.filename)
+  ));
 
   return handlePipeline(
     await redis
@@ -91,7 +88,8 @@ async function adjustAccess({ params }) {
     .bind(this, id)
     .then(fetchData)
     .then(hasAccess(username))
-    .then(isProcessed);
+    .then(isProcessed)
+    .then(assertNotImmutable);
 
   return Promise
     .bind(this, [uploadId, data])
