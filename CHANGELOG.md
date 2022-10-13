@@ -1,3 +1,10 @@
+# [16.1.0](https://github.com/makeomatic/ms-files/compare/v16.0.7...v16.1.0) (2022-10-13)
+
+
+### Features
+
+* immutable field and clone file feature ([#275](https://github.com/makeomatic/ms-files/issues/275)) ([958e4cc](https://github.com/makeomatic/ms-files/commit/958e4ccf516cf9721d034ccbd07aa8afbadfae59))
+
 ## [16.0.7](https://github.com/makeomatic/ms-files/compare/v16.0.6...v16.0.7) (2022-09-27)
 
 
