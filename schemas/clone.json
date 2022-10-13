@@ -1,0 +1,16 @@
+{
+  "$id": "clone",
+  "type": "object",
+  "required": [
+      "uploadId",
+      "username"
+  ],
+  "properties": {
+    "uploadId": {
+      "$ref": "common#/definitions/uploadId"
+    },
+    "username": {
+      "$ref": "common#/definitions/owner"
+    }
+  }
+}

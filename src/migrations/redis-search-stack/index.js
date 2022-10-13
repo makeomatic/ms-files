@@ -18,6 +18,11 @@ const {
   FILES_NAME_FIELD,
   FILES_DESCRIPTION_FIELD,
   FILES_WEBSITE_FIELD,
+  FILES_PARENT_FIELD,
+  FILES_CLONED_AT_FIELD,
+  FILES_IMMUTABLE_FIELD,
+  FILES_HAS_CLONES_FIELD,
+  FILES_IS_CLONE_FIELD,
 } = require('../../constant');
 
 const FIELD_TO_TYPE = [
@@ -40,6 +45,11 @@ const FIELD_TO_TYPE = [
   [FILES_NAME_FIELD, 'TEXT', 'NOSTEM', 'SORTABLE'],
   [FILES_DESCRIPTION_FIELD, 'TEXT', 'NOSTEM', 'SORTABLE'],
   [FILES_WEBSITE_FIELD, 'TEXT', 'NOSTEM', 'SORTABLE'],
+  [FILES_PARENT_FIELD, 'TAG', 'SORTABLE'],
+  [FILES_CLONED_AT_FIELD, 'NUMERIC', 'SORTABLE'],
+  [FILES_IMMUTABLE_FIELD, 'TAG', 'SORTABLE'],
+  [FILES_HAS_CLONES_FIELD, 'NUMERIC', 'SORTABLE'],
+  [FILES_IS_CLONE_FIELD, 'NUMERIC', 'SORTABLE'],
 ];
 
 // https://redis.io/docs/stack/search/reference/aggregations/#filter-expressions
@@ -49,7 +59,7 @@ async function createSearchIndex(service) {
 
   await redis.call(
     'FT.CREATE',
-    `${keyPrefix}:files-list-v3`,
+    `${keyPrefix}:files-list-v4`,
     'ON',
     'HASH',
     'PREFIX',
@@ -63,5 +73,5 @@ async function createSearchIndex(service) {
 module.exports = {
   script: createSearchIndex,
   min: 1,
-  final: 7,
+  final: 8,
 };

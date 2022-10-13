@@ -815,8 +815,7 @@
           "type": "string",
           "minLength": 1,
           "maxLength": 50
-        },
-        {
+        }, {
           "type": "object",
           "minProperties": 1,
           "maxProperties": 2,

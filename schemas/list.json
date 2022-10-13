@@ -81,6 +81,21 @@
                 "parts": {
                     "$ref": "common#/definitions/filter-props"
                 },
+                "parentId": {
+                    "$ref": "common#/definitions/filter-props"
+                },
+                "immutable": {
+                    "$ref": "common#/definitions/filter-props"
+                },
+                "hasClones": {
+                    "$ref": "common#/definitions/filter-props"
+                },
+                "isClone": {
+                    "$ref": "common#/definitions/filter-props"
+                },
+                "clonedAt": {
+                    "$ref": "common#/definitions/filter-props"
+                },
                 "#": {
                     "$ref": "common#/definitions/filter-props"
                 },

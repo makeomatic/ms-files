@@ -9,6 +9,7 @@ const hasAccess = require('../utils/has-access');
 const isAliasTaken = require('../utils/is-alias-taken');
 const stringify = require('../utils/stringify');
 const isValidBackgroundOrigin = require('../utils/is-valid-background-origin');
+const { assertNotImmutable } = require('../utils/is-immutable');
 const { bustCache } = require('../utils/bust-cache');
 const {
   FILES_TAGS_FIELD,
@@ -27,6 +28,7 @@ const {
   FILES_VERSION_FIELD,
   FILES_NFT_FIELD,
   FILES_HAS_NFT,
+  FILES_IMMUTABLE_FIELD,
 } = require('../constant');
 
 const { call } = Function.prototype;
@@ -70,7 +72,7 @@ function preProcessMetadata(data) {
 }
 
 async function updateMeta(lock, ctx, params) {
-  const { uploadId, username, directOnly } = params;
+  const { uploadId, username, directOnly, immutable } = params;
   const { redis } = ctx;
   const key = FILES_DATA_INDEX_KEY(uploadId);
   const meta = preProcessMetadata(params.meta);
@@ -86,7 +88,8 @@ async function updateMeta(lock, ctx, params) {
     .then(isProcessed)
     .then(isUnlisted)
     .then(hasAccess(username))
-    .then(isAliasTaken(alias));
+    .then(isAliasTaken(alias))
+    .then(assertNotImmutable);
 
   // ensure we still hold the lock
   await lock.extend();
@@ -159,6 +162,10 @@ async function updateMeta(lock, ctx, params) {
       pipeline.srem(FILES_INDEX_PUBLIC, uploadId);
       pipeline.srem(userPublicIndex, uploadId);
     }
+  }
+
+  if (immutable === true) {
+    pipeline.hset(key, FILES_IMMUTABLE_FIELD, '1');
   }
 
   for (const field of FIELDS_TO_STRINGIFY.values()) {

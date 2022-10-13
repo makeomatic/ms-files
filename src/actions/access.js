@@ -5,6 +5,8 @@ const fetchData = require('../utils/fetch-data');
 const hasAccess = require('../utils/has-access');
 const isProcessed = require('../utils/is-processed');
 const { bustCache } = require('../utils/bust-cache');
+const { assertNotImmutable } = require('../utils/is-immutable');
+
 const {
   FILES_DATA,
   FILES_OWNER_FIELD,
@@ -61,7 +63,6 @@ async function removeFromPublic(uploadId, data) {
 
   // get transport
   const transport = provider('access', data);
-
   await Promise.map(files, (file) => (
     transport.makePrivate(file.filename)
   ));
@@ -87,7 +88,8 @@ async function adjustAccess({ params }) {
     .bind(this, id)
     .then(fetchData)
     .then(hasAccess(username))
-    .then(isProcessed);
+    .then(isProcessed)
+    .then(assertNotImmutable);
 
   return Promise
     .bind(this, [uploadId, data])

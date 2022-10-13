@@ -3,6 +3,7 @@ const Promise = require('bluebird');
 const hasAccess = require('../utils/has-access');
 const fetchData = require('../utils/fetch-data');
 const isUnlisted = require('../utils/is-unlisted');
+const { assertNotImmutable } = require('../utils/is-immutable');
 const { bustCache } = require('../utils/bust-cache');
 const {
   FILES_INDEX,
@@ -51,7 +52,8 @@ async function removeFile({ params }) {
     .bind(this, key)
     .then(fetchData)
     .then(isUnlisted)
-    .then(hasAccess(username));
+    .then(hasAccess(username))
+    .then(assertNotImmutable);
 
   if (!softDelete) {
     // we do not track this

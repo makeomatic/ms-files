@@ -16,6 +16,9 @@
     "directOnly": {
       "type": "boolean"
     },
+    "immutable": {
+      "type": "boolean"
+    },
     "meta": {
       "default": {},
       "allOf": [

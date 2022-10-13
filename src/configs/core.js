@@ -62,6 +62,7 @@ exports.hooks = {
   'files:process:pre': [],
   'files:process:post': [],
   'files:info:post': [],
+  'files:clone:before-pipeline-exec': [],
 };
 
 /**
