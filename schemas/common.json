@@ -411,7 +411,7 @@
       "properties": {
         "type": {
           "type": "string",
-          "const": "nn-color-source"
+          "const": "c-nn-color-source"
         },
         "contentType": {
           "type": "string",
@@ -443,7 +443,7 @@
       "properties": {
         "type": {
           "type": "string",
-          "const": "nn-mask-source"
+          "const": "c-nn-mask-source"
         },
         "contentType": {
           "type": "string",
