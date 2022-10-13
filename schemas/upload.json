@@ -23,7 +23,9 @@
           { "$ref": "common#/definitions/cp-gltf" },
           { "$ref": "common#/definitions/cp-usdz" },
           { "$ref": "common#/definitions/c-ar-color" },
-          { "$ref": "common#/definitions/c-ar-masks" }
+          { "$ref": "common#/definitions/c-ar-masks" },
+          { "$ref": "common#/definitions/c-nn-color-source" },
+          { "$ref": "common#/definitions/c-nn-mask-source" }
         ]
       }
     },

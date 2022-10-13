@@ -399,6 +399,70 @@
         }
       }
     },
+    "c-nn-color-source": {
+      "type": "object",
+      "required": [
+        "type",
+        "contentType",
+        "contentLength",
+        "md5Hash"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "type": "string",
+          "const": "nn-color-source"
+        },
+        "contentType": {
+          "type": "string",
+          "const": "image/vnd.cappasity+nn-color-source"
+        },
+        "contentLength": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 104857600
+        },
+        "md5Hash": {
+          "type": "string",
+          "pattern": "^[0-9A-Fa-f]{32}$"
+        },
+        "platforms": {
+          "$ref": "#/definitions/platforms"
+        }
+      }
+    },
+    "c-nn-mask-source": {
+      "type": "object",
+      "required": [
+        "type",
+        "contentType",
+        "contentLength",
+        "md5Hash"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "type": "string",
+          "const": "nn-mask-source"
+        },
+        "contentType": {
+          "type": "string",
+          "const": "image/vnd.cappasity+nn-mask-source"
+        },
+        "contentLength": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 104857600
+        },
+        "md5Hash": {
+          "type": "string",
+          "pattern": "^[0-9A-Fa-f]{32}$"
+        },
+        "platforms": {
+          "$ref": "#/definitions/platforms"
+        }
+      }
+    },
     "background-image": {
       "type": "object",
       "required": [
