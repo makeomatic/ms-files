@@ -36,3 +36,4 @@ lib
 pk.json
 /configs
 .pnpm-store
+.DS_Store
