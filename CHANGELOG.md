@@ -1,3 +1,10 @@
+# [16.2.0](https://github.com/makeomatic/ms-files/compare/v16.1.0...v16.2.0) (2022-10-14)
+
+
+### Features
+
+* new pack types ([#278](https://github.com/makeomatic/ms-files/issues/278)) ([575bd17](https://github.com/makeomatic/ms-files/commit/575bd17b2dea16a31aab7213f2d49c45380da341))
+
 # [16.1.0](https://github.com/makeomatic/ms-files/compare/v16.0.7...v16.1.0) (2022-10-13)
 
 
