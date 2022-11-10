@@ -553,6 +553,7 @@
           "enum": [
             "text/plain",
             "application/pdf",
+            "application/json",
             "text/csv"
           ]
         },
