@@ -1,3 +1,10 @@
+# [16.3.0](https://github.com/makeomatic/ms-files/compare/v16.2.0...v16.3.0) (2022-11-10)
+
+
+### Features
+
+* common.json extended with content-type application/json for arbitrary type ([#279](https://github.com/makeomatic/ms-files/issues/279)) ([b701cdf](https://github.com/makeomatic/ms-files/commit/b701cdf0108b463edbd461ddb723df58a534533c))
+
 # [16.2.0](https://github.com/makeomatic/ms-files/compare/v16.1.0...v16.2.0) (2022-10-14)
 
 
