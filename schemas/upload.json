@@ -25,7 +25,9 @@
           { "$ref": "common#/definitions/c-ar-color" },
           { "$ref": "common#/definitions/c-ar-masks" },
           { "$ref": "common#/definitions/c-nn-color-source" },
-          { "$ref": "common#/definitions/c-nn-mask-source" }
+          { "$ref": "common#/definitions/c-nn-mask-source" },
+          { "$ref": "common#/definitions/c-orig-color" },
+          { "$ref": "common#/definitions/c-orig-masks" }
         ]
       }
     },

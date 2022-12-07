@@ -1,7 +1,7 @@
 const uid = process.getuid()
 
 module.exports = exports = {
-  node: "16",
+  node: "18",
   auto_compose: true,
   with_local_compose: true,
   in_one: true,
