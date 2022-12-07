@@ -1,3 +1,15 @@
+# [16.4.0](https://github.com/makeomatic/ms-files/compare/v16.3.0...v16.4.0) (2022-12-07)
+
+
+### Bug Fixes
+
+* specify fetch.duplex as requested ([3b57ab4](https://github.com/makeomatic/ms-files/commit/3b57ab41eac60fe78e9603b149b08c909f016378))
+
+
+### Features
+
+* pack types, node 18 ([e7c301e](https://github.com/makeomatic/ms-files/commit/e7c301e6682cde533eb6efad65f502c438283894))
+
 # [16.3.0](https://github.com/makeomatic/ms-files/compare/v16.2.0...v16.3.0) (2022-11-10)
 
 
