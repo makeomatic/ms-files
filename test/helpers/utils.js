@@ -183,6 +183,7 @@ async function upload(location, file) {
     const res = await fetch(location, {
       method: 'PUT',
       keepalive: false,
+      duplex: 'half',
       body: Readable.from([file], { objectMode: false }),
     });
 
@@ -216,6 +217,7 @@ async function uploadSimple(meta, file, isPublic) {
     const res = await fetch(meta.location, {
       method: 'PUT',
       body: Readable.from([file], { objectMode: false }),
+      duplex: 'half',
       headers,
       keepalive: false,
     });

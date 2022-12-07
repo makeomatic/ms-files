@@ -167,6 +167,7 @@ async function uploadFile(meta, idx) {
     method: 'PUT',
     body: Readable.from([fileBuffer], { objectMode: false }),
     headers,
+    duplex: 'half',
     keepalive: false,
   });
 
