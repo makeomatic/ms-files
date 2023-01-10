@@ -315,12 +315,6 @@ async function redisSearch(ctx) {
     query.push(`${ctx.modelType === '3d' ? '-' : ''}@${FILES_HAS_NFT}:[1 1]`);
   }
 
-  if (ctx.uploadedAt) {
-    const lte = typeof ctx.uploadedAt.lte === 'number' ? ctx.uploadedAt.lte : '+inf';
-    const gte = typeof ctx.uploadedAt.gte === 'number' ? ctx.uploadedAt.gte : '-inf';
-    query.push('FILTER', FILES_UPLOADED_AT_FIELD, gte, lte);
-  }
-
   const { filter } = ctx;
 
   for (const [_propName, actionTypeOrValue] of Object.entries(filter)) {
@@ -377,6 +371,12 @@ async function redisSearch(ctx) {
     args.push(query.join(' '));
   } else {
     args.push('*');
+  }
+
+  if (ctx.uploadedAt) {
+    const lte = typeof ctx.uploadedAt.lte === 'number' ? ctx.uploadedAt.lte : '+inf';
+    const gte = typeof ctx.uploadedAt.gte === 'number' ? ctx.uploadedAt.gte : '-inf';
+    args.push('FILTER', FILES_UPLOADED_AT_FIELD, gte, lte);
   }
 
   if (params.length > 0) {
