@@ -1,3 +1,10 @@
+## [16.4.1](https://github.com/makeomatic/ms-files/compare/v16.4.0...v16.4.1) (2023-01-11)
+
+
+### Bug Fixes
+
+* **list:** redis search query for filter by uploadedAt ([#281](https://github.com/makeomatic/ms-files/issues/281)) ([6a2dbc9](https://github.com/makeomatic/ms-files/commit/6a2dbc9713e8743922a1cb1f9899c193617036c2))
+
 # [16.4.0](https://github.com/makeomatic/ms-files/compare/v16.3.0...v16.4.0) (2022-12-07)
 
 
