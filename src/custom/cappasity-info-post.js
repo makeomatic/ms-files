@@ -9,8 +9,10 @@ const {
   STATUS_PROCESSED,
   STATUS_PROCESSING,
   STATUS_FAILED,
-
   CAPPASITY_IMAGE_MODEL,
+  UPLOAD_TYPE_GOOGLE_MODEL_VIEWER,
+  UPLOAD_TYPE_PANORAMA_EQUIRECT,
+  UPLOAD_TYPE_PANORAMA_CUBEMAP,
 } = require('../constant');
 
 /*
@@ -232,10 +234,12 @@ const iframePre = flatstr(`<iframe
   frameborder="0"
   style="border:0;"`.replace(/\s+/g, ' '));
 
-// prepare options for 3 types of model - inserted after id
+// prepare options for 5 types of model - inserted after id
 const iframeMesh = flatstr(`${coreQS}&${meshQS}`);
 const iframeRotate = flatstr(`${coreQS}&${rotateQS}`);
 const iframeZoom = flatstr(`${coreQS}&${rotateQS}&${zoomQS}&${arQS}`);
+const iframePano = flatstr(`${coreQS}&${rotateQS}`);
+const iframeModelViewer = flatstr(`${coreQS}&${rotateQS}&${arQS}`);
 
 // pregenerate option objects - 1.x.x
 const paramsMesh = Object.setPrototypeOf({
@@ -260,10 +264,27 @@ const paramsZoom = Object.setPrototypeOf({
   ...defaultWindowOptions,
 }, null);
 
+// >= 5.x.x
+const paramsPano = Object.setPrototypeOf({
+  ...corePlayerOpts,
+  ...rotatePlayerOpts,
+  ...defaultWindowOptions,
+}, null);
+
+// >= 5.x.x
+const paramsModelViewer = Object.setPrototypeOf({
+  ...corePlayerOpts,
+  ...rotatePlayerOpts,
+  ...arPlayerOpts,
+  ...defaultWindowOptions,
+}, null);
+
 // quick-access selector
 const MESH_TYPE = Symbol('mesh');
 const ROTATE_TYPE = Symbol('rotate');
 const ZOOM_TYPE = Symbol('zoom');
+const PANO_TYPE = Symbol('pano');
+const MODEL_VIEWER_TYPE = Symbol('model-viewer');
 
 const selector = Object.setPrototypeOf({
   [MESH_TYPE]: Object.setPrototypeOf({
@@ -280,6 +301,16 @@ const selector = Object.setPrototypeOf({
     qs: iframeZoom,
     params: paramsZoom,
   }, null),
+
+  [PANO_TYPE]: Object.setPrototypeOf({
+    qs: iframePano,
+    params: paramsPano,
+  }, null),
+
+  [MODEL_VIEWER_TYPE]: Object.setPrototypeOf({
+    qs: iframeModelViewer,
+    params: paramsModelViewer,
+  }, null),
 }, null);
 
 const is4 = (version) => /^4\./.test(version);
@@ -290,15 +321,31 @@ const getAiHtml = memoize((apiDomain) => `<script async src="${getBaseUrl(apiDom
 const getPlayerOpts = (id, { uploadType, c_ver: modelVersion, packed }, apiDomain) => {
   // if upload type isn't simple - means we have old mesh upload
   // generally c_ver -> 1.x.x
-  // eslint-disable-next-line no-nested-ternary
-  const version = uploadType !== CAPPASITY_IMAGE_MODEL
-    ? MESH_TYPE
+  let version;
+
+  if (uploadType !== CAPPASITY_IMAGE_MODEL) {
+    switch (uploadType) {
+      case UPLOAD_TYPE_GOOGLE_MODEL_VIEWER:
+        version = MODEL_VIEWER_TYPE;
+        break;
+
+      case UPLOAD_TYPE_PANORAMA_EQUIRECT:
+      case UPLOAD_TYPE_PANORAMA_CUBEMAP:
+        version = PANO_TYPE;
+        break;
+
+      default:
+        version = MESH_TYPE;
+        break;
+    }
+  } else {
     // if it's not a new .pack format -> it would be old images in 2.x.x format
     // next one is 3.x.x with old packs, doesn't have zoom either
     // and then 4.x.x is advanced packs, we don't want semver checks here for purpose of
-    : modelVersion === undefined || !packed || is4(modelVersion) === false
+    version = modelVersion === undefined || !packed || is4(modelVersion) === false
       ? ROTATE_TYPE
       : ZOOM_TYPE;
+  }
 
   const data = selector[version];
   const baseUrl = getBaseUrl(apiDomain);
