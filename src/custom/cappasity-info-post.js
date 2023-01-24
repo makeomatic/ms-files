@@ -46,7 +46,7 @@ const corePlayerOpts = Object.setPrototypeOf({
     default: 1,
     description: 'Show logo',
     paid: true,
-    reqPlanLevel: 20,
+    reqPlanLevel: 5,
   },
   analytics: {
     type: 'boolean',
@@ -200,7 +200,8 @@ const arPlayerOpts = Object.setPrototypeOf({
     type: 'boolean',
     default: 1,
     description: 'AR button',
-    paid: false,
+    paid: true,
+    reqPlanLevel: 40,
   },
 }, null);
 
@@ -319,10 +320,10 @@ const getBaseUrl = memoize((apiDomain) => `https://${apiDomain}/api/player`);
 const getAiHtml = memoize((apiDomain) => `<script async src="${getBaseUrl(apiDomain)}/cappasity-ai"></script>`);
 
 const getPlayerOpts = (id, { uploadType, c_ver: modelVersion, packed }, apiDomain) => {
-  // if upload type isn't simple - means we have old mesh upload
-  // generally c_ver -> 1.x.x
   let version;
 
+  // if upload type isn't simple - means we have old mesh upload
+  // generally c_ver -> 1.x.x
   if (uploadType !== CAPPASITY_IMAGE_MODEL) {
     switch (uploadType) {
       case UPLOAD_TYPE_GOOGLE_MODEL_VIEWER:
