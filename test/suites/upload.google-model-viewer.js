@@ -5,7 +5,7 @@ const {
   stopService,
 } = require('../helpers/utils');
 
-describe('upload google-model-viewer suite', function suite() {
+describe('upload glb-extended suite', function suite() {
   before('start service', startService);
   after('stop service', stopService);
 
@@ -14,9 +14,9 @@ describe('upload google-model-viewer suite', function suite() {
 
     const response = await amqp.publishAndWait('files.upload', {
       username: 'v@makeomatic.ru',
-      uploadType: 'google-model-viewer',
+      uploadType: 'glb-extended',
       meta: {
-        name: 'google-model-viewer example',
+        name: 'glb-extended example',
       },
       files: [{
         contentType: 'image/jpeg',
@@ -31,7 +31,7 @@ describe('upload google-model-viewer suite', function suite() {
       }],
     });
 
-    strictEqual(response.name, 'google-model-viewer example');
+    strictEqual(response.name, 'glb-extended example');
     strictEqual(response.uploadId !== undefined, true);
     strictEqual(response.startedAt !== undefined, true);
     strictEqual(response.parts, 2);
@@ -39,7 +39,7 @@ describe('upload google-model-viewer suite', function suite() {
     strictEqual(response.status, '1');
     strictEqual(response.owner, 'v@makeomatic.ru');
     strictEqual(response.bucket.startsWith('makeomatic-13123'), true);
-    strictEqual(response.uploadType, 'google-model-viewer');
+    strictEqual(response.uploadType, 'glb-extended');
 
     strictEqual(response.files[0].contentType, 'image/jpeg');
     strictEqual(response.files[0].contentLength, 2452676);
@@ -65,9 +65,9 @@ describe('upload google-model-viewer suite', function suite() {
 
     const response = await amqp.publishAndWait('files.upload', {
       username: 'v@makeomatic.ru',
-      uploadType: 'google-model-viewer',
+      uploadType: 'glb-extended',
       meta: {
-        name: 'google-model-viewer example',
+        name: 'glb-extended example',
       },
       files: [{
         contentType: 'image/jpeg',
@@ -87,7 +87,7 @@ describe('upload google-model-viewer suite', function suite() {
       }],
     });
 
-    strictEqual(response.name, 'google-model-viewer example');
+    strictEqual(response.name, 'glb-extended example');
     strictEqual(response.uploadId !== undefined, true);
     strictEqual(response.startedAt !== undefined, true);
     strictEqual(response.parts, 3);
@@ -95,7 +95,7 @@ describe('upload google-model-viewer suite', function suite() {
     strictEqual(response.status, '1');
     strictEqual(response.owner, 'v@makeomatic.ru');
     strictEqual(response.bucket.startsWith('makeomatic-13123'), true);
-    strictEqual(response.uploadType, 'google-model-viewer');
+    strictEqual(response.uploadType, 'glb-extended');
 
     strictEqual(response.files[0].contentType, 'image/jpeg');
     strictEqual(response.files[0].contentLength, 2452676);
@@ -130,9 +130,9 @@ describe('upload google-model-viewer suite', function suite() {
     await rejects(
       amqp.publishAndWait('files.upload', {
         username: 'v@makeomatic.ru',
-        uploadType: 'google-model-viewer',
+        uploadType: 'glb-extended',
         meta: {
-          name: 'google-model-viewer example',
+          name: 'glb-extended example',
         },
         files: [{
           contentType: 'image/jpeg',
@@ -160,9 +160,9 @@ describe('upload google-model-viewer suite', function suite() {
     await rejects(
       amqp.publishAndWait('files.upload', {
         username: 'v@makeomatic.ru',
-        uploadType: 'google-model-viewer',
+        uploadType: 'glb-extended',
         meta: {
-          name: 'google-model-viewer example',
+          name: 'glb-extended example',
         },
         files: [{ // invalid count
           contentType: 'image/jpeg',
@@ -200,9 +200,9 @@ describe('upload google-model-viewer suite', function suite() {
     await rejects(
       amqp.publishAndWait('files.upload', {
         username: 'v@makeomatic.ru',
-        uploadType: 'google-model-viewer',
+        uploadType: 'glb-extended',
         meta: {
-          name: 'google-model-viewer example',
+          name: 'glb-extended example',
         },
         files: [{ // missing GLB
           contentType: 'image/jpeg',

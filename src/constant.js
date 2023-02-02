@@ -126,6 +126,6 @@ exports.FILES_USER_INDEX_PUBLIC_KEY = (username) => `${exports.FILES_INDEX}:${us
 exports.FILES_USER_INDEX_UAT_KEY = (username) => `${exports.FILES_INDEX_UAT}:${username}`;
 exports.FILES_USER_INDEX_UAT_PUBLIC_KEY = (username) => `${exports.FILES_USER_INDEX_UAT_KEY(username)}:pub`;
 
-exports.UPLOAD_TYPE_GOOGLE_MODEL_VIEWER = 'google-model-viewer';
+exports.UPLOAD_TYPE_GLB_EXTENDED = 'glb-extended';
 exports.UPLOAD_TYPE_PANORAMA_EQUIRECT = 'pano-equirect';
 exports.UPLOAD_TYPE_PANORAMA_CUBEMAP = 'pano-cubemap';

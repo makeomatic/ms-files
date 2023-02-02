@@ -10,7 +10,7 @@ const {
   STATUS_PROCESSING,
   STATUS_FAILED,
   CAPPASITY_IMAGE_MODEL,
-  UPLOAD_TYPE_GOOGLE_MODEL_VIEWER,
+  UPLOAD_TYPE_GLB_EXTENDED,
   UPLOAD_TYPE_PANORAMA_EQUIRECT,
   UPLOAD_TYPE_PANORAMA_CUBEMAP,
 } = require('../constant');
@@ -199,7 +199,7 @@ const arPlayerOpts = Object.setPrototypeOf({
   arbutton: {
     type: 'boolean',
     default: 1,
-    description: 'AR button',
+    description: 'Augmented Reality button',
     paid: true,
     reqPlanLevel: 40,
   },
@@ -240,7 +240,7 @@ const iframeMesh = flatstr(`${coreQS}&${meshQS}`);
 const iframeRotate = flatstr(`${coreQS}&${rotateQS}`);
 const iframeZoom = flatstr(`${coreQS}&${rotateQS}&${zoomQS}&${arQS}`);
 const iframePano = flatstr(`${coreQS}&${rotateQS}`);
-const iframeModelViewer = flatstr(`${coreQS}&${rotateQS}&${arQS}`);
+const iframeGlbExtended = flatstr(`${coreQS}&${rotateQS}&${arQS}`);
 
 // pregenerate option objects - 1.x.x
 const paramsMesh = Object.setPrototypeOf({
@@ -272,12 +272,17 @@ const paramsPano = Object.setPrototypeOf({
   ...defaultWindowOptions,
 }, null);
 
-// >= 5.x.x
-const paramsModelViewer = Object.setPrototypeOf({
+// >= 6.x.x
+const paramsGlbExtended = Object.setPrototypeOf({
   ...corePlayerOpts,
   ...rotatePlayerOpts,
   ...arPlayerOpts,
   ...defaultWindowOptions,
+  autoar: {
+    type: 'boolean',
+    default: 0,
+    description: 'Auto-start Augmented Reality',
+  },
 }, null);
 
 // quick-access selector
@@ -285,7 +290,7 @@ const MESH_TYPE = Symbol('mesh');
 const ROTATE_TYPE = Symbol('rotate');
 const ZOOM_TYPE = Symbol('zoom');
 const PANO_TYPE = Symbol('pano');
-const MODEL_VIEWER_TYPE = Symbol('model-viewer');
+const GLB_EXTENDED_TYPE = Symbol('glb-extended');
 
 const selector = Object.setPrototypeOf({
   [MESH_TYPE]: Object.setPrototypeOf({
@@ -308,9 +313,9 @@ const selector = Object.setPrototypeOf({
     params: paramsPano,
   }, null),
 
-  [MODEL_VIEWER_TYPE]: Object.setPrototypeOf({
-    qs: iframeModelViewer,
-    params: paramsModelViewer,
+  [GLB_EXTENDED_TYPE]: Object.setPrototypeOf({
+    qs: iframeGlbExtended,
+    params: paramsGlbExtended,
   }, null),
 }, null);
 
@@ -326,8 +331,8 @@ const getPlayerOpts = (id, { uploadType, c_ver: modelVersion, packed }, apiDomai
   // generally c_ver -> 1.x.x
   if (uploadType !== CAPPASITY_IMAGE_MODEL) {
     switch (uploadType) {
-      case UPLOAD_TYPE_GOOGLE_MODEL_VIEWER:
-        version = MODEL_VIEWER_TYPE;
+      case UPLOAD_TYPE_GLB_EXTENDED:
+        version = GLB_EXTENDED_TYPE;
         break;
 
       case UPLOAD_TYPE_PANORAMA_EQUIRECT:
