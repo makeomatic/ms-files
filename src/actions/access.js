@@ -89,7 +89,7 @@ async function adjustAccess({ params }) {
     .then(fetchData)
     .then(hasAccess(username))
     .then(isProcessed)
-    .then(assertNotImmutable);
+    .then(assertNotImmutable());
 
   return Promise
     .bind(this, [uploadId, data])

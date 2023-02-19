@@ -14,12 +14,18 @@ function assertImmutable(data) {
   return data;
 }
 
-function assertNotImmutable(data) {
-  if (isImmutable(data)) {
-    throw new HttpStatusError(400, 'should not be immutable object');
-  }
+function assertNotImmutable(metaToUpdate = {}) {
+  const allowedFieldsRe = /^c_nft.+/;
 
-  return data;
+  return function immutabilityCheck(data) {
+    const roField = Object.entries(metaToUpdate).filter(([key]) => !(allowedFieldsRe.test(key)));
+
+    if (isImmutable(data) && !roField) {
+      throw new HttpStatusError(400, 'should not be immutable object');
+    }
+
+    return data;
+  };
 }
 
 module.exports = {

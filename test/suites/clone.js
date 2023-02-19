@@ -94,6 +94,46 @@ describe('clone file suite', function suite() {
     assert.strictEqual(copy.isClone, '1');
   });
 
+  it.only('should allow to update specific metadata even if model is readonly', async function updateROFiedsSuite() {
+    await this.amqp.publishAndWait('files.update', {
+      uploadId: file.uploadId,
+      username: owner,
+      immutable: true,
+      meta: {},
+    });
+
+    const { uploadId, username } = await this.send({
+      uploadId: file.uploadId,
+      username: owner,
+    });
+
+    await this.amqp.publishAndWait('files.update', {
+      uploadId,
+      username,
+      meta: {
+        c_nftOwnerWallet: '0x0000',
+        c_nftCollectionId: '0x0000',
+        c_nftTokenId: '0x000',
+        c_nftTokenCount: 1,
+      },
+    });
+
+    const updatedData = await this.amqp.publishAndWait('files.data', {
+      uploadId,
+      fields: [
+        'c_nftOwnerWallet', 'c_nftCollectionId', 'c_nftTokenId', 'c_nftTokenCount',
+      ],
+    });
+
+    assert.deepStrictEqual(updatedData.file, {
+      uploadId,
+      c_nftOwnerWallet: '0x0000',
+      c_nftCollectionId: '0x0000',
+      c_nftTokenId: '0x000',
+      c_nftTokenCount: '1',
+    });
+  });
+
   it('lists public cloned models', async function checkListSuite() {
     const { files: response } = await this.amqp.publishAndWait('files.list', {
       public: true,

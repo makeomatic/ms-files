@@ -686,7 +686,7 @@
       "type": "object",
       "additionalProperties": false,
       "patternProperties": {
-        "^c_[a-z]+$": {
+        "^c_[a-zA-Z]+$": {
           "anyOf": [
             {
               "type": "string",

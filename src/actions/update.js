@@ -89,7 +89,7 @@ async function updateMeta(lock, ctx, params) {
     .then(isUnlisted)
     .then(hasAccess(username))
     .then(isAliasTaken(alias))
-    .then(assertNotImmutable);
+    .then(assertNotImmutable(meta));
 
   // ensure we still hold the lock
   await lock.extend();

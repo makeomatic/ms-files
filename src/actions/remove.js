@@ -53,7 +53,7 @@ async function removeFile({ params }) {
     .then(fetchData)
     .then(isUnlisted)
     .then(hasAccess(username))
-    .then(assertNotImmutable);
+    .then(assertNotImmutable());
 
   if (!softDelete) {
     // we do not track this

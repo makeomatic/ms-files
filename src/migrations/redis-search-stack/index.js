@@ -59,7 +59,7 @@ async function createSearchIndex(service) {
 
   await redis.call(
     'FT.CREATE',
-    `${keyPrefix}:files-list-v4`,
+    `${keyPrefix}:files-list-v5`,
     'ON',
     'HASH',
     'PREFIX',
@@ -73,5 +73,5 @@ async function createSearchIndex(service) {
 module.exports = {
   script: createSearchIndex,
   min: 1,
-  final: 8,
+  final: 9,
 };
