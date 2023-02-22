@@ -199,7 +199,7 @@ const arPlayerOpts = Object.setPrototypeOf({
   arbutton: {
     type: 'boolean',
     default: 1,
-    description: 'Augmented Reality button',
+    description: 'AR button',
     paid: true,
     reqPlanLevel: 40,
   },
