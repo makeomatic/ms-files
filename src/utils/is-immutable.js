@@ -1,9 +1,20 @@
 const { HttpStatusError } = require('common-errors');
 
-const { FILES_IMMUTABLE_FIELD } = require('../constant');
+const {
+  FILES_IMMUTABLE_FIELD,
+  FILES_NFT_WALLET,
+  FILES_NFT_COLLECTION,
+  FILES_NFT_TOKEN,
+  FILES_NFT_AMOUNT,
+  FILES_IS_CLONE_FIELD,
+} = require('../constant');
 
 function isImmutable(data) {
   return data && data[FILES_IMMUTABLE_FIELD];
+}
+
+function isClone(data) {
+  return data && data[FILES_IS_CLONE_FIELD];
 }
 
 function assertImmutable(data) {
@@ -14,13 +25,18 @@ function assertImmutable(data) {
   return data;
 }
 
-function assertNotImmutable(metaToUpdate = {}) {
-  const allowedFieldsRe = /^c_nft.+/;
+const updatableFields = [
+  FILES_NFT_AMOUNT,
+  FILES_NFT_COLLECTION,
+  FILES_NFT_TOKEN,
+  FILES_NFT_WALLET,
+];
 
+function assertNotImmutable(metaToUpdate = {}, isRemoveOp = false) {
   return function immutabilityCheck(data) {
-    const roField = Object.entries(metaToUpdate).filter(([key]) => !(allowedFieldsRe.test(key)));
+    const updatesRoField = Object.entries(metaToUpdate).filter(([key]) => !(updatableFields.includes(key)));
 
-    if (isImmutable(data) && !roField) {
+    if (isImmutable(data) && !updatesRoField && !isRemoveOp) {
       throw new HttpStatusError(400, 'should not be immutable object');
     }
 
@@ -30,6 +46,7 @@ function assertNotImmutable(metaToUpdate = {}) {
 
 module.exports = {
   isImmutable,
+  isClone,
   assertImmutable,
   assertNotImmutable,
 };

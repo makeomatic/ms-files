@@ -23,6 +23,10 @@ const {
   FILES_IMMUTABLE_FIELD,
   FILES_HAS_CLONES_FIELD,
   FILES_IS_CLONE_FIELD,
+  FILES_NFT_WALLET,
+  FILES_NFT_COLLECTION,
+  FILES_NFT_TOKEN,
+  FILES_NFT_AMOUNT,
 } = require('../../constant');
 
 const FIELD_TO_TYPE = [
@@ -50,6 +54,10 @@ const FIELD_TO_TYPE = [
   [FILES_IMMUTABLE_FIELD, 'TAG', 'SORTABLE'],
   [FILES_HAS_CLONES_FIELD, 'NUMERIC', 'SORTABLE'],
   [FILES_IS_CLONE_FIELD, 'NUMERIC', 'SORTABLE'],
+  [FILES_NFT_WALLET, 'TAG', 'SORTABLE'],
+  [FILES_NFT_COLLECTION, 'TAG', 'SORTABLE'],
+  [FILES_NFT_TOKEN, 'TAG', 'SORTABLE'],
+  [FILES_NFT_AMOUNT, 'NUMERIC', 'SORTABLE'],
 ];
 
 // https://redis.io/docs/stack/search/reference/aggregations/#filter-expressions

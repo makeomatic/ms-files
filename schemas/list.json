@@ -96,6 +96,18 @@
                 "clonedAt": {
                     "$ref": "common#/definitions/filter-props"
                 },
+                "nftWallet": {
+                    "$ref": "common#/definitions/filter-props"
+                },
+                "nftToken": {
+                    "$ref": "common#/definitions/filter-props"
+                },
+                "nftCollection": {
+                    "$ref": "common#/definitions/filter-props"
+                },
+                "nftAmount": {
+                    "$ref": "common#/definitions/filter-props"
+                },
                 "#": {
                     "$ref": "common#/definitions/filter-props"
                 },

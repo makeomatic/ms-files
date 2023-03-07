@@ -955,6 +955,24 @@
         "height": {
           "type": "integer",
           "description": "For panorama: panorama height"
+        },
+        "nftWallet": {
+          "type": "string",
+          "pattern":"^0x[0-9A-Fa-f]{40}$"
+        },
+        "nftCollection": {
+          "type": "string",
+          "pattern":"^0x[0-9A-Fa-f]{40}$"
+        },
+        "nftToken": {
+          "type": "string",
+          "pattern": "^[0-9]{58}$"
+        },
+        "nftAmount": {
+          "type": "number"
+        },
+        "nftBlockNumber": {
+          "type": "number"
         }
       }
     },
@@ -963,9 +981,8 @@
         {
           "type": "string",
           "minLength": 1,
-          "maxLength": 50
-        },
-        {
+          "maxLength": 58
+        }, {
           "type": "object",
           "minProperties": 1,
           "maxProperties": 2,

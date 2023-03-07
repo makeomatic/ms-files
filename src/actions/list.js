@@ -284,7 +284,7 @@ const punctuation = /[,.<>{}[\]"':;!@#$%^&*()\-+=~]+/g;
  */
 async function redisSearch(ctx) {
   // 1. build query
-  const indexName = `${ctx.service.config.redis.options.keyPrefix}:files-list-v4`;
+  const indexName = `${ctx.service.config.redis.options.keyPrefix}:files-list-v5`;
   const args = ['FT.SEARCH', indexName];
   const query = [];
   const params = [];

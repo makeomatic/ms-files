@@ -3,7 +3,7 @@ const Promise = require('bluebird');
 const hasAccess = require('../utils/has-access');
 const fetchData = require('../utils/fetch-data');
 const isUnlisted = require('../utils/is-unlisted');
-const { assertNotImmutable } = require('../utils/is-immutable');
+const { assertNotImmutable, isClone } = require('../utils/is-immutable');
 const { bustCache } = require('../utils/bust-cache');
 const {
   FILES_INDEX,
@@ -53,9 +53,9 @@ async function removeFile({ params }) {
     .then(fetchData)
     .then(isUnlisted)
     .then(hasAccess(username))
-    .then(assertNotImmutable());
+    .then(assertNotImmutable({}, true));
 
-  if (!softDelete) {
+  if (!softDelete || !isClone(data)) {
     // we do not track this
     cleanupFileProvider(data.files, provider, log)
       .catch((e) => log.fatal({ err: e }, 'failed to cleanup file provider for %s', filename));
