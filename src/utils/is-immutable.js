@@ -2,7 +2,7 @@ const { HttpStatusError } = require('common-errors');
 
 const {
   FILES_IMMUTABLE_FIELD,
-  FILES_NFT_WALLET,
+  FILES_NFT_OWNER,
   FILES_NFT_COLLECTION,
   FILES_NFT_TOKEN,
   FILES_NFT_AMOUNT,
@@ -29,7 +29,7 @@ const updatableFields = [
   FILES_NFT_AMOUNT,
   FILES_NFT_COLLECTION,
   FILES_NFT_TOKEN,
-  FILES_NFT_WALLET,
+  FILES_NFT_OWNER,
 ];
 
 function assertNotImmutable(metaToUpdate = {}, isRemoveOp = false) {

@@ -24,8 +24,9 @@ const {
   STATUS_PROCESSED,
   FILES_UPLOADED_AT_FIELD,
 } = require('../../src/constant');
+const { rejects } = require('assert');
 
-for (const redisSearchEnabled of [false, true].values()) {
+for (const redisSearchEnabled of [true, false].values()) {
   describe(`list suite, redisSearchEnabled: ${redisSearchEnabled}`, function suite() {
     // setup functions
     before('override config', function overrideConfig() {
@@ -650,43 +651,131 @@ for (const redisSearchEnabled of [false, true].values()) {
           meta: nftMeta,
         });
       });
+      describe('generic', function suiteGeneric() {
+        it('returns files for 3d', function test() {
+          return this.amqp.publishAndWait('files.list', {
+            filter: {},
+            order: 'ASC',
+            offset: 0,
+            limit: 10,
+            modelType: '3d',
+          })
+            .then((data) => {
+              assert.equal(data.pages, 50);
+            });
+        });
 
-      it('returns files without modelType meta', function test() {
-        return this.amqp.publishAndWait('files.list', {
-          filter: {},
-          order: 'ASC',
-          offset: 0,
-          limit: 10,
-        })
-          .then((data) => {
-            assert.equal(data.pages, 51);
+        if (!redisSearchEnabled) {
+          it('throws not implemented on nft modeltype request', async function test() {
+            const promise = this.amqp.publishAndWait('files.list', {
+              filter: {},
+              order: 'ASC',
+              offset: 0,
+              limit: 10,
+              modelType: 'nft',
+            });
+
+            await rejects(promise, /nft filter is unavailable/);
           });
+
+          return;
+        }
+
+        it('returns files without modelType meta', function test() {
+          return this.amqp.publishAndWait('files.list', {
+            filter: {},
+            order: 'ASC',
+            offset: 0,
+            limit: 10,
+          })
+            .then((data) => {
+              assert.equal(data.pages, 51);
+            });
+        });
+
+        it('returns files for modelType nft', function test() {
+          return this.amqp.publishAndWait('files.list', {
+            filter: {},
+            order: 'ASC',
+            offset: 0,
+            limit: 10,
+            modelType: 'nft',
+          })
+            .then((data) => {
+              assert.equal(data.pages, 1);
+            });
+        });
+
+        it('returns files for modelType nft and owner without wallet', async function test() {
+          const list = await this.amqp.publishAndWait('files.list', {
+            filter: {},
+            order: 'ASC',
+            offset: 0,
+            limit: 10,
+            modelType: 'nft',
+            owner: username,
+          });
+
+          assert.equal(list.pages, 1);
+        });
       });
 
-      it('returns files for 3d', function test() {
-        return this.amqp.publishAndWait('files.list', {
-          filter: {},
-          order: 'ASC',
-          offset: 0,
-          limit: 10,
-          modelType: '3d',
-        })
-          .then((data) => {
-            assert.equal(data.pages, 50);
-          });
-      });
+      describe('model with nftOwner', function suiteNft() {
+        // fsort logic not implemented
+        if (!redisSearchEnabled) {
+          return;
+        }
 
-      it('returns files for modelType nft', function test() {
-        return this.amqp.publishAndWait('files.list', {
-          filter: {},
-          order: 'ASC',
-          offset: 0,
-          limit: 10,
-          modelType: 'nft',
-        })
-          .then((data) => {
-            assert.equal(data.pages, 1);
+        before(async function before() {
+          await this.amqp.publishAndWait(updateRoute, {
+            uploadId: this.response.uploadId,
+            username,
+            meta: {
+              nftOwner: '0x0000000000000000000000000000000000000000',
+            },
           });
+        });
+
+        it('returns files for modelType nft and wallet', async function test() {
+          const list = await this.amqp.publishAndWait('files.list', {
+            filter: {},
+            order: 'ASC',
+            offset: 0,
+            limit: 10,
+            modelType: 'nft',
+            nftOwner: '0x0000000000000000000000000000000000000000',
+          });
+
+          assert.equal(list.pages, 1);
+        });
+
+        it('shows files for modelType nft by username and wallet', async function test() {
+          const list = await this.amqp.publishAndWait('files.list', {
+            filter: {},
+            order: 'ASC',
+            offset: 0,
+            limit: 10,
+            modelType: 'nft',
+            owner: username,
+            nftOwner: '0x0000000000000000000000000000000000000000',
+          });
+
+          assert.equal(list.pages, 1);
+        });
+
+        it('shows files for modelType nft by different username and mathing wallet', async function test() {
+          const list = await this.amqp.publishAndWait('files.list', {
+            filter: {},
+            order: 'ASC',
+            offset: 0,
+            limit: 10,
+            modelType: 'nft',
+            owner: `${username}123`,
+            nftOwner: '0x0000000000000000000000000000000000000000',
+          });
+
+          assert.equal(list.pages, 1);
+        });
       });
     });
   });

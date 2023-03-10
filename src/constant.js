@@ -59,10 +59,11 @@ module.exports = exports = Object.setPrototypeOf({
   FILES_IS_CLONE_FIELD: 'isClone',
   FILES_CLONED_AT_FIELD: 'clonedAt',
   FILES_FILES_FIELD: 'files',
-  FILES_NFT_WALLET: 'nftWallet',
+  FILES_NFT_OWNER: 'nftOwner',
+  FILES_HAS_NFT_OWNER: 'hnw',
   FILES_NFT_COLLECTION: 'nftCollection',
   FILES_NFT_TOKEN: 'nftToken',
-  FILES_NFT_TOKNE_COUNT: 'nftAmount',
+  FILES_NFT_TOKEN_COUNT: 'nftAmount',
 
   // metatype of file
   FILES_TYPE_FIELD: 'type',

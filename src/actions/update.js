@@ -29,6 +29,8 @@ const {
   FILES_NFT_FIELD,
   FILES_HAS_NFT,
   FILES_IMMUTABLE_FIELD,
+  FILES_NFT_OWNER,
+  FILES_HAS_NFT_OWNER,
 } = require('../constant');
 
 const { call } = Function.prototype;
@@ -179,6 +181,9 @@ async function updateMeta(lock, ctx, params) {
       meta[FILES_HAS_NFT] = '1';
     }
 
+    if (meta[FILES_NFT_OWNER]) {
+      meta[FILES_HAS_NFT_OWNER] = '1';
+    }
     pipeline.hmset(key, meta);
   }
 

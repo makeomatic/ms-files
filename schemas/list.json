@@ -96,7 +96,7 @@
                 "clonedAt": {
                     "$ref": "common#/definitions/filter-props"
                 },
-                "nftWallet": {
+                "nftOwner": {
                     "$ref": "common#/definitions/filter-props"
                 },
                 "nftToken": {

@@ -956,7 +956,7 @@
           "type": "integer",
           "description": "For panorama: panorama height"
         },
-        "nftWallet": {
+        "nftOwner": {
           "type": "string",
           "pattern":"^0x[0-9A-Fa-f]{40}$"
         },

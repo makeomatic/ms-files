@@ -79,7 +79,7 @@ describe('clone file suite', function suite() {
       uploadId: file.uploadId,
       username: owner,
       meta: {
-        nftWallet: '0x0000000000000000000000000000000000000002',
+        nftOwner: '0x0000000000000000000000000000000000000002',
       },
     });
 
@@ -95,7 +95,7 @@ describe('clone file suite', function suite() {
     assert.strictEqual(copy.owner, owner);
     assert.strictEqual(copy.parentId, file.uploadId);
     assert.strictEqual(copy.isClone, '1');
-    assert.strictEqual(copy.nftWallet, '0x0000000000000000000000000000000000000002');
+    assert.strictEqual(copy.nftOwner, '0x0000000000000000000000000000000000000002');
   });
 
   it('should allow to update specific metadata even if model is readonly', async function updateROFiedsSuite() {
@@ -115,7 +115,7 @@ describe('clone file suite', function suite() {
       uploadId,
       username,
       meta: {
-        nftWallet: '0x0000000000000000000000000000000000000001',
+        nftOwner: '0x0000000000000000000000000000000000000001',
         nftCollection: '0x0000000000000000000000000000000000000000',
         nftToken: '0000000000000000000000000000000000000000000000000000000000',
         nftAmount: 1,
@@ -125,13 +125,13 @@ describe('clone file suite', function suite() {
     const updatedData = await this.amqp.publishAndWait('files.data', {
       uploadId,
       fields: [
-        'nftWallet', 'nftCollection', 'nftToken', 'nftAmount',
+        'nftOwner', 'nftCollection', 'nftToken', 'nftAmount',
       ],
     });
 
     assert.deepStrictEqual(updatedData.file, {
       uploadId,
-      nftWallet: '0x0000000000000000000000000000000000000001',
+      nftOwner: '0x0000000000000000000000000000000000000001',
       nftCollection: '0x0000000000000000000000000000000000000000',
       nftToken: '0000000000000000000000000000000000000000000000000000000000',
       nftAmount: '1',

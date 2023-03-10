@@ -2,7 +2,7 @@ const { ActionTransport } = require('@microfleet/plugin-router');
 const Promise = require('bluebird');
 const fsort = require('redis-filtered-sort');
 const perf = require('ms-perf');
-const { HttpStatusError } = require('common-errors');
+const { HttpStatusError, NotImplementedError } = require('common-errors');
 const handlePipeline = require('../utils/pipeline-error');
 const fetchData = require('../utils/fetch-data').batch;
 const {
@@ -27,6 +27,8 @@ const {
   FILES_ID_FIELD,
   FILES_HAS_NFT,
   FILES_TEMP_FIELD,
+  FILES_NFT_OWNER,
+  FILES_HAS_NFT_OWNER,
 } = require('../constant');
 
 const k404Error = new Error('ELIST404');
@@ -35,7 +37,11 @@ const k404Error = new Error('ELIST404');
  * Internal functions
  */
 async function interstore(ctx) {
-  const { isPublic, temp, tags, redis, hasTags, uploadedAt, order, maxInterval, username } = ctx;
+  const { isPublic, temp, tags, redis, hasTags, uploadedAt, order, maxInterval, username, modelType } = ctx;
+
+  if (modelType === 'nft') {
+    throw new NotImplementedError('nft filter is unavailable');
+  }
 
   // choose which set to use
   let filesIndex;
@@ -289,7 +295,7 @@ async function redisSearch(ctx) {
   const query = [];
   const params = [];
 
-  if (ctx.username) {
+  if (ctx.username && ctx.modelType !== 'nft') {
     query.push(`@${FILES_OWNER_FIELD}:{ $username }`);
     params.push('username', ctx.username);
   }
@@ -313,6 +319,27 @@ async function redisSearch(ctx) {
 
   if (ctx.modelType) {
     query.push(`${ctx.modelType === '3d' ? '-' : ''}@${FILES_HAS_NFT}:[1 1]`);
+
+    if (ctx.modelType === 'nft') {
+      let ownerMatch = '';
+      let nftOwnerMatch = '';
+
+      if (ctx.username) {
+        // owner and empty wallet
+        ownerMatch = `(@${FILES_OWNER_FIELD}:{ $username } -@${FILES_HAS_NFT_OWNER}:[1 1])`;
+        params.push('username', ctx.username);
+      }
+
+      if (ctx.nftOwner) {
+        // only wallet match
+        nftOwnerMatch = `(@${FILES_NFT_OWNER}:{ $nftOwner }) @${FILES_HAS_NFT_OWNER}:[1 1]`;
+        params.push('nftOwner', ctx.nftOwner);
+      }
+
+      if (ctx.username || ctx.nftOwner) {
+        query.push(`(${ownerMatch}${ownerMatch && nftOwnerMatch ? '|' : ''}${nftOwnerMatch})`);
+      }
+    }
   }
 
   const { filter } = ctx;
@@ -439,6 +466,7 @@ async function listFiles({ params }) {
     criteria,
     tags,
     modelType,
+    nftOwner,
     temp,
     expiration = 30000,
   } = params;
@@ -451,7 +479,6 @@ async function listFiles({ params }) {
   }
 
   const nftFilters = {
-    nft: { nft: { exists: '1' } },
     '3d': { nft: { isempty: '1' } },
   };
 
@@ -493,6 +520,7 @@ async function listFiles({ params }) {
     hasTags: Array.isArray(tags) && tags.length > 0,
     avoidTagCache,
     username: '',
+    nftOwner,
     modelType,
   };
 
@@ -504,9 +532,9 @@ async function listFiles({ params }) {
     let ids;
     let total;
     if (config.redisSearch.enabled) {
-      ({ total, ids } = await redisSearch(ctx, username));
+      ({ total, ids } = await redisSearch(ctx));
     } else {
-      const stored = await interstore(ctx, username);
+      const stored = await interstore(ctx);
       timer('interstore');
       ids = await fetchFromRedis(ctx, stored);
       total = +ids.pop();
