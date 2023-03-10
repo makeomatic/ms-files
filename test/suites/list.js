@@ -2,6 +2,7 @@ const assert = require('assert');
 const { faker } = require('@faker-js/faker');
 const ld = require('lodash');
 const moment = require('moment');
+const { rejects } = require('assert');
 
 // helpers
 const {
@@ -24,7 +25,6 @@ const {
   STATUS_PROCESSED,
   FILES_UPLOADED_AT_FIELD,
 } = require('../../src/constant');
-const { rejects } = require('assert');
 
 for (const redisSearchEnabled of [true, false].values()) {
   describe(`list suite, redisSearchEnabled: ${redisSearchEnabled}`, function suite() {
