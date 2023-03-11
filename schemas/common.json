@@ -935,6 +935,14 @@
               }
             }
           }
+        },
+        "width": {
+          "type": "integer",
+          "description": "For panorama: panorama width"
+        },
+        "height": {
+          "type": "integer",
+          "description": "For panorama: panorama height"
         }
       }
     },
@@ -944,7 +952,8 @@
           "type": "string",
           "minLength": 1,
           "maxLength": 50
-        }, {
+        },
+        {
           "type": "object",
           "minProperties": 1,
           "maxProperties": 2,
