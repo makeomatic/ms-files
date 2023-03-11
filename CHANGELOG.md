@@ -1,3 +1,10 @@
+# [16.5.0](https://github.com/makeomatic/ms-files/compare/v16.4.1...v16.5.0) (2023-03-11)
+
+
+### Features
+
+* **upload:** add width and height to meta (used for panorama) ([#283](https://github.com/makeomatic/ms-files/issues/283)) ([a013ba7](https://github.com/makeomatic/ms-files/commit/a013ba76b7f8f97698878d019ebb9cc156ba09db))
+
 ## [16.4.1](https://github.com/makeomatic/ms-files/compare/v16.4.0...v16.4.1) (2023-01-11)
 
 
