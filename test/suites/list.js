@@ -763,7 +763,7 @@ for (const redisSearchEnabled of [true, false].values()) {
           assert.equal(list.pages, 1);
         });
 
-        it('shows files for modelType nft by different username and mathing wallet', async function test() {
+        it('shows files for modelType nft by different username and matching wallet', async function test() {
           const list = await this.amqp.publishAndWait('files.list', {
             filter: {},
             order: 'ASC',
@@ -775,6 +775,20 @@ for (const redisSearchEnabled of [true, false].values()) {
           });
 
           assert.equal(list.pages, 1);
+        });
+
+        it('hides files for modelType nft by different username and matching wallet', async function test() {
+          const list = await this.amqp.publishAndWait('files.list', {
+            filter: {},
+            order: 'ASC',
+            offset: 0,
+            limit: 10,
+            modelType: 'nft',
+            owner: username,
+            nftOwner: '0x0000000000000000000000000000000000000003',
+          });
+
+          assert.equal(list.pages, 0);
         });
       });
     });
