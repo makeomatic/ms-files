@@ -278,11 +278,6 @@ const paramsGlbExtended = Object.setPrototypeOf({
   ...rotatePlayerOpts,
   ...arPlayerOpts,
   ...defaultWindowOptions,
-  autoar: {
-    type: 'boolean',
-    default: 0,
-    description: 'Auto-start Augmented Reality',
-  },
 }, null);
 
 // quick-access selector
