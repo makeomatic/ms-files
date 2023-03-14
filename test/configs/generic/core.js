@@ -80,7 +80,6 @@ exports.hooks = {
   // return same username, because we mock it
   'files:download:alias': (username) => username,
   'files:info:post': require(`${cwd}/src/custom/cappasity-info-post`),
-  'files:clone:before-pipeline-exec': require(`${cwd}/src/custom/cappasity-clone-before-pipeline-exec`),
 };
 
 exports.maxTries = 1;

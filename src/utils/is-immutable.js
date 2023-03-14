@@ -7,6 +7,7 @@ const {
   FILES_NFT_TOKEN,
   FILES_NFT_AMOUNT,
   FILES_IS_CLONE_FIELD,
+  FILES_CLONES_COUNT,
 } = require('../constant');
 
 function isImmutable(data) {
@@ -30,6 +31,7 @@ const updatableFields = [
   FILES_NFT_COLLECTION,
   FILES_NFT_TOKEN,
   FILES_NFT_OWNER,
+  FILES_CLONES_COUNT,
 ];
 
 function assertNotImmutable(metaToUpdate = {}, isRemoveOp = false) {
