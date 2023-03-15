@@ -9,7 +9,7 @@ const hasAccess = require('../utils/has-access');
 const isAliasTaken = require('../utils/is-alias-taken');
 const stringify = require('../utils/stringify');
 const isValidBackgroundOrigin = require('../utils/is-valid-background-origin');
-const { assertNotImmutable } = require('../utils/is-immutable');
+const { assertUpdatable } = require('../utils/check-data');
 const { bustCache } = require('../utils/bust-cache');
 const {
   FILES_TAGS_FIELD,
@@ -91,7 +91,7 @@ async function updateMeta(lock, ctx, params) {
     .then(isUnlisted)
     .then(hasAccess(username))
     .then(isAliasTaken(alias))
-    .then(assertNotImmutable(meta));
+    .then(assertUpdatable(meta));
 
   // ensure we still hold the lock
   await lock.extend();

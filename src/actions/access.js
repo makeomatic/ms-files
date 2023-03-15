@@ -5,7 +5,7 @@ const fetchData = require('../utils/fetch-data');
 const hasAccess = require('../utils/has-access');
 const isProcessed = require('../utils/is-processed');
 const { bustCache } = require('../utils/bust-cache');
-const { assertNotImmutable } = require('../utils/is-immutable');
+const { assertUpdatable } = require('../utils/check-data');
 
 const {
   FILES_DATA,
@@ -89,7 +89,7 @@ async function adjustAccess({ params }) {
     .then(fetchData)
     .then(hasAccess(username))
     .then(isProcessed)
-    .then(assertNotImmutable());
+    .then(assertUpdatable());
 
   return Promise
     .bind(this, [uploadId, data])

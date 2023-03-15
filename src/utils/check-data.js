@@ -34,8 +34,8 @@ const updatableFields = [
   FILES_CLONES_COUNT,
 ];
 
-function assertNotImmutable(metaToUpdate = {}, isRemoveOp = false) {
-  return function immutabilityCheck(data) {
+function assertUpdatable(metaToUpdate = {}, isRemoveOp = false) {
+  return function isPossibleUpdateCheck(data) {
     const updatesRoField = Object.entries(metaToUpdate).filter(([key]) => !(updatableFields.includes(key)));
 
     if (isImmutable(data) && !updatesRoField && !isRemoveOp) {
@@ -50,5 +50,5 @@ module.exports = {
   isImmutable,
   isClone,
   assertImmutable,
-  assertNotImmutable,
+  assertUpdatable,
 };
