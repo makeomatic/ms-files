@@ -101,7 +101,8 @@
         "text",
         "pdf",
         "pano-equirect",
-        "pano-cubemap"
+        "pano-cubemap",
+        "glb-extended"
       ]
     },
     "directOnly": {
@@ -223,6 +224,45 @@
             },
             "minContains": 6,
             "maxContains": 6
+          }, {
+            "contains": {
+              "$ref": "common#/definitions/c-preview"
+            },
+            "minContains": 1,
+            "maxContains": 1
+          }]
+        }
+      }
+    }
+  }, {
+    "if": {
+      "required": [
+        "uploadType"
+      ],
+      "properties": {
+        "uploadType": {
+          "const": "glb-extended"
+        }
+      }
+    },
+    "then": {
+      "properties": {
+        "files": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 3,
+          "allOf": [{
+            "contains": {
+              "$ref": "common#/definitions/cp-gltf"
+            },
+            "minContains": 1,
+            "maxContains": 1
+          }, {
+            "contains": {
+              "$ref": "common#/definitions/cp-usdz"
+            },
+            "minContains": 0,
+            "maxContains": 1
           }, {
             "contains": {
               "$ref": "common#/definitions/c-preview"

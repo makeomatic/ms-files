@@ -9,8 +9,10 @@ const {
   STATUS_PROCESSED,
   STATUS_PROCESSING,
   STATUS_FAILED,
-
   CAPPASITY_IMAGE_MODEL,
+  UPLOAD_TYPE_GLB_EXTENDED,
+  UPLOAD_TYPE_PANORAMA_EQUIRECT,
+  UPLOAD_TYPE_PANORAMA_CUBEMAP,
 } = require('../constant');
 
 /*
@@ -44,7 +46,7 @@ const corePlayerOpts = Object.setPrototypeOf({
     default: 1,
     description: 'Show logo',
     paid: true,
-    reqPlanLevel: 20,
+    reqPlanLevel: 5,
   },
   analytics: {
     type: 'boolean',
@@ -198,7 +200,8 @@ const arPlayerOpts = Object.setPrototypeOf({
     type: 'boolean',
     default: 1,
     description: 'AR button',
-    paid: false,
+    paid: true,
+    reqPlanLevel: 40,
   },
 }, null);
 
@@ -232,10 +235,12 @@ const iframePre = flatstr(`<iframe
   frameborder="0"
   style="border:0;"`.replace(/\s+/g, ' '));
 
-// prepare options for 3 types of model - inserted after id
+// prepare options for 5 types of model - inserted after id
 const iframeMesh = flatstr(`${coreQS}&${meshQS}`);
 const iframeRotate = flatstr(`${coreQS}&${rotateQS}`);
 const iframeZoom = flatstr(`${coreQS}&${rotateQS}&${zoomQS}&${arQS}`);
+const iframePano = flatstr(`${coreQS}&${rotateQS}`);
+const iframeGlbExtended = flatstr(`${coreQS}&${rotateQS}&${arQS}`);
 
 // pregenerate option objects - 1.x.x
 const paramsMesh = Object.setPrototypeOf({
@@ -260,10 +265,27 @@ const paramsZoom = Object.setPrototypeOf({
   ...defaultWindowOptions,
 }, null);
 
+// >= 5.x.x
+const paramsPano = Object.setPrototypeOf({
+  ...corePlayerOpts,
+  ...rotatePlayerOpts,
+  ...defaultWindowOptions,
+}, null);
+
+// >= 6.x.x
+const paramsGlbExtended = Object.setPrototypeOf({
+  ...corePlayerOpts,
+  ...rotatePlayerOpts,
+  ...arPlayerOpts,
+  ...defaultWindowOptions,
+}, null);
+
 // quick-access selector
 const MESH_TYPE = Symbol('mesh');
 const ROTATE_TYPE = Symbol('rotate');
 const ZOOM_TYPE = Symbol('zoom');
+const PANO_TYPE = Symbol('pano');
+const GLB_EXTENDED_TYPE = Symbol('glb-extended');
 
 const selector = Object.setPrototypeOf({
   [MESH_TYPE]: Object.setPrototypeOf({
@@ -280,6 +302,16 @@ const selector = Object.setPrototypeOf({
     qs: iframeZoom,
     params: paramsZoom,
   }, null),
+
+  [PANO_TYPE]: Object.setPrototypeOf({
+    qs: iframePano,
+    params: paramsPano,
+  }, null),
+
+  [GLB_EXTENDED_TYPE]: Object.setPrototypeOf({
+    qs: iframeGlbExtended,
+    params: paramsGlbExtended,
+  }, null),
 }, null);
 
 const is4 = (version) => /^4\./.test(version);
@@ -288,17 +320,33 @@ const getBaseUrl = memoize((apiDomain) => `https://${apiDomain}/api/player`);
 const getAiHtml = memoize((apiDomain) => `<script async src="${getBaseUrl(apiDomain)}/cappasity-ai"></script>`);
 
 const getPlayerOpts = (id, { uploadType, c_ver: modelVersion, packed }, apiDomain) => {
+  let version;
+
   // if upload type isn't simple - means we have old mesh upload
   // generally c_ver -> 1.x.x
-  // eslint-disable-next-line no-nested-ternary
-  const version = uploadType !== CAPPASITY_IMAGE_MODEL
-    ? MESH_TYPE
+  if (uploadType !== CAPPASITY_IMAGE_MODEL) {
+    switch (uploadType) {
+      case UPLOAD_TYPE_GLB_EXTENDED:
+        version = GLB_EXTENDED_TYPE;
+        break;
+
+      case UPLOAD_TYPE_PANORAMA_EQUIRECT:
+      case UPLOAD_TYPE_PANORAMA_CUBEMAP:
+        version = PANO_TYPE;
+        break;
+
+      default:
+        version = MESH_TYPE;
+        break;
+    }
+  } else {
     // if it's not a new .pack format -> it would be old images in 2.x.x format
     // next one is 3.x.x with old packs, doesn't have zoom either
     // and then 4.x.x is advanced packs, we don't want semver checks here for purpose of
-    : modelVersion === undefined || !packed || is4(modelVersion) === false
+    version = modelVersion === undefined || !packed || is4(modelVersion) === false
       ? ROTATE_TYPE
       : ZOOM_TYPE;
+  }
 
   const data = selector[version];
   const baseUrl = getBaseUrl(apiDomain);

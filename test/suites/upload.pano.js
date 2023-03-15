@@ -64,52 +64,66 @@ describe('upload panorama suite', function suite() {
     it('should be able to return an error if the file type is invalid', async () => {
       const { amqp } = this.ctx;
 
-      await rejects(amqp.publishAndWait('files.upload', {
-        username: 'v@makeomatic.ru',
-        uploadType: 'pano-equirect',
-        meta: {
-          name: 'pano-equirect exmaple',
-        },
-        files: [{
-          contentType: 'image/jpeg',
-          contentLength: 2452676,
-          md5Hash: '8478d2bdfc72bea50f2754615d8b357b',
-          type: 'c-preview',
-        }, {
-          contentType: 'image/jpeg',
-          contentLength: 2452676,
-          md5Hash: '8478d2bdfc72bea50f2754615d8b357b',
-          type: 'pano-cubemap-image', // invalid type
-        }],
-      }), 'HttpStatusError: upload validation failed: data.files[0].type should be equal to constant');
+      await rejects(
+        amqp.publishAndWait('files.upload', {
+          username: 'v@makeomatic.ru',
+          uploadType: 'pano-equirect',
+          meta: {
+            name: 'pano-equirect exmaple',
+          },
+          files: [{
+            contentType: 'image/jpeg',
+            contentLength: 2452676,
+            md5Hash: '8478d2bdfc72bea50f2754615d8b357b',
+            type: 'c-preview',
+          }, {
+            contentType: 'image/jpeg',
+            contentLength: 2452676,
+            md5Hash: '8478d2bdfc72bea50f2754615d8b357b',
+            type: 'pano-cubemap-image', // invalid type
+          }],
+        }),
+        {
+          name: 'HttpStatusError',
+          // eslint-disable-next-line max-len
+          message: 'upload validation failed: data/files/0/type must be equal to constant, data/files/1/type must be equal to constant, data/files must contain at least 1 and no more than 1 valid item(s), data must match "then" schema',
+        }
+      );
     });
 
     it('should be able to return an error if the number of files is invalid', async () => {
       const { amqp } = this.ctx;
 
-      await rejects(amqp.publishAndWait('files.upload', {
-        username: 'v@makeomatic.ru',
-        uploadType: 'pano-equirect',
-        meta: {
-          name: 'pano-equirect exmaple',
-        },
-        files: [{ // invalid count
-          contentType: 'image/jpeg',
-          contentLength: 2452676,
-          md5Hash: '8478d2bdfc72bea50f2754615d8b357b',
-          type: 'c-preview',
-        }, {
-          contentType: 'image/jpeg',
-          contentLength: 2452676,
-          md5Hash: '8478d2bdfc72bea50f2754615d8b357b',
-          type: 'pano-equirect-image',
-        }, {
-          contentType: 'image/jpeg',
-          contentLength: 2452676,
-          md5Hash: '8478d2bdfc72bea50f2754615d8b357b',
-          type: 'pano-equirect-image',
-        }],
-      }), 'HttpStatusError: upload validation failed: data.files should NOT have more than 1 items');
+      await rejects(
+        amqp.publishAndWait('files.upload', {
+          username: 'v@makeomatic.ru',
+          uploadType: 'pano-equirect',
+          meta: {
+            name: 'pano-equirect exmaple',
+          },
+          files: [{ // invalid count
+            contentType: 'image/jpeg',
+            contentLength: 2452676,
+            md5Hash: '8478d2bdfc72bea50f2754615d8b357b',
+            type: 'c-preview',
+          }, {
+            contentType: 'image/jpeg',
+            contentLength: 2452676,
+            md5Hash: '8478d2bdfc72bea50f2754615d8b357b',
+            type: 'pano-equirect-image',
+          }, {
+            contentType: 'image/jpeg',
+            contentLength: 2452676,
+            md5Hash: '8478d2bdfc72bea50f2754615d8b357b',
+            type: 'pano-equirect-image',
+          }],
+        }),
+        {
+          name: 'HttpStatusError',
+          // eslint-disable-next-line max-len
+          message: 'upload validation failed: data/files/0/type must be equal to constant, data/files must contain at least 1 and no more than 1 valid item(s), data/files must NOT have more than 2 items, data must match "then" schema',
+        }
+      );
     });
   });
 
@@ -233,47 +247,61 @@ describe('upload panorama suite', function suite() {
     it('should be able to return an error if the file type is invalid', async () => {
       const { amqp } = this.ctx;
 
-      await rejects(amqp.publishAndWait('files.upload', {
-        username: 'v@makeomatic.ru',
-        uploadType: 'pano-cubemap',
-        meta: {
-          name: 'pano-cubemap exmaple',
-        },
-        files: [{
-          contentType: 'image/jpeg',
-          contentLength: 2452676,
-          md5Hash: '8478d2bdfc72bea50f2754615d8b357b',
-          type: 'c-preview',
-        }, {
-          contentType: 'image/jpeg',
-          contentLength: 2452676,
-          md5Hash: '8478d2bdfc72bea50f2754615d8b357b',
-          type: 'pano-equirect-image', // invalid type
-        }],
-      }), 'HttpStatusError: upload validation failed: data.files[0].type should be equal to constant');
+      await rejects(
+        amqp.publishAndWait('files.upload', {
+          username: 'v@makeomatic.ru',
+          uploadType: 'pano-cubemap',
+          meta: {
+            name: 'pano-cubemap exmaple',
+          },
+          files: [{
+            contentType: 'image/jpeg',
+            contentLength: 2452676,
+            md5Hash: '8478d2bdfc72bea50f2754615d8b357b',
+            type: 'c-preview',
+          }, {
+            contentType: 'image/jpeg',
+            contentLength: 2452676,
+            md5Hash: '8478d2bdfc72bea50f2754615d8b357b',
+            type: 'pano-equirect-image', // invalid type
+          }],
+        }),
+        {
+          name: 'HttpStatusError',
+          // eslint-disable-next-line max-len
+          message: 'upload validation failed: data/files/0/type must be equal to constant, data/files/1/type must be equal to constant, data/files must contain at least 6 and no more than 6 valid item(s), data/files must NOT have fewer than 7 items, data must match "then" schema',
+        }
+      );
     });
 
     it('should be able to return an error if the number of files is invalid', async () => {
       const { amqp } = this.ctx;
 
-      await rejects(amqp.publishAndWait('files.upload', {
-        username: 'v@makeomatic.ru',
-        uploadType: 'pano-cubemap',
-        meta: {
-          name: 'pano-cubemap exmaple',
-        },
-        files: [{ // invalid count
-          contentType: 'image/jpeg',
-          contentLength: 2452676,
-          md5Hash: '8478d2bdfc72bea50f2754615d8b357b',
-          type: 'c-preview',
-        }, {
-          contentType: 'image/jpeg',
-          contentLength: 2452676,
-          md5Hash: '8478d2bdfc72bea50f2754615d8b357b',
-          type: 'pano-cubemap-image',
-        }],
-      }), 'HttpStatusError: upload validation failed: data.files should NOT have more than 1 items');
+      await rejects(
+        amqp.publishAndWait('files.upload', {
+          username: 'v@makeomatic.ru',
+          uploadType: 'pano-cubemap',
+          meta: {
+            name: 'pano-cubemap exmaple',
+          },
+          files: [{ // invalid count
+            contentType: 'image/jpeg',
+            contentLength: 2452676,
+            md5Hash: '8478d2bdfc72bea50f2754615d8b357b',
+            type: 'c-preview',
+          }, {
+            contentType: 'image/jpeg',
+            contentLength: 2452676,
+            md5Hash: '8478d2bdfc72bea50f2754615d8b357b',
+            type: 'pano-cubemap-image',
+          }],
+        }),
+        {
+          name: 'HttpStatusError',
+          // eslint-disable-next-line max-len
+          message: 'upload validation failed: data/files/0/type must be equal to constant, data/files must contain at least 6 and no more than 6 valid item(s), data/files must NOT have fewer than 7 items, data must match "then" schema',
+        }
+      );
     });
   });
 });

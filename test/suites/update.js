@@ -221,8 +221,42 @@ describe('update suite', function suite() {
         });
     });
 
-    it('update background color', function test() {
+    it('update background color (hex)', function test() {
       meta.backgroundColor = '#00ffFa';
+
+      return this
+        .send({ uploadId: this.response.uploadId, username, meta }, 45000)
+        .then(async (result) => {
+          assert.equal(result, true);
+
+          const verifyResult = await getInfo.call(this, {
+            filename: this.response.uploadId,
+            username,
+          });
+
+          assert.equal(verifyResult.file.backgroundColor, meta.backgroundColor);
+        });
+    });
+
+    it('update background color (rgb)', function test() {
+      meta.backgroundColor = 'rgb(255,0,0)';
+
+      return this
+        .send({ uploadId: this.response.uploadId, username, meta }, 45000)
+        .then(async (result) => {
+          assert.equal(result, true);
+
+          const verifyResult = await getInfo.call(this, {
+            filename: this.response.uploadId,
+            username,
+          });
+
+          assert.equal(verifyResult.file.backgroundColor, meta.backgroundColor);
+        });
+    });
+
+    it('update background color (transparent)', function test() {
+      meta.backgroundColor = 'transparent';
 
       return this
         .send({ uploadId: this.response.uploadId, username, meta }, 45000)
