@@ -1,3 +1,10 @@
+# [16.6.0](https://github.com/makeomatic/ms-files/compare/v16.5.0...v16.6.0) (2023-03-15)
+
+
+### Features
+
+* upload GLB (extended) ([#280](https://github.com/makeomatic/ms-files/issues/280)) ([7f95d29](https://github.com/makeomatic/ms-files/commit/7f95d292afcdd65ed89646fcde7d20120d0aef84))
+
 # [16.5.0](https://github.com/makeomatic/ms-files/compare/v16.4.1...v16.5.0) (2023-03-11)
 
 
