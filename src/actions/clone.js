@@ -5,7 +5,7 @@ const Promise = require('bluebird');
 const fetchData = require('../utils/fetch-data');
 const isProcessed = require('../utils/is-processed');
 const isUnlisted = require('../utils/is-unlisted');
-const { assertImmutable } = require('../utils/check-data');
+const { assertClonable } = require('../utils/check-data');
 const { bustCache } = require('../utils/bust-cache');
 const stringify = require('../utils/stringify');
 const handlePipeline = require('../utils/pipeline-error');
@@ -52,7 +52,7 @@ async function cloneFile(lock, ctx, params) {
     .then(fetchData)
     .then(isProcessed)
     .then(isUnlisted)
-    .then(assertImmutable);
+    .then(assertClonable(meta));
 
   await lock.extend();
 

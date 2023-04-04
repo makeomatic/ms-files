@@ -116,8 +116,6 @@ describe('clone file suite', function suite() {
       username,
       meta: {
         nftOwner: '0x0000000000000000000000000000000000000001',
-        nftCollection: '0x0000000000000000000000000000000000000000',
-        nftToken: '0000000000000000000000000000000000000000000000000000000000',
         nftAmount: 1,
       },
     });
@@ -125,15 +123,13 @@ describe('clone file suite', function suite() {
     const updatedData = await this.amqp.publishAndWait('files.data', {
       uploadId,
       fields: [
-        'nftOwner', 'nftCollection', 'nftToken', 'nftAmount',
+        'nftOwner', 'nftAmount',
       ],
     });
 
     assert.deepStrictEqual(updatedData.file, {
       uploadId,
       nftOwner: '0x0000000000000000000000000000000000000001',
-      nftCollection: '0x0000000000000000000000000000000000000000',
-      nftToken: '0000000000000000000000000000000000000000000000000000000000',
       nftAmount: '1',
     });
   });

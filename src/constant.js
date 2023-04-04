@@ -64,7 +64,7 @@ module.exports = exports = Object.setPrototypeOf({
   FILES_HAS_NFT_OWNER: 'hnw',
   FILES_NFT_COLLECTION: 'nftCollection',
   FILES_NFT_TOKEN: 'nftToken',
-  FILES_NFT_TOKEN_COUNT: 'nftAmount',
+  FILES_NFT_TOKEN_AMOUNT: 'nftAmount',
 
   // metatype of file
   FILES_TYPE_FIELD: 'type',
