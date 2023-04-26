@@ -11,6 +11,8 @@ const stringify = require('../utils/stringify');
 const isValidBackgroundOrigin = require('../utils/is-valid-background-origin');
 const { assertUpdatable } = require('../utils/check-data');
 const { bustCache } = require('../utils/bust-cache');
+const { updateReferences, verifyReferences, isReferenceChanged, getReferenceData } = require('../utils/reference');
+
 const {
   FILES_TAGS_FIELD,
   FIELDS_TO_STRINGIFY,
@@ -31,6 +33,8 @@ const {
   FILES_IMMUTABLE_FIELD,
   FILES_NFT_OWNER,
   FILES_HAS_NFT_OWNER,
+  FILES_HAS_REFERENCES,
+  FILES_REFERECES_FIELD,
 } = require('../constant');
 
 const { call } = Function.prototype;
@@ -74,7 +78,7 @@ function preProcessMetadata(data) {
 }
 
 async function updateMeta(lock, ctx, params) {
-  const { uploadId, username, directOnly, immutable } = params;
+  const { uploadId, username, directOnly, immutable, includeReferences } = params;
   const { redis } = ctx;
   const key = FILES_DATA_INDEX_KEY(uploadId);
   const meta = preProcessMetadata(params.meta);
@@ -98,6 +102,16 @@ async function updateMeta(lock, ctx, params) {
 
   // call hook
   await ctx.hook.call(ctx, 'files:update:pre', username, data);
+
+  const referenceChanged = meta[FILES_REFERECES_FIELD] && isReferenceChanged(meta, data);
+  const newReferences = meta[FILES_REFERECES_FIELD];
+  const referencedInfo = referenceChanged
+    ? await getReferenceData(redis, newReferences)
+    : {};
+
+  if (referenceChanged) {
+    verifyReferences(data, referencedInfo, newReferences);
+  }
 
   // perform update
   const pipeline = redis.pipeline();
@@ -168,6 +182,17 @@ async function updateMeta(lock, ctx, params) {
 
   if (immutable === true) {
     pipeline.hset(key, FILES_IMMUTABLE_FIELD, '1');
+
+    // set referenced items immutable if requested
+    if (includeReferences) {
+      meta[FILES_REFERECES_FIELD].forEach((id) => {
+        pipeline.hset(FILES_DATA_INDEX_KEY(id), FILES_IMMUTABLE_FIELD, '1');
+      });
+    }
+  }
+
+  if (referenceChanged) {
+    updateReferences(meta, data, referencedInfo, pipeline);
   }
 
   for (const field of FIELDS_TO_STRINGIFY.values()) {
@@ -184,6 +209,13 @@ async function updateMeta(lock, ctx, params) {
     if (meta[FILES_NFT_OWNER]) {
       meta[FILES_HAS_NFT_OWNER] = '1';
     }
+
+    if (Array.isArray(meta[FILES_REFERECES_FIELD]) && meta[FILES_REFERECES_FIELD].length > 0) {
+      meta[FILES_HAS_REFERENCES] = '1';
+    } else {
+      meta[FILES_HAS_REFERENCES] = '0';
+    }
+
     pipeline.hmset(key, meta);
   }
 
@@ -213,6 +245,12 @@ function initFileUpdate({ params }) {
   // if we remove it - we don't care, so both undefined and '' works
   if (alias) {
     keys.push(`file:update:alias:${alias}`);
+  }
+
+  if (meta[FILES_REFERECES_FIELD]) {
+    meta[FILES_REFERECES_FIELD].forEach((referenceId) => {
+      keys.push(LOCK_UPDATE_KEY(referenceId));
+    });
   }
 
   // ensure there are no race-conditions
