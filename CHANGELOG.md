@@ -1,3 +1,10 @@
+## [16.6.1](https://github.com/makeomatic/ms-files/compare/v16.6.0...v16.6.1) (2023-04-27)
+
+
+### Bug Fixes
+
+* **upload:** increase max size for .glb ([#284](https://github.com/makeomatic/ms-files/issues/284)) ([7a2ac01](https://github.com/makeomatic/ms-files/commit/7a2ac016dd820e3c82bff56d8a62def1f1a47417))
+
 # [16.6.0](https://github.com/makeomatic/ms-files/compare/v16.5.0...v16.6.0) (2023-03-15)
 
 
