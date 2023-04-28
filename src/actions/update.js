@@ -103,13 +103,13 @@ async function updateMeta(lock, ctx, params) {
   // call hook
   await ctx.hook.call(ctx, 'files:update:pre', username, data);
 
-  const referenceChanged = meta[FILES_REFERENCES_FIELD] && isReferenceChanged(meta, data);
+  const referencesChanged = meta[FILES_REFERENCES_FIELD] && isReferenceChanged(meta, data);
   const newReferences = meta[FILES_REFERENCES_FIELD];
-  const referencedInfo = referenceChanged
+  const referencedInfo = referencesChanged
     ? await getReferenceData(redis, [...newReferences, ...data[FILES_REFERENCES_FIELD] || []])
     : {};
 
-  if (referenceChanged) {
+  if (referencesChanged) {
     verifyReferences(data, referencedInfo, newReferences);
   }
 
@@ -191,7 +191,7 @@ async function updateMeta(lock, ctx, params) {
     }
   }
 
-  if (referenceChanged) {
+  if (referencesChanged) {
     updateReferences(meta, data, referencedInfo, pipeline);
   }
 
