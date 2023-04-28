@@ -60,8 +60,8 @@ const FIELD_TO_TYPE = [
   [FILES_NFT_COLLECTION, 'TAG', 'SORTABLE'],
   [FILES_NFT_TOKEN, 'TAG', 'SORTABLE'],
   [FILES_NFT_AMOUNT, 'NUMERIC', 'SORTABLE'],
-  [FILES_HAS_NFT_OWNER, 'TAG', 'SORTABLE'],
-  [FILES_HAS_REFERENCES, 'TAG', 'SORTABLE'],
+  [FILES_HAS_NFT_OWNER, 'NUMERIC', 'SORTABLE'],
+  [FILES_HAS_REFERENCES, 'NUMERIC', 'SORTABLE'],
 ];
 
 // https://redis.io/docs/stack/search/reference/aggregations/#filter-expressions
