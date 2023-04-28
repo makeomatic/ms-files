@@ -534,4 +534,132 @@ describe('update suite', function suite() {
       });
     });
   });
+
+  describe('file references', function referenceSuite() {
+    let uploadId;
+    let modelWithReference;
+
+    before('upload-file', async function uploadFile() {
+      meta.backgroundImage = '';
+      const uploaded = await initAndUpload({
+        ...modelData,
+        message: {
+          ...modelData.message,
+          meta: {
+            ...meta,
+            ...modelData.message.meta,
+          },
+          access: {
+            setPublic: true,
+          },
+        },
+      }).call({ amqp: this.amqp });
+
+      uploadId = uploaded.uploadId;
+    });
+
+    it('assigns reference', async function test() {
+      const { amqp } = this;
+
+      const anotherUpload = await initAndUpload({
+        ...modelData,
+        message: {
+          ...modelData.message,
+          meta: {
+            ...meta,
+            ...modelData.message.meta,
+          },
+          access: {
+            setPublic: true,
+          },
+        },
+      }, false).call({ amqp });
+
+      modelWithReference = anotherUpload.uploadId;
+
+      await this.send({
+        username,
+        uploadId: anotherUpload.uploadId,
+        meta: {
+          references: [uploadId],
+        },
+      });
+
+      const updated = await getInfo.call(this, {
+        filename: anotherUpload.uploadId,
+        username,
+      });
+
+      assert.deepStrictEqual(updated.file.references, [uploadId]);
+      assert.deepStrictEqual(updated.file.hasReferences, '1');
+
+      const referenced = await getInfo.call(this, {
+        filename: uploadId,
+        username,
+      });
+
+      assert.deepStrictEqual(referenced.file.isReferenced, '1');
+    });
+
+    it('denies reference already referenced model', async function test() {
+      const { amqp } = this;
+
+      const anotherUpload = await initAndUpload({
+        ...modelData,
+        message: {
+          ...modelData.message,
+          meta: {
+            ...meta,
+            ...modelData.message.meta,
+          },
+          access: {
+            setPublic: true,
+          },
+        },
+      }, false).call({ amqp });
+
+      await assert.rejects(
+        this.send({
+          username,
+          uploadId: anotherUpload.uploadId,
+          meta: {
+            references: [uploadId],
+          },
+        }),
+        (err) => {
+          assert.strictEqual(err.name, 'ValidationError');
+          assert.strictEqual(err.message, 'invalid reference');
+          assert.strictEqual(err.errors[0].text, 'already has reference');
+          assert.strictEqual(err.errors[0].field, uploadId);
+
+          return true;
+        }
+      );
+    });
+
+    it('removes reference', async function test() {
+      await this.send({
+        username,
+        uploadId: modelWithReference,
+        meta: {
+          references: [],
+        },
+      });
+
+      const updated = await getInfo.call(this, {
+        filename: modelWithReference,
+        username,
+      });
+
+      assert.deepStrictEqual(updated.file.references, []);
+      assert.deepStrictEqual(updated.file.hasReferences, '0');
+
+      const referenced = await getInfo.call(this, {
+        filename: uploadId,
+        username,
+      });
+
+      assert.deepStrictEqual(referenced.file.isReferenced, '0');
+    });
+  });
 });

@@ -962,7 +962,7 @@
         },
         "nftCollection": {
           "type": "string",
-          "pattern":"^0x[0-9A-Fa-f]{40}$"
+          "format": "uuid"
         },
         "nftToken": {
           "type": "string",
@@ -971,8 +971,14 @@
         "nftAmount": {
           "type": "number"
         },
-        "nftBlockNumber": {
+        "nftBlock": {
           "type": "number"
+        },
+        "references": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       }
     },

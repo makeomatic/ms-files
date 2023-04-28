@@ -2,7 +2,7 @@ const { ValidationError } = require('common-errors');
 const { isEqual, chunk } = require('lodash');
 
 const {
-  FILES_REFERENCE_FIELD,
+  FILES_REFERENCES_FIELD,
   FILES_REFERENCED_INDEX_KEY,
   FILES_DATA_INDEX_KEY,
   FILES_OWNER_FIELD,
@@ -14,7 +14,7 @@ const findDeleted = (oldReferences, newReferences) => oldReferences.filter((id) 
 const findAdded = (oldReferences, newReferences) => newReferences.filter((id) => !oldReferences.includes(id));
 
 function isReferenceChanged(newMeta, originalMeta) {
-  return isEqual(newMeta[FILES_REFERENCE_FIELD], originalMeta[FILES_REFERENCE_FIELD]);
+  return !isEqual(newMeta[FILES_REFERENCES_FIELD], originalMeta[FILES_REFERENCES_FIELD]);
 }
 
 async function getReferenceData(redis, references = []) {
@@ -41,9 +41,9 @@ async function getReferenceData(redis, references = []) {
 
 function verifyReferences(originalMeta, referenceInfoMap, newReferences) {
   const { uploadId, owner } = originalMeta;
-  const oldReferences = originalMeta[FILES_REFERENCE_FIELD] || [];
+  const oldReferences = originalMeta[FILES_REFERENCES_FIELD] || [];
   const added = findAdded(oldReferences, newReferences);
-  const validationError = new ValidationError();
+  const validationError = new ValidationError('invalid reference');
 
   added.forEach((id) => {
     const refInfo = referenceInfoMap[id];
@@ -66,9 +66,9 @@ function verifyReferences(originalMeta, referenceInfoMap, newReferences) {
   }
 }
 
-async function updateReferences(newMeta, originalMeta, referencedInfo, pipeline) {
-  const oldReferences = originalMeta[FILES_REFERENCE_FIELD] || [];
-  const newReferences = newMeta[FILES_REFERENCE_FIELD] || [];
+function updateReferences(newMeta, originalMeta, referencedInfo, pipeline) {
+  const oldReferences = originalMeta[FILES_REFERENCES_FIELD] || [];
+  const newReferences = newMeta[FILES_REFERENCES_FIELD] || [];
 
   const deleted = findDeleted(oldReferences, newReferences);
   const added = findAdded(oldReferences, newReferences);

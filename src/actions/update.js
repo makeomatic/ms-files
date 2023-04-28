@@ -34,7 +34,7 @@ const {
   FILES_NFT_OWNER,
   FILES_HAS_NFT_OWNER,
   FILES_HAS_REFERENCES,
-  FILES_REFERECES_FIELD,
+  FILES_REFERENCES_FIELD,
 } = require('../constant');
 
 const { call } = Function.prototype;
@@ -103,10 +103,10 @@ async function updateMeta(lock, ctx, params) {
   // call hook
   await ctx.hook.call(ctx, 'files:update:pre', username, data);
 
-  const referenceChanged = meta[FILES_REFERECES_FIELD] && isReferenceChanged(meta, data);
-  const newReferences = meta[FILES_REFERECES_FIELD];
+  const referenceChanged = meta[FILES_REFERENCES_FIELD] && isReferenceChanged(meta, data);
+  const newReferences = meta[FILES_REFERENCES_FIELD];
   const referencedInfo = referenceChanged
-    ? await getReferenceData(redis, newReferences)
+    ? await getReferenceData(redis, [...newReferences, ...data[FILES_REFERENCES_FIELD] || []])
     : {};
 
   if (referenceChanged) {
@@ -185,7 +185,7 @@ async function updateMeta(lock, ctx, params) {
 
     // set referenced items immutable if requested
     if (includeReferences) {
-      meta[FILES_REFERECES_FIELD].forEach((id) => {
+      meta[FILES_REFERENCES_FIELD].forEach((id) => {
         pipeline.hset(FILES_DATA_INDEX_KEY(id), FILES_IMMUTABLE_FIELD, '1');
       });
     }
@@ -193,10 +193,6 @@ async function updateMeta(lock, ctx, params) {
 
   if (referenceChanged) {
     updateReferences(meta, data, referencedInfo, pipeline);
-  }
-
-  for (const field of FIELDS_TO_STRINGIFY.values()) {
-    stringify(meta, field);
   }
 
   // make sure it's not an empty object
@@ -210,10 +206,14 @@ async function updateMeta(lock, ctx, params) {
       meta[FILES_HAS_NFT_OWNER] = '1';
     }
 
-    if (Array.isArray(meta[FILES_REFERECES_FIELD]) && meta[FILES_REFERECES_FIELD].length > 0) {
+    if (Array.isArray(meta[FILES_REFERENCES_FIELD]) && meta[FILES_REFERENCES_FIELD].length > 0) {
       meta[FILES_HAS_REFERENCES] = '1';
     } else {
       meta[FILES_HAS_REFERENCES] = '0';
+    }
+
+    for (const field of FIELDS_TO_STRINGIFY.values()) {
+      stringify(meta, field);
     }
 
     pipeline.hmset(key, meta);
@@ -247,8 +247,8 @@ function initFileUpdate({ params }) {
     keys.push(`file:update:alias:${alias}`);
   }
 
-  if (meta[FILES_REFERECES_FIELD]) {
-    meta[FILES_REFERECES_FIELD].forEach((referenceId) => {
+  if (meta[FILES_REFERENCES_FIELD]) {
+    meta[FILES_REFERENCES_FIELD].forEach((referenceId) => {
       keys.push(LOCK_UPDATE_KEY(referenceId));
     });
   }

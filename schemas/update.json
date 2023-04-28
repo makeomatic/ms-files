@@ -19,6 +19,9 @@
     "immutable": {
       "type": "boolean"
     },
+    "includeReferences": {
+      "type": "boolean"
+    },
     "meta": {
       "default": {},
       "allOf": [
