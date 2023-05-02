@@ -1,3 +1,10 @@
+# [16.7.0](https://github.com/makeomatic/ms-files/compare/v16.6.1...v16.7.0) (2023-05-02)
+
+
+### Features
+
+* extra nft props + references ([#282](https://github.com/makeomatic/ms-files/issues/282)) ([78e0672](https://github.com/makeomatic/ms-files/commit/78e067288de86a3830a0b108101314768dcb7cd9))
+
 ## [16.6.1](https://github.com/makeomatic/ms-files/compare/v16.6.0...v16.6.1) (2023-04-27)
 
 
