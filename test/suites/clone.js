@@ -78,6 +78,9 @@ describe('clone file suite', function suite() {
     const response = await this.send({
       uploadId: file.uploadId,
       username: owner,
+      meta: {
+        nftOwner: '0x0000000000000000000000000000000000000002',
+      },
     });
 
     assert.ok(response.uploadId);
@@ -92,6 +95,43 @@ describe('clone file suite', function suite() {
     assert.strictEqual(copy.owner, owner);
     assert.strictEqual(copy.parentId, file.uploadId);
     assert.strictEqual(copy.isClone, '1');
+    assert.strictEqual(copy.nftOwner, '0x0000000000000000000000000000000000000002');
+  });
+
+  it('should allow to update specific metadata even if model is readonly', async function updateROFiedsSuite() {
+    await this.amqp.publishAndWait('files.update', {
+      uploadId: file.uploadId,
+      username: owner,
+      immutable: true,
+      meta: {},
+    });
+
+    const { uploadId, username } = await this.send({
+      uploadId: file.uploadId,
+      username: owner,
+    });
+
+    await this.amqp.publishAndWait('files.update', {
+      uploadId,
+      username,
+      meta: {
+        nftOwner: '0x0000000000000000000000000000000000000001',
+        nftAmount: 1,
+      },
+    });
+
+    const updatedData = await this.amqp.publishAndWait('files.data', {
+      uploadId,
+      fields: [
+        'nftOwner', 'nftAmount',
+      ],
+    });
+
+    assert.deepStrictEqual(updatedData.file, {
+      uploadId,
+      nftOwner: '0x0000000000000000000000000000000000000001',
+      nftAmount: '1',
+    });
   });
 
   it('lists public cloned models', async function checkListSuite() {
@@ -109,7 +149,7 @@ describe('clone file suite', function suite() {
       username: file.owner,
     });
 
-    assert.strictEqual(response.length, 2);
+    assert.strictEqual(response.length, 3);
   });
 
   it('lists all cloned models', async function checkListSuite() {
@@ -117,7 +157,7 @@ describe('clone file suite', function suite() {
       public: false,
     });
 
-    assert.strictEqual(response.length, 2);
+    assert.strictEqual(response.length, 3);
   });
 
   it('lists all cloned models', async function checkListSuite() {
@@ -146,23 +186,19 @@ describe('clone file suite', function suite() {
       },
     });
 
-    assert.strictEqual(response.length, 1);
+    assert.strictEqual(response.length, 2);
     assert.strictEqual(response[0].isClone, '1');
   });
 
-  it('report endpoint returns stats for public & private models', function test() {
-    return this
-      .amqp
-      .publishAndWait('files.report', {
-        username: file.owner,
-        includeStorage: true,
-      })
-      .then((response) => {
-        assert.equal(response.total, 2);
-        assert.equal(response.public, 0);
-        assert.equal(response.totalContentLength, 1901153 * 2);
-        assert.equal(response.publicContentLength, 0);
-        return null;
-      });
+  it('report endpoint returns stats for public & private models', async function test() {
+    const response = await this.amqp.publishAndWait('files.report', {
+      username: file.owner,
+      includeStorage: true,
+    });
+
+    assert.equal(response.total, 3);
+    assert.equal(response.public, 0);
+    assert.equal(response.totalContentLength, 1901153 * 3);
+    assert.equal(response.publicContentLength, 0);
   });
 });

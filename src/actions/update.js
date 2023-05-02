@@ -9,8 +9,10 @@ const hasAccess = require('../utils/has-access');
 const isAliasTaken = require('../utils/is-alias-taken');
 const stringify = require('../utils/stringify');
 const isValidBackgroundOrigin = require('../utils/is-valid-background-origin');
-const { assertNotImmutable } = require('../utils/is-immutable');
+const { assertUpdatable } = require('../utils/check-data');
 const { bustCache } = require('../utils/bust-cache');
+const { updateReferences, verifyReferences, isReferenceChanged, getReferenceData } = require('../utils/reference');
+
 const {
   FILES_TAGS_FIELD,
   FIELDS_TO_STRINGIFY,
@@ -29,6 +31,10 @@ const {
   FILES_NFT_FIELD,
   FILES_HAS_NFT,
   FILES_IMMUTABLE_FIELD,
+  FILES_NFT_OWNER,
+  FILES_HAS_NFT_OWNER,
+  FILES_HAS_REFERENCES,
+  FILES_REFERENCES_FIELD,
 } = require('../constant');
 
 const { call } = Function.prototype;
@@ -72,7 +78,7 @@ function preProcessMetadata(data) {
 }
 
 async function updateMeta(lock, ctx, params) {
-  const { uploadId, username, directOnly, immutable } = params;
+  const { uploadId, username, directOnly, immutable, includeReferences } = params;
   const { redis } = ctx;
   const key = FILES_DATA_INDEX_KEY(uploadId);
   const meta = preProcessMetadata(params.meta);
@@ -89,13 +95,23 @@ async function updateMeta(lock, ctx, params) {
     .then(isUnlisted)
     .then(hasAccess(username))
     .then(isAliasTaken(alias))
-    .then(assertNotImmutable);
+    .then(assertUpdatable(meta));
 
   // ensure we still hold the lock
   await lock.extend();
 
   // call hook
   await ctx.hook.call(ctx, 'files:update:pre', username, data);
+
+  const referencesChanged = meta[FILES_REFERENCES_FIELD] && isReferenceChanged(meta, data);
+  const newReferences = meta[FILES_REFERENCES_FIELD];
+  const referencedInfo = referencesChanged
+    ? await getReferenceData(redis, [...newReferences, ...data[FILES_REFERENCES_FIELD] || []])
+    : {};
+
+  if (referencesChanged) {
+    verifyReferences(data, referencedInfo, newReferences);
+  }
 
   // perform update
   const pipeline = redis.pipeline();
@@ -166,10 +182,17 @@ async function updateMeta(lock, ctx, params) {
 
   if (immutable === true) {
     pipeline.hset(key, FILES_IMMUTABLE_FIELD, '1');
+
+    // set referenced items immutable if requested
+    if (includeReferences) {
+      meta[FILES_REFERENCES_FIELD].forEach((id) => {
+        pipeline.hset(FILES_DATA_INDEX_KEY(id), FILES_IMMUTABLE_FIELD, '1');
+      });
+    }
   }
 
-  for (const field of FIELDS_TO_STRINGIFY.values()) {
-    stringify(meta, field);
+  if (referencesChanged) {
+    updateReferences(meta, data, referencedInfo, pipeline);
   }
 
   // make sure it's not an empty object
@@ -177,6 +200,20 @@ async function updateMeta(lock, ctx, params) {
     // to index using this property with redis-search
     if (meta[FILES_NFT_FIELD]) {
       meta[FILES_HAS_NFT] = '1';
+    }
+
+    if (meta[FILES_NFT_OWNER]) {
+      meta[FILES_HAS_NFT_OWNER] = '1';
+    }
+
+    if (Array.isArray(meta[FILES_REFERENCES_FIELD]) && meta[FILES_REFERENCES_FIELD].length > 0) {
+      meta[FILES_HAS_REFERENCES] = '1';
+    } else {
+      meta[FILES_HAS_REFERENCES] = '0';
+    }
+
+    for (const field of FIELDS_TO_STRINGIFY.values()) {
+      stringify(meta, field);
     }
 
     pipeline.hmset(key, meta);
@@ -208,6 +245,12 @@ function initFileUpdate({ params }) {
   // if we remove it - we don't care, so both undefined and '' works
   if (alias) {
     keys.push(`file:update:alias:${alias}`);
+  }
+
+  if (meta[FILES_REFERENCES_FIELD]) {
+    meta[FILES_REFERENCES_FIELD].forEach((referenceId) => {
+      keys.push(LOCK_UPDATE_KEY(referenceId));
+    });
   }
 
   // ensure there are no race-conditions

@@ -2,8 +2,8 @@
   "$id": "clone",
   "type": "object",
   "required": [
-      "uploadId",
-      "username"
+    "uploadId",
+    "username"
   ],
   "properties": {
     "uploadId": {
@@ -11,6 +11,10 @@
     },
     "username": {
       "$ref": "common#/definitions/owner"
+    },
+    "meta": {
+      "default": {},
+      "$ref": "common#/definitions/meta"
     }
   }
 }

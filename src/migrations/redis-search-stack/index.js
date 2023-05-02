@@ -23,6 +23,12 @@ const {
   FILES_IMMUTABLE_FIELD,
   FILES_HAS_CLONES_FIELD,
   FILES_IS_CLONE_FIELD,
+  FILES_NFT_OWNER,
+  FILES_NFT_COLLECTION,
+  FILES_NFT_TOKEN,
+  FILES_NFT_AMOUNT,
+  FILES_HAS_NFT_OWNER,
+  FILES_HAS_REFERENCES,
 } = require('../../constant');
 
 const FIELD_TO_TYPE = [
@@ -50,6 +56,12 @@ const FIELD_TO_TYPE = [
   [FILES_IMMUTABLE_FIELD, 'TAG', 'SORTABLE'],
   [FILES_HAS_CLONES_FIELD, 'NUMERIC', 'SORTABLE'],
   [FILES_IS_CLONE_FIELD, 'NUMERIC', 'SORTABLE'],
+  [FILES_NFT_OWNER, 'TAG', 'SORTABLE'],
+  [FILES_NFT_COLLECTION, 'TAG', 'SORTABLE'],
+  [FILES_NFT_TOKEN, 'TAG', 'SORTABLE'],
+  [FILES_NFT_AMOUNT, 'NUMERIC', 'SORTABLE'],
+  [FILES_HAS_NFT_OWNER, 'NUMERIC', 'SORTABLE'],
+  [FILES_HAS_REFERENCES, 'NUMERIC', 'SORTABLE'],
 ];
 
 // https://redis.io/docs/stack/search/reference/aggregations/#filter-expressions
@@ -59,7 +71,7 @@ async function createSearchIndex(service) {
 
   await redis.call(
     'FT.CREATE',
-    `${keyPrefix}:files-list-v4`,
+    `${keyPrefix}:files-list-v5`,
     'ON',
     'HASH',
     'PREFIX',
@@ -73,5 +85,5 @@ async function createSearchIndex(service) {
 module.exports = {
   script: createSearchIndex,
   min: 1,
-  final: 8,
+  final: 9,
 };

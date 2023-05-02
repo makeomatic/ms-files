@@ -14,6 +14,8 @@ module.exports = exports = Object.setPrototypeOf({
   FILES_INDEX_UAT: 'files-index-uat',
   FILES_INDEX_UAT_PUBLIC: 'files-index-uat-pub',
 
+  FILES_INDEX_REFERENCED: 'files-index-referenced',
+
   FILES_LIST: 'files-list',
   FILES_DATA: 'files-data',
   FILES_POST_ACTION: 'files-post',
@@ -56,9 +58,19 @@ module.exports = exports = Object.setPrototypeOf({
   FILES_IMMUTABLE_FIELD: 'immutable',
   FILES_PARENT_FIELD: 'parentId',
   FILES_HAS_CLONES_FIELD: 'hasClones',
+  FILES_CLONES_COUNT: 'cloneCount',
   FILES_IS_CLONE_FIELD: 'isClone',
   FILES_CLONED_AT_FIELD: 'clonedAt',
   FILES_FILES_FIELD: 'files',
+  FILES_NFT_OWNER: 'nftOwner',
+  FILES_HAS_NFT_OWNER: 'hnw',
+  FILES_NFT_COLLECTION: 'nftCollection',
+  FILES_NFT_TOKEN: 'nftToken',
+  FILES_NFT_TOKEN_AMOUNT: 'nftAmount',
+  FILES_NFT_BLOCK: 'nftBlock',
+  FILES_HAS_REFERENCES: 'hasReferences',
+  FILES_REFERENCES_FIELD: 'references',
+  FILES_IS_REFERENCED: 'isReferenced',
 
   // metatype of file
   FILES_TYPE_FIELD: 'type',
@@ -103,6 +115,7 @@ exports.FIELDS_TO_STRINGIFY = [
   exports.FILES_PLAYER_SETTINGS_FIELD,
   exports.FILES_PLAYER_FRAMES_CYCLE_FIELD,
   exports.FILES_NFT_FIELD,
+  exports.FILES_REFERENCES_FIELD,
 ];
 
 exports.CAPPASITY_3D_MODEL = 'model';
@@ -125,6 +138,7 @@ exports.FILES_USER_INDEX_KEY = (username) => `${exports.FILES_INDEX}:${username}
 exports.FILES_USER_INDEX_PUBLIC_KEY = (username) => `${exports.FILES_INDEX}:${username}:pub`;
 exports.FILES_USER_INDEX_UAT_KEY = (username) => `${exports.FILES_INDEX_UAT}:${username}`;
 exports.FILES_USER_INDEX_UAT_PUBLIC_KEY = (username) => `${exports.FILES_USER_INDEX_UAT_KEY(username)}:pub`;
+exports.FILES_REFERENCED_INDEX_KEY = (uploadId) => `${exports.FILES_REFERENCED_INDEX_KEY}:${uploadId}`;
 
 exports.UPLOAD_TYPE_GLB_EXTENDED = 'glb-extended';
 exports.UPLOAD_TYPE_PANORAMA_EQUIRECT = 'pano-equirect';

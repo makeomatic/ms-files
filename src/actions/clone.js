@@ -5,7 +5,7 @@ const Promise = require('bluebird');
 const fetchData = require('../utils/fetch-data');
 const isProcessed = require('../utils/is-processed');
 const isUnlisted = require('../utils/is-unlisted');
-const { assertImmutable } = require('../utils/is-immutable');
+const { assertClonable } = require('../utils/check-data');
 const { bustCache } = require('../utils/bust-cache');
 const stringify = require('../utils/stringify');
 const handlePipeline = require('../utils/pipeline-error');
@@ -39,10 +39,11 @@ const {
  * Create data clone of the selected file. Do not copies files in the buckets
  * @param  {Object} params.uploadId
  * @param  {Object} params.owner
+ * @param  {Object} [params.meta] - extra metadata to update
  * @return {Promise}
  */
 async function cloneFile(lock, ctx, params) {
-  const { uploadId, username } = params;
+  const { uploadId, username, meta } = params;
   const { redis } = ctx;
   const uploadKey = FILES_DATA_INDEX_KEY(uploadId);
   const uploadData = await Promise
@@ -51,7 +52,7 @@ async function cloneFile(lock, ctx, params) {
     .then(fetchData)
     .then(isProcessed)
     .then(isUnlisted)
-    .then(assertImmutable);
+    .then(assertClonable(meta));
 
   await lock.extend();
 
@@ -75,21 +76,23 @@ async function cloneFile(lock, ctx, params) {
 
   delete uploadData[FILES_HAS_CLONES_FIELD];
 
+  const mergedData = { ...uploadData, ...meta };
+
   // add model to user and global indexes
   pipeline.sadd(FILES_USER_INDEX_KEY(username), newUploadId);
   pipeline.sadd(FILES_INDEX, newUploadId);
   pipeline.zadd(FILES_INDEX_UAT, uploadedAt, newUploadId);
   pipeline.zadd(FILES_USER_INDEX_UAT_KEY(username), uploadedAt, newUploadId);
 
-  if (uploadData[FILES_TAGS_FIELD]) {
-    uploadData[FILES_TAGS_FIELD].forEach((tag) => pipeline.sadd(FILES_TAGS_INDEX_KEY(tag), newUploadId));
+  if (mergedData[FILES_TAGS_FIELD]) {
+    mergedData[FILES_TAGS_FIELD].forEach((tag) => pipeline.sadd(FILES_TAGS_INDEX_KEY(tag), newUploadId));
   }
 
   for (const field of [...FIELDS_TO_STRINGIFY.values(), FILES_FILES_FIELD]) {
-    stringify(uploadData, field);
+    stringify(mergedData, field);
   }
 
-  if (!uploadData[FILES_DIRECT_ONLY_FIELD] && isPublic) {
+  if (!mergedData[FILES_DIRECT_ONLY_FIELD] && isPublic) {
     pipeline.sadd(FILES_INDEX_PUBLIC, newUploadId);
     pipeline.sadd(newOwnerPublicIndex, newUploadId);
   }
@@ -97,13 +100,13 @@ async function cloneFile(lock, ctx, params) {
   // add mark to the original file
   pipeline.hset(uploadKey, FILES_HAS_CLONES_FIELD, 1);
 
-  pipeline.hmset(newUploadKey, uploadData);
+  pipeline.hmset(newUploadKey, mergedData);
 
-  await await ctx.hook.call(ctx, 'files:clone:before-pipeline-exec', pipeline, uploadData);
+  await await ctx.hook.call(ctx, 'files:clone:before-pipeline-exec', pipeline, mergedData);
 
   handlePipeline(await pipeline.exec());
 
-  await bustCache(redis, uploadData, true, true);
+  await bustCache(redis, mergedData, true, true);
 
   return {
     uploadId: newUploadId,

@@ -686,7 +686,7 @@
       "type": "object",
       "additionalProperties": false,
       "patternProperties": {
-        "^c_[a-z]+$": {
+        "^c_[a-zA-Z]+$": {
           "anyOf": [
             {
               "type": "string",
@@ -955,6 +955,30 @@
         "height": {
           "type": "integer",
           "description": "For panorama: panorama height"
+        },
+        "nftOwner": {
+          "type": "string",
+          "pattern":"^0x[0-9A-Fa-f]{40}$"
+        },
+        "nftCollection": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "nftToken": {
+          "type": "string",
+          "pattern": "^[0-9]{58}$"
+        },
+        "nftAmount": {
+          "type": "number"
+        },
+        "nftBlock": {
+          "type": "number"
+        },
+        "references": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       }
     },
@@ -963,9 +987,8 @@
         {
           "type": "string",
           "minLength": 1,
-          "maxLength": 50
-        },
-        {
+          "maxLength": 58
+        }, {
           "type": "object",
           "minProperties": 1,
           "maxProperties": 2,
