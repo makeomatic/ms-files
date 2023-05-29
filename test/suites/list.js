@@ -153,10 +153,9 @@ for (const redisSearchEnabled of [true, false].values()) {
           },
           order: 'DESC',
         });
-        
+
         assert.ok(data.files);
         assert.equal(data.files.length, 1);
-        console.debug(data.files)
         assert.equal(data.files[0].name, name);
       });
 
