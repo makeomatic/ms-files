@@ -87,6 +87,8 @@ for (const redisSearchEnabled of [true, false].values()) {
       // we upload an extra file later
       skus.clear();
       ids.clear();
+      names.clear();
+
       return insertData.call(this, { times: 499, owners, statuses: statusValues });
     });
 
