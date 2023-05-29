@@ -16,7 +16,7 @@ const {
   nftMeta,
   owner: username,
 } = require('../helpers/utils');
-const { insertData, skus, ids } = require('../helpers/insert-data');
+const { insertData, skus, ids, names } = require('../helpers/insert-data');
 
 const route = 'files.list';
 const updateRoute = 'files.update';
@@ -137,6 +137,27 @@ for (const redisSearchEnabled of [true, false].values()) {
             assert.equal(file.embed, undefined);
           }
         });
+      });
+
+      it('finds by name with multiple words', async function test() {
+        const name = ld.sample(Array.from(names));
+        const data = await this.amqp.publishAndWait('files.list', {
+          filter: {
+            '#multi': {
+              fields: [
+                'name',
+                'alias',
+              ],
+              match: name,
+            },
+          },
+          order: 'DESC',
+        });
+        
+        assert.ok(data.files);
+        assert.equal(data.files.length, 1);
+        console.debug(data.files)
+        assert.equal(data.files[0].name, name);
       });
 
       it('returns files filtered by their id', async function test() {
