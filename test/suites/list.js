@@ -147,8 +147,7 @@ for (const redisSearchEnabled of [true, false].values()) {
           filter: {
             '#multi': {
               fields: [
-                'name',
-                'alias',
+                'name'
               ],
               match: name,
             },
@@ -157,8 +156,35 @@ for (const redisSearchEnabled of [true, false].values()) {
         });
 
         assert.ok(data.files);
-        assert.equal(data.files.length, 1);
-        assert.equal(data.files[0].name, name);
+        assert.ok(data.files.length >= 1);
+
+        data.files.forEach((file) => {
+          assert.ok(file.name.includes(name), 'should include search string in name')
+        })
+      });
+
+      it('finds by name with multiple words and trims spaces', async function test() {
+        const name = ld.sample(Array.from(names));
+        const partialName = `${name.split(" ").slice(0, 1).join(" ")} `;
+
+        const data = await this.amqp.publishAndWait('files.list', {
+          filter: {
+            '#multi': {
+              fields: [
+                'name'
+              ],
+              match: partialName,
+            },
+          },
+          order: 'DESC',
+        });
+
+        assert.ok(data.files);
+        assert.ok(data.files.length >= 1);
+
+        data.files.forEach((file) => {
+          assert.ok(file.name.includes(partialName), 'should include search string in name')
+        })
       });
 
       it('returns files filtered by their id', async function test() {

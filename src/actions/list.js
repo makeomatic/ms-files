@@ -284,7 +284,7 @@ async function prepareResponse(ctx, data) {
 }
 
 const punctuation = /[,.<>{}[\]"':;!@#$%^&*()\-+=~]+/g;
-const tokenization = /[\s,.<>{}[\]"':;!@#$%^&*()\-+=~]/;
+const tokenization = /[\s,.<>{}[\]"':;!@#$%^&*()\-+=~]+/g;
 
 /**
  * Performs search using redis search extension
@@ -385,8 +385,11 @@ async function redisSearch(ctx) {
       const queryVars = [];
 
       words.forEach((word, index) => {
-        const wordVarName = `${varName}_${index}`;
+        if (word.trim().length == 0) {
+          return
+        }
 
+        const wordVarName = `${varName}_${index}`;
         queryVars.push(`$${wordVarName}`);
         params.push(wordVarName, word);
       });
