@@ -28,6 +28,7 @@ const {
 
 const skus = new Set();
 const ids = new Set();
+const names = new Set();
 
 function createFakeFile({ owners, statuses }) {
   const owner = ld.sample(owners);
@@ -43,14 +44,17 @@ function createFakeFile({ owners, statuses }) {
   }
 
   const id = uuid.v4();
+  const name = faker.commerce.productName();
+
   ids.add(id);
+  names.add(name);
 
   return {
     [FILES_ID_FIELD]: id,
     status: ld.sample(statuses),
     [FILES_UPLOAD_STARTED_AT_FIELD]: startedAt,
     [FILES_UPLOADED_AT_FIELD]: startedAt + 1000,
-    [FILES_NAME_FIELD]: faker.commerce.productName(),
+    [FILES_NAME_FIELD]: name,
     files: JSON.stringify([]), // can insert real files, but dont care
     [FILES_CONTENT_LENGTH_FIELD]: ld.random(1, 2132311),
     parts: ld.random(1, 4),
@@ -94,4 +98,4 @@ function insertData({ times, ...opts }) {
   return Promise.all(ld.times(times, () => insertFile.call(this, createFakeFile(opts))));
 }
 
-module.exports = { createFakeFile, insertFile, insertData, ids, skus };
+module.exports = { createFakeFile, insertFile, insertData, ids, skus, names };

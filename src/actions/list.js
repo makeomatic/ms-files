@@ -284,6 +284,7 @@ async function prepareResponse(ctx, data) {
 }
 
 const punctuation = /[,.<>{}[\]"':;!@#$%^&*()\-+=~]+/g;
+const tokenization = /[\s,.<>{}[\]"':;!@#$%^&*()\-+=~]/;
 
 /**
  * Performs search using redis search extension
@@ -379,10 +380,18 @@ async function redisSearch(ctx) {
       query.push(`-@${propName}:{ $f_${propName}_ne }`);
       params.push(`f_${propName}_ne`, actionTypeOrValue.ne);
     } else if (actionTypeOrValue.match) {
-      // TODO: verify correctness of this
       const varName = `f_${propName.replace(/\|/g, '_')}_m`;
-      query.push(`@${propName}:($${varName}*)`);
-      params.push(varName, actionTypeOrValue.match);
+      const words = actionTypeOrValue.match.split(tokenization);
+      const queryVars = [];
+
+      words.forEach((word, index) => {
+        const wordVarName = `${varName}_${index}`;
+
+        queryVars.push(`$${wordVarName}`);
+        params.push(wordVarName, word);
+      });
+
+      query.push(`@${propName}:(${queryVars.join('* ')})`);
     }
   }
 
