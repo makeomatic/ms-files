@@ -1,3 +1,10 @@
+## [16.7.3](https://github.com/makeomatic/ms-files/compare/v16.7.2...v16.7.3) (2023-05-30)
+
+
+### Bug Fixes
+
+* files.list multi match phrase trim spaces ([#289](https://github.com/makeomatic/ms-files/issues/289)) ([a6a1fcd](https://github.com/makeomatic/ms-files/commit/a6a1fcd0304b213bab5e80aa9b4ee453fe8f8f76))
+
 ## [16.7.2](https://github.com/makeomatic/ms-files/compare/v16.7.1...v16.7.2) (2023-05-30)
 
 
