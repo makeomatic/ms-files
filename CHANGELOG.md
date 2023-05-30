@@ -1,3 +1,10 @@
+## [16.7.1](https://github.com/makeomatic/ms-files/compare/v16.7.0...v16.7.1) (2023-05-30)
+
+
+### Bug Fixes
+
+* #multi match with spaces ([#286](https://github.com/makeomatic/ms-files/issues/286)) ([1675bf3](https://github.com/makeomatic/ms-files/commit/1675bf36edefed85f23f7b1ab3db77c6f394bfaa))
+
 # [16.7.0](https://github.com/makeomatic/ms-files/compare/v16.6.1...v16.7.0) (2023-05-02)
 
 
