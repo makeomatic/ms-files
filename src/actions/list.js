@@ -391,7 +391,7 @@ async function redisSearch(ctx) {
         params.push(wordVarName, word);
       });
 
-      query.push(`@${propName}:(${queryVars.join('* ')}*)`);
+      query.push(`@${propName}:(${queryVars.join(' ')}*)`);
     }
   }
 
