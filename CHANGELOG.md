@@ -1,3 +1,11 @@
+## [16.7.2](https://github.com/makeomatic/ms-files/compare/v16.7.1...v16.7.2) (2023-05-30)
+
+
+### Bug Fixes
+
+* multi match wildcard ([#288](https://github.com/makeomatic/ms-files/issues/288)) ([c571f89](https://github.com/makeomatic/ms-files/commit/c571f89aebe112191dfa6f81e87a9cffca1e1033))
+* multi match wildcard at the end of query ([#287](https://github.com/makeomatic/ms-files/issues/287)) ([dc3bbdd](https://github.com/makeomatic/ms-files/commit/dc3bbddc1bacd4be6f623ba9d80a8ac86a9d020f))
+
 ## [16.7.1](https://github.com/makeomatic/ms-files/compare/v16.7.0...v16.7.1) (2023-05-30)
 
 
