@@ -385,8 +385,8 @@ async function redisSearch(ctx) {
       const queryVars = [];
 
       words.forEach((word, index) => {
-        if (word.trim().length == 0) {
-          return
+        if (word.trim().length === 0) {
+          return;
         }
 
         const wordVarName = `${varName}_${index}`;
