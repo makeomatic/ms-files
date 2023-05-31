@@ -49,7 +49,7 @@ function assertClonable(metaToUpdate) {
 
 function assertUpdatable(metaToUpdate = {}, isRemoveOp = false) {
   return function isUpdatePossibleCheck(data) {
-    if (isImmutable(data) && !fieldUpdatePossible(metaToUpdate) && !isRemoveOp) {
+    if (isImmutable(data) && (!fieldUpdatePossible(metaToUpdate) || isRemoveOp)) {
       throw new HttpStatusError(400, 'should not be immutable object');
     }
 

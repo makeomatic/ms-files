@@ -180,19 +180,21 @@ async function updateMeta(lock, ctx, params) {
     }
   }
 
+  if (referencesChanged) {
+    updateReferences(meta, data, referencedInfo, pipeline);
+  }
+
   if (immutable === true) {
     pipeline.hset(key, FILES_IMMUTABLE_FIELD, '1');
 
     // set referenced items immutable if requested
     if (includeReferences) {
-      meta[FILES_REFERENCES_FIELD].forEach((id) => {
+      const references = referencesChanged ? meta[FILES_REFERENCES_FIELD] : data[FILES_REFERENCES_FIELD];
+
+      (references || []).forEach((id) => {
         pipeline.hset(FILES_DATA_INDEX_KEY(id), FILES_IMMUTABLE_FIELD, '1');
       });
     }
-  }
-
-  if (referencesChanged) {
-    updateReferences(meta, data, referencedInfo, pipeline);
   }
 
   // make sure it's not an empty object

@@ -2,6 +2,7 @@ const { HttpStatusError } = require('@microfleet/validation');
 const Promise = require('bluebird');
 const assert = require('assert');
 const uuid = require('uuid');
+const { rejects } = require('assert');
 
 // helpers
 const {
@@ -11,6 +12,7 @@ const {
   modelData,
   bindSend,
   initAndUpload,
+  processUpload,
 } = require('../helpers/utils');
 
 const MissingError = new HttpStatusError(404, '404: could not find upload');
@@ -76,5 +78,47 @@ describe('soft delete', function suite() {
       const exists = await this.files.providers[0].exists(file.filename);
       assert.equal(exists, true, MissingError);
     }));
+  });
+});
+
+describe('immutable/referenced block', function suite() {
+  // setup functions
+  before('start service', startService);
+  // sets `this.response` to `files.finish` response
+  beforeEach('pre-upload file', initAndUpload(modelData));
+  before('helpers', bindSend(route));
+
+  // tear-down
+  after('stop service', stopService);
+
+  it('remove of the immutable model is denied', async function test() {
+    await processUpload.call(this.files, this.response);
+    await this.amqp.publishAndWait('files.update', {
+      uploadId: this.response.uploadId,
+      username: owner,
+      immutable: true,
+      includeReferences: true,
+      meta: {},
+    });
+
+    await rejects(this.send({ filename: this.response.uploadId, username: owner }), /should not be immutable object/);
+  });
+
+  it('remove of the referenced model is denied', async function test() {
+    const secondFile = await initAndUpload(modelData).call(this.files);
+    await processUpload.call(this.files, this.response);
+    await processUpload.call(this.files, secondFile);
+
+    await this.amqp.publishAndWait('files.update', {
+      uploadId: this.response.uploadId,
+      username: owner,
+      immutable: true,
+      includeReferences: false,
+      meta: {
+        references: [secondFile.uploadId],
+      },
+    });
+
+    await rejects(this.send({ filename: secondFile.uploadId, username: owner }), /should not be referenced/);
   });
 });
