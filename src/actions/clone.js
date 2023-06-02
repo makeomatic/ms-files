@@ -33,6 +33,8 @@ const {
   FILES_FILES_FIELD,
   FILES_OWNER_FIELD,
   FILES_IS_CLONE_FIELD,
+  FILES_NFT_OWNER,
+  FILES_HAS_NFT_OWNER,
 } = require('../constant');
 
 /**
@@ -95,6 +97,10 @@ async function cloneFile(lock, ctx, params) {
   if (!mergedData[FILES_DIRECT_ONLY_FIELD] && isPublic) {
     pipeline.sadd(FILES_INDEX_PUBLIC, newUploadId);
     pipeline.sadd(newOwnerPublicIndex, newUploadId);
+  }
+
+  if (mergedData[FILES_NFT_OWNER]) {
+    mergedData[FILES_HAS_NFT_OWNER] = '1';
   }
 
   // add mark to the original file
