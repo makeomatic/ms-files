@@ -285,6 +285,7 @@ async function prepareResponse(ctx, data) {
 
 const punctuation = /[,.<>{}[\]"':;!@#$%^&*()\-+=~]+/g;
 const tokenization = /[\s,.<>{}[\]"':;!@#$%^&*()\-+=~]+/g;
+const hexAddressString = /^0x.*$/;
 
 /**
  * Performs search using redis search extension
@@ -359,7 +360,7 @@ async function redisSearch(ctx) {
       // skip empty attributes
       // or nft cause it uses special index
     } else if (typeof actionTypeOrValue === 'string') {
-      if (Number.isNaN(+actionTypeOrValue)) {
+      if (Number.isNaN(+actionTypeOrValue) || hexAddressString.test(actionTypeOrValue)) {
         query.push(`@${propName}:{ $f_${propName} }`);
         params.push(`f_${propName}`, actionTypeOrValue);
       } else {
