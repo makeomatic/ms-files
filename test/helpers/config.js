@@ -1,12 +1,14 @@
 const set = require('lodash/set');
-const { transport } = require('../configs/generic/core');
+const assert = require('node:assert/strict');
+const { initStore } = require('../../src/config');
 
 exports.enablePubsub = async function enablePubsub() {
-  this.configOverride = {
-    transport: [...transport],
-  };
+  const store = await initStore({ env: process.env.NODE_ENV });
+  const transportConfig = store.get('/transport');
 
-  set(this.configOverride.transport[0], 'options.bucket.channel', {
+  assert(transportConfig[0].options?.gce?.credentials?.client_email);
+
+  set(transportConfig[0], 'options.bucket.channel', {
     pubsub: {
       topic: 'gcs-object-create',
       name: `test-runner-${Math.random()}`,
@@ -15,4 +17,8 @@ exports.enablePubsub = async function enablePubsub() {
       },
     },
   });
+
+  this.configOverride = {
+    transport: transportConfig,
+  };
 };
