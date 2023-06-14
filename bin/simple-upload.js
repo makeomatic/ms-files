@@ -221,6 +221,8 @@ if (argv.confirm) {
         transport.close(),
       ]);
     }
+
+    process.exit(0);
   })();
 } else {
   // print upload message
