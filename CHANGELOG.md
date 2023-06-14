@@ -1,3 +1,22 @@
+# [17.0.0](https://github.com/makeomatic/ms-files/compare/v16.7.3...v17.0.0) (2023-06-14)
+
+
+### Features
+
+* upgrade ms-conf@8, microfleet ([#290](https://github.com/makeomatic/ms-files/issues/290)) ([170fcba](https://github.com/makeomatic/ms-files/commit/170fcba59517d4cc6c4692ca623c18858196a310))
+
+
+### BREAKING CHANGES
+
+* requires node >= 18.16, new initializer
+
+* feat: upgrade ms-conf@8, microfleet
+* fix: omit empty query
+* chore: binary dispatcher close
+* chore: add force exit
+* chore: pubsub enable
+* chore: disable codecov as it leaks handles
+
 ## [16.7.3](https://github.com/makeomatic/ms-files/compare/v16.7.2...v16.7.3) (2023-05-30)
 
 
