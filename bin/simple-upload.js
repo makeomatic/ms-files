@@ -67,7 +67,7 @@ const { argv } = require('yargs')
 const Promise = require('bluebird');
 const { Readable } = require('node:stream');
 const fs = Promise.promisifyAll(require('fs'));
-const { fetch } = require('undici');
+const { fetch, getGlobalDispatcher } = require('undici');
 const { globSync } = require('glob');
 const md5 = require('md5');
 const path = require('path');
@@ -176,8 +176,10 @@ if (argv.confirm) {
         keepalive: false,
       });
 
-      await res.text();
       assert.equal(res.status, 200);
+      if (!res.bodyUsed) {
+        await res.text();
+      }
     }
 
     /**
@@ -214,7 +216,10 @@ if (argv.confirm) {
     try {
       await uploadFiles(transport);
     } finally {
-      await transport.close();
+      await Promise.all([
+        getGlobalDispatcher().close(),
+        transport.close(),
+      ]);
     }
   })();
 } else {
