@@ -2,5 +2,6 @@
   "timeout": 15000,
   "bail": true,
   "report": "spec",
-  "forbid-only": false
+  "forbid-only": false,
+  "exit": false
 }

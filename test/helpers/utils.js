@@ -355,6 +355,12 @@ async function startService() {
     return amqp.publishAndWait(route, msg, { timeout });
   };
 
+  try {
+    await getGlobalDispatcher().close();
+  } catch (e) {
+    // might have already been closed
+  }
+
   const agent = new Agent({
     keepAliveTimeout: 10,
     keepAliveMaxTimeout: 10,
