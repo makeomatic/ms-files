@@ -68,23 +68,13 @@ const Promise = require('bluebird');
 const { Readable } = require('node:stream');
 const fs = Promise.promisifyAll(require('fs'));
 const { fetch } = require('undici');
-const glob = require('glob');
+const { globSync } = require('glob');
 const md5 = require('md5');
 const path = require('path');
 const omit = require('lodash/omit');
 const AMQPTransport = require('@microfleet/transport-amqp');
 const { strict: assert } = require('node:assert');
-const config = require('../lib/config').get('/', { env: process.env.NODE_ENV });
-
-// AMQP adapter
-const amqpConfig = omit(config.amqp.transport, ['queue', 'listen', 'neck', 'onComplete']);
-const { prefix } = config.router.routes;
-const getTransport = () => {
-  if (process.env.NODE_ENV === 'test') {
-    console.info('establishing connection to amqp with %j', amqpConfig);
-  }
-  return AMQPTransport.connect({ ...amqpConfig, debug: false });
-};
+const { initStore } = require('../src/config');
 
 // prepare upload
 const readFile = (_type) => (filepath) => {
@@ -109,16 +99,15 @@ const readFile = (_type) => (filepath) => {
 };
 
 // paths
-const previewFile = path.resolve(__dirname, '..', argv.p);
-let modelFiles = glob.sync(`${argv.f}/*.{jpg,jpeg,pack}`, { realpath: true });
+const previewFile = path.resolve(process.cwd(), argv.p);
+const modelFiles = globSync(`${argv.f}/*.{jpg,jpeg,pack}`, {
+  realpath: true,
+  ignore: argv.excludePreview ? [previewFile] : [],
+});
 
 if (argv.reverse) {
   console.info('reversing the array...');
   modelFiles.reverse();
-}
-
-if (argv.excludePreview) {
-  modelFiles = modelFiles.filter((it) => (it !== previewFile));
 }
 
 console.info('resolved %d file(s)', modelFiles.length);
@@ -148,65 +137,79 @@ if (argv.d) {
   uploadMessage.meta.description = argv.d;
 }
 
-/**
- * Uploads File to GCS
- */
-async function uploadFile(meta, idx) {
-  // upload file
-  const fileBuffer = uploadMessage.files[idx].file;
-  const headers = {
-    'Content-MD5': meta.md5Hash,
-    'Content-Type': meta.contentType,
-  };
-
-  if (argv.public) {
-    headers['x-goog-acl'] = 'public-read';
-  }
-
-  const res = await fetch(meta.location, {
-    method: 'PUT',
-    body: Readable.from([fileBuffer], { objectMode: false }),
-    headers,
-    duplex: 'half',
-    keepalive: false,
-  });
-
-  await res.text();
-  assert.equal(res.status, 200);
-}
-
-/**
- * Reports success of upload
- */
-async function reportSuccess(amqp, meta) {
-  process.stdout.write('.');
-  try {
-    return await amqp.publishAndWait(`${prefix}.finish`, { filename: meta.filename });
-  } catch (e) {
-    if ([200, 202].indexOf(e.statusCode) >= 0) {
-      return 'ok';
-    }
-
-    throw e;
-  }
-}
-
-/**
- * Inits upload, sends stuff to GCS, reports finish
- */
-const uploadFiles = async (amqp) => {
-  const data = await amqp.publishAndWait(`${prefix}.upload`, uploadMessage);
-
-  await Promise.map(data.files, async (file, idx) => {
-    await uploadFile(file, idx);
-    await reportSuccess(amqp, file);
-  }, { concurrency: 20 });
-
-  console.info(`\n${data.uploadId}`);
-};
-
 if (argv.confirm) {
   (async () => {
+    // Configuration
+    const store = await initStore({ env: process.env.NODE_ENV });
+    const config = store.get('/');
+
+    // AMQP adapter
+    const amqpConfig = omit(config.amqp.transport, ['queue', 'listen', 'neck', 'onComplete']);
+    const { prefix } = config.router.routes;
+    const getTransport = () => {
+      if (process.env.NODE_ENV === 'test') {
+        console.info('establishing connection to amqp with %j', amqpConfig);
+      }
+      return AMQPTransport.connect({ ...amqpConfig, debug: false });
+    };
+
+    /**
+     * Uploads File to GCS
+     */
+    async function uploadFile(meta, idx) {
+      // upload file
+      const fileBuffer = uploadMessage.files[idx].file;
+      const headers = {
+        'Content-MD5': meta.md5Hash,
+        'Content-Type': meta.contentType,
+      };
+
+      if (argv.public) {
+        headers['x-goog-acl'] = 'public-read';
+      }
+
+      const res = await fetch(meta.location, {
+        method: 'PUT',
+        body: Readable.from([fileBuffer], { objectMode: false }),
+        headers,
+        duplex: 'half',
+        keepalive: false,
+      });
+
+      await res.text();
+      assert.equal(res.status, 200);
+    }
+
+    /**
+     * Reports success of upload
+     */
+    async function reportSuccess(amqp, meta) {
+      process.stdout.write('.');
+      try {
+        return await amqp.publishAndWait(`${prefix}.finish`, { filename: meta.filename });
+      } catch (e) {
+        if ([200, 202].indexOf(e.statusCode) >= 0) {
+          return 'ok';
+        }
+
+        throw e;
+      }
+    }
+
+    /**
+     * Inits upload, sends stuff to GCS, reports finish
+     */
+    const uploadFiles = async (amqp) => {
+      const data = await amqp.publishAndWait(`${prefix}.upload`, uploadMessage);
+
+      await Promise.map(data.files, async (file, idx) => {
+        await uploadFile(file, idx);
+        await reportSuccess(amqp, file);
+      }, { concurrency: 20 });
+
+      console.info(`\n${data.uploadId}`);
+    };
+
     const transport = await getTransport();
     try {
       await uploadFiles(transport);

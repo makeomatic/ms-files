@@ -29,7 +29,7 @@ describe('migrations testing suite', function suite() {
       .withArgs(ctx.files.config.users.getInternalData, sinon.match.any)
       .resolves({ id: '000000' });
   });
-  after('stop service', stopService.bind(ctx));
+  after('stop service', () => stopService.call(ctx));
 
   it('pre-upload files', async () => {
     const uploads = [];

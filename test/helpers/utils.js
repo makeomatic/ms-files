@@ -16,7 +16,7 @@ const url = require('url');
 const is = require('is');
 const { fetch, getGlobalDispatcher, setGlobalDispatcher, Agent } = require('undici');
 const { Readable } = require('node:stream');
-const Files = require('../../src');
+const initFiles = require('../../src');
 
 // helpers
 const cache = {};
@@ -347,7 +347,7 @@ function getInfo({ filename, username }) {
 // start service
 //
 async function startService() {
-  const service = this.files = new Files(this.configOverride);
+  const service = this.files = await initFiles(this.configOverride);
   await service.connect();
 
   const amqp = this.amqp = service.amqp;
@@ -358,8 +358,8 @@ async function startService() {
   const agent = new Agent({
     keepAliveTimeout: 10,
     keepAliveMaxTimeout: 10,
-    headersTimeout: 1e3,
-    bodyTimeout: 1e3,
+    headersTimeout: 1e5,
+    bodyTimeout: 1e5,
   });
   setGlobalDispatcher(agent);
 

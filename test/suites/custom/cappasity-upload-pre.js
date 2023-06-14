@@ -4,17 +4,10 @@ const noop = require('lodash/noop');
 const reject = require('lodash/reject');
 const Bluebird = require('bluebird');
 
-const config = require('../../../src/config').get('/');
 const hook = require('../../../src/custom/cappasity-upload-pre');
 const { FILES_USER_INDEX_KEY } = require('../../../src/constant');
 
-const {
-  users,
-  plans,
-  metadata,
-  internals,
-  uploadedFiles,
-} = require('../../helpers/mocks');
+const { getMocks } = require('../../helpers/mocks');
 
 const ctx = {
   amqp: { publishAndWait: noop },
@@ -29,7 +22,16 @@ const ctx = {
 };
 
 describe('cappasity-upload-pre hook test suite', function suite() {
-  before('add stubs', function stubs() {
+  before('add stubs', async function stubs() {
+    const {
+      users,
+      plans,
+      metadata,
+      internals,
+      uploadedFiles,
+      config,
+    } = await getMocks();
+
     const amqpStub = sinon.stub(ctx.amqp, 'publishAndWait').usingPromise(Bluebird);
     const redisStub = sinon.stub(ctx.redis, 'scard').usingPromise(Bluebird).rejects();
 
