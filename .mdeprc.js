@@ -16,7 +16,7 @@ module.exports = exports = {
     }
   },
   pre: 'rimraf ./coverage/*',
-  post_exec: './node_modules/.bin/c8 report -r text -r lcov'
+  // post_exec: './node_modules/.bin/c8 report -r text -r lcov'
 };
 
 switch (process.env.DB) {

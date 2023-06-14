@@ -1,5 +1,8 @@
 {
   "extends": "makeomatic",
+  "parserOptions": {
+    "ecmaVersion": "latest"
+  },
   "rules": {
     "object-curly-newline": 0
   }

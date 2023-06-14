@@ -1,15 +1,21 @@
 const Promise = require('bluebird');
 const { Microfleet, ConnectorsTypes } = require('@microfleet/core');
 const noop = require('lodash/noop');
-const merge = require('lodash/merge');
 const fsort = require('redis-filtered-sort');
-require('@microfleet/plugin-dlock');
+const deepmerge = require('@fastify/deepmerge')({
+  mergeArray(options) {
+    const { clone } = options;
+    return function replaceByClonedSource(_, source) {
+      return clone(source);
+    };
+  },
+});
 
 // constants
 const { HttpStatusError } = require('common-errors');
 const { WEBHOOK_RESOURCE_ID } = require('./constant');
 const StorageProviders = require('./providers');
-const conf = require('./config');
+const { initStore } = require('./config');
 
 /**
  * @class Files
@@ -19,8 +25,8 @@ class Files extends Microfleet {
    * class Constructor, initializes configuration
    * and internal providers
    */
-  constructor(opts = {}) {
-    super(merge({}, Files.defaultOpts, opts));
+  constructor(opts) {
+    super(opts);
     const { config } = this;
 
     /**
@@ -141,10 +147,12 @@ class Files extends Microfleet {
   }
 }
 
-/**
- * Default options for the service
- * @type {Object}
- */
-Files.defaultOpts = conf.get('/', { env: process.env.NODE_ENV });
+async function initFiles(opts = {}) {
+  const store = await initStore({ env: process.env.NODE_ENV });
+  const files = new Files(deepmerge(store.get('/'), opts));
+  return files;
+}
 
-module.exports = Files;
+exports = module.exports = initFiles;
+exports.Files = Files;
+exports.default = initFiles;
