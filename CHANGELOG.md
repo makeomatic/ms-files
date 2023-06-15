@@ -1,3 +1,10 @@
+## [17.0.1](https://github.com/makeomatic/ms-files/compare/v17.0.0...v17.0.1) (2023-06-15)
+
+
+### Bug Fixes
+
+* redisearch disable stopwords ([#291](https://github.com/makeomatic/ms-files/issues/291)) ([06ba393](https://github.com/makeomatic/ms-files/commit/06ba39310164b419594023c099af8289b759d73d))
+
 # [17.0.0](https://github.com/makeomatic/ms-files/compare/v16.7.3...v17.0.0) (2023-06-14)
 
 
