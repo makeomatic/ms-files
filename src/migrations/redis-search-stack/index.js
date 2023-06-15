@@ -77,7 +77,8 @@ async function createSearchIndex(service) {
     'PREFIX',
     '1',
     `${keyPrefix}${FILES_DATA}:`,
-    'STOPWORDS', '0',
+    'STOPWORDS',
+    '0',
     'SCHEMA',
     ...FIELD_TO_TYPE.flatMap((x) => x)
   );
