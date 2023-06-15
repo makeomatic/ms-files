@@ -291,7 +291,7 @@ const tokenization = /[\s,.<>{}[\]"':;!@#$%^&*()\-+=~]+/g;
  */
 async function redisSearch(ctx) {
   // 1. build query
-  const indexName = `${ctx.service.config.redis.options.keyPrefix}:files-list-v5`;
+  const indexName = `${ctx.service.config.redis.options.keyPrefix}:files-list-v6`;
   const args = ['FT.SEARCH', indexName];
   const query = [];
   const params = [];
