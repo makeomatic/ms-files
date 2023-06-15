@@ -1,3 +1,10 @@
+## [17.0.2](https://github.com/makeomatic/ms-files/compare/v17.0.1...v17.0.2) (2023-06-15)
+
+
+### Bug Fixes
+
+* do not ignore sources ([f047608](https://github.com/makeomatic/ms-files/commit/f047608445af75a6136e0f6fff2af8fc66a1335e))
+
 ## [17.0.1](https://github.com/makeomatic/ms-files/compare/v17.0.0...v17.0.1) (2023-06-15)
 
 
