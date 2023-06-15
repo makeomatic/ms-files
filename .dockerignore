@@ -32,7 +32,6 @@ node_modules
 test
 Makefile
 .env
-src
 .git
 Dockerfile*
 .babel
