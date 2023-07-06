@@ -1,3 +1,10 @@
+## [17.0.3](https://github.com/makeomatic/ms-files/compare/v17.0.2...v17.0.3) (2023-07-06)
+
+
+### Bug Fixes
+
+* nft fixes extra ([#292](https://github.com/makeomatic/ms-files/issues/292)) ([6cd8ecc](https://github.com/makeomatic/ms-files/commit/6cd8ecc97472bb2cf7d8bbfe7ded105464ba6480))
+
 ## [17.0.2](https://github.com/makeomatic/ms-files/compare/v17.0.1...v17.0.2) (2023-06-15)
 
 
