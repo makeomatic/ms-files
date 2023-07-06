@@ -17,6 +17,7 @@ const route = 'files.clone';
 
 describe('clone file suite', function suite() {
   let file;
+  let secondFile;
 
   before('override config', function overrideConfig() {
     this.configOverride = {
@@ -34,6 +35,9 @@ describe('clone file suite', function suite() {
   before('upload', async function uploadFile() {
     file = await initAndUpload(modelData).call(this.files);
     await processUpload.call(this.files, file);
+
+    secondFile = await initAndUpload(modelData).call(this.files);
+    await processUpload.call(this.files, secondFile);
   });
 
   before('helpers', bindSend(route));
@@ -68,137 +72,152 @@ describe('clone file suite', function suite() {
     );
   });
 
-  it('should clone model', async function test() {
-    await this.amqp.publishAndWait('files.update', {
-      uploadId: file.uploadId,
-      username: owner,
-      immutable: true,
-      meta: {},
-    });
-    const response = await this.send({
-      uploadId: file.uploadId,
-      username: owner,
-      meta: {
-        nftOwner: '0x0000000000000000000000000000000000000002',
-      },
-    });
+  describe('immutable clone', function immutableClone() {
+    it('should clone model', async function test() {
+      await this.amqp.publishAndWait('files.update', {
+        uploadId: file.uploadId,
+        username: owner,
+        immutable: true,
+        meta: {
+          references: [secondFile.uploadId],
+        },
+      });
 
-    assert.ok(response.uploadId);
-    assert.strictEqual(response.username, owner);
+      const response = await this.send({
+        uploadId: file.uploadId,
+        username: owner,
+        meta: {
+          nftOwner: '0x0000000000000000000000000000000000000002',
+        },
+      });
 
-    const { file: copy } = await this.amqp.publishAndWait('files.info', {
-      filename: response.uploadId,
-      username: file.owner,
-    });
+      assert.ok(response.uploadId);
+      assert.strictEqual(response.username, owner);
 
-    assert.ok(copy.clonedAt);
-    assert.strictEqual(copy.owner, owner);
-    assert.strictEqual(copy.parentId, file.uploadId);
-    assert.strictEqual(copy.isClone, '1');
-    assert.strictEqual(copy.nftOwner, '0x0000000000000000000000000000000000000002');
-  });
+      const { file: copy } = await this.amqp.publishAndWait('files.info', {
+        filename: response.uploadId,
+        username: file.owner,
+      });
 
-  it('should allow to update specific metadata even if model is readonly', async function updateROFiedsSuite() {
-    await this.amqp.publishAndWait('files.update', {
-      uploadId: file.uploadId,
-      username: owner,
-      immutable: true,
-      meta: {},
-    });
+      assert.ok(copy.clonedAt);
+      assert.strictEqual(copy.owner, owner);
+      assert.strictEqual(copy.parentId, file.uploadId);
+      assert.strictEqual(copy.isClone, '1');
+      assert.strictEqual(copy.nftOwner, '0x0000000000000000000000000000000000000002');
 
-    const { uploadId, username } = await this.send({
-      uploadId: file.uploadId,
-      username: owner,
+      const { file: reference } = await this.amqp.publishAndWait('files.info', {
+        filename: response.uploadId,
+        username: file.owner,
+      });
+
+      assert.strictEqual(reference.immutable, '1');
     });
 
-    await this.amqp.publishAndWait('files.update', {
-      uploadId,
-      username,
-      meta: {
+    it('should allow to update specific metadata even if model is readonly', async function updateROFiedsSuite() {
+      await this.amqp.publishAndWait('files.update', {
+        uploadId: file.uploadId,
+        username: owner,
+        immutable: true,
+        includeReferences: true,
+        meta: {},
+      });
+
+      const { uploadId, username } = await this.send({
+        uploadId: file.uploadId,
+        username: owner,
+      });
+
+      await this.amqp.publishAndWait('files.update', {
+        uploadId,
+        username,
+        meta: {
+          nftOwner: '0x0000000000000000000000000000000000000001',
+          nftAmount: 1,
+        },
+      });
+
+      const updatedData = await this.amqp.publishAndWait('files.data', {
+        uploadId,
+        fields: [
+          'nftOwner', 'nftAmount',
+        ],
+      });
+
+      assert.deepStrictEqual(updatedData.file, {
+        uploadId,
         nftOwner: '0x0000000000000000000000000000000000000001',
-        nftAmount: 1,
-      },
-    });
-
-    const updatedData = await this.amqp.publishAndWait('files.data', {
-      uploadId,
-      fields: [
-        'nftOwner', 'nftAmount',
-      ],
-    });
-
-    assert.deepStrictEqual(updatedData.file, {
-      uploadId,
-      nftOwner: '0x0000000000000000000000000000000000000001',
-      nftAmount: '1',
+        nftAmount: '1',
+      });
     });
   });
 
-  it('lists public cloned models', async function checkListSuite() {
-    const { files: response } = await this.amqp.publishAndWait('files.list', {
-      public: true,
-      username: file.owner,
+  describe('list and report', function listAndReportSuite() {
+    it('lists public cloned models', async function checkListSuite() {
+      const { files: response } = await this.amqp.publishAndWait('files.list', {
+        public: true,
+        username: file.owner,
+      });
+
+      assert.strictEqual(response.length, 0);
     });
 
-    assert.strictEqual(response.length, 0);
-  });
+    it('lists public cloned models', async function checkListSuite() {
+      const { files: response } = await this.amqp.publishAndWait('files.list', {
+        public: false,
+        username: file.owner,
+      });
 
-  it('lists public cloned models', async function checkListSuite() {
-    const { files: response } = await this.amqp.publishAndWait('files.list', {
-      public: false,
-      username: file.owner,
+      assert.strictEqual(response.length, 4);
     });
 
-    assert.strictEqual(response.length, 3);
-  });
+    it('lists all cloned models', async function checkListSuite() {
+      const { files: response } = await this.amqp.publishAndWait('files.list', {
+        public: false,
+      });
 
-  it('lists all cloned models', async function checkListSuite() {
-    const { files: response } = await this.amqp.publishAndWait('files.list', {
-      public: false,
+      assert.strictEqual(response.length, 4);
     });
 
-    assert.strictEqual(response.length, 3);
-  });
+    it('lists all cloned models', async function checkListSuite() {
+      const { files: response } = await this.amqp.publishAndWait('files.list', {
+        public: true,
+      });
 
-  it('lists all cloned models', async function checkListSuite() {
-    const { files: response } = await this.amqp.publishAndWait('files.list', {
-      public: true,
+      assert.strictEqual(response.length, 0);
     });
 
-    assert.strictEqual(response.length, 0);
-  });
+    it('able to find models by `hasClones`', async function checkListSuite() {
+      const { files: response } = await this.amqp.publishAndWait('files.list', {
+        filter: {
+          hasClones: '1',
+        },
+      });
 
-  it('able to find models by `hasClones`', async function checkListSuite() {
-    const { files: response } = await this.amqp.publishAndWait('files.list', {
-      filter: {
-        hasClones: '1',
-      },
+      assert.strictEqual(response.length, 1);
+      assert.strictEqual(response[0].hasClones, '1');
     });
 
-    assert.strictEqual(response.length, 1);
-    assert.strictEqual(response[0].hasClones, '1');
-  });
+    it('able to find models by `isClone`', async function checkListSuite() {
+      const { files: response } = await this.amqp.publishAndWait('files.list', {
+        filter: {
+          isClone: '1',
+        },
+      });
 
-  it('able to find models by `isClone`', async function checkListSuite() {
-    const { files: response } = await this.amqp.publishAndWait('files.list', {
-      filter: {
-        isClone: '1',
-      },
+      assert.strictEqual(response.length, 2);
+      assert.strictEqual(response[0].isClone, '1');
     });
 
-    assert.strictEqual(response.length, 2);
-    assert.strictEqual(response[0].isClone, '1');
-  });
+    it('report endpoint returns stats for public & private models', async function test() {
+      const response = await this.amqp.publishAndWait('files.report', {
+        username: file.owner,
+        includeStorage: true,
+      });
 
-  it('report endpoint returns stats for public & private models', async function test() {
-    const response = await this.amqp.publishAndWait('files.report', {
-      username: file.owner,
-      includeStorage: true,
+      assert.equal(response.total, 4);
+      assert.equal(response.public, 0);
+      assert.equal(response.totalContentLength, 1901153 * 4);
+      assert.equal(response.publicContentLength, 0);
     });
-
-    assert.equal(response.total, 3);
-    assert.equal(response.public, 0);
-    assert.equal(response.totalContentLength, 1901153 * 3);
-    assert.equal(response.publicContentLength, 0);
   });
 });

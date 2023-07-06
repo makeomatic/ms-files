@@ -108,6 +108,12 @@
                 "nftAmount": {
                     "$ref": "common#/definitions/filter-props"
                 },
+                "hasReferences": {
+                    "$ref": "common#/definitions/filter-props"
+                },
+                "isReferenced": {
+                    "$ref": "common#/definitions/filter-props"
+                },
                 "#": {
                     "$ref": "common#/definitions/filter-props"
                 },

@@ -26,9 +26,10 @@ const {
   FILES_NFT_OWNER,
   FILES_NFT_COLLECTION,
   FILES_NFT_TOKEN,
-  FILES_NFT_AMOUNT,
+  FILES_NFT_TOKEN_AMOUNT,
   FILES_HAS_NFT_OWNER,
   FILES_HAS_REFERENCES,
+  FILES_IS_REFERENCED,
 } = require('../../constant');
 
 const FIELD_TO_TYPE = [
@@ -59,9 +60,10 @@ const FIELD_TO_TYPE = [
   [FILES_NFT_OWNER, 'TAG', 'SORTABLE'],
   [FILES_NFT_COLLECTION, 'TAG', 'SORTABLE'],
   [FILES_NFT_TOKEN, 'TAG', 'SORTABLE'],
-  [FILES_NFT_AMOUNT, 'NUMERIC', 'SORTABLE'],
+  [FILES_NFT_TOKEN_AMOUNT, 'NUMERIC', 'SORTABLE'],
   [FILES_HAS_NFT_OWNER, 'NUMERIC', 'SORTABLE'],
   [FILES_HAS_REFERENCES, 'NUMERIC', 'SORTABLE'],
+  [FILES_IS_REFERENCED, 'NUMERIC', 'SORTABLE'],
 ];
 
 // https://redis.io/docs/stack/search/reference/aggregations/#filter-expressions
@@ -71,7 +73,7 @@ async function createSearchIndex(service) {
 
   await redis.call(
     'FT.CREATE',
-    `${keyPrefix}:files-list-v6`,
+    `${keyPrefix}:files-list-v7`,
     'ON',
     'HASH',
     'PREFIX',
@@ -87,5 +89,5 @@ async function createSearchIndex(service) {
 module.exports = {
   script: createSearchIndex,
   min: 1,
-  final: 10,
+  final: 11,
 };
