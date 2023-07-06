@@ -1,3 +1,10 @@
+## [17.0.4](https://github.com/makeomatic/ms-files/compare/v17.0.3...v17.0.4) (2023-07-06)
+
+
+### Bug Fixes
+
+* override tag style for fields ([#293](https://github.com/makeomatic/ms-files/issues/293)) ([bc71dc4](https://github.com/makeomatic/ms-files/commit/bc71dc4c375b7fc4a8ffa5adf82c7160cf2bb26c))
+
 ## [17.0.3](https://github.com/makeomatic/ms-files/compare/v17.0.2...v17.0.3) (2023-07-06)
 
 
