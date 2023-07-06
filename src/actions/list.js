@@ -292,7 +292,7 @@ const hexAddressString = /^0x.*$/;
  */
 async function redisSearch(ctx) {
   // 1. build query
-  const indexName = `${ctx.service.config.redis.options.keyPrefix}:files-list-v6`;
+  const indexName = `${ctx.service.config.redis.options.keyPrefix}:files-list-v7`;
   const args = ['FT.SEARCH', indexName];
   const query = [];
   const params = [];
