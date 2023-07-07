@@ -7,6 +7,7 @@ const {
   FILES_DATA_INDEX_KEY,
   FILES_OWNER_FIELD,
   FILES_IS_REFERENCED,
+  FILES_HAS_REFERENCES,
 } = require('../constant');
 const handlePipeline = require('./pipeline-error');
 
@@ -22,15 +23,16 @@ async function getReferenceData(redis, references = []) {
 
   references.forEach((id) => {
     pipeline.smembers(FILES_REFERENCED_INDEX_KEY(id));
-    pipeline.hget(FILES_DATA_INDEX_KEY(id), FILES_OWNER_FIELD);
+    pipeline.hget(FILES_DATA_INDEX_KEY(id), FILES_OWNER_FIELD, FILES_HAS_REFERENCES);
   });
 
   const redisData = handlePipeline(await pipeline.exec());
   const referenceInfoMap = {};
 
-  chunk(redisData, 2).forEach(([referenced, owner], index) => {
+  chunk(redisData, 3).forEach(([referenced, owner, hasReferences], index) => {
     const refUploadId = references[index];
     referenceInfoMap[refUploadId] = {
+      hasReferences,
       referenced,
       owner,
     };
@@ -44,12 +46,19 @@ function verifyReferences(originalMeta, referenceInfoMap, newReferences) {
   const oldReferences = originalMeta[FILES_REFERENCES_FIELD] || [];
   const added = findAdded(oldReferences, newReferences);
   const validationError = new ValidationError('invalid reference');
+  validationError.statusCode = 403;
 
   added.forEach((id) => {
     const refInfo = referenceInfoMap[id];
     if (refInfo.owner !== owner) {
       validationError.addError(
         new ValidationError('invalid reference owner', 'e_reference', id)
+      );
+    }
+
+    if (refInfo.hasReferences) {
+      validationError.addError(
+        new ValidationError('should not have child references', 'e_reference', id)
       );
     }
 
