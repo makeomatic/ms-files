@@ -23,13 +23,13 @@ async function getReferenceData(redis, references = []) {
 
   references.forEach((id) => {
     pipeline.smembers(FILES_REFERENCED_INDEX_KEY(id));
-    pipeline.hget(FILES_DATA_INDEX_KEY(id), FILES_OWNER_FIELD, FILES_HAS_REFERENCES);
+    pipeline.hmget(FILES_DATA_INDEX_KEY(id), FILES_OWNER_FIELD, FILES_HAS_REFERENCES);
   });
 
   const redisData = handlePipeline(await pipeline.exec());
   const referenceInfoMap = {};
 
-  chunk(redisData, 3).forEach(([referenced, owner, hasReferences], index) => {
+  chunk(redisData, 2).forEach(([referenced, [owner, hasReferences]], index) => {
     const refUploadId = references[index];
     referenceInfoMap[refUploadId] = {
       hasReferences,
