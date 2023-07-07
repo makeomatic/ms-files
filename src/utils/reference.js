@@ -8,6 +8,7 @@ const {
   FILES_OWNER_FIELD,
   FILES_IS_REFERENCED,
   FILES_HAS_REFERENCES,
+  FILES_HAS_NFT,
 } = require('../constant');
 const handlePipeline = require('./pipeline-error');
 
@@ -23,15 +24,16 @@ async function getReferenceData(redis, references = []) {
 
   references.forEach((id) => {
     pipeline.smembers(FILES_REFERENCED_INDEX_KEY(id));
-    pipeline.hmget(FILES_DATA_INDEX_KEY(id), FILES_OWNER_FIELD, FILES_HAS_REFERENCES);
+    pipeline.hmget(FILES_DATA_INDEX_KEY(id), FILES_OWNER_FIELD, FILES_HAS_REFERENCES, FILES_HAS_NFT);
   });
 
   const redisData = handlePipeline(await pipeline.exec());
   const referenceInfoMap = {};
 
-  chunk(redisData, 2).forEach(([referenced, [owner, hasReferences]], index) => {
+  chunk(redisData, 2).forEach(([referenced, [owner, hasReferences, hasNft]], index) => {
     const refUploadId = references[index];
     referenceInfoMap[refUploadId] = {
+      hasNft,
       hasReferences,
       referenced,
       owner,
@@ -59,6 +61,12 @@ function verifyReferences(originalMeta, referenceInfoMap, newReferences) {
     if (refInfo.hasReferences) {
       validationError.addError(
         new ValidationError('should not have child references', 'e_reference', id)
+      );
+    }
+
+    if (refInfo.hasNft) {
+      validationError.addError(
+        new ValidationError('should not be nft', 'e_reference', id)
       );
     }
 
