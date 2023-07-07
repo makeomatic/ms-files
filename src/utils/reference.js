@@ -58,7 +58,7 @@ function verifyReferences(originalMeta, referenceInfoMap, newReferences) {
       );
     }
 
-    if (refInfo.hasReferences) {
+    if (refInfo.hasReferences && +refInfo.hasReferences === 1) {
       validationError.addError(
         new ValidationError('should not have child references', 'e_reference', id)
       );
