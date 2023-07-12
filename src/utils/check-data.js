@@ -2,10 +2,10 @@ const { HttpStatusError } = require('common-errors');
 
 const {
   FILES_IMMUTABLE_FIELD,
-  FILES_NFT_OWNER,
-  FILES_NFT_TOKEN_AMOUNT,
+  FILES_NFT_OWNER_FIELD,
+  FILES_NFT_TOKEN_AMOUNT_FIELD,
   FILES_IS_CLONE_FIELD,
-  FILES_NFT_BLOCK,
+  FILES_NFT_BLOCK_FIELD,
   FILES_IS_REFERENCED,
 } = require('../constant');
 
@@ -26,9 +26,9 @@ function assertImmutable(data) {
 }
 
 const updatableFields = [
-  FILES_NFT_TOKEN_AMOUNT,
-  FILES_NFT_OWNER,
-  FILES_NFT_BLOCK,
+  FILES_NFT_TOKEN_AMOUNT_FIELD,
+  FILES_NFT_OWNER_FIELD,
+  FILES_NFT_BLOCK_FIELD,
 ];
 
 function fieldUpdatePossible(metaToUpdate) {

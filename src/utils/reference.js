@@ -6,8 +6,8 @@ const {
   FILES_REFERENCED_INDEX_KEY,
   FILES_DATA_INDEX_KEY,
   FILES_OWNER_FIELD,
-  FILES_IS_REFERENCED,
-  FILES_HAS_REFERENCES,
+  FILES_IS_REFERENCED_FIELD,
+  FILES_HAS_REFERENCES_FIELD,
   FILES_HAS_NFT,
 } = require('../constant');
 const handlePipeline = require('./pipeline-error');
@@ -24,7 +24,7 @@ async function getReferenceData(redis, references = []) {
 
   references.forEach((id) => {
     pipeline.smembers(FILES_REFERENCED_INDEX_KEY(id));
-    pipeline.hmget(FILES_DATA_INDEX_KEY(id), FILES_OWNER_FIELD, FILES_HAS_REFERENCES, FILES_HAS_NFT);
+    pipeline.hmget(FILES_DATA_INDEX_KEY(id), FILES_OWNER_FIELD, FILES_HAS_REFERENCES_FIELD, FILES_HAS_NFT);
   });
 
   const redisData = handlePipeline(await pipeline.exec());
@@ -91,13 +91,13 @@ function updateReferences(newMeta, originalMeta, referencedInfo, pipeline) {
   const added = findAdded(oldReferences, newReferences);
 
   added.forEach((id) => {
-    pipeline.hset(FILES_DATA_INDEX_KEY(id), FILES_IS_REFERENCED, '1');
+    pipeline.hset(FILES_DATA_INDEX_KEY(id), FILES_IS_REFERENCED_FIELD, '1');
     pipeline.sadd(FILES_REFERENCED_INDEX_KEY(id), originalMeta.uploadId);
   });
 
   deleted.forEach((id) => {
     if (referencedInfo[id].referenced.length - 1 === 0) {
-      pipeline.hset(FILES_DATA_INDEX_KEY(id), FILES_IS_REFERENCED, '0');
+      pipeline.hset(FILES_DATA_INDEX_KEY(id), FILES_IS_REFERENCED_FIELD, '0');
     }
     pipeline.srem(FILES_REFERENCED_INDEX_KEY(id), originalMeta.uploadId);
   });
