@@ -4,6 +4,8 @@ const assert = require('assert');
 const { HttpStatusError } = require('common-errors');
 const fetchData = require('../utils/fetch-data');
 const handlePipeline = require('../utils/pipeline-error');
+const { updateReferences, getReferenceData } = require('../utils/reference');
+
 const {
   STATUS_UPLOADED,
   STATUS_PENDING,
@@ -29,6 +31,7 @@ const {
   FILES_INDEX_UAT_PUBLIC,
   FILES_USER_INDEX_UAT_KEY,
   FILES_USER_INDEX_UAT_PUBLIC_KEY,
+  FILES_REFERENCES_FIELD,
 } = require('../constant');
 
 // cached vars
@@ -144,6 +147,13 @@ async function completeFileUpload({ params }) {
           pipeline.sadd(`${FILES_INDEX_TAGS}:${tag}`, uploadId);
         }
       }
+    }
+
+    const uploadData = await fetchData.call(this, uploadKey);
+    const references = uploadData[FILES_REFERENCES_FIELD] || [];
+    if (references.length > 0) {
+      const referencedInfo = await getReferenceData(redis, references);
+      updateReferences({ references }, { uploadId }, referencedInfo, pipeline);
     }
   }
 
