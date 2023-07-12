@@ -8,6 +8,8 @@ const handlePipeline = require('../utils/pipeline-error');
 const stringify = require('../utils/stringify');
 const extension = require('../utils/extension');
 const isValidBackgroundOrigin = require('../utils/is-valid-background-origin');
+const { getReferenceData, verifyReferences } = require('../utils/reference');
+
 const {
   STATUS_PENDING,
   UPLOAD_DATA,
@@ -25,6 +27,7 @@ const {
   FILES_CONTENT_LENGTH_FIELD,
   FILES_ID_FIELD,
   FILES_UPLOAD_STARTED_AT_FIELD,
+  FILES_REFERENCES_FIELD,
 } = require('../constant');
 
 /**
@@ -149,6 +152,12 @@ async function initFileUpload({ params }) {
     [FILES_OWNER_FIELD]: username,
     [FILES_BUCKET_FIELD]: bucketName,
   };
+
+  const newReferences = fileData[FILES_REFERENCES_FIELD] || [];
+  if (newReferences.length > 0) {
+    const referencedInfo = await getReferenceData(redis, newReferences);
+    verifyReferences(fileData, referencedInfo, newReferences);
+  }
 
   if (uploadType) {
     fileData.uploadType = uploadType;
