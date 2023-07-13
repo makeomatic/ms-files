@@ -28,6 +28,8 @@ const {
   FILES_ID_FIELD,
   FILES_UPLOAD_STARTED_AT_FIELD,
   FILES_REFERENCES_FIELD,
+  FILES_HAS_NFT,
+  FILES_NFT_FIELD,
 } = require('../constant');
 
 /**
@@ -157,6 +159,10 @@ async function initFileUpload({ params }) {
   if (newReferences.length > 0) {
     const referencedInfo = await getReferenceData(redis, newReferences);
     verifyReferences(fileData, referencedInfo, newReferences);
+  }
+
+  if (fileData[FILES_NFT_FIELD]) {
+    fileData[FILES_HAS_NFT] = '1';
   }
 
   if (uploadType) {
