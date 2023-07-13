@@ -19,6 +19,7 @@ describe('upload suite', function suite() {
     processUpload,
     getInfo,
     meta,
+    initAndUpload,
   } = require('../helpers/utils');
 
   // data
@@ -682,6 +683,77 @@ describe('upload suite', function suite() {
       assert(vs('upload', missingPh).error
         .message.match(/data.meta must have required property 'pHeight', data.meta must match "then" schema/));
       assert(vs('upload', missingPw).error.message.match(/data.meta must have required property 'pWidth', data.meta must match "then" schema/));
+    });
+
+    it('validates meta.nft', function test() {
+      const invalidNft = {
+        ...valid,
+        meta: {
+          nft: {},
+        },
+      };
+      const vs = this.files.validator.ifError.bind(this.files.validator);
+
+      // eslint-disable-next-line max-len
+      assert.throws(() => vs('upload', invalidNft), /validation failed: data\/meta\/nft must have required property 'price', data\/meta\/nft must have required property 'currency', data\/meta\/nft must have required property 'supply', data\/meta\/nft must have required property 'image', data\/meta must have required property 'name'/);
+    });
+  });
+
+  describe('references', function checkReferencesSute() {
+    let referencedModelId;
+
+    before('upload file', async function uploadFile() {
+      const referencedUploaded = await initAndUpload({
+        ...modelData,
+        message: {
+          ...modelData.message,
+          meta: {
+            ...meta,
+            ...modelData.message.meta,
+          },
+          access: {
+            setPublic: true,
+          },
+        },
+      }, false).call({ amqp: this.amqp });
+
+      referencedModelId = referencedUploaded.uploadId;
+    });
+
+    it('assigns references on upload and after finish', async function checkReferences() {
+      const uploadResult = await initAndUpload({
+        ...modelData,
+        message: {
+          ...modelData.message,
+          meta: {
+            ...meta,
+            ...modelData.message.meta,
+            references: [referencedModelId],
+          },
+          access: {
+            setPublic: true,
+          },
+        },
+      }, false).call({ amqp: this.amqp });
+
+      assert.deepStrictEqual(uploadResult.references, [referencedModelId]);
+      assert.deepStrictEqual(uploadResult.hasReferences, '1');
+    });
+
+    it('checks references on upload', async function checkReferences() {
+      const uploadResult = this.send({
+        ...modelData.message,
+        meta: {
+          ...meta,
+          ...modelData.message.meta,
+          references: [referencedModelId],
+        },
+        access: {
+          setPublic: true,
+        },
+      }, 45000);
+
+      await assert.rejects(uploadResult, /invalid reference/);
     });
   });
 });

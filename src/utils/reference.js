@@ -13,6 +13,8 @@ const {
   FILE_MISSING_ERROR,
   FILES_DIRECT_ONLY_FIELD,
   FILES_UNLISTED_FIELD,
+  FILES_STATUS_FIELD,
+  STATUS_PROCESSED,
 } = require('../constant');
 const handlePipeline = require('./pipeline-error');
 
@@ -35,7 +37,8 @@ async function getReferenceData(redis, references = []) {
       FILES_HAS_NFT,
       FILES_IMMUTABLE_FIELD,
       FILES_DIRECT_ONLY_FIELD,
-      FILES_UNLISTED_FIELD
+      FILES_UNLISTED_FIELD,
+      FILES_STATUS_FIELD
     );
   });
 
@@ -43,7 +46,7 @@ async function getReferenceData(redis, references = []) {
   const referenceInfoMap = {};
 
   chunk(redisData, 2).forEach(([referenced, meta], index) => {
-    const [owner, hasReferences, hasNft, immutable, directOnly, unlisted] = meta;
+    const [owner, hasReferences, hasNft, immutable, directOnly, unlisted, status] = meta;
     if (!owner) {
       throw FILE_MISSING_ERROR;
     }
@@ -57,6 +60,7 @@ async function getReferenceData(redis, references = []) {
       immutable,
       directOnly,
       unlisted,
+      status,
     };
   });
 
@@ -74,6 +78,12 @@ function verifyReferences(originalMeta, referenceInfoMap, newReferences) {
 
   added.forEach((id) => {
     const refInfo = referenceInfoMap[id];
+
+    if (refInfo.status !== STATUS_PROCESSED) {
+      validationError.addError(
+        new ValidationError('invalid reference status', 'e_reference', id)
+      );
+    }
 
     if (refInfo.owner !== owner) {
       validationError.addError(

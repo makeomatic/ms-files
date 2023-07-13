@@ -30,6 +30,7 @@ const {
   FILES_REFERENCES_FIELD,
   FILES_HAS_NFT,
   FILES_NFT_FIELD,
+  FILES_HAS_REFERENCES_FIELD,
 } = require('../constant');
 
 /**
@@ -137,6 +138,19 @@ async function initFileUpload({ params }) {
     };
   });
 
+  const newReferences = meta[FILES_REFERENCES_FIELD] || [];
+  if (newReferences.length > 0) {
+    const referencedInfo = await getReferenceData(redis, newReferences);
+    const tempMeta = {
+      ...meta,
+      uploadId,
+      [FILES_REFERENCES_FIELD]: [],
+      [FILES_OWNER_FIELD]: username,
+    };
+
+    verifyReferences(tempMeta, referencedInfo, newReferences);
+  }
+
   const serialized = Object.create(null);
   for (const field of FIELDS_TO_STRINGIFY) {
     stringify(meta, field, serialized);
@@ -155,10 +169,8 @@ async function initFileUpload({ params }) {
     [FILES_BUCKET_FIELD]: bucketName,
   };
 
-  const newReferences = fileData[FILES_REFERENCES_FIELD] || [];
   if (newReferences.length > 0) {
-    const referencedInfo = await getReferenceData(redis, newReferences);
-    verifyReferences(fileData, referencedInfo, newReferences);
+    fileData[FILES_HAS_REFERENCES_FIELD] = '1';
   }
 
   if (fileData[FILES_NFT_FIELD]) {
