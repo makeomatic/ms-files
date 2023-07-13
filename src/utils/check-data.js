@@ -6,7 +6,7 @@ const {
   FILES_NFT_TOKEN_AMOUNT_FIELD,
   FILES_IS_CLONE_FIELD,
   FILES_NFT_BLOCK_FIELD,
-  FILES_IS_REFERENCED,
+  FILES_IS_REFERENCED_FIELD,
 } = require('../constant');
 
 function isImmutable(data) {
@@ -58,7 +58,7 @@ function assertUpdatable(metaToUpdate = {}, isRemoveOp = false) {
 }
 
 async function assertNotReferenced(data) {
-  if (data[FILES_IS_REFERENCED] === '1') {
+  if (data[FILES_IS_REFERENCED_FIELD] === '1') {
     throw new HttpStatusError(400, 'should not be referenced');
   }
 

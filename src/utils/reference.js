@@ -9,6 +9,7 @@ const {
   FILES_IS_REFERENCED_FIELD,
   FILES_HAS_REFERENCES_FIELD,
   FILES_HAS_NFT,
+  FILES_IMMUTABLE_FIELD,
 } = require('../constant');
 const handlePipeline = require('./pipeline-error');
 
@@ -24,19 +25,26 @@ async function getReferenceData(redis, references = []) {
 
   references.forEach((id) => {
     pipeline.smembers(FILES_REFERENCED_INDEX_KEY(id));
-    pipeline.hmget(FILES_DATA_INDEX_KEY(id), FILES_OWNER_FIELD, FILES_HAS_REFERENCES_FIELD, FILES_HAS_NFT);
+    pipeline.hmget(
+      FILES_DATA_INDEX_KEY(id),
+      FILES_OWNER_FIELD,
+      FILES_HAS_REFERENCES_FIELD,
+      FILES_HAS_NFT,
+      FILES_IMMUTABLE_FIELD
+    );
   });
 
   const redisData = handlePipeline(await pipeline.exec());
   const referenceInfoMap = {};
 
-  chunk(redisData, 2).forEach(([referenced, [owner, hasReferences, hasNft]], index) => {
+  chunk(redisData, 2).forEach(([referenced, [owner, hasReferences, hasNft, immutable]], index) => {
     const refUploadId = references[index];
     referenceInfoMap[refUploadId] = {
       hasNft,
       hasReferences,
       referenced,
       owner,
+      immutable,
     };
   });
 
@@ -64,9 +72,9 @@ function verifyReferences(originalMeta, referenceInfoMap, newReferences) {
       );
     }
 
-    if (refInfo.hasNft) {
+    if (refInfo.hasNft || refInfo.immutable) {
       validationError.addError(
-        new ValidationError('should not be nft', 'e_reference', id)
+        new ValidationError('should not be immutable or special type', 'e_reference', id)
       );
     }
 
