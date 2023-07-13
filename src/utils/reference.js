@@ -10,6 +10,7 @@ const {
   FILES_HAS_REFERENCES_FIELD,
   FILES_HAS_NFT,
   FILES_IMMUTABLE_FIELD,
+  FILE_MISSING_ERROR,
 } = require('../constant');
 const handlePipeline = require('./pipeline-error');
 
@@ -38,6 +39,10 @@ async function getReferenceData(redis, references = []) {
   const referenceInfoMap = {};
 
   chunk(redisData, 2).forEach(([referenced, [owner, hasReferences, hasNft, immutable]], index) => {
+    if (!owner) {
+      throw FILE_MISSING_ERROR;
+    }
+
     const refUploadId = references[index];
     referenceInfoMap[refUploadId] = {
       hasNft,
@@ -55,6 +60,8 @@ function verifyReferences(originalMeta, referenceInfoMap, newReferences) {
   const { uploadId, owner } = originalMeta;
   const oldReferences = originalMeta[FILES_REFERENCES_FIELD] || [];
   const added = findAdded(oldReferences, newReferences);
+
+  // :(
   const validationError = new ValidationError('invalid reference');
   validationError.statusCode = 403;
 
