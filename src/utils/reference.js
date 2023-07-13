@@ -11,6 +11,7 @@ const {
   FILES_HAS_NFT,
   FILES_IMMUTABLE_FIELD,
   FILE_MISSING_ERROR,
+  FILES_DIRECT_ONLY_FIELD,
 } = require('../constant');
 const handlePipeline = require('./pipeline-error');
 
@@ -31,14 +32,16 @@ async function getReferenceData(redis, references = []) {
       FILES_OWNER_FIELD,
       FILES_HAS_REFERENCES_FIELD,
       FILES_HAS_NFT,
-      FILES_IMMUTABLE_FIELD
+      FILES_IMMUTABLE_FIELD,
+      FILES_DIRECT_ONLY_FIELD
     );
   });
 
   const redisData = handlePipeline(await pipeline.exec());
   const referenceInfoMap = {};
 
-  chunk(redisData, 2).forEach(([referenced, [owner, hasReferences, hasNft, immutable]], index) => {
+  chunk(redisData, 2).forEach(([referenced, meta], index) => {
+    const [owner, hasReferences, hasNft, immutable, directOnly] = meta;
     if (!owner) {
       throw FILE_MISSING_ERROR;
     }
@@ -50,6 +53,7 @@ async function getReferenceData(redis, references = []) {
       referenced,
       owner,
       immutable,
+      directOnly,
     };
   });
 
@@ -79,9 +83,9 @@ function verifyReferences(originalMeta, referenceInfoMap, newReferences) {
       );
     }
 
-    if (refInfo.hasNft || refInfo.immutable) {
+    if (refInfo.hasNft || refInfo.immutable || refInfo.directOnly) {
       validationError.addError(
-        new ValidationError('should not be immutable or special type', 'e_reference', id)
+        new ValidationError('should not be immutable, special type or private', 'e_reference', id)
       );
     }
 
