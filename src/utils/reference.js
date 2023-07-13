@@ -12,6 +12,7 @@ const {
   FILES_IMMUTABLE_FIELD,
   FILE_MISSING_ERROR,
   FILES_DIRECT_ONLY_FIELD,
+  FILES_UNLISTED_FIELD,
 } = require('../constant');
 const handlePipeline = require('./pipeline-error');
 
@@ -33,7 +34,8 @@ async function getReferenceData(redis, references = []) {
       FILES_HAS_REFERENCES_FIELD,
       FILES_HAS_NFT,
       FILES_IMMUTABLE_FIELD,
-      FILES_DIRECT_ONLY_FIELD
+      FILES_DIRECT_ONLY_FIELD,
+      FILES_UNLISTED_FIELD
     );
   });
 
@@ -41,7 +43,7 @@ async function getReferenceData(redis, references = []) {
   const referenceInfoMap = {};
 
   chunk(redisData, 2).forEach(([referenced, meta], index) => {
-    const [owner, hasReferences, hasNft, immutable, directOnly] = meta;
+    const [owner, hasReferences, hasNft, immutable, directOnly, unlisted] = meta;
     if (!owner) {
       throw FILE_MISSING_ERROR;
     }
@@ -54,6 +56,7 @@ async function getReferenceData(redis, references = []) {
       owner,
       immutable,
       directOnly,
+      unlisted,
     };
   });
 
@@ -71,21 +74,34 @@ function verifyReferences(originalMeta, referenceInfoMap, newReferences) {
 
   added.forEach((id) => {
     const refInfo = referenceInfoMap[id];
+
     if (refInfo.owner !== owner) {
       validationError.addError(
         new ValidationError('invalid reference owner', 'e_reference', id)
       );
     }
 
-    if (refInfo.hasReferences && +refInfo.hasReferences === 1) {
+    if (refInfo.hasReferences && refInfo.hasReferences === '1') {
       validationError.addError(
         new ValidationError('should not have child references', 'e_reference', id)
       );
     }
 
-    if (refInfo.hasNft || refInfo.immutable || refInfo.directOnly) {
+    if (refInfo.hasNft) {
       validationError.addError(
-        new ValidationError('should not be immutable, special type or private', 'e_reference', id)
+        new ValidationError('should not be special type', 'e_reference', id)
+      );
+    }
+
+    if (refInfo.immutable) {
+      validationError.addError(
+        new ValidationError('should not be immutable', 'e_reference', id)
+      );
+    }
+
+    if (refInfo.directOnly || refInfo.unlisted) {
+      validationError.addError(
+        new ValidationError('should not be private or unlisted', 'e_reference', id)
       );
     }
 

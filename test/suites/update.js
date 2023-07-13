@@ -438,7 +438,7 @@ describe('update suite', function suite() {
   describe('update nft', function emptyDescription() {
     it('update nft fields', async function test() {
       const { uploadId } = this.response;
-      meta.nft = {
+      const nft = {
         price: '1',
         asset: 'asset',
         story: 'story',
@@ -454,7 +454,10 @@ describe('update suite', function suite() {
       await this.send({
         uploadId,
         username,
-        meta,
+        meta: {
+          ...meta,
+          nft,
+        },
       }, 45000);
 
       const fileInfo = await getInfo.call(this, {
@@ -553,7 +556,7 @@ describe('update suite', function suite() {
             setPublic: true,
           },
         },
-      }).call({ amqp: this.amqp });
+      }, false).call({ amqp: this.amqp });
 
       uploadId = uploaded.uploadId;
     });
@@ -631,6 +634,69 @@ describe('update suite', function suite() {
           assert.strictEqual(err.message, 'invalid reference');
           assert.strictEqual(err.errors[0].text, 'already has reference');
           assert.strictEqual(err.errors[0].field, uploadId);
+
+          return true;
+        }
+      );
+    });
+
+    it('validates directOnly, nft and nested references', async function test() {
+      await this.send({
+        username,
+        uploadId,
+        immutable: true,
+        meta: {
+          nft: {
+            price: '1',
+            asset: 'asset',
+            story: 'story',
+            currency: 'usd',
+            supply: 1,
+            image: 'http://website.com/image.jpeg',
+            attributes: [{
+              title: 'test',
+              imageUrl: 'http://test.com',
+            }],
+          },
+        },
+        access: {
+          isPublic: false,
+        },
+      });
+
+      const anotherUpload = await initAndUpload({
+        ...modelData,
+        message: {
+          ...modelData.message,
+          meta: {
+            ...meta,
+            ...modelData.message.meta,
+          },
+          access: {
+            setPublic: true,
+          },
+        },
+      }, false).call({ amqp: this.amqp });
+
+      await assert.rejects(
+        this.send({
+          username,
+          uploadId: anotherUpload.uploadId,
+          meta: {
+            references: [uploadId, modelWithReference],
+          },
+        }),
+        (err) => {
+          assert.strictEqual(err.name, 'ValidationError');
+          assert.strictEqual(err.message, 'invalid reference');
+          assert.strictEqual(err.errors[0].text, 'should not be special type');
+          assert.strictEqual(err.errors[0].field, uploadId);
+          assert.strictEqual(err.errors[1].text, 'should not be immutable');
+          assert.strictEqual(err.errors[1].field, uploadId);
+          assert.strictEqual(err.errors[2].text, 'already has reference');
+          assert.strictEqual(err.errors[2].field, uploadId);
+          assert.strictEqual(err.errors[3].text, 'should not have child references');
+          assert.strictEqual(err.errors[3].field, modelWithReference);
 
           return true;
         }
