@@ -34,6 +34,7 @@ const {
   FILES_PARENT_FIELD,
   FILES_NFT_TOKEN_FIELD,
   FILES_NFT_COLLECTION_FIELD,
+  FILES_IS_CLONE_FIELD,
 } = require('../constant');
 
 const k404Error = new Error('ELIST404');
@@ -290,7 +291,10 @@ async function prepareResponse(ctx, data) {
 
 const punctuation = /[,.<>{}[\]"':;!@#$%^&*()\-+=~]+/g;
 const tokenization = /[\s,.<>{}[\]"':;!@#$%^&*()\-+=~]+/g;
-const tagProps = [FILES_OWNER_FIELD, FILES_NFT_OWNER_FIELD, FILES_PARENT_FIELD, FILES_NFT_TOKEN_FIELD, FILES_NFT_COLLECTION_FIELD];
+const tagProps = [
+  FILES_OWNER_FIELD, FILES_NFT_OWNER_FIELD, FILES_PARENT_FIELD, FILES_NFT_TOKEN_FIELD, FILES_NFT_COLLECTION_FIELD,
+  FILES_IS_CLONE_FIELD,
+];
 const numericProps = [FILES_HAS_REFERENCES_FIELD, FILES_IS_REFERENCED_FIELD];
 
 /**
