@@ -721,14 +721,14 @@ describe('update suite', function suite() {
       });
 
       assert.deepStrictEqual(updated.file.references, []);
-      assert.deepStrictEqual(updated.file.hasReferences, '0');
+      assert.strict(!updated.file.hasReferences);
 
       const referenced = await getInfo.call(this, {
         filename: uploadId,
         username,
       });
 
-      assert.deepStrictEqual(referenced.file.isReferenced, '0');
+      assert.strict(!referenced.file.isReferenced);
     });
   });
 });

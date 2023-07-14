@@ -211,7 +211,8 @@ async function updateMeta(lock, ctx, params) {
     if (Array.isArray(meta[FILES_REFERENCES_FIELD]) && meta[FILES_REFERENCES_FIELD].length > 0) {
       meta[FILES_HAS_REFERENCES_FIELD] = '1';
     } else {
-      meta[FILES_HAS_REFERENCES_FIELD] = '0';
+      delete meta[FILES_HAS_REFERENCES_FIELD];
+      pipeline.hdel(key, FILES_HAS_REFERENCES_FIELD);
     }
 
     for (const field of FIELDS_TO_STRINGIFY.values()) {

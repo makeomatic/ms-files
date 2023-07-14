@@ -142,7 +142,7 @@ function updateReferences(newMeta, originalMeta, referencedInfo, pipeline) {
 
   deleted.forEach((id) => {
     if (referencedInfo[id].referenced.length - 1 === 0) {
-      pipeline.hset(FILES_DATA_INDEX_KEY(id), FILES_IS_REFERENCED_FIELD, '0');
+      pipeline.hdel(FILES_DATA_INDEX_KEY(id), FILES_IS_REFERENCED_FIELD);
     }
     pipeline.srem(FILES_REFERENCED_INDEX_KEY(id), originalMeta.uploadId);
   });
