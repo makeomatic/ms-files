@@ -931,16 +931,19 @@
                 "type": "object",
                 "required": [
                   "title",
-                  "imageUrl"
+                  "type"
                 ],
                 "properties": {
                   "title": {
                     "type": "string"
                   },
-                  "imageUrl": {
+                  "type": {
                     "type": "string"
                   },
                   "url": {
+                    "type": "string"
+                  },
+                  "id": {
                     "type": "string"
                   }
                 }
@@ -958,7 +961,7 @@
         },
         "nftOwner": {
           "type": "string",
-          "pattern":"^0x[0-9A-Fa-f]{40}$"
+          "pattern": "^0x[0-9A-Fa-f]{40}$"
         },
         "nftCollection": {
           "type": "string",
@@ -988,7 +991,8 @@
           "type": "string",
           "minLength": 1,
           "maxLength": 58
-        }, {
+        },
+        {
           "type": "object",
           "minProperties": 1,
           "maxProperties": 2,

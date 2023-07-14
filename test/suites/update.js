@@ -447,7 +447,8 @@ describe('update suite', function suite() {
         image: 'http://website.com/image.jpeg',
         attributes: [{
           title: 'test',
-          imageUrl: 'http://test.com',
+          type: 'image',
+          url: 'http://test.com',
         }],
       };
 
@@ -472,7 +473,8 @@ describe('update suite', function suite() {
       assert.equal(fileInfo.file.nft.supply, 1);
       assert.equal(fileInfo.file.nft.image, 'http://website.com/image.jpeg');
       assert.equal(fileInfo.file.nft.attributes[0].title, 'test');
-      assert.equal(fileInfo.file.nft.attributes[0].imageUrl, 'http://test.com');
+      assert.equal(fileInfo.file.nft.attributes[0].type, 'image');
+      assert.equal(fileInfo.file.nft.attributes[0].url, 'http://test.com');
     });
   });
 
@@ -655,7 +657,8 @@ describe('update suite', function suite() {
             image: 'http://website.com/image.jpeg',
             attributes: [{
               title: 'test',
-              imageUrl: 'http://test.com',
+              type: 'image',
+              url: 'http://test.com',
             }],
           },
         },

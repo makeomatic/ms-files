@@ -461,7 +461,8 @@ const nftMeta = {
     image: 'http://website.com/image.jpeg',
     attributes: [{
       title: 'test',
-      imageUrl: 'http://test.com',
+      type: 'image',
+      url: 'http://test.com',
     }],
   },
 };
