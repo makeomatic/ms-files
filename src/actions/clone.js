@@ -33,8 +33,8 @@ const {
   FILES_FILES_FIELD,
   FILES_OWNER_FIELD,
   FILES_IS_CLONE_FIELD,
-  FILES_NFT_OWNER,
-  FILES_HAS_NFT_OWNER,
+  FILES_NFT_OWNER_FIELD,
+  FILES_HAS_NFT_OWNER_FIELD,
 } = require('../constant');
 
 /**
@@ -99,8 +99,8 @@ async function cloneFile(lock, ctx, params) {
     pipeline.sadd(newOwnerPublicIndex, newUploadId);
   }
 
-  if (mergedData[FILES_NFT_OWNER]) {
-    mergedData[FILES_HAS_NFT_OWNER] = '1';
+  if (mergedData[FILES_NFT_OWNER_FIELD]) {
+    mergedData[FILES_HAS_NFT_OWNER_FIELD] = '1';
   }
 
   // add mark to the original file

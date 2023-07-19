@@ -8,6 +8,8 @@ const handlePipeline = require('../utils/pipeline-error');
 const stringify = require('../utils/stringify');
 const extension = require('../utils/extension');
 const isValidBackgroundOrigin = require('../utils/is-valid-background-origin');
+const { getReferenceData, verifyReferences } = require('../utils/reference');
+
 const {
   STATUS_PENDING,
   UPLOAD_DATA,
@@ -25,6 +27,10 @@ const {
   FILES_CONTENT_LENGTH_FIELD,
   FILES_ID_FIELD,
   FILES_UPLOAD_STARTED_AT_FIELD,
+  FILES_REFERENCES_FIELD,
+  FILES_HAS_NFT,
+  FILES_NFT_FIELD,
+  FILES_HAS_REFERENCES_FIELD,
 } = require('../constant');
 
 /**
@@ -132,6 +138,19 @@ async function initFileUpload({ params }) {
     };
   });
 
+  const newReferences = meta[FILES_REFERENCES_FIELD] || [];
+  if (newReferences.length > 0) {
+    const referencedInfo = await getReferenceData(redis, newReferences);
+    const tempMeta = {
+      ...meta,
+      uploadId,
+      [FILES_REFERENCES_FIELD]: [],
+      [FILES_OWNER_FIELD]: username,
+    };
+
+    verifyReferences(tempMeta, referencedInfo, newReferences);
+  }
+
   const serialized = Object.create(null);
   for (const field of FIELDS_TO_STRINGIFY) {
     stringify(meta, field, serialized);
@@ -149,6 +168,14 @@ async function initFileUpload({ params }) {
     [FILES_OWNER_FIELD]: username,
     [FILES_BUCKET_FIELD]: bucketName,
   };
+
+  if (newReferences.length > 0) {
+    fileData[FILES_HAS_REFERENCES_FIELD] = '1';
+  }
+
+  if (fileData[FILES_NFT_FIELD]) {
+    fileData[FILES_HAS_NFT] = '1';
+  }
 
   if (uploadType) {
     fileData.uploadType = uploadType;

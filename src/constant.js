@@ -62,15 +62,15 @@ module.exports = exports = Object.setPrototypeOf({
   FILES_IS_CLONE_FIELD: 'isClone',
   FILES_CLONED_AT_FIELD: 'clonedAt',
   FILES_FILES_FIELD: 'files',
-  FILES_NFT_OWNER: 'nftOwner',
-  FILES_HAS_NFT_OWNER: 'hnw',
-  FILES_NFT_COLLECTION: 'nftCollection',
-  FILES_NFT_TOKEN: 'nftToken',
-  FILES_NFT_TOKEN_AMOUNT: 'nftAmount',
-  FILES_NFT_BLOCK: 'nftBlock',
-  FILES_HAS_REFERENCES: 'hasReferences',
+  FILES_NFT_OWNER_FIELD: 'nftOwner',
+  FILES_HAS_NFT_OWNER_FIELD: 'hnw',
+  FILES_NFT_COLLECTION_FIELD: 'nftCollection',
+  FILES_NFT_TOKEN_FIELD: 'nftToken',
+  FILES_NFT_TOKEN_AMOUNT_FIELD: 'nftAmount',
+  FILES_NFT_BLOCK_FIELD: 'nftBlock',
+  FILES_HAS_REFERENCES_FIELD: 'hasReferences',
   FILES_REFERENCES_FIELD: 'references',
-  FILES_IS_REFERENCED: 'isReferenced',
+  FILES_IS_REFERENCED_FIELD: 'isReferenced',
 
   // metatype of file
   FILES_TYPE_FIELD: 'type',
@@ -138,7 +138,7 @@ exports.FILES_USER_INDEX_KEY = (username) => `${exports.FILES_INDEX}:${username}
 exports.FILES_USER_INDEX_PUBLIC_KEY = (username) => `${exports.FILES_INDEX}:${username}:pub`;
 exports.FILES_USER_INDEX_UAT_KEY = (username) => `${exports.FILES_INDEX_UAT}:${username}`;
 exports.FILES_USER_INDEX_UAT_PUBLIC_KEY = (username) => `${exports.FILES_USER_INDEX_UAT_KEY(username)}:pub`;
-exports.FILES_REFERENCED_INDEX_KEY = (uploadId) => `${exports.FILES_REFERENCED_INDEX_KEY}:${uploadId}`;
+exports.FILES_REFERENCED_INDEX_KEY = (uploadId) => `${exports.FILES_INDEX_REFERENCED}:${uploadId}`;
 
 exports.UPLOAD_TYPE_GLB_EXTENDED = 'glb-extended';
 exports.UPLOAD_TYPE_PANORAMA_EQUIRECT = 'pano-equirect';

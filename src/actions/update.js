@@ -31,9 +31,9 @@ const {
   FILES_NFT_FIELD,
   FILES_HAS_NFT,
   FILES_IMMUTABLE_FIELD,
-  FILES_NFT_OWNER,
-  FILES_HAS_NFT_OWNER,
-  FILES_HAS_REFERENCES,
+  FILES_NFT_OWNER_FIELD,
+  FILES_HAS_NFT_OWNER_FIELD,
+  FILES_HAS_REFERENCES_FIELD,
   FILES_REFERENCES_FIELD,
 } = require('../constant');
 
@@ -204,14 +204,15 @@ async function updateMeta(lock, ctx, params) {
       meta[FILES_HAS_NFT] = '1';
     }
 
-    if (meta[FILES_NFT_OWNER]) {
-      meta[FILES_HAS_NFT_OWNER] = '1';
+    if (meta[FILES_NFT_OWNER_FIELD]) {
+      meta[FILES_HAS_NFT_OWNER_FIELD] = '1';
     }
 
     if (Array.isArray(meta[FILES_REFERENCES_FIELD]) && meta[FILES_REFERENCES_FIELD].length > 0) {
-      meta[FILES_HAS_REFERENCES] = '1';
+      meta[FILES_HAS_REFERENCES_FIELD] = '1';
     } else {
-      meta[FILES_HAS_REFERENCES] = '0';
+      delete meta[FILES_HAS_REFERENCES_FIELD];
+      pipeline.hdel(key, FILES_HAS_REFERENCES_FIELD);
     }
 
     for (const field of FIELDS_TO_STRINGIFY.values()) {

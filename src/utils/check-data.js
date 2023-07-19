@@ -2,11 +2,11 @@ const { HttpStatusError } = require('common-errors');
 
 const {
   FILES_IMMUTABLE_FIELD,
-  FILES_NFT_OWNER,
-  FILES_NFT_TOKEN_AMOUNT,
+  FILES_NFT_OWNER_FIELD,
+  FILES_NFT_TOKEN_AMOUNT_FIELD,
   FILES_IS_CLONE_FIELD,
-  FILES_NFT_BLOCK,
-  FILES_IS_REFERENCED,
+  FILES_NFT_BLOCK_FIELD,
+  FILES_IS_REFERENCED_FIELD,
 } = require('../constant');
 
 function isImmutable(data) {
@@ -26,9 +26,9 @@ function assertImmutable(data) {
 }
 
 const updatableFields = [
-  FILES_NFT_TOKEN_AMOUNT,
-  FILES_NFT_OWNER,
-  FILES_NFT_BLOCK,
+  FILES_NFT_TOKEN_AMOUNT_FIELD,
+  FILES_NFT_OWNER_FIELD,
+  FILES_NFT_BLOCK_FIELD,
 ];
 
 function fieldUpdatePossible(metaToUpdate) {
@@ -58,7 +58,7 @@ function assertUpdatable(metaToUpdate = {}, isRemoveOp = false) {
 }
 
 async function assertNotReferenced(data) {
-  if (data[FILES_IS_REFERENCED] === '1') {
+  if (data[FILES_IS_REFERENCED_FIELD] === '1') {
     throw new HttpStatusError(400, 'should not be referenced');
   }
 

@@ -27,8 +27,14 @@ const {
   FILES_ID_FIELD,
   FILES_HAS_NFT,
   FILES_TEMP_FIELD,
-  FILES_NFT_OWNER,
-  FILES_HAS_NFT_OWNER,
+  FILES_NFT_OWNER_FIELD,
+  FILES_HAS_NFT_OWNER_FIELD,
+  FILES_HAS_REFERENCES_FIELD,
+  FILES_IS_REFERENCED_FIELD,
+  FILES_PARENT_FIELD,
+  FILES_NFT_TOKEN_FIELD,
+  FILES_NFT_COLLECTION_FIELD,
+  FILES_IS_CLONE_FIELD,
 } = require('../constant');
 
 const k404Error = new Error('ELIST404');
@@ -285,7 +291,11 @@ async function prepareResponse(ctx, data) {
 
 const punctuation = /[,.<>{}[\]"':;!@#$%^&*()\-+=~]+/g;
 const tokenization = /[\s,.<>{}[\]"':;!@#$%^&*()\-+=~]+/g;
-const tagProps = ['owner', 'nftOwner', 'nftWallet', 'parentId', 'nftToken', 'nftCollection'];
+const tagProps = [
+  FILES_OWNER_FIELD, FILES_NFT_OWNER_FIELD, FILES_PARENT_FIELD, FILES_NFT_TOKEN_FIELD, FILES_NFT_COLLECTION_FIELD,
+];
+const numericProps = [FILES_HAS_REFERENCES_FIELD, FILES_IS_REFERENCED_FIELD, FILES_IS_CLONE_FIELD];
+
 /**
  * Performs search using redis search extension
  */
@@ -327,13 +337,13 @@ async function redisSearch(ctx) {
 
       if (ctx.username) {
         // owner and empty wallet
-        ownerMatch = `(@${FILES_OWNER_FIELD}:{ $username } -@${FILES_HAS_NFT_OWNER}:[1 1])`;
+        ownerMatch = `(@${FILES_OWNER_FIELD}:{ $username } -@${FILES_HAS_NFT_OWNER_FIELD}:[1 1])`;
         params.push('username', ctx.username);
       }
 
       if (ctx.nftOwner) {
         // only wallet match
-        nftOwnerMatch = `(@${FILES_NFT_OWNER}:{ $nftOwner }) @${FILES_HAS_NFT_OWNER}:[1 1]`;
+        nftOwnerMatch = `(@${FILES_NFT_OWNER_FIELD}:{ $nftOwner }) @${FILES_HAS_NFT_OWNER_FIELD}:[1 1]`;
         params.push('nftOwner', ctx.nftOwner);
       }
 
@@ -370,9 +380,17 @@ async function redisSearch(ctx) {
       const upperRange = actionTypeOrValue.lte || '+inf';
       query.push(`@${propName}:[${lowerRange} ${upperRange}]`);
     } else if (actionTypeOrValue.exists !== undefined) {
-      query.push(`-@${propName}:""`);
+      if (numericProps.includes(propName)) {
+        query.push(`@${propName}:[-inf +inf]`);
+      } else {
+        query.push(`-@${propName}:""`);
+      }
     } else if (actionTypeOrValue.isempty !== undefined) {
-      query.push(`@${propName}:""`);
+      if (numericProps.includes(propName)) {
+        query.push(`-@${propName}:[-inf +inf]`);
+      } else {
+        query.push(`@${propName}:""`);
+      }
     } else if (actionTypeOrValue.eq) {
       query.push(`@${propName}:{ $f_${propName}_eq }`);
       params.push(`f_${propName}_eq`, actionTypeOrValue.eq);

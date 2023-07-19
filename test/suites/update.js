@@ -438,7 +438,7 @@ describe('update suite', function suite() {
   describe('update nft', function emptyDescription() {
     it('update nft fields', async function test() {
       const { uploadId } = this.response;
-      meta.nft = {
+      const nft = {
         price: '1',
         asset: 'asset',
         story: 'story',
@@ -447,14 +447,18 @@ describe('update suite', function suite() {
         image: 'http://website.com/image.jpeg',
         attributes: [{
           title: 'test',
-          imageUrl: 'http://test.com',
+          type: 'image',
+          url: 'http://test.com',
         }],
       };
 
       await this.send({
         uploadId,
         username,
-        meta,
+        meta: {
+          ...meta,
+          nft,
+        },
       }, 45000);
 
       const fileInfo = await getInfo.call(this, {
@@ -469,7 +473,8 @@ describe('update suite', function suite() {
       assert.equal(fileInfo.file.nft.supply, 1);
       assert.equal(fileInfo.file.nft.image, 'http://website.com/image.jpeg');
       assert.equal(fileInfo.file.nft.attributes[0].title, 'test');
-      assert.equal(fileInfo.file.nft.attributes[0].imageUrl, 'http://test.com');
+      assert.equal(fileInfo.file.nft.attributes[0].type, 'image');
+      assert.equal(fileInfo.file.nft.attributes[0].url, 'http://test.com');
     });
   });
 
@@ -553,7 +558,7 @@ describe('update suite', function suite() {
             setPublic: true,
           },
         },
-      }).call({ amqp: this.amqp });
+      }, false).call({ amqp: this.amqp });
 
       uploadId = uploaded.uploadId;
     });
@@ -637,6 +642,70 @@ describe('update suite', function suite() {
       );
     });
 
+    it('validates directOnly, nft and nested references', async function test() {
+      await this.send({
+        username,
+        uploadId,
+        immutable: true,
+        meta: {
+          nft: {
+            price: '1',
+            asset: 'asset',
+            story: 'story',
+            currency: 'usd',
+            supply: 1,
+            image: 'http://website.com/image.jpeg',
+            attributes: [{
+              title: 'test',
+              type: 'image',
+              url: 'http://test.com',
+            }],
+          },
+        },
+        access: {
+          isPublic: false,
+        },
+      });
+
+      const anotherUpload = await initAndUpload({
+        ...modelData,
+        message: {
+          ...modelData.message,
+          meta: {
+            ...meta,
+            ...modelData.message.meta,
+          },
+          access: {
+            setPublic: true,
+          },
+        },
+      }, false).call({ amqp: this.amqp });
+
+      await assert.rejects(
+        this.send({
+          username,
+          uploadId: anotherUpload.uploadId,
+          meta: {
+            references: [uploadId, modelWithReference],
+          },
+        }),
+        (err) => {
+          assert.strictEqual(err.name, 'ValidationError');
+          assert.strictEqual(err.message, 'invalid reference');
+          assert.strictEqual(err.errors[0].text, 'should not be special type');
+          assert.strictEqual(err.errors[0].field, uploadId);
+          assert.strictEqual(err.errors[1].text, 'should not be immutable');
+          assert.strictEqual(err.errors[1].field, uploadId);
+          assert.strictEqual(err.errors[2].text, 'already has reference');
+          assert.strictEqual(err.errors[2].field, uploadId);
+          assert.strictEqual(err.errors[3].text, 'should not have child references');
+          assert.strictEqual(err.errors[3].field, modelWithReference);
+
+          return true;
+        }
+      );
+    });
+
     it('removes reference', async function test() {
       await this.send({
         username,
@@ -652,14 +721,14 @@ describe('update suite', function suite() {
       });
 
       assert.deepStrictEqual(updated.file.references, []);
-      assert.deepStrictEqual(updated.file.hasReferences, '0');
+      assert.strict(!updated.file.hasReferences);
 
       const referenced = await getInfo.call(this, {
         filename: uploadId,
         username,
       });
 
-      assert.deepStrictEqual(referenced.file.isReferenced, '0');
+      assert.strict(!referenced.file.isReferenced);
     });
   });
 });
