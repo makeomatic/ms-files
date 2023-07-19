@@ -737,7 +737,7 @@
         "description": {
           "type": "string",
           "minLength": 0,
-          "maxLength": 2000
+          "maxLength": 10000
         },
         "version": {
           "type": "string"
