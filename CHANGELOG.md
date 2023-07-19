@@ -1,3 +1,10 @@
+## [17.0.5](https://github.com/makeomatic/ms-files/compare/v17.0.4...v17.0.5) (2023-07-19)
+
+
+### Bug Fixes
+
+* references key and update description limit ([#294](https://github.com/makeomatic/ms-files/issues/294)) ([ce8479d](https://github.com/makeomatic/ms-files/commit/ce8479df19a369287b7caba28bf9654e9012e9b4))
+
 ## [17.0.4](https://github.com/makeomatic/ms-files/compare/v17.0.3...v17.0.4) (2023-07-06)
 
 
