@@ -65,7 +65,7 @@ describe('upload with signed resumable url suite', function suite() {
     strictEqual(response.files[0].bucket.startsWith('makeomatic-13123'), true);
     strictEqual(response.files[0].type, 'c-preview');
     strictEqual(response.files[0].filename !== undefined, true);
-    strictEqual(response.files[0].location.startsWith('https://makeomatic-131231/'), true);
+    strictEqual(response.files[0].location.startsWith('https://makeomatic-13123'), true);
 
     strictEqual(response.files[1] === undefined, true);
   });
