@@ -58,6 +58,7 @@ async function initFileUpload({ params }) {
     uploadType,
     postAction,
     directOnly,
+    signResumableUrl,
   } = params;
 
   const { redis, config: { uploadTTL } } = this;
@@ -109,7 +110,18 @@ async function initFileUpload({ params }) {
     }
 
     let location;
-    if (resumable) {
+
+    if (!resumable || signResumableUrl) {
+      // simple upload
+      location = await provider.createSignedURL({
+        action: resumable ? 'resumable' : 'write',
+        md5: metadata.md5Hash,
+        type: metadata.contentType,
+        resource: filename,
+        extensionHeaders,
+        expires: Date.now() + (expires * 1000),
+      });
+    } else {
       location = await provider.initResumableUpload({
         filename,
         origin,
@@ -117,16 +129,6 @@ async function initFileUpload({ params }) {
         metadata: {
           ...metadata,
         },
-      });
-    } else {
-      // simple upload
-      location = await provider.createSignedURL({
-        action: 'write',
-        md5: metadata.md5Hash,
-        type: metadata.contentType,
-        resource: filename,
-        extensionHeaders,
-        expires: Date.now() + (expires * 1000),
       });
     }
 
