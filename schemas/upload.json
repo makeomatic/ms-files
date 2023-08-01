@@ -111,7 +111,7 @@
     },
     "signResumableUrl": {
       "type": "boolean",
-      "default": false
+      "default": true
     }
   },
   "allOf": [{
