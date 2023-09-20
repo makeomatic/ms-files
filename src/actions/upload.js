@@ -58,7 +58,6 @@ async function initFileUpload({ params }) {
     uploadType,
     postAction,
     directOnly,
-    signResumableUrl,
   } = params;
 
   const { redis, config: { uploadTTL } } = this;
@@ -109,27 +108,40 @@ async function initFileUpload({ params }) {
       extensionHeaders['x-goog-acl'] = 'public-read';
     }
 
+    const createSignedURL = (action) => provider.createSignedURL({
+      action,
+      md5: metadata.md5Hash,
+      type: metadata.contentType,
+      resource: filename,
+      extensionHeaders,
+      expires: Date.now() + (expires * 1000),
+    });
+
     let location;
 
-    if (!resumable || signResumableUrl) {
-      // simple upload
-      location = await provider.createSignedURL({
-        action: resumable ? 'resumable' : 'write',
-        md5: metadata.md5Hash,
-        type: metadata.contentType,
-        resource: filename,
-        extensionHeaders,
-        expires: Date.now() + (expires * 1000),
-      });
+    if (resumable) {
+      if (provider.rename) {
+        // https://cloud.google.com/storage/docs/access-control/signed-urls#signing-resumable
+        const initUploadURL = await createSignedURL('resumable');
+        const result = await provider.initResumableUploadFromURL(initUploadURL, {
+          md5Hash: metadata.md5Hash,
+          contentType: metadata.contentType,
+        });
+
+        location = result.headers.location;
+      } else {
+        location = await provider.initResumableUpload({
+          filename,
+          origin,
+          public: isPublic,
+          metadata: {
+            ...metadata,
+          },
+        });
+      }
     } else {
-      location = await provider.initResumableUpload({
-        filename,
-        origin,
-        public: isPublic,
-        metadata: {
-          ...metadata,
-        },
-      });
+      // simple upload
+      location = await createSignedURL('write');
     }
 
     return {

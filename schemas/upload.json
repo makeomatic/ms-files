@@ -108,10 +108,6 @@
     "directOnly": {
       "type": "boolean",
       "default": false
-    },
-    "signResumableUrl": {
-      "type": "boolean",
-      "default": true
     }
   },
   "allOf": [{

@@ -334,6 +334,26 @@ class GCETransport extends AbstractFileTransfer {
   }
 
   /**
+   * Perform resumable uploads
+   * https://cloud.google.com/storage/docs/performing-resumable-uploads#initiate-session
+   *
+   * @param {String} url
+   * @returns {Promise<String>}
+   */
+  // eslint-disable-next-line class-methods-use-this
+  initResumableUploadFromURL(url, { md5Hash, contentType }) {
+    return fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-MD5': md5Hash,
+        'Content-Type': contentType,
+        'X-Goog-Acl': 'public-read',
+        'X-Goog-Resumable': 'start',
+      },
+    });
+  }
+
+  /**
    * Download file/stream
    * @param {String} filename - what do we want to download
    * @param {Object} opts
