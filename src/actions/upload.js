@@ -128,7 +128,7 @@ async function initFileUpload({ params }) {
           contentType: metadata.contentType,
         });
 
-        location = result.headers.location;
+        location = result.headers.get('location');
       } else {
         location = await provider.initResumableUpload({
           filename,
