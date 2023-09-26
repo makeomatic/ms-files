@@ -1,3 +1,10 @@
+## [17.0.6](https://github.com/makeomatic/ms-files/compare/v17.0.5...v17.0.6) (2023-09-26)
+
+
+### Bug Fixes
+
+* use mime type for c-preview extension (was jpeg) ([#298](https://github.com/makeomatic/ms-files/issues/298)) ([47e9e07](https://github.com/makeomatic/ms-files/commit/47e9e074a26cd028fd94eb03d2d3844cc377c068))
+
 ## [17.0.5](https://github.com/makeomatic/ms-files/compare/v17.0.4...v17.0.5) (2023-07-19)
 
 
