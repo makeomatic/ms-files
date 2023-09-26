@@ -47,7 +47,9 @@ describe('upload glb-extended suite', function suite() {
     strictEqual(response.files[0].bucket.startsWith('makeomatic-13123'), true);
     strictEqual(response.files[0].type, 'c-preview');
     strictEqual(response.files[0].filename !== undefined, true);
+    strictEqual(response.files[0].filename.endsWith('.jpeg'), true);
     strictEqual(response.files[0].location !== undefined, true);
+    strictEqual(response.files[0].location.includes('.jpeg'), true);
 
     strictEqual(response.files[1].contentType, 'model/gltf-binary');
     strictEqual(response.files[1].contentLength, 2452676);
@@ -55,7 +57,9 @@ describe('upload glb-extended suite', function suite() {
     strictEqual(response.files[1].bucket.startsWith('makeomatic-13123'), true);
     strictEqual(response.files[1].type, 'c-gltf');
     strictEqual(response.files[1].filename !== undefined, true);
+    strictEqual(response.files[1].filename.endsWith('.glb'), true);
     strictEqual(response.files[1].location !== undefined, true);
+    strictEqual(response.files[1].location.includes('.glb'), true);
 
     strictEqual(response.files[2] === undefined, true);
   });
@@ -119,7 +123,9 @@ describe('upload glb-extended suite', function suite() {
     strictEqual(response.files[2].bucket.startsWith('makeomatic-13123'), true);
     strictEqual(response.files[2].type, 'c-usdz');
     strictEqual(response.files[2].filename !== undefined, true);
+    strictEqual(response.files[2].filename.endsWith('.usdz'), true);
     strictEqual(response.files[2].location !== undefined, true);
+    strictEqual(response.files[2].location.includes('.usdz'), true);
 
     strictEqual(response.files[3] === undefined, true);
   });
@@ -222,5 +228,48 @@ describe('upload glb-extended suite', function suite() {
         message: 'upload validation failed: data/files/0/type must be equal to constant, data/files/0/contentType must be equal to one of the allowed values, data/files/1/type must be equal to constant, data/files/1/contentType must be equal to one of the allowed values, data/files must contain at least 1 and no more than 1 valid item(s), data must match "then" schema',
       }
     );
+  });
+
+  it('should be able to upload PNG preview', async () => {
+    const { amqp } = this.ctx;
+
+    const response = await amqp.publishAndWait('files.upload', {
+      username: 'v@makeomatic.ru',
+      uploadType: 'glb-extended',
+      meta: {
+        name: 'glb-extended with png',
+      },
+      files: [{
+        contentType: 'image/png',
+        contentLength: 2452676,
+        md5Hash: '8478d2bdfc72bea50f2754615d8b357b',
+        type: 'c-preview',
+      }, {
+        contentType: 'model/gltf-binary',
+        contentLength: 2452676,
+        md5Hash: '8478d2bdfc72bea50f2754615d8b357b',
+        type: 'c-gltf',
+      }],
+    });
+
+    strictEqual(response.name, 'glb-extended with png');
+    strictEqual(response.uploadId !== undefined, true);
+    strictEqual(response.startedAt !== undefined, true);
+    strictEqual(response.parts, 2);
+    strictEqual(response.contentLength, 4905352);
+    strictEqual(response.status, '1');
+    strictEqual(response.owner, 'v@makeomatic.ru');
+    strictEqual(response.bucket.startsWith('makeomatic-13123'), true);
+    strictEqual(response.uploadType, 'glb-extended');
+
+    strictEqual(response.files[0].contentType, 'image/png');
+    strictEqual(response.files[0].contentLength, 2452676);
+    strictEqual(response.files[0].md5Hash !== undefined, true);
+    strictEqual(response.files[0].bucket.startsWith('makeomatic-13123'), true);
+    strictEqual(response.files[0].type, 'c-preview');
+    strictEqual(response.files[0].filename !== undefined, true);
+    strictEqual(response.files[0].filename.endsWith('.png'), true);
+    strictEqual(response.files[0].location !== undefined, true);
+    strictEqual(response.files[0].location.includes('.png'), true);
   });
 });
