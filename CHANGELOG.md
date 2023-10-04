@@ -1,3 +1,10 @@
+# [17.1.0](https://github.com/makeomatic/ms-files/compare/v17.0.6...v17.1.0) (2023-10-04)
+
+
+### Features
+
+* cname for resumable uploads ([#296](https://github.com/makeomatic/ms-files/issues/296)) ([be022d2](https://github.com/makeomatic/ms-files/commit/be022d233b93d7fcf36fdf8730dfa4603defc848))
+
 ## [17.0.6](https://github.com/makeomatic/ms-files/compare/v17.0.5...v17.0.6) (2023-09-26)
 
 
