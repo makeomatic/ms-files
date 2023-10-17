@@ -391,7 +391,7 @@ describe('update suite', function suite() {
 
       assert.strictEqual(fileInfo.file.website, undefined, 'Website should be unseted');
     });
-  })
+  });
 
   describe('playerSettings', function playerSettingsSuite() {
     it('able to change rotation mode', async function test() {
