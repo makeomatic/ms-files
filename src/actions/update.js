@@ -39,6 +39,7 @@ const {
   FILES_NAME_FIELD,
   FILES_NAME_NORMALIZED_FIELD,
   FILES_CATEGORIES_FIELD,
+  FILES_WEBSITE_FIELD,
 } = require('../constant');
 
 const { call } = Function.prototype;
@@ -199,6 +200,11 @@ async function updateMeta(lock, ctx, params) {
         pipeline.hset(FILES_DATA_INDEX_KEY(id), FILES_IMMUTABLE_FIELD, '1');
       });
     }
+  }
+
+  if (meta[FILES_WEBSITE_FIELD] === '') {
+    delete meta[FILES_WEBSITE_FIELD];
+    pipeline.hdel(key, FILES_WEBSITE_FIELD);
   }
 
   // make sure it's not an empty object
