@@ -127,6 +127,7 @@ async function initFileUpload({ params }) {
           origin,
           md5Hash: metadata.md5Hash,
           contentType: metadata.contentType,
+          headers: extensionHeaders,
         });
 
         location = result.headers.get('location');

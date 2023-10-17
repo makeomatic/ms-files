@@ -341,15 +341,15 @@ class GCETransport extends AbstractFileTransfer {
    * @returns {Promise<String>}
    */
   // eslint-disable-next-line class-methods-use-this
-  initResumableUploadFromURL(url, { origin, md5Hash, contentType }) {
+  initResumableUploadFromURL(url, { origin, md5Hash, contentType, headers = {} }) {
     return fetch(url, {
       method: 'POST',
       headers: {
         origin,
         'Content-MD5': md5Hash,
         'Content-Type': contentType,
-        'X-Goog-Acl': 'public-read',
         'X-Goog-Resumable': 'start',
+        ...headers,
       },
     });
   }
