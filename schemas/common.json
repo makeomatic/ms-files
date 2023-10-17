@@ -749,8 +749,16 @@
           "type": "boolean"
         },
         "website": {
-          "type": "string",
-          "format": "http-url"
+          "oneOf": [
+            {
+              "type": "string",
+              "format": "http-url"
+            },
+            {
+              "type": "string",
+              "const": ""
+            }
+          ]
         },
         "tags": {
           "$ref": "common#/definitions/tags"
