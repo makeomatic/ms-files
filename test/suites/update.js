@@ -389,7 +389,7 @@ describe('update suite', function suite() {
         username,
       });
 
-      assert.strictEqual(fileInfo.file.website, '', 'Website should be empty');
+      assert.strictEqual(fileInfo.file.website, undefined, 'Website should be unseted');
     });
   })
 
