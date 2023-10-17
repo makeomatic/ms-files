@@ -344,7 +344,7 @@ class GCETransport extends AbstractFileTransfer {
    */
   // eslint-disable-next-line class-methods-use-this
   async initResumableUploadFromURL(url, { origin, md5Hash, contentType, headers = {} }) {
-    const response = fetch(url, {
+    const response = await fetch(url, {
       method: 'POST',
       headers: {
         origin,
@@ -359,7 +359,7 @@ class GCETransport extends AbstractFileTransfer {
 
     const location = response.headers.get('location');
 
-    if (response.status !== 204 || !location) {
+    if (!response.ok || !location) {
       throw new HttpStatusError(422, 'could not init resumable upload');
     }
 
