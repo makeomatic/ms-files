@@ -152,6 +152,15 @@ async function updateMeta(lock, ctx, params) {
     delete meta[FILES_ALIAS_FIELD]; // <-- this field is empty at this point
   }
 
+  if (meta[FILES_WEBSITE_FIELD] === '') {
+    delete meta[FILES_WEBSITE_FIELD];
+
+    // remove field if existing early
+    if (data[FILES_WEBSITE_FIELD]) {
+      pipeline.hdel(key, FILES_WEBSITE_FIELD);
+    }
+  }
+
   if (hasOwnProperty.call(meta, FILES_TAGS_FIELD) && data[FILES_TAGS_FIELD]) {
     // @todo migrate all tags in files data to lowercase and then remove this tag.toLowerCase()
     for (const tag of data[FILES_TAGS_FIELD].values()) {
@@ -200,11 +209,6 @@ async function updateMeta(lock, ctx, params) {
         pipeline.hset(FILES_DATA_INDEX_KEY(id), FILES_IMMUTABLE_FIELD, '1');
       });
     }
-  }
-
-  if (meta[FILES_WEBSITE_FIELD] === '') {
-    delete meta[FILES_WEBSITE_FIELD];
-    pipeline.hdel(key, FILES_WEBSITE_FIELD);
   }
 
   // make sure it's not an empty object
