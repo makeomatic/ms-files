@@ -1,3 +1,10 @@
+## [17.1.1](https://github.com/makeomatic/ms-files/compare/v17.1.0...v17.1.1) (2023-10-18)
+
+
+### Bug Fixes
+
+* x-goog-acl header for private uploads ([#301](https://github.com/makeomatic/ms-files/issues/301)) ([b3c391a](https://github.com/makeomatic/ms-files/commit/b3c391aa61906a1b8c19ae97c4df8b4296ed21a6))
+
 # [17.1.0](https://github.com/makeomatic/ms-files/compare/v17.0.6...v17.1.0) (2023-10-04)
 
 
