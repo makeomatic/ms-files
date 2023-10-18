@@ -361,7 +361,7 @@ class GCETransport extends AbstractFileTransfer {
     if (!response.ok) {
       throw new HttpStatusError(422, `could not init resumable upload: ${body}`);
     }
-    
+
     if (!location) {
       throw new HttpStatusError(422, `could not init resumable upload, empty location: ${body}`);
     }
