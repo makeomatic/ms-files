@@ -6,6 +6,8 @@ const bl = require('bl');
 const assert = require('assert');
 const os = require('os');
 const { Storage } = require('@google-cloud/storage');
+const { fetch } = require('undici');
+const { HttpStatusError } = require('common-errors');
 
 // for some reason it doesn't go through it if we just do the obj
 const unwrap = (datum) => datum[0];
@@ -341,17 +343,30 @@ class GCETransport extends AbstractFileTransfer {
    * @returns {Promise<String>}
    */
   // eslint-disable-next-line class-methods-use-this
-  initResumableUploadFromURL(url, { origin, md5Hash, contentType }) {
-    return fetch(url, {
+  async initResumableUploadFromURL(url, { origin, md5Hash, contentType, headers = {} }) {
+    const response = await fetch(url, {
       method: 'POST',
       headers: {
         origin,
         'Content-MD5': md5Hash,
         'Content-Type': contentType,
-        'X-Goog-Acl': 'public-read',
         'X-Goog-Resumable': 'start',
+        ...headers,
       },
     });
+
+    const body = await response.text();
+    const location = response.headers.get('location');
+
+    if (!response.ok) {
+      throw new HttpStatusError(422, `could not init resumable upload: ${body}`);
+    }
+
+    if (!location) {
+      throw new HttpStatusError(422, `could not init resumable upload, empty location: ${body}`);
+    }
+
+    return location;
   }
 
   /**

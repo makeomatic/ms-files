@@ -123,13 +123,12 @@ async function initFileUpload({ params }) {
       if (provider.rename) {
         // https://cloud.google.com/storage/docs/access-control/signed-urls#signing-resumable
         const initUploadURL = await createSignedURL('resumable');
-        const result = await provider.initResumableUploadFromURL(initUploadURL, {
+        location = await provider.initResumableUploadFromURL(initUploadURL, {
           origin,
           md5Hash: metadata.md5Hash,
           contentType: metadata.contentType,
+          headers: extensionHeaders,
         });
-
-        location = result.headers.get('location');
       } else {
         location = await provider.initResumableUpload({
           filename,
