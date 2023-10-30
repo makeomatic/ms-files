@@ -327,9 +327,9 @@ class GCETransport extends AbstractFileTransfer {
     const [uri] = await this.bucket.file(filename, { generation }).createResumableUpload({
       ...props,
       metadata,
-    })
+    });
 
-    return uri
+    return uri;
   }
 
   /**

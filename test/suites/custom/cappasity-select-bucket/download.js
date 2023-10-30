@@ -2,7 +2,7 @@
 const { strict: assert } = require('assert');
 const uuid = require('uuid');
 const url = require('url');
-const { encodeURI } = require('@google-cloud/storage/build/src/util');
+const { encodeURI } = require('../../../../src/utils/encode-uri');
 
 function overrideConfig() {
   this.configOverride = {
