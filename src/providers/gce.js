@@ -1,7 +1,6 @@
 const Promise = require('bluebird');
 const AbstractFileTransfer = require('ms-files-transport');
 const { get, merge, defaults } = require('lodash');
-const createURI = Promise.promisify(require('gcs-resumable-upload').createURI);
 const bl = require('bl');
 const assert = require('assert');
 const os = require('os');
@@ -316,23 +315,21 @@ class GCETransport extends AbstractFileTransfer {
    * @param  {String} opts.metadata.contentType - must be included
    * @param  {String} opts.metadata.md5Hash - must be included
    * @param  {String} [opts.metadata.contentEncoding] - optional, can be set to gzip
-   * @return {Promise}
+   * @return {Promise<string>}
    */
-  initResumableUpload(opts) {
+  async initResumableUpload(opts) {
     const {
       filename, metadata, generation, ...props
     } = opts;
 
     this.log.debug('initiating resumable upload of %s', filename);
 
-    return createURI({
+    const [uri] = await this.bucket.file(filename, { generation }).createResumableUpload({
       ...props,
-      authClient: this.bucket.storage.authClient,
-      bucket: this.bucket.name,
-      file: filename,
-      generation,
       metadata,
-    });
+    })
+
+    return uri
   }
 
   /**
@@ -413,7 +410,7 @@ class GCETransport extends AbstractFileTransfer {
   writeStream(filename, opts) {
     this.log.debug('initiating upload of %s', filename);
     const file = this.bucket.file(filename);
-    return file.createWriteStream(opts);
+    return file.createWriteStream(opts, { resumable: false });
   }
 
   /**

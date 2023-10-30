@@ -9,6 +9,8 @@ const stringify = require('../utils/stringify');
 const extension = require('../utils/extension');
 const isValidBackgroundOrigin = require('../utils/is-valid-background-origin');
 const { getReferenceData, verifyReferences } = require('../utils/reference');
+const { normalizeForSearch } = require('../utils/normalize-name');
+const { FILES_NAME_FIELD, FILES_NAME_NORMALIZED_FIELD } = require('../constant');
 
 const {
   STATUS_PENDING,
@@ -61,6 +63,11 @@ async function initFileUpload({ params }) {
   } = params;
 
   const { redis, config: { uploadTTL } } = this;
+
+  // adds normalized version of the name field
+  if (meta[FILES_NAME_FIELD]) {
+    meta[FILES_NAME_NORMALIZED_FIELD] = normalizeForSearch(meta[FILES_NAME_FIELD]);
+  }
 
   this.log.info({ params }, 'preparing upload');
 
