@@ -1,7 +1,6 @@
 /* eslint-disable max-len */
 
 const { strict: assert } = require('assert');
-const Bluebird = require('bluebird');
 const sinon = require('sinon');
 const {
   startService,
@@ -99,14 +98,11 @@ describe('upload suite', function suite() {
     ctx.bucketName = config.transport[0].options.bucket.name;
 
     const amqpStub = sinon
-      .stub(service.amqp, 'publishAndWait')
-      .usingPromise(Bluebird);
+      .stub(service.amqp, 'publishAndWait');
 
     service.providers.forEach((provider) => {
       if (!provider.exists) return;
-      sinon.stub(provider, 'exists')
-        .usingPromise(Bluebird)
-        .resolves(true);
+      sinon.stub(provider, 'exists').resolves(true);
     });
 
     const { planGet } = config.payments;
