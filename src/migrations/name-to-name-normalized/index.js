@@ -1,4 +1,3 @@
-// const { getRedisMasterNode } = require('../../utils/get-redis-master-node');
 const handlePipeline = require('../../utils/pipeline-error');
 const { normalizeForSearch } = require('../../utils/normalize-name');
 const {
@@ -10,9 +9,8 @@ const {
 
 async function nameToNameNormalized(service) {
   const { redis: masterNode, log } = service;
-  // const masterNode = getRedisMasterNode(redis, service);
-
   let iter = 0;
+
   const stream = masterNode.sscanStream(FILES_INDEX, {
     count: 100,
   });

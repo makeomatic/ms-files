@@ -35,8 +35,6 @@ const {
   FILES_NFT_TOKEN_FIELD,
   FILES_NFT_COLLECTION_FIELD,
   FILES_IS_CLONE_FIELD,
-  FILES_NAME_FIELD,
-  FILES_NAME_NORMALIZED_FIELD,
 } = require('../constant');
 
 const k404Error = new Error('ELIST404');
@@ -365,8 +363,6 @@ async function redisSearch(ctx) {
       propName = actionTypeOrValue.fields.join('|');
     } else if (propName === 'alias') {
       propName = 'alias_tag';
-    } else if (propName === FILES_NAME_FIELD) {
-      propName = FILES_NAME_NORMALIZED_FIELD;
     }
 
     if (actionTypeOrValue === undefined || propName === 'nft') {
