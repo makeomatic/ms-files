@@ -271,6 +271,20 @@ describe('update suite', function suite() {
           assert.equal(verifyResult.file.backgroundColor, meta.backgroundColor);
         });
     });
+
+    it('update name sets name_n field', async function test() {
+      meta.name = 'New Name';
+      const updateResult = await this.send({ uploadId: this.response.uploadId, username, meta }, 45000);
+      assert.equal(updateResult, true);
+
+      const verifyResult = await getInfo.call(this, {
+        filename: this.response.uploadId,
+        username,
+      });
+
+      assert.equal(verifyResult.file.name, 'New Name');
+      assert.equal(verifyResult.file.name_n, 'new name');
+    });
   });
 
   describe('directOnly update', function directOnlySuite() {

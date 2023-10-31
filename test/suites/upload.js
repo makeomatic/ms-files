@@ -699,6 +699,28 @@ describe('upload suite', function suite() {
     });
   });
 
+  describe('name normalization', function nameNormSuite() {
+    it('normalizes name property on upload', async function nameNormCheck() {
+      const uploadResult = await initAndUpload({
+        ...modelData,
+        message: {
+          ...modelData.message,
+          meta: {
+            ...meta,
+            ...modelData.message.meta,
+            name: 'Name with Case',
+          },
+          access: {
+            setPublic: true,
+          },
+        },
+      }, false).call({ amqp: this.amqp });
+
+      assert.deepStrictEqual(uploadResult.name, 'Name with Case');
+      assert.deepStrictEqual(uploadResult.name_n, 'name with case');
+    });
+  });
+
   describe('references', function checkReferencesSute() {
     let referencedModelId;
 

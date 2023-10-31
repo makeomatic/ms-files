@@ -16,6 +16,7 @@ const {
   FILES_CONTENT_LENGTH_FIELD,
   FILES_HAS_NFT,
   FILES_NAME_FIELD,
+  FILES_NAME_NORMALIZED_FIELD,
   FILES_DESCRIPTION_FIELD,
   FILES_WEBSITE_FIELD,
   FILES_PARENT_FIELD,
@@ -50,6 +51,7 @@ const FIELD_TO_TYPE = [
   [FILES_HAS_NFT, 'NUMERIC', 'SORTABLE'],
   [FILES_TEMP_FIELD, 'NUMERIC', 'SORTABLE'],
   [FILES_NAME_FIELD, 'TEXT', 'NOSTEM', 'SORTABLE'],
+  [FILES_NAME_NORMALIZED_FIELD, 'TEXT', 'NOSTEM', 'SORTABLE'],
   [FILES_DESCRIPTION_FIELD, 'TEXT', 'NOSTEM', 'SORTABLE'],
   [FILES_WEBSITE_FIELD, 'TEXT', 'NOSTEM', 'SORTABLE'],
   [FILES_PARENT_FIELD, 'TAG', 'SORTABLE'],
@@ -73,7 +75,7 @@ async function createSearchIndex(service) {
 
   await redis.call(
     'FT.CREATE',
-    `${keyPrefix}:files-list-v7`,
+    `${keyPrefix}:files-list-v8`,
     'ON',
     'HASH',
     'PREFIX',
@@ -89,5 +91,5 @@ async function createSearchIndex(service) {
 module.exports = {
   script: createSearchIndex,
   min: 1,
-  final: 11,
+  final: 12,
 };

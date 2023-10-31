@@ -35,6 +35,8 @@ const {
   FILES_NFT_TOKEN_FIELD,
   FILES_NFT_COLLECTION_FIELD,
   FILES_IS_CLONE_FIELD,
+  FILES_NAME_FIELD,
+  FILES_NAME_NORMALIZED_FIELD,
 } = require('../constant');
 
 const k404Error = new Error('ELIST404');
@@ -301,7 +303,7 @@ const numericProps = [FILES_HAS_REFERENCES_FIELD, FILES_IS_REFERENCED_FIELD, FIL
  */
 async function redisSearch(ctx) {
   // 1. build query
-  const indexName = `${ctx.service.config.redis.options.keyPrefix}:files-list-v7`;
+  const indexName = `${ctx.service.config.redis.options.keyPrefix}:files-list-v8`;
   const args = ['FT.SEARCH', indexName];
   const query = [];
   const params = [];
@@ -363,6 +365,8 @@ async function redisSearch(ctx) {
       propName = actionTypeOrValue.fields.join('|');
     } else if (propName === 'alias') {
       propName = 'alias_tag';
+    } else if (propName === FILES_NAME_FIELD) {
+      propName = FILES_NAME_NORMALIZED_FIELD;
     }
 
     if (actionTypeOrValue === undefined || propName === 'nft') {
