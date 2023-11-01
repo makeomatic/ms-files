@@ -107,14 +107,22 @@ describe('upload suite', function suite() {
     it('initiates public upload and returns correct response format', async function test() {
       const { message } = modelData;
 
+      const nonNormalizedName = 'ФРЫВЛОФ_absdjkab_123718 hsdkaj12 1278';
+      const normalizedName = 'фрывлоф_absdjkab_123718 hsdkaj12 1278';
+
       const rsp = await this.send({
         ...message,
+        meta: {
+          ...message.meta,
+          name: nonNormalizedName,
+        },
         access: {
           setPublic: true,
         },
       }, 45000);
 
-      assert.equal(rsp.name, message.meta.name);
+      assert.equal(rsp.name, nonNormalizedName);
+      assert.equal(rsp.name_n, normalizedName);
       assert.equal(rsp.owner, message.username);
       assert.ok(rsp.uploadId);
       assert.ok(rsp.startedAt);
