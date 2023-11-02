@@ -1,3 +1,4 @@
+const { delay } = require('bluebird');
 const handlePipeline = require('../../utils/pipeline-error');
 const { normalizeForSearch } = require('../../utils/normalize-name');
 const {
@@ -31,12 +32,16 @@ async function nameToNameNormalized(service) {
 
     for (const [idx, [name]] of handlePipeline(data).entries()) {
       const uploadId = ids[idx];
-      addFieldPipeline.hset(FILES_DATA_INDEX_KEY(uploadId), FILES_NAME_NORMALIZED_FIELD, normalizeForSearch(name));
+      if (typeof name === 'string') {
+        addFieldPipeline.hset(FILES_DATA_INDEX_KEY(uploadId), FILES_NAME_NORMALIZED_FIELD, normalizeForSearch(name));
+      }
     }
 
     handlePipeline(await addFieldPipeline.exec());
 
     log.info({ iteration: iter }, 'processed batch');
+
+    await delay(100);
   }
 
   log.info('finished nameToNameNormalized processing in %d iterations', iter);
