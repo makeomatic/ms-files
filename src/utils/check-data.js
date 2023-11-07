@@ -7,6 +7,8 @@ const {
   FILES_IS_CLONE_FIELD,
   FILES_NFT_BLOCK_FIELD,
   FILES_IS_REFERENCED_FIELD,
+  FILES_HAS_REFERENCES_FIELD,
+  FILES_REFERENCES_FIELD,
 } = require('../constant');
 
 function isImmutable(data) {
@@ -57,6 +59,31 @@ function assertUpdatable(metaToUpdate = {}, isRemoveOp = false) {
   };
 }
 
+function hasOrIsReference(data) {
+  return data[FILES_HAS_REFERENCES_FIELD] === '1' || data[FILES_IS_REFERENCED_FIELD] === '1';
+}
+
+function assertReferenceOnAccessChange(metaToUpdate = {}, params = {}) {
+  return function visibilityCheck(data) {
+    console.debug({
+      metaToUpdate,
+      data,
+      params,
+      hasOrIsReference: hasOrIsReference(data),
+    });
+
+    if (((params.access && typeof params.access.setPublic === 'boolean') || typeof params.directOnly === 'boolean')
+      && (
+        hasOrIsReference(data) || (metaToUpdate[FILES_REFERENCES_FIELD] && metaToUpdate[FILES_REFERENCES_FIELD].length > 1)
+      )
+    ) {
+      throw new HttpStatusError(400, 'should not have or be a reference');
+    }
+
+    return data;
+  };
+}
+
 async function assertNotReferenced(data) {
   if (data[FILES_IS_REFERENCED_FIELD] === '1') {
     throw new HttpStatusError(400, 'should not be referenced');
@@ -72,4 +99,5 @@ module.exports = {
   assertUpdatable,
   assertClonable,
   assertNotReferenced,
+  assertReferenceOnAccessChange,
 };

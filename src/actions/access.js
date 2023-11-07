@@ -5,7 +5,7 @@ const fetchData = require('../utils/fetch-data');
 const hasAccess = require('../utils/has-access');
 const isProcessed = require('../utils/is-processed');
 const { bustCache } = require('../utils/bust-cache');
-const { assertUpdatable } = require('../utils/check-data');
+const { assertReferenceOnAccessChange } = require('../utils/check-data');
 
 const {
   FILES_DATA,
@@ -89,7 +89,7 @@ async function adjustAccess({ params }) {
     .then(fetchData)
     .then(hasAccess(username))
     .then(isProcessed)
-    .then(assertUpdatable());
+    .then(assertReferenceOnAccessChange({}, { ...params, access: { setPublic } }));
 
   return Promise
     .bind(this, [uploadId, data])
