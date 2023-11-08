@@ -22,9 +22,11 @@ const {
   FILES_ALIAS_FIELD,
   FILES_USR_ALIAS_PTR,
   FILES_NAME_FIELD,
+  FILES_NAME_NORMALIZED_FIELD,
   FILES_DESCRIPTION_FIELD,
   FILES_WEBSITE_FIELD,
 } = require('../../src/constant');
+const { normalizeForSearch } = require('../../src/utils/normalize-name');
 
 const skus = new Set();
 const ids = new Set();
@@ -55,6 +57,7 @@ function createFakeFile({ owners, statuses }) {
     [FILES_UPLOAD_STARTED_AT_FIELD]: startedAt,
     [FILES_UPLOADED_AT_FIELD]: startedAt + 1000,
     [FILES_NAME_FIELD]: name,
+    [FILES_NAME_NORMALIZED_FIELD]: normalizeForSearch(name),
     files: JSON.stringify([]), // can insert real files, but dont care
     [FILES_CONTENT_LENGTH_FIELD]: ld.random(1, 2132311),
     parts: ld.random(1, 4),

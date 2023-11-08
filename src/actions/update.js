@@ -12,6 +12,7 @@ const isValidBackgroundOrigin = require('../utils/is-valid-background-origin');
 const { assertUpdatable } = require('../utils/check-data');
 const { bustCache } = require('../utils/bust-cache');
 const { updateReferences, verifyReferences, isReferenceChanged, getReferenceData } = require('../utils/reference');
+const { normalizeForSearch } = require('../utils/normalize-name');
 
 const {
   FILES_TAGS_FIELD,
@@ -35,6 +36,8 @@ const {
   FILES_HAS_NFT_OWNER_FIELD,
   FILES_HAS_REFERENCES_FIELD,
   FILES_REFERENCES_FIELD,
+  FILES_NAME_FIELD,
+  FILES_NAME_NORMALIZED_FIELD,
 } = require('../constant');
 
 const { call } = Function.prototype;
@@ -217,6 +220,11 @@ async function updateMeta(lock, ctx, params) {
 
     for (const field of FIELDS_TO_STRINGIFY.values()) {
       stringify(meta, field);
+    }
+
+    // renaming file, adjust normalized name, too
+    if (meta[FILES_NAME_FIELD]) {
+      meta[FILES_NAME_NORMALIZED_FIELD] = normalizeForSearch(meta[FILES_NAME_FIELD]);
     }
 
     pipeline.hmset(key, meta);

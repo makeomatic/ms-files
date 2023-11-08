@@ -53,6 +53,7 @@ module.exports = exports = Object.setPrototypeOf({
   FILES_VERSION_FIELD: 'version',
   FILES_HAS_NFT: 'hn',
   FILES_NAME_FIELD: 'name',
+  FILES_NAME_NORMALIZED_FIELD: 'name_n',
   FILES_DESCRIPTION_FIELD: 'description',
   FILES_WEBSITE_FIELD: 'website',
   FILES_IMMUTABLE_FIELD: 'immutable',

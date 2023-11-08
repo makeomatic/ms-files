@@ -1,6 +1,7 @@
 const sinon = require('sinon');
 const { strict: assert } = require('assert');
 const { resolve } = require('path');
+const Redis = require('ioredis');
 
 // helpers
 const {
@@ -11,7 +12,13 @@ const {
 } = require('../../helpers/utils');
 
 const { getRedisMasterNode } = require('../../../src/utils/get-redis-master-node');
-const { FILES_INDEX_UAT } = require('../../../src/constant');
+const {
+  FILES_INDEX_UAT,
+  FILES_INDEX,
+  FILES_DATA_INDEX_KEY,
+  FILES_NAME_FIELD,
+  FILES_NAME_NORMALIZED_FIELD,
+} = require('../../../src/constant');
 
 const ctx = Object.create(null);
 
@@ -62,5 +69,29 @@ describe('migrations testing suite', function suite() {
     const { keyPrefix } = ctx.files.config.redis.options;
     const keys = await redis.keys(`${keyPrefix}${FILES_INDEX_UAT}*`);
     assert(keys.length > 0, 'no keys found');
+  });
+
+  it('migrates name to normalized name', async () => {
+    const { redis } = ctx.files;
+
+    const filesIndexKey = FILES_INDEX;
+    const uploads = await redis.smembers(filesIndexKey);
+
+    // cleanup indexes and reset version
+    // node on cluster sometimes request sent to different nodes.
+    // so index exists on one node, but absent on another
+    const redisMaster = getRedisMasterNode(ctx.files.redis, ctx.files);
+    const indexes = await redisMaster.sendCommand(new Redis.Command('ft._list'));
+    await redisMaster.sendCommand(new Redis.Command('ft.dropindex', indexes));
+    await redis.del('version');
+
+    // set name to new value
+    const fileDataKey = FILES_DATA_INDEX_KEY(uploads[0]);
+    await redis.hset(fileDataKey, FILES_NAME_FIELD, 'New Value');
+
+    await ctx.files.migrate('redis', resolve(__dirname, '../../../src/migrations'));
+
+    const migratedData = await redis.hgetall(fileDataKey);
+    assert.deepStrictEqual(migratedData[FILES_NAME_NORMALIZED_FIELD], 'new value');
   });
 });

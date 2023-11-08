@@ -107,14 +107,22 @@ describe('upload suite', function suite() {
     it('initiates public upload and returns correct response format', async function test() {
       const { message } = modelData;
 
+      const nonNormalizedName = 'ФРЫВЛОФ_absdjkab_123718 hsdkaj12 1278';
+      const normalizedName = 'фрывлоф_absdjkab_123718 hsdkaj12 1278';
+
       const rsp = await this.send({
         ...message,
+        meta: {
+          ...message.meta,
+          name: nonNormalizedName,
+        },
         access: {
           setPublic: true,
         },
       }, 45000);
 
-      assert.equal(rsp.name, message.meta.name);
+      assert.equal(rsp.name, nonNormalizedName);
+      assert.equal(rsp.name_n, normalizedName);
       assert.equal(rsp.owner, message.username);
       assert.ok(rsp.uploadId);
       assert.ok(rsp.startedAt);
@@ -696,6 +704,28 @@ describe('upload suite', function suite() {
 
       // eslint-disable-next-line max-len
       assert.throws(() => vs('upload', invalidNft), /validation failed: data\/meta\/nft must have required property 'price', data\/meta\/nft must have required property 'currency', data\/meta\/nft must have required property 'supply', data\/meta\/nft must have required property 'image', data\/meta must have required property 'name'/);
+    });
+  });
+
+  describe('name normalization', function nameNormSuite() {
+    it('normalizes name property on upload', async function nameNormCheck() {
+      const uploadResult = await initAndUpload({
+        ...modelData,
+        message: {
+          ...modelData.message,
+          meta: {
+            ...meta,
+            ...modelData.message.meta,
+            name: 'Name with Case',
+          },
+          access: {
+            setPublic: true,
+          },
+        },
+      }, false).call({ amqp: this.amqp });
+
+      assert.deepStrictEqual(uploadResult.name, 'Name with Case');
+      assert.deepStrictEqual(uploadResult.name_n, 'name with case');
     });
   });
 

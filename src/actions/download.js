@@ -1,7 +1,7 @@
 const { ActionTransport } = require('@microfleet/plugin-router');
 const Promise = require('bluebird');
 const { HttpStatusError } = require('common-errors');
-const { encodeURI } = require('@google-cloud/storage/build/src/util');
+const { encodeURI } = require('../utils/encode-uri');
 const { FILES_DATA, FILES_OWNER_FIELD, FILES_PUBLIC_FIELD } = require('../constant');
 const fetchData = require('../utils/fetch-data');
 const hasAccess = require('../utils/has-access');

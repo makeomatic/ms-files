@@ -2,7 +2,6 @@ const assert = require('assert');
 const sinon = require('sinon');
 const noop = require('lodash/noop');
 const reject = require('lodash/reject');
-const Bluebird = require('bluebird');
 
 const hook = require('../../../src/custom/cappasity-upload-pre');
 const { FILES_USER_INDEX_KEY } = require('../../../src/constant');
@@ -32,8 +31,8 @@ describe('cappasity-upload-pre hook test suite', function suite() {
       config,
     } = await getMocks();
 
-    const amqpStub = sinon.stub(ctx.amqp, 'publishAndWait').usingPromise(Bluebird);
-    const redisStub = sinon.stub(ctx.redis, 'scard').usingPromise(Bluebird).rejects();
+    const amqpStub = sinon.stub(ctx.amqp, 'publishAndWait');
+    const redisStub = sinon.stub(ctx.redis, 'scard').rejects();
 
     const { planGet } = config.payments;
     const { getMetadata, getInternalData } = config.users;
