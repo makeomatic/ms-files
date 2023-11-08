@@ -1,3 +1,24 @@
+# [18.0.0](https://github.com/makeomatic/ms-files/compare/v17.1.1...v18.0.0) (2023-11-08)
+
+
+### Bug Fixes
+
+* metadata normalized name, replace createURI from gcs-resumable-upload with built-in version, copy createURI into the code, node 20 ([#302](https://github.com/makeomatic/ms-files/issues/302)) ([3a4a9c9](https://github.com/makeomatic/ms-files/commit/3a4a9c994e98d9973d6e5abd142b74f84de0f138))
+
+
+### BREAKING CHANGES
+
+* uses node 20 by default, removed gcs-resumable-upload, normalized name field
+
+* fix: remove gcs-resumable-upload, add file name normalization
+* feat: metadata searchable name, gcs-resumable-upload removal
+* chore: remove usingPromises for sinon
+* feat: normalized name field migration and redisearch index
+* fix: name field alias
+* fix: tests stub generation + reorg index
+* chore: add upload test case
+* fix: name migration check name, add delay
+
 ## [17.1.1](https://github.com/makeomatic/ms-files/compare/v17.1.0...v17.1.1) (2023-10-18)
 
 
