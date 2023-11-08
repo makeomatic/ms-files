@@ -63,7 +63,15 @@ describe('soft delete', function suite() {
   // setup functions
   before('start service', startService);
   // sets `this.response` to `files.finish` response
-  before('pre-upload file', initAndUpload(modelData));
+  before('pre-upload file', initAndUpload({
+    ...modelData,
+    message: {
+      ...modelData.message,
+      access: {
+        setPublic: true,
+      },
+    },
+  }));
   before('helpers', bindSend(route));
 
   // tear-down
@@ -105,7 +113,15 @@ describe('immutable/referenced block', function suite() {
   });
 
   it('remove of the referenced model is denied', async function test() {
-    const secondFile = await initAndUpload(modelData).call(this.files);
+    const secondFile = await initAndUpload({
+      ...modelData,
+      message: {
+        ...modelData.message,
+        access: {
+          setPublic: true,
+        },
+      },
+    }).call(this.files);
     await processUpload.call(this.files, this.response);
     await processUpload.call(this.files, secondFile);
 
