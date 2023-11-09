@@ -99,7 +99,7 @@ async function initFileUpload({ params }) {
     verifyReferences(tempMeta, referencedInfo, newReferences);
   }
 
-  assertReferenceOnAccessChange({}, { setPublic: isPublic, directOnly })(meta);
+  assertReferenceOnAccessChange({}, { access: { setPublic: isPublic }, directOnly })(meta);
 
   const parts = await Promise.map(files, async ({ md5Hash, type, ...rest }) => {
     // generate filename
