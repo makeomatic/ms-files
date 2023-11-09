@@ -1,3 +1,10 @@
+## [18.0.2](https://github.com/makeomatic/ms-files/compare/v18.0.1...v18.0.2) (2023-11-09)
+
+
+### Bug Fixes
+
+* verify content-encoding is present ([9ee1b8b](https://github.com/makeomatic/ms-files/commit/9ee1b8b00cd93e69a7782410e0b33b6f07fb68ad))
+
 ## [18.0.1](https://github.com/makeomatic/ms-files/compare/v18.0.0...v18.0.1) (2023-11-09)
 
 
