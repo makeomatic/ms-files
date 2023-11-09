@@ -1,3 +1,10 @@
+## [18.0.1](https://github.com/makeomatic/ms-files/compare/v18.0.0...v18.0.1) (2023-11-09)
+
+
+### Bug Fixes
+
+* v4 signing url, missing arbitrary meta ([#304](https://github.com/makeomatic/ms-files/issues/304)) ([708d39a](https://github.com/makeomatic/ms-files/commit/708d39a3df2d2e3d4f36bb5ff09b3859023517b1))
+
 # [18.0.0](https://github.com/makeomatic/ms-files/compare/v17.1.1...v18.0.0) (2023-11-08)
 
 
