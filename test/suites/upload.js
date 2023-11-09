@@ -281,9 +281,12 @@ describe('upload suite', function suite() {
         assert.equal(location.protocol, 'https:');
         assert.equal(location.hostname, 'storage.googleapis.com');
         assert.equal(decodeURIComponent(location.pathname), `/${bucketName}/${part.filename}`);
-        assert.ok(location.query.GoogleAccessId);
-        assert.ok(location.query.Signature);
-        assert.ok(location.query.Expires);
+        assert.ok(location.query['X-Goog-Algorithm'], location);
+        assert.ok(location.query['X-Goog-Expires'], location);
+        assert.ok(location.query['X-Goog-Credential'], location);
+        assert.ok(location.query['X-Goog-Date'], location);
+        assert.ok(location.query['X-Goog-Signature'], location);
+        assert.ok(location.query['X-Goog-SignedHeaders'], location);
 
         // verify that filename contains multiple parts
         const [ownerHash, uploadId, filename] = part.filename.split('/');

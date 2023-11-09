@@ -4,6 +4,8 @@
     "ecmaVersion": "latest"
   },
   "rules": {
-    "object-curly-newline": 0
+    "object-curly-newline": 0,
+    // Requires eslint >= v8.14.0
+    "no-constant-binary-expression": "error"
   }
 }
