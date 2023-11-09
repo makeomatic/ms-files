@@ -69,9 +69,12 @@ describe('download suite', function suite() {
             assert.equal(parsedLink.protocol, 'https:', link);
             assert.equal(parsedLink.host, 'storage.googleapis.com', link);
             assert.equal(parsedLink.pathname, `/${bucketName}/${encodeURI(rsp.files[idx].filename, false)}`, link);
-            assert.ok(parsedLink.query.GoogleAccessId, link);
-            assert.ok(parsedLink.query.Expires, link);
-            assert.ok(parsedLink.query.Signature, link);
+            assert.ok(parsedLink.query['X-Goog-Algorithm'], link);
+            assert.ok(parsedLink.query['X-Goog-Expires'], link);
+            assert.ok(parsedLink.query['X-Goog-Credential'], link);
+            assert.ok(parsedLink.query['X-Goog-Date'], link);
+            assert.ok(parsedLink.query['X-Goog-Signature'], link);
+            assert.ok(parsedLink.query['X-Goog-SignedHeaders'], link);
           });
 
           return null;
@@ -99,9 +102,12 @@ describe('download suite', function suite() {
             assert.equal(parsedLink.protocol, 'https:', link);
             assert.equal(parsedLink.host, 'storage.googleapis.com', link);
             assert.equal(parsedLink.pathname, `/${bucketName}/${encodeURI(rsp.files[idx].filename, false)}`, link);
-            assert.ok(parsedLink.query.GoogleAccessId, link);
-            assert.ok(parsedLink.query.Expires, link);
-            assert.ok(parsedLink.query.Signature, link);
+            assert.ok(parsedLink.query['X-Goog-Algorithm'], link);
+            assert.ok(parsedLink.query['X-Goog-Expires'], link);
+            assert.ok(parsedLink.query['X-Goog-Credential'], link);
+            assert.ok(parsedLink.query['X-Goog-Date'], link);
+            assert.ok(parsedLink.query['X-Goog-Signature'], link);
+            assert.ok(parsedLink.query['X-Goog-SignedHeaders'], link);
             // @todo ok or not?
             assert.ok(parsedLink.query['response-content-disposition'], link);
           });
@@ -129,9 +135,12 @@ describe('download suite', function suite() {
               assert.equal(parsedLink.protocol, 'https:', link);
               assert.equal(parsedLink.host, 'storage.googleapis.com', link);
               assert.equal(parsedLink.pathname, `/${bucketName}/${encodeURI(rsp.files[idx].filename, false)}`, link);
-              assert.ifError(parsedLink.query.GoogleAccessId, link);
-              assert.ifError(parsedLink.query.Expires, link);
-              assert.ifError(parsedLink.query.Signature, link);
+              assert.ifError(parsedLink.query['X-Goog-Algorithm'], link);
+              assert.ifError(parsedLink.query['X-Goog-Expires'], link);
+              assert.ifError(parsedLink.query['X-Goog-Credential'], link);
+              assert.ifError(parsedLink.query['X-Goog-Date'], link);
+              assert.ifError(parsedLink.query['X-Goog-Signature'], link);
+              assert.ifError(parsedLink.query['X-Goog-SignedHeaders'], link);
             });
 
             return null;
@@ -158,9 +167,12 @@ describe('download suite', function suite() {
               assert.equal(parsedLink.protocol, 'https:', link);
               assert.equal(parsedLink.host, 'storage.googleapis.com', link);
               assert.equal(parsedLink.pathname, `/${bucketName}/${encodeURI(rsp.files[idx].filename, false)}`, link);
-              assert.ok(parsedLink.query.GoogleAccessId, link);
-              assert.ok(parsedLink.query.Expires, link);
-              assert.ok(parsedLink.query.Signature, link);
+              assert.ok(parsedLink.query['X-Goog-Algorithm'], link);
+              assert.ok(parsedLink.query['X-Goog-Expires'], link);
+              assert.ok(parsedLink.query['X-Goog-Credential'], link);
+              assert.ok(parsedLink.query['X-Goog-Date'], link);
+              assert.ok(parsedLink.query['X-Goog-Signature'], link);
+              assert.ok(parsedLink.query['X-Goog-SignedHeaders'], link);
               assert.ok(parsedLink.query['response-content-disposition'], link);
             });
 

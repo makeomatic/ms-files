@@ -275,9 +275,16 @@ class GCETransport extends AbstractFileTransfer {
       action, md5, type, expires, extensionHeaders, resource, ...props
     } = opts;
 
+    /**
+     * @type {import('@google-cloud/storage').File}
+     */
     const file = this.bucket.file(resource);
+
+    /**
+     * @type {import('@google-cloud/storage').GetSignedUrlConfig}
+     */
     const settings = {
-      version: 'v2',
+      version: 'v4',
       ...props,
       action,
       expires,

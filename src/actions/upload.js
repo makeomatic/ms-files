@@ -115,10 +115,11 @@ async function initFileUpload({ params }) {
       extensionHeaders['x-goog-acl'] = 'public-read';
     }
 
-    const createSignedURL = (action) => provider.createSignedURL({
+    const createSignedURL = (action, { md5Hash: md5Data, contentType, ...props }) => provider.createSignedURL({
+      ...props,
       action,
-      md5: metadata.md5Hash,
-      type: metadata.contentType,
+      md5: md5Data,
+      type: contentType,
       resource: filename,
       extensionHeaders,
       expires: Date.now() + (expires * 1000),
@@ -129,7 +130,7 @@ async function initFileUpload({ params }) {
     if (resumable) {
       if (provider.rename) {
         // https://cloud.google.com/storage/docs/access-control/signed-urls#signing-resumable
-        const initUploadURL = await createSignedURL('resumable');
+        const initUploadURL = await createSignedURL('resumable', metadata);
         location = await provider.initResumableUploadFromURL(initUploadURL, {
           origin,
           md5Hash: metadata.md5Hash,
@@ -148,7 +149,7 @@ async function initFileUpload({ params }) {
       }
     } else {
       // simple upload
-      location = await createSignedURL('write');
+      location = await createSignedURL('write', metadata);
     }
 
     return {
