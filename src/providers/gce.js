@@ -271,9 +271,7 @@ class GCETransport extends AbstractFileTransfer {
   createSignedURL(opts) {
     this.log.debug('initiating signing of URL for %s', opts.resource);
     const { cname, rename } = this;
-    const {
-      action, md5, type, expires, extensionHeaders, resource, ...props
-    } = opts;
+    const { action, md5, type, expires, extensionHeaders, resource, ...props } = opts;
 
     /**
      * @type {import('@google-cloud/storage').File}

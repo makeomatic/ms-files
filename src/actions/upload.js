@@ -115,6 +115,11 @@ async function initFileUpload({ params }) {
       extensionHeaders['x-goog-acl'] = 'public-read';
     }
 
+    // TODO: support more header types
+    if (metadata.contentEncoding) {
+      extensionHeaders['content-encoding'] = metadata.contentEncoding
+    }
+
     const createSignedURL = (action, { md5Hash: md5Data, contentType, ...props }) => provider.createSignedURL({
       ...props,
       action,

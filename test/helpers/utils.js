@@ -201,11 +201,8 @@ async function upload(location, file) {
 }
 
 async function uploadSimple(meta, file, isPublic) {
-  const { query: { Expires } } = url.parse(meta.location);
-
   const headers = {
     'Content-MD5': meta.md5Hash,
-    'Cache-Control': `public,max-age=${Expires}`,
     'Content-Type': meta.contentType,
   };
 

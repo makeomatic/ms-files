@@ -245,6 +245,68 @@ describe('upload suite', function suite() {
   describe('signed url', function signedURLSuite() {
     let response;
 
+    it('initiates signed URL upload: includes content-encoding', async function test() {
+      const { message } = modelData;
+
+      const rsp = await this.send({
+        ...message,
+        meta: {
+          ...meta,
+          ...message.meta,
+        },
+        resumable: false,
+        access: {
+          setPublic: true,
+        },
+        uploadType: 'simple',
+      });
+
+      assert.equal(rsp.name, message.meta.name);
+      assert.equal(rsp.owner, message.username);
+      assert.ok(rsp.uploadId);
+      assert.ok(rsp.startedAt);
+      assert.ok(rsp.files);
+      assert.ok(rsp.public);
+      assert.equal(rsp.status, STATUS_PENDING);
+      assert.equal(rsp.parts, message.files.length);
+      assert.deepEqual(rsp.playerSettings, meta.playerSettings);
+      assert.deepEqual(rsp.creationInfo, meta.creationInfo);
+
+      // verify that location is present
+      let encoding = 0;
+      rsp.files.forEach((part) => {
+        assert.ok(part.location);
+
+        // verify upload link
+        const location = url.parse(part.location, true);
+        assert.equal(location.protocol, 'https:');
+        assert.equal(location.hostname, 'storage.googleapis.com');
+        assert.equal(decodeURIComponent(location.pathname), `/${bucketName}/${part.filename}`);
+        assert.ok(location.query['X-Goog-Algorithm'], location);
+        assert.ok(location.query['X-Goog-Expires'], location);
+        assert.ok(location.query['X-Goog-Credential'], location);
+        assert.ok(location.query['X-Goog-Date'], location);
+        assert.ok(location.query['X-Goog-Signature'], location);
+        assert.ok(location.query['X-Goog-SignedHeaders'], location);
+
+        if (part.contentEncoding) {
+          encoding += 1;
+          assert(location.query['X-Goog-SignedHeaders'].includes('content-encoding'), location.query['X-Goog-SignedHeaders'])
+        }
+
+        // verify that filename contains multiple parts
+        const [ownerHash, uploadId, filename] = part.filename.split('/');
+        assert.equal(md5(owner), ownerHash);
+        assert.equal(rsp.uploadId, uploadId);
+        assert.ok(filename);
+      });
+
+      assert(encoding > 0, 'no content-encoding present')
+
+      // save for the next
+      response = rsp;
+    });
+
     it('initiates signed URL upload', async function test() {
       const { message } = simpleData;
 
@@ -287,6 +349,10 @@ describe('upload suite', function suite() {
         assert.ok(location.query['X-Goog-Date'], location);
         assert.ok(location.query['X-Goog-Signature'], location);
         assert.ok(location.query['X-Goog-SignedHeaders'], location);
+
+        if (part.contentEncoding) {
+          assert(location.query['X-Goog-SignedHeaders'].includes('content-encoding'), location.query['X-Goog-SignedHeaders'])
+        }
 
         // verify that filename contains multiple parts
         const [ownerHash, uploadId, filename] = part.filename.split('/');
