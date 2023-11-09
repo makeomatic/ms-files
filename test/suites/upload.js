@@ -291,7 +291,7 @@ describe('upload suite', function suite() {
 
         if (part.contentEncoding) {
           encoding += 1;
-          assert(location.query['X-Goog-SignedHeaders'].includes('content-encoding'), location.query['X-Goog-SignedHeaders'])
+          assert(location.query['X-Goog-SignedHeaders'].includes('content-encoding'), location.query['X-Goog-SignedHeaders']);
         }
 
         // verify that filename contains multiple parts
@@ -301,7 +301,7 @@ describe('upload suite', function suite() {
         assert.ok(filename);
       });
 
-      assert(encoding > 0, 'no content-encoding present')
+      assert(encoding > 0, 'no content-encoding present');
 
       // save for the next
       response = rsp;
@@ -351,7 +351,7 @@ describe('upload suite', function suite() {
         assert.ok(location.query['X-Goog-SignedHeaders'], location);
 
         if (part.contentEncoding) {
-          assert(location.query['X-Goog-SignedHeaders'].includes('content-encoding'), location.query['X-Goog-SignedHeaders'])
+          assert(location.query['X-Goog-SignedHeaders'].includes('content-encoding'), location.query['X-Goog-SignedHeaders']);
         }
 
         // verify that filename contains multiple parts

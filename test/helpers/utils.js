@@ -12,7 +12,6 @@ const md5 = require('md5');
 const partial = require('lodash/partial');
 const values = require('lodash/values');
 const zlib = require('zlib');
-const url = require('url');
 const is = require('is');
 const { fetch, getGlobalDispatcher, setGlobalDispatcher, Agent } = require('undici');
 const { Readable } = require('node:stream');
