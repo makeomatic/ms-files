@@ -65,13 +65,6 @@ function hasOrIsReference(data) {
 
 function assertReferenceOnAccessChange(metaToUpdate = {}, params = {}) {
   return function visibilityCheck(data) {
-    console.debug({
-      metaToUpdate,
-      data,
-      params,
-      hasOrIsReference: hasOrIsReference(data),
-    });
-
     if (((params.access && typeof params.access.setPublic === 'boolean') || typeof params.directOnly === 'boolean')
       && (
         hasOrIsReference(data) || (metaToUpdate[FILES_REFERENCES_FIELD] && metaToUpdate[FILES_REFERENCES_FIELD].length > 1)

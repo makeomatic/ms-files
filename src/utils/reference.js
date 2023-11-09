@@ -111,7 +111,7 @@ function verifyReferences(originalMeta, referenceInfoMap, newReferences) {
         new ValidationError('should not be immutable', 'e_reference', id)
       );
     }
-    console.debug(refInfo);
+
     if (refInfo.directOnly || refInfo.unlisted || !refInfo.public) {
       validationError.addError(
         new ValidationError('should not be private or unlisted', 'e_reference', id)
