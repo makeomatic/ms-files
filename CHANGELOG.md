@@ -1,3 +1,10 @@
+## [18.0.3](https://github.com/makeomatic/ms-files/compare/v18.0.2...v18.0.3) (2023-11-10)
+
+
+### Bug Fixes
+
+* references should allow only public uploads ([#303](https://github.com/makeomatic/ms-files/issues/303)) ([07b7559](https://github.com/makeomatic/ms-files/commit/07b7559d99b51cfcc654ba9ad291bc635bc3b76e))
+
 ## [18.0.2](https://github.com/makeomatic/ms-files/compare/v18.0.1...v18.0.2) (2023-11-09)
 
 

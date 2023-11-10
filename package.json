@@ -2,7 +2,7 @@
   "name": "ms-files",
   "description": "Opinionated solution for managing files with GCS and other cloud storage providers",
   "main": "./src/index.js",
-  "version": "18.0.2",
+  "version": "18.0.3",
   "scripts": {
     "test": "pnpm lint && pnpm test:e2e",
     "test:e2e": "pnpm test:e2e:cluster && pnpm test:e2e:sentinel",
