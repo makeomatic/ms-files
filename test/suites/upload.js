@@ -800,6 +800,8 @@ describe('upload suite', function suite() {
 
   describe('references', function checkReferencesSute() {
     let referencedModelId;
+    let privateModelId;
+    let unlistedModelId;
 
     before('upload file', async function uploadFile() {
       const referencedUploaded = await initAndUpload({
@@ -817,6 +819,36 @@ describe('upload suite', function suite() {
       }, false).call({ amqp: this.amqp });
 
       referencedModelId = referencedUploaded.uploadId;
+
+      const privateModel = await initAndUpload({
+        ...modelData,
+        message: {
+          ...modelData.message,
+          meta: {
+            ...meta,
+            ...modelData.message.meta,
+          },
+          access: {
+            setPublic: false,
+          },
+        },
+      }, false).call({ amqp: this.amqp });
+
+      privateModelId = privateModel.uploadId;
+
+      const unlistedModel = await initAndUpload({
+        ...modelData,
+        message: {
+          ...modelData.message,
+          meta: {
+            ...meta,
+            ...modelData.message.meta,
+          },
+          directOnly: true,
+        },
+      }, false).call({ amqp: this.amqp });
+
+      unlistedModelId = unlistedModel.uploadId;
     });
 
     it('assigns references on upload and after finish', async function checkReferences() {
@@ -845,11 +877,53 @@ describe('upload suite', function suite() {
         meta: {
           ...meta,
           ...modelData.message.meta,
-          references: [referencedModelId],
+          references: [referencedModelId, unlistedModelId, privateModelId],
         },
         access: {
           setPublic: true,
         },
+      }, 45000);
+
+      await assert.rejects(uploadResult, (err) => {
+        assert.strictEqual(err.name, 'ValidationError');
+        assert.strictEqual(err.message, 'invalid reference');
+
+        assert.strictEqual(err.errors[0].text, 'already has reference');
+        assert.strictEqual(err.errors[0].field, referencedModelId);
+        assert.strictEqual(err.errors[1].text, 'should not be private or unlisted');
+        assert.strictEqual(err.errors[1].field, unlistedModelId);
+        assert.strictEqual(err.errors[2].text, 'should not be private or unlisted');
+        assert.strictEqual(err.errors[2].field, privateModelId);
+
+        return true;
+      });
+    });
+
+    it('disallows references on private upload', async function checkReferences() {
+      const uploadResult = this.send({
+        ...modelData.message,
+        meta: {
+          ...meta,
+          ...modelData.message.meta,
+          references: [referencedModelId],
+        },
+        access: {
+          setPublic: false,
+        },
+      }, 45000);
+
+      await assert.rejects(uploadResult, /invalid reference/);
+    });
+
+    it('disallows references on unlisted upload', async function checkReferences() {
+      const uploadResult = this.send({
+        ...modelData.message,
+        meta: {
+          ...meta,
+          ...modelData.message.meta,
+          references: [referencedModelId],
+        },
+        directOnly: true,
       }, 45000);
 
       await assert.rejects(uploadResult, /invalid reference/);

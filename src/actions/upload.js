@@ -34,6 +34,7 @@ const {
   FILES_NFT_FIELD,
   FILES_HAS_REFERENCES_FIELD,
 } = require('../constant');
+const { assertReferenceOnAccessChange } = require('../utils/check-data');
 
 /**
  * Initiates upload
@@ -85,6 +86,20 @@ async function initFileUpload({ params }) {
     .tap(isValidBackgroundOrigin);
 
   this.log.info({ params }, 'preprocessed upload');
+
+  const newReferences = meta[FILES_REFERENCES_FIELD] || [];
+  if (newReferences.length > 0) {
+    const referencedInfo = await getReferenceData(redis, newReferences);
+    const tempMeta = {
+      ...meta,
+      uploadId,
+      [FILES_REFERENCES_FIELD]: [],
+      [FILES_OWNER_FIELD]: username,
+    };
+    verifyReferences(tempMeta, referencedInfo, newReferences);
+  }
+
+  assertReferenceOnAccessChange({}, { access: { setPublic: isPublic }, directOnly })(meta);
 
   const parts = await Promise.map(files, async ({ md5Hash, type, ...rest }) => {
     // generate filename
@@ -164,19 +179,6 @@ async function initFileUpload({ params }) {
       location,
     };
   });
-
-  const newReferences = meta[FILES_REFERENCES_FIELD] || [];
-  if (newReferences.length > 0) {
-    const referencedInfo = await getReferenceData(redis, newReferences);
-    const tempMeta = {
-      ...meta,
-      uploadId,
-      [FILES_REFERENCES_FIELD]: [],
-      [FILES_OWNER_FIELD]: username,
-    };
-
-    verifyReferences(tempMeta, referencedInfo, newReferences);
-  }
 
   const serialized = Object.create(null);
   for (const field of FIELDS_TO_STRINGIFY) {

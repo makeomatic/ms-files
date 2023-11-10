@@ -36,7 +36,15 @@ describe('clone file suite', function suite() {
     file = await initAndUpload(modelData).call(this.files);
     await processUpload.call(this.files, file);
 
-    secondFile = await initAndUpload(modelData).call(this.files);
+    secondFile = await initAndUpload({
+      ...modelData,
+      message: {
+        ...modelData.message,
+        access: {
+          setPublic: true,
+        },
+      },
+    }).call(this.files);
     await processUpload.call(this.files, secondFile);
   });
 
@@ -158,10 +166,10 @@ describe('clone file suite', function suite() {
         username: file.owner,
       });
 
-      assert.strictEqual(response.length, 0);
+      assert.strictEqual(response.length, 1);
     });
 
-    it('lists public cloned models', async function checkListSuite() {
+    it('lists private cloned models', async function checkListSuite() {
       const { files: response } = await this.amqp.publishAndWait('files.list', {
         public: false,
         username: file.owner,
@@ -183,7 +191,7 @@ describe('clone file suite', function suite() {
         public: true,
       });
 
-      assert.strictEqual(response.length, 0);
+      assert.strictEqual(response.length, 1);
     });
 
     it('able to find models by `hasClones`', async function checkListSuite() {
@@ -215,9 +223,9 @@ describe('clone file suite', function suite() {
       });
 
       assert.equal(response.total, 4);
-      assert.equal(response.public, 0);
+      assert.equal(response.public, 1);
       assert.equal(response.totalContentLength, 1901153 * 4);
-      assert.equal(response.publicContentLength, 0);
+      assert.equal(response.publicContentLength, 1901153);
     });
   });
 });

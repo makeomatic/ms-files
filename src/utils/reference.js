@@ -14,6 +14,7 @@ const {
   FILES_DIRECT_ONLY_FIELD,
   FILES_UNLISTED_FIELD,
   FILES_STATUS_FIELD,
+  FILES_PUBLIC_FIELD,
   STATUS_PROCESSED,
 } = require('../constant');
 const handlePipeline = require('./pipeline-error');
@@ -38,6 +39,7 @@ async function getReferenceData(redis, references = []) {
       FILES_IMMUTABLE_FIELD,
       FILES_DIRECT_ONLY_FIELD,
       FILES_UNLISTED_FIELD,
+      FILES_PUBLIC_FIELD,
       FILES_STATUS_FIELD
     );
   });
@@ -46,7 +48,7 @@ async function getReferenceData(redis, references = []) {
   const referenceInfoMap = {};
 
   chunk(redisData, 2).forEach(([referenced, meta], index) => {
-    const [owner, hasReferences, hasNft, immutable, directOnly, unlisted, status] = meta;
+    const [owner, hasReferences, hasNft, immutable, directOnly, unlisted, publicField, status] = meta;
     if (!owner) {
       throw FILE_MISSING_ERROR;
     }
@@ -61,6 +63,7 @@ async function getReferenceData(redis, references = []) {
       directOnly,
       unlisted,
       status,
+      public: publicField,
     };
   });
 
@@ -109,7 +112,7 @@ function verifyReferences(originalMeta, referenceInfoMap, newReferences) {
       );
     }
 
-    if (refInfo.directOnly || refInfo.unlisted) {
+    if (refInfo.directOnly || refInfo.unlisted || !refInfo.public) {
       validationError.addError(
         new ValidationError('should not be private or unlisted', 'e_reference', id)
       );
