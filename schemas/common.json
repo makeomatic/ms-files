@@ -896,6 +896,9 @@
           "type": "integer",
           "description": "Preview/Image height"
         },
+        "isInShowroom": {
+          "type": "boolean"
+        },
         "nft": {
           "type": "object",
           "required": [
