@@ -301,7 +301,7 @@ const numericProps = [FILES_HAS_REFERENCES_FIELD, FILES_IS_REFERENCED_FIELD, FIL
  */
 async function redisSearch(ctx) {
   // 1. build query
-  const indexName = `${ctx.service.config.redis.options.keyPrefix}:files-list-v8`;
+  const indexName = `${ctx.service.config.redis.options.keyPrefix}:files-list-v9`;
   const args = ['FT.SEARCH', indexName];
   const query = [];
   const params = [];
