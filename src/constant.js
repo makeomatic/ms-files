@@ -92,7 +92,6 @@ module.exports = exports = Object.setPrototypeOf({
     'c-masks': '.mask',
     'c-usdz': '.usdz',
   }, null),
-
   // errors
   FILE_MISSING_ERROR: new HttpStatusError(404, 'could not find associated data'),
   FILE_PROCESS_IN_PROGRESS_ERROR: new HttpStatusError(409, 'file is being processed'),
