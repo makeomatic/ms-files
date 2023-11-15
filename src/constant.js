@@ -72,6 +72,7 @@ module.exports = exports = Object.setPrototypeOf({
   FILES_HAS_REFERENCES_FIELD: 'hasReferences',
   FILES_REFERENCES_FIELD: 'references',
   FILES_IS_REFERENCED_FIELD: 'isReferenced',
+  FILES_IS_IN_SHOWROOM_FIELD: 'isInShowroom',
 
   // metatype of file
   FILES_TYPE_FIELD: 'type',
@@ -91,7 +92,6 @@ module.exports = exports = Object.setPrototypeOf({
     'c-masks': '.mask',
     'c-usdz': '.usdz',
   }, null),
-
   // errors
   FILE_MISSING_ERROR: new HttpStatusError(404, 'could not find associated data'),
   FILE_PROCESS_IN_PROGRESS_ERROR: new HttpStatusError(409, 'file is being processed'),
