@@ -91,6 +91,6 @@ async function createSearchIndex(service) {
 
 module.exports = {
   script: createSearchIndex,
-  min: 1,
+  min: 13,
   final: 14,
 };
