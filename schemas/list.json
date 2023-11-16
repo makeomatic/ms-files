@@ -114,6 +114,9 @@
                 "isReferenced": {
                     "$ref": "common#/definitions/filter-props"
                 },
+                "isInShowroom": {
+                    "$ref": "common#/definitions/filter-props"
+                },
                 "#": {
                     "$ref": "common#/definitions/filter-props"
                 },
