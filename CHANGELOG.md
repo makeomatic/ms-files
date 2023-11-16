@@ -1,3 +1,10 @@
+# [18.1.0](https://github.com/makeomatic/ms-files/compare/v18.0.3...v18.1.0) (2023-11-16)
+
+
+### Features
+
+* showroom ([#305](https://github.com/makeomatic/ms-files/issues/305)) ([8fa3578](https://github.com/makeomatic/ms-files/commit/8fa357856b077a5c7af793da618fac1b64228bd2))
+
 ## [18.0.3](https://github.com/makeomatic/ms-files/compare/v18.0.2...v18.0.3) (2023-11-10)
 
 
