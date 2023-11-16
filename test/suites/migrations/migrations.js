@@ -84,8 +84,7 @@ describe('migrations testing suite', function suite() {
     const indexes = await redisMaster.sendCommand(new Redis.Command('ft._list'));
     await redisMaster.sendCommand(new Redis.Command('ft.dropindex', indexes));
     const indexes1 = await redisMaster.sendCommand(new Redis.Command('ft._list'));
-    // eslint-disable-next-line no-console
-    console.log(indexes1, '---LOG---: : indexes1');
+    await redisMaster.sendCommand(new Redis.Command('ft.dropindex', indexes1));
     await redis.del('version');
 
     // set name to new value
