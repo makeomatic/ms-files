@@ -82,6 +82,8 @@ describe('migrations testing suite', function suite() {
     // so index exists on one node, but absent on another
     const redisMaster = getRedisMasterNode(ctx.files.redis, ctx.files);
     const indexes = await redisMaster.sendCommand(new Redis.Command('ft._list'));
+
+    console.log(indexes, '---LOG---: : indexes');
     await redisMaster.sendCommand(new Redis.Command('ft.dropindex', indexes));
     await redis.del('version');
 
