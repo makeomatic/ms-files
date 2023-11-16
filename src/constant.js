@@ -72,6 +72,7 @@ module.exports = exports = Object.setPrototypeOf({
   FILES_HAS_REFERENCES_FIELD: 'hasReferences',
   FILES_REFERENCES_FIELD: 'references',
   FILES_IS_REFERENCED_FIELD: 'isReferenced',
+  FILES_IS_IN_SHOWROOM_FIELD: 'isInShowroom',
 
   // metatype of file
   FILES_TYPE_FIELD: 'type',
@@ -91,7 +92,6 @@ module.exports = exports = Object.setPrototypeOf({
     'c-masks': '.mask',
     'c-usdz': '.usdz',
   }, null),
-
   // errors
   FILE_MISSING_ERROR: new HttpStatusError(404, 'could not find associated data'),
   FILE_PROCESS_IN_PROGRESS_ERROR: new HttpStatusError(409, 'file is being processed'),
@@ -144,3 +144,5 @@ exports.FILES_REFERENCED_INDEX_KEY = (uploadId) => `${exports.FILES_INDEX_REFERE
 exports.UPLOAD_TYPE_GLB_EXTENDED = 'glb-extended';
 exports.UPLOAD_TYPE_PANORAMA_EQUIRECT = 'pano-equirect';
 exports.UPLOAD_TYPE_PANORAMA_CUBEMAP = 'pano-cubemap';
+
+exports.FILES_LIST_SEARCH = 'files-list-v9';
