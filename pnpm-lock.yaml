@@ -15,50 +15,50 @@ dependencies:
     specifier: ^21.3.2
     version: 21.3.2
   '@microfleet/core':
-    specifier: ^19.2.10
-    version: 19.2.10(@microfleet/validation@11.1.3)(common-errors@1.2.0)
+    specifier: ^19.2.11
+    version: 19.2.11(@microfleet/validation@11.1.3)(common-errors@1.2.0)
   '@microfleet/core-types':
     specifier: ^2.2.10
     version: 2.2.10
   '@microfleet/plugin-amqp':
     specifier: ^2.2.10
-    version: 2.2.10(@microfleet/core@19.2.10)(@microfleet/plugin-logger@2.2.10)(@microfleet/plugin-router@2.2.10)(@microfleet/plugin-validator@2.2.10)(common-errors@1.2.0)
+    version: 2.2.10(@microfleet/core@19.2.11)(@microfleet/plugin-logger@2.2.10)(@microfleet/plugin-router@2.2.10)(@microfleet/plugin-validator@2.2.10)(common-errors@1.2.0)
   '@microfleet/plugin-dlock':
     specifier: ^2.2.10
-    version: 2.2.10(@microfleet/core@19.2.10)
+    version: 2.2.10(@microfleet/core@19.2.11)
   '@microfleet/plugin-hapi':
     specifier: ^2.2.10
-    version: 2.2.10(@microfleet/core@19.2.10)(@microfleet/utils@2.2.10)(common-errors@1.2.0)
+    version: 2.2.10(@microfleet/core@19.2.11)(@microfleet/utils@2.2.10)(common-errors@1.2.0)
   '@microfleet/plugin-logger':
     specifier: ^2.2.10
-    version: 2.2.10(@microfleet/core@19.2.10)(common-errors@1.2.0)
+    version: 2.2.10(@microfleet/core@19.2.11)(common-errors@1.2.0)
   '@microfleet/plugin-opentracing':
     specifier: ^2.2.10
-    version: 2.2.10(@microfleet/core@19.2.10)(common-errors@1.2.0)
+    version: 2.2.10(@microfleet/core@19.2.11)(common-errors@1.2.0)
   '@microfleet/plugin-prometheus':
     specifier: ^2.2.10
-    version: 2.2.10(@microfleet/core@19.2.10)(common-errors@1.2.0)
+    version: 2.2.10(@microfleet/core@19.2.11)(common-errors@1.2.0)
   '@microfleet/plugin-redis-cluster':
     specifier: ^2.2.10
-    version: 2.2.10(@microfleet/core@19.2.10)(common-errors@1.2.0)(ioredis@4.28.5)
+    version: 2.2.10(@microfleet/core@19.2.11)(common-errors@1.2.0)(ioredis@4.28.5)
   '@microfleet/plugin-redis-sentinel':
     specifier: ^2.2.10
-    version: 2.2.10(@microfleet/core@19.2.10)(common-errors@1.2.0)(ioredis@4.28.5)
+    version: 2.2.10(@microfleet/core@19.2.11)(common-errors@1.2.0)(ioredis@4.28.5)
   '@microfleet/plugin-router':
     specifier: ^2.2.10
-    version: 2.2.10(@microfleet/core-types@2.2.10)(@microfleet/core@19.2.10)(@microfleet/plugin-logger@2.2.10)(@microfleet/utils@2.2.10)(common-errors@1.2.0)
+    version: 2.2.10(@microfleet/core-types@2.2.10)(@microfleet/core@19.2.11)(@microfleet/plugin-logger@2.2.10)(@microfleet/utils@2.2.10)(common-errors@1.2.0)
   '@microfleet/plugin-router-amqp':
     specifier: ^2.2.10
-    version: 2.2.10(@microfleet/core-types@2.2.10)(@microfleet/core@19.2.10)(@microfleet/plugin-amqp@2.2.10)(@microfleet/plugin-logger@2.2.10)(@microfleet/plugin-router@2.2.10)(common-errors@1.2.0)
+    version: 2.2.10(@microfleet/core-types@2.2.10)(@microfleet/core@19.2.11)(@microfleet/plugin-amqp@2.2.10)(@microfleet/plugin-logger@2.2.10)(@microfleet/plugin-router@2.2.10)(common-errors@1.2.0)
   '@microfleet/plugin-router-hapi':
     specifier: ^2.2.10
-    version: 2.2.10(@microfleet/core@19.2.10)(@microfleet/plugin-hapi@2.2.10)(@microfleet/plugin-opentracing@2.2.10)(@microfleet/plugin-router@2.2.10)(@microfleet/plugin-validator@2.2.10)(common-errors@1.2.0)
+    version: 2.2.10(@microfleet/core@19.2.11)(@microfleet/plugin-hapi@2.2.10)(@microfleet/plugin-opentracing@2.2.10)(@microfleet/plugin-router@2.2.10)(@microfleet/plugin-validator@2.2.10)(common-errors@1.2.0)
   '@microfleet/plugin-validator':
     specifier: ^2.2.10
-    version: 2.2.10(@microfleet/core-types@2.2.10)(@microfleet/core@19.2.10)(@microfleet/utils@2.2.10)
+    version: 2.2.10(@microfleet/core-types@2.2.10)(@microfleet/core@19.2.11)(@microfleet/utils@2.2.10)
   '@microfleet/transport-amqp':
-    specifier: ^17.5.0
-    version: 17.5.0(common-errors@1.2.0)
+    specifier: ^17.7.0
+    version: 17.7.0(common-errors@1.2.0)
   '@microfleet/utils':
     specifier: ^2.2.10
     version: 2.2.10
@@ -997,8 +997,8 @@ packages:
       - supports-color
     dev: false
 
-  /@microfleet/amqp-codec@2.4.0:
-    resolution: {integrity: sha512-InwyZiMQCURntXBpo3wIba6Sf1OkSKSOUWUf73JjvlZJoDBBp2viR3LawsjBsho/4Sls7x9MTq77I06WzOdvlg==}
+  /@microfleet/amqp-codec@2.5.0:
+    resolution: {integrity: sha512-OhWy3f1hblkBZh5hO6iYKq7fjfhZmTibvulaMOapzVgZPRit22GcfFbIO5+2qK1EakEZBgxmf0XYwMwnQHiM+A==}
     dependencies:
       debug: 4.3.4(supports-color@8.1.1)
     transitivePeerDependencies:
@@ -1025,11 +1025,11 @@ packages:
       - supports-color
     dev: false
 
-  /@microfleet/amqp-coffee@2.6.0:
-    resolution: {integrity: sha512-GtGVy2lCEnGEkSlpogMXv6d2ndYZQNLXfa7noFe9wDYuu6aBavTTh+c7/TWUKTOOX01fY69GsXqvntQXA/1e2Q==}
-    engines: {node: '>= 14.17'}
+  /@microfleet/amqp-coffee@2.7.0:
+    resolution: {integrity: sha512-aD4h1pZishyx4wU013kt5VyeZYIG8J1tXNiRJBDIjfpdEoG4VPPpONb+UrhrGm8jdEUh83TBy3w5VHNcTRzLeg==}
+    engines: {node: '>= 18.17'}
     dependencies:
-      '@microfleet/amqp-codec': 2.4.0
+      '@microfleet/amqp-codec': 2.5.0
       async: 3.2.5
       bl: 6.0.8
       bson: 6.2.0
@@ -1062,16 +1062,25 @@ packages:
       eventemitter3: 5.0.1
     dev: false
 
-  /@microfleet/core@19.2.10(@microfleet/validation@11.1.3)(common-errors@1.2.0):
-    resolution: {integrity: sha512-gisl9nnjBX5lFTekYN3Lbl1AAOdaIeYmkeccHso6RRXAlEkIYaUOw7nt2eFR7YfjheNUIOmT0S1T8RlpckNK5w==}
+  /@microfleet/core-types@2.2.11:
+    resolution: {integrity: sha512-j6Egn2RvaggsDa6V1keZLKBf/vuFfsUtr8KqXbfy5eVQiQ7+8ymVrM+BAilt9imnPg1Cs20X4JyhjYOId5Lx3g==}
+    dependencies:
+      '@microfleet/utils': 2.2.11
+      bluebird: 3.7.2
+      bluebird-retry: 0.11.0(bluebird@3.7.2)
+      eventemitter3: 5.0.1
+    dev: false
+
+  /@microfleet/core@19.2.11(@microfleet/validation@11.1.3)(common-errors@1.2.0):
+    resolution: {integrity: sha512-+And5do6kk3QWL9EXbfPbvafAXXDdPtmyWRT9uWO1x+P+lbFiG6jje7WHPDe1nN4IJ8dMIDbrFUvwURgBPkGOw==}
     engines: {node: '>= 12.14.0', npm: '>= 4.0.0'}
     hasBin: true
     peerDependencies:
       '@microfleet/validation': ^11.1.1
       common-errors: ^1.x.x
     dependencies:
-      '@microfleet/core-types': 2.2.10
-      '@microfleet/utils': 2.2.10
+      '@microfleet/core-types': 2.2.11
+      '@microfleet/utils': 2.2.11
       '@microfleet/validation': 11.1.3(common-errors@1.2.0)
       bluebird: 3.7.2
       bluebird-retry: 0.11.0(bluebird@3.7.2)
@@ -1110,7 +1119,7 @@ packages:
       ioredis: 4.28.5
       uuid: 8.3.2
 
-  /@microfleet/plugin-amqp@2.2.10(@microfleet/core@19.2.10)(@microfleet/plugin-logger@2.2.10)(@microfleet/plugin-router@2.2.10)(@microfleet/plugin-validator@2.2.10)(common-errors@1.2.0):
+  /@microfleet/plugin-amqp@2.2.10(@microfleet/core@19.2.11)(@microfleet/plugin-logger@2.2.10)(@microfleet/plugin-router@2.2.10)(@microfleet/plugin-validator@2.2.10)(common-errors@1.2.0):
     resolution: {integrity: sha512-ZSo9NRv37oC7ogkBZ3w732veBsEA57Mm0q1umXia+rNmL7S+wiBa0eEnOFINVi/O+Eh7JENOpX1JWTNXqC1hBQ==}
     engines: {node: '>= 12.14.0', npm: '>= 4.0.0'}
     peerDependencies:
@@ -1120,28 +1129,28 @@ packages:
       '@microfleet/plugin-validator': ^2.2.10
       common-errors: ~1.x.x
     dependencies:
-      '@microfleet/core': 19.2.10(@microfleet/validation@11.1.3)(common-errors@1.2.0)
-      '@microfleet/plugin-logger': 2.2.10(@microfleet/core@19.2.10)(common-errors@1.2.0)
-      '@microfleet/plugin-router': 2.2.10(@microfleet/core-types@2.2.10)(@microfleet/core@19.2.10)(@microfleet/plugin-logger@2.2.10)(@microfleet/utils@2.2.10)(common-errors@1.2.0)
-      '@microfleet/plugin-validator': 2.2.10(@microfleet/core-types@2.2.10)(@microfleet/core@19.2.10)(@microfleet/utils@2.2.10)
-      '@microfleet/transport-amqp': 17.5.0(common-errors@1.2.0)
+      '@microfleet/core': 19.2.11(@microfleet/validation@11.1.3)(common-errors@1.2.0)
+      '@microfleet/plugin-logger': 2.2.10(@microfleet/core@19.2.11)(common-errors@1.2.0)
+      '@microfleet/plugin-router': 2.2.10(@microfleet/core-types@2.2.10)(@microfleet/core@19.2.11)(@microfleet/plugin-logger@2.2.10)(@microfleet/utils@2.2.10)(common-errors@1.2.0)
+      '@microfleet/plugin-validator': 2.2.10(@microfleet/core-types@2.2.10)(@microfleet/core@19.2.11)(@microfleet/utils@2.2.10)
+      '@microfleet/transport-amqp': 17.7.0(common-errors@1.2.0)
       bluebird: 3.7.2
       common-errors: 1.2.0
     transitivePeerDependencies:
       - supports-color
     dev: false
 
-  /@microfleet/plugin-dlock@2.2.10(@microfleet/core@19.2.10):
+  /@microfleet/plugin-dlock@2.2.10(@microfleet/core@19.2.11):
     resolution: {integrity: sha512-N3iXyMA8ITNmjzTvS/EWIFOjs2PjTtA0YlCAJGT+bnSjFurYHCwxK71bTSVEXnOrt9/RkGC27+eFj4iUZ5eLxw==}
     engines: {node: '>= 12.14.0', npm: '>= 4.0.0'}
     peerDependencies:
       '@microfleet/core': ^19.2.10
     dependencies:
-      '@microfleet/core': 19.2.10(@microfleet/validation@11.1.3)(common-errors@1.2.0)
+      '@microfleet/core': 19.2.11(@microfleet/validation@11.1.3)(common-errors@1.2.0)
       '@microfleet/core-types': 2.2.10
       '@microfleet/dlock': 15.0.0(ioredis@4.28.5)
       '@microfleet/ioredis-lock': 5.1.0(ioredis@4.28.5)
-      '@microfleet/plugin-validator': 2.2.10(@microfleet/core-types@2.2.10)(@microfleet/core@19.2.10)(@microfleet/utils@2.2.10)
+      '@microfleet/plugin-validator': 2.2.10(@microfleet/core-types@2.2.10)(@microfleet/core@19.2.11)(@microfleet/utils@2.2.10)
       '@microfleet/utils': 2.2.10
       bluebird: 3.7.2
       common-errors: 1.2.0
@@ -1150,7 +1159,7 @@ packages:
       - supports-color
     dev: false
 
-  /@microfleet/plugin-hapi@2.2.10(@microfleet/core@19.2.10)(@microfleet/utils@2.2.10)(common-errors@1.2.0):
+  /@microfleet/plugin-hapi@2.2.10(@microfleet/core@19.2.11)(@microfleet/utils@2.2.10)(common-errors@1.2.0):
     resolution: {integrity: sha512-yA4/Dwakr5WUGdAu+xnfgVt8RmWFUQYNjtUv8aZASsRTLUi1mNfQWy9etINb7vF2STPws7x3oqSYUzvLK4m4Dw==}
     engines: {node: '>= 12.14.0', npm: '>= 4.0.0'}
     peerDependencies:
@@ -1159,12 +1168,12 @@ packages:
     dependencies:
       '@hapi/hapi': 21.3.2
       '@hapi/vision': 7.0.3
-      '@microfleet/core': 19.2.10(@microfleet/validation@11.1.3)(common-errors@1.2.0)
+      '@microfleet/core': 19.2.11(@microfleet/validation@11.1.3)(common-errors@1.2.0)
       '@microfleet/core-types': 2.2.10
-      '@microfleet/plugin-logger': 2.2.10(@microfleet/core@19.2.10)(common-errors@1.2.0)
-      '@microfleet/plugin-router': 2.2.10(@microfleet/core-types@2.2.10)(@microfleet/core@19.2.10)(@microfleet/plugin-logger@2.2.10)(@microfleet/utils@2.2.10)(common-errors@1.2.0)
-      '@microfleet/plugin-socketio': 2.2.10(@microfleet/core@19.2.10)(common-errors@1.2.0)
-      '@microfleet/plugin-validator': 2.2.10(@microfleet/core-types@2.2.10)(@microfleet/core@19.2.10)(@microfleet/utils@2.2.10)
+      '@microfleet/plugin-logger': 2.2.10(@microfleet/core@19.2.11)(common-errors@1.2.0)
+      '@microfleet/plugin-router': 2.2.10(@microfleet/core-types@2.2.10)(@microfleet/core@19.2.11)(@microfleet/plugin-logger@2.2.10)(@microfleet/utils@2.2.10)(common-errors@1.2.0)
+      '@microfleet/plugin-socketio': 2.2.10(@microfleet/core@19.2.11)(common-errors@1.2.0)
+      '@microfleet/plugin-validator': 2.2.10(@microfleet/core-types@2.2.10)(@microfleet/core@19.2.11)(@microfleet/utils@2.2.10)
       common-errors: 1.2.0
       joi: 17.11.0
     transitivePeerDependencies:
@@ -1174,16 +1183,16 @@ packages:
       - utf-8-validate
     dev: false
 
-  /@microfleet/plugin-logger@2.2.10(@microfleet/core@19.2.10)(common-errors@1.2.0):
+  /@microfleet/plugin-logger@2.2.10(@microfleet/core@19.2.11)(common-errors@1.2.0):
     resolution: {integrity: sha512-d60BomuXBKdc8Ay/rsV9Ir5NTs20usaCXDQdXVX4AltVmaGhYaz8AISJwuzn/YDcd2K8jXbjnfgm49bbLYblzA==}
     engines: {node: '>= 12.15.0', npm: '>= 4.0.0'}
     peerDependencies:
       '@microfleet/core': ^19.2.10
       common-errors: ~1.x.x
     dependencies:
-      '@microfleet/core': 19.2.10(@microfleet/validation@11.1.3)(common-errors@1.2.0)
+      '@microfleet/core': 19.2.11(@microfleet/validation@11.1.3)(common-errors@1.2.0)
       '@microfleet/core-types': 2.2.10
-      '@microfleet/plugin-validator': 2.2.10(@microfleet/core-types@2.2.10)(@microfleet/core@19.2.10)(@microfleet/utils@2.2.10)
+      '@microfleet/plugin-validator': 2.2.10(@microfleet/core-types@2.2.10)(@microfleet/core@19.2.11)(@microfleet/utils@2.2.10)
       '@microfleet/utils': 2.2.10
       '@sentry/utils': 7.76.0
       common-errors: 1.2.0
@@ -1197,17 +1206,17 @@ packages:
       - supports-color
     dev: false
 
-  /@microfleet/plugin-opentracing@2.2.10(@microfleet/core@19.2.10)(common-errors@1.2.0):
+  /@microfleet/plugin-opentracing@2.2.10(@microfleet/core@19.2.11)(common-errors@1.2.0):
     resolution: {integrity: sha512-bjJp9YjSSZemMxU4XKMooMLQezm5XT3EtDT53KFHbwJzIZTX9D3mkeQkhMSCQ7SLdoWnHkjhk1Wa6kdrrk2zLQ==}
     engines: {node: '>= 12.15.0', npm: '>= 4.0.0'}
     peerDependencies:
       '@microfleet/core': ^19.2.10
       common-errors: ~1.x.x
     dependencies:
-      '@microfleet/core': 19.2.10(@microfleet/validation@11.1.3)(common-errors@1.2.0)
+      '@microfleet/core': 19.2.11(@microfleet/validation@11.1.3)(common-errors@1.2.0)
       '@microfleet/core-types': 2.2.10
-      '@microfleet/plugin-logger': 2.2.10(@microfleet/core@19.2.10)(common-errors@1.2.0)
-      '@microfleet/plugin-validator': 2.2.10(@microfleet/core-types@2.2.10)(@microfleet/core@19.2.10)(@microfleet/utils@2.2.10)
+      '@microfleet/plugin-logger': 2.2.10(@microfleet/core@19.2.11)(common-errors@1.2.0)
+      '@microfleet/plugin-validator': 2.2.10(@microfleet/core-types@2.2.10)(@microfleet/core@19.2.11)(@microfleet/utils@2.2.10)
       '@microfleet/utils': 2.2.10
       common-errors: 1.2.0
       jaeger-client: 3.19.0
@@ -1215,14 +1224,14 @@ packages:
       - supports-color
     dev: false
 
-  /@microfleet/plugin-prometheus@2.2.10(@microfleet/core@19.2.10)(common-errors@1.2.0):
+  /@microfleet/plugin-prometheus@2.2.10(@microfleet/core@19.2.11)(common-errors@1.2.0):
     resolution: {integrity: sha512-V2hLbZeZtmb9nLl/pFBLucnIBnkKfrrdisO/yInotpgX4A6FtvlCpPg/EmzbGOMS4p4z5kfTTI9fFuu0pW1VVQ==}
     engines: {node: '>= 12.15.0', npm: '>= 4.0.0'}
     peerDependencies:
       '@microfleet/core': ^19.2.10
       common-errors: ~1.x.x
     dependencies:
-      '@microfleet/core': 19.2.10(@microfleet/validation@11.1.3)(common-errors@1.2.0)
+      '@microfleet/core': 19.2.11(@microfleet/validation@11.1.3)(common-errors@1.2.0)
       '@microfleet/core-types': 2.2.10
       '@microfleet/utils': 2.2.10
       common-errors: 1.2.0
@@ -1230,7 +1239,7 @@ packages:
       semver: 7.5.4
     dev: false
 
-  /@microfleet/plugin-redis-cluster@2.2.10(@microfleet/core@19.2.10)(common-errors@1.2.0)(ioredis@4.28.5):
+  /@microfleet/plugin-redis-cluster@2.2.10(@microfleet/core@19.2.11)(common-errors@1.2.0)(ioredis@4.28.5):
     resolution: {integrity: sha512-iofvw+XLL4re15ZOusLkO45ss/lIxCGA0GdKcMLIbKBl7zZcm+pQ8wx/UPQsJ8O7P+WDFdl53VtRwJc5lBzYAw==}
     engines: {node: '>= 12.15.0', npm: '>= 4.0.0'}
     peerDependencies:
@@ -1238,10 +1247,10 @@ packages:
       common-errors: ^1.2.0
       ioredis: ^4.28.0
     dependencies:
-      '@microfleet/core': 19.2.10(@microfleet/validation@11.1.3)(common-errors@1.2.0)
+      '@microfleet/core': 19.2.11(@microfleet/validation@11.1.3)(common-errors@1.2.0)
       '@microfleet/core-types': 2.2.10
-      '@microfleet/plugin-redis-core': 2.2.10(@microfleet/core@19.2.10)(common-errors@1.2.0)(ioredis@4.28.5)
-      '@microfleet/plugin-validator': 2.2.10(@microfleet/core-types@2.2.10)(@microfleet/core@19.2.10)(@microfleet/utils@2.2.10)
+      '@microfleet/plugin-redis-core': 2.2.10(@microfleet/core@19.2.11)(common-errors@1.2.0)(ioredis@4.28.5)
+      '@microfleet/plugin-validator': 2.2.10(@microfleet/core-types@2.2.10)(@microfleet/core@19.2.11)(@microfleet/utils@2.2.10)
       '@microfleet/utils': 2.2.10
       bluebird: 3.7.2
       common-errors: 1.2.0
@@ -1253,7 +1262,7 @@ packages:
       - supports-color
     dev: false
 
-  /@microfleet/plugin-redis-core@2.2.10(@microfleet/core@19.2.10)(common-errors@1.2.0)(ioredis@4.28.5):
+  /@microfleet/plugin-redis-core@2.2.10(@microfleet/core@19.2.11)(common-errors@1.2.0)(ioredis@4.28.5):
     resolution: {integrity: sha512-n95smUUk/8lEdwL5WxMM6Ho/l80h8SMwZUlLdiNO7lwSL+0IHeMt5JM8aFmtAN8/Zx8rmt1thZVf+FXK79gP0Q==}
     engines: {node: '>= 12.15.0', npm: '>= 4.0.0'}
     peerDependencies:
@@ -1261,7 +1270,7 @@ packages:
       ioredis: ^4.0.0
     dependencies:
       '@microfleet/core-types': 2.2.10
-      '@microfleet/plugin-logger': 2.2.10(@microfleet/core@19.2.10)(common-errors@1.2.0)
+      '@microfleet/plugin-logger': 2.2.10(@microfleet/core@19.2.11)(common-errors@1.2.0)
       common-errors: 1.2.0
       debug: 4.3.4(supports-color@8.1.1)
       glob: 10.3.10
@@ -1272,7 +1281,7 @@ packages:
       - supports-color
     dev: false
 
-  /@microfleet/plugin-redis-sentinel@2.2.10(@microfleet/core@19.2.10)(common-errors@1.2.0)(ioredis@4.28.5):
+  /@microfleet/plugin-redis-sentinel@2.2.10(@microfleet/core@19.2.11)(common-errors@1.2.0)(ioredis@4.28.5):
     resolution: {integrity: sha512-eJQaHKt+6F99wlGH1DiOi1j3vfMuTXyYnHiKm3lH/Cg6PFjA2XcAzQgKGWXz+u5wVI+ZPegP8lqFr3Wa9xFw/g==}
     engines: {node: '>= 12.15.0', npm: '>= 4.0.0'}
     peerDependencies:
@@ -1280,10 +1289,10 @@ packages:
       common-errors: ^1.2.0
       ioredis: ^4.28.0
     dependencies:
-      '@microfleet/core': 19.2.10(@microfleet/validation@11.1.3)(common-errors@1.2.0)
+      '@microfleet/core': 19.2.11(@microfleet/validation@11.1.3)(common-errors@1.2.0)
       '@microfleet/core-types': 2.2.10
-      '@microfleet/plugin-redis-core': 2.2.10(@microfleet/core@19.2.10)(common-errors@1.2.0)(ioredis@4.28.5)
-      '@microfleet/plugin-validator': 2.2.10(@microfleet/core-types@2.2.10)(@microfleet/core@19.2.10)(@microfleet/utils@2.2.10)
+      '@microfleet/plugin-redis-core': 2.2.10(@microfleet/core@19.2.11)(common-errors@1.2.0)(ioredis@4.28.5)
+      '@microfleet/plugin-validator': 2.2.10(@microfleet/core-types@2.2.10)(@microfleet/core@19.2.11)(@microfleet/utils@2.2.10)
       '@microfleet/utils': 2.2.10
       bluebird: 3.7.2
       common-errors: 1.2.0
@@ -1293,7 +1302,7 @@ packages:
       - supports-color
     dev: false
 
-  /@microfleet/plugin-router-amqp@2.2.10(@microfleet/core-types@2.2.10)(@microfleet/core@19.2.10)(@microfleet/plugin-amqp@2.2.10)(@microfleet/plugin-logger@2.2.10)(@microfleet/plugin-router@2.2.10)(common-errors@1.2.0):
+  /@microfleet/plugin-router-amqp@2.2.10(@microfleet/core-types@2.2.10)(@microfleet/core@19.2.11)(@microfleet/plugin-amqp@2.2.10)(@microfleet/plugin-logger@2.2.10)(@microfleet/plugin-router@2.2.10)(common-errors@1.2.0):
     resolution: {integrity: sha512-IOYyntQOruTqtFvqnWkoqncCer4Y9tErfi0Blo+BaDIteDTw1uI53QpFsQ3nX5U6ar5niBVwcQCNy8vUVq0LvQ==}
     engines: {node: '>= 12.14.0', npm: '>= 4.0.0'}
     peerDependencies:
@@ -1305,12 +1314,12 @@ packages:
       common-errors: ~1.x.x
     dependencies:
       '@microfleet/amqp-coffee': 2.5.0
-      '@microfleet/core': 19.2.10(@microfleet/validation@11.1.3)(common-errors@1.2.0)
+      '@microfleet/core': 19.2.11(@microfleet/validation@11.1.3)(common-errors@1.2.0)
       '@microfleet/core-types': 2.2.10
-      '@microfleet/plugin-amqp': 2.2.10(@microfleet/core@19.2.10)(@microfleet/plugin-logger@2.2.10)(@microfleet/plugin-router@2.2.10)(@microfleet/plugin-validator@2.2.10)(common-errors@1.2.0)
-      '@microfleet/plugin-logger': 2.2.10(@microfleet/core@19.2.10)(common-errors@1.2.0)
-      '@microfleet/plugin-router': 2.2.10(@microfleet/core-types@2.2.10)(@microfleet/core@19.2.10)(@microfleet/plugin-logger@2.2.10)(@microfleet/utils@2.2.10)(common-errors@1.2.0)
-      '@microfleet/transport-amqp': 17.5.0(common-errors@1.2.0)
+      '@microfleet/plugin-amqp': 2.2.10(@microfleet/core@19.2.11)(@microfleet/plugin-logger@2.2.10)(@microfleet/plugin-router@2.2.10)(@microfleet/plugin-validator@2.2.10)(common-errors@1.2.0)
+      '@microfleet/plugin-logger': 2.2.10(@microfleet/core@19.2.11)(common-errors@1.2.0)
+      '@microfleet/plugin-router': 2.2.10(@microfleet/core-types@2.2.10)(@microfleet/core@19.2.11)(@microfleet/plugin-logger@2.2.10)(@microfleet/utils@2.2.10)(common-errors@1.2.0)
+      '@microfleet/transport-amqp': 17.7.0(common-errors@1.2.0)
       bluebird: 3.7.2
       common-errors: 1.2.0
       lodash: 4.17.21
@@ -1318,7 +1327,7 @@ packages:
       - supports-color
     dev: false
 
-  /@microfleet/plugin-router-hapi@2.2.10(@microfleet/core@19.2.10)(@microfleet/plugin-hapi@2.2.10)(@microfleet/plugin-opentracing@2.2.10)(@microfleet/plugin-router@2.2.10)(@microfleet/plugin-validator@2.2.10)(common-errors@1.2.0):
+  /@microfleet/plugin-router-hapi@2.2.10(@microfleet/core@19.2.11)(@microfleet/plugin-hapi@2.2.10)(@microfleet/plugin-opentracing@2.2.10)(@microfleet/plugin-router@2.2.10)(@microfleet/plugin-validator@2.2.10)(common-errors@1.2.0):
     resolution: {integrity: sha512-TQilN5mSsJcoLudEPjmi7tUTMMPxTyKgR570vcnYq7WqVx/fJImuZyYdbfx1p/GdknVxOVf708ErOV7gXJ4e+g==}
     engines: {node: '>= 12.14.0', npm: '>= 4.0.0'}
     peerDependencies:
@@ -1331,11 +1340,11 @@ packages:
     dependencies:
       '@hapi/boom': 10.0.1
       '@hapi/hapi': 21.3.2
-      '@microfleet/core': 19.2.10(@microfleet/validation@11.1.3)(common-errors@1.2.0)
-      '@microfleet/plugin-hapi': 2.2.10(@microfleet/core@19.2.10)(@microfleet/utils@2.2.10)(common-errors@1.2.0)
-      '@microfleet/plugin-opentracing': 2.2.10(@microfleet/core@19.2.10)(common-errors@1.2.0)
-      '@microfleet/plugin-router': 2.2.10(@microfleet/core-types@2.2.10)(@microfleet/core@19.2.10)(@microfleet/plugin-logger@2.2.10)(@microfleet/utils@2.2.10)(common-errors@1.2.0)
-      '@microfleet/plugin-validator': 2.2.10(@microfleet/core-types@2.2.10)(@microfleet/core@19.2.10)(@microfleet/utils@2.2.10)
+      '@microfleet/core': 19.2.11(@microfleet/validation@11.1.3)(common-errors@1.2.0)
+      '@microfleet/plugin-hapi': 2.2.10(@microfleet/core@19.2.11)(@microfleet/utils@2.2.10)(common-errors@1.2.0)
+      '@microfleet/plugin-opentracing': 2.2.10(@microfleet/core@19.2.11)(common-errors@1.2.0)
+      '@microfleet/plugin-router': 2.2.10(@microfleet/core-types@2.2.10)(@microfleet/core@19.2.11)(@microfleet/plugin-logger@2.2.10)(@microfleet/utils@2.2.10)(common-errors@1.2.0)
+      '@microfleet/plugin-validator': 2.2.10(@microfleet/core-types@2.2.10)(@microfleet/core@19.2.11)(@microfleet/utils@2.2.10)
       '@microfleet/validation': 11.1.3(common-errors@1.2.0)
       common-errors: 1.2.0
       get-value: 3.0.1
@@ -1345,7 +1354,7 @@ packages:
       - supports-color
     dev: false
 
-  /@microfleet/plugin-router@2.2.10(@microfleet/core-types@2.2.10)(@microfleet/core@19.2.10)(@microfleet/plugin-logger@2.2.10)(@microfleet/utils@2.2.10)(common-errors@1.2.0):
+  /@microfleet/plugin-router@2.2.10(@microfleet/core-types@2.2.10)(@microfleet/core@19.2.11)(@microfleet/plugin-logger@2.2.10)(@microfleet/utils@2.2.10)(common-errors@1.2.0):
     resolution: {integrity: sha512-K5mYyfGYaQUaU+X+lVwKwcZQYLN6XJUTkGPExgSZUKnPciRXdVMgjJFCsoVyUtHmH1NxDUhLs0XqY7ZBlM9aCQ==}
     engines: {node: '>= 12.14.0', npm: '>= 4.0.0'}
     peerDependencies:
@@ -1356,10 +1365,10 @@ packages:
       common-errors: ~1.x.x
     dependencies:
       '@hapi/boom': 10.0.1
-      '@microfleet/core': 19.2.10(@microfleet/validation@11.1.3)(common-errors@1.2.0)
+      '@microfleet/core': 19.2.11(@microfleet/validation@11.1.3)(common-errors@1.2.0)
       '@microfleet/core-types': 2.2.10
-      '@microfleet/plugin-logger': 2.2.10(@microfleet/core@19.2.10)(common-errors@1.2.0)
-      '@microfleet/transport-amqp': 17.5.0(common-errors@1.2.0)
+      '@microfleet/plugin-logger': 2.2.10(@microfleet/core@19.2.11)(common-errors@1.2.0)
+      '@microfleet/transport-amqp': 17.7.0(common-errors@1.2.0)
       '@microfleet/utils': 2.2.10
       '@microfleet/validation': 11.1.3(common-errors@1.2.0)
       common-errors: 1.2.0
@@ -1374,7 +1383,7 @@ packages:
       - supports-color
     dev: false
 
-  /@microfleet/plugin-socketio@2.2.10(@microfleet/core@19.2.10)(common-errors@1.2.0):
+  /@microfleet/plugin-socketio@2.2.10(@microfleet/core@19.2.11)(common-errors@1.2.0):
     resolution: {integrity: sha512-uNwlmpbAKhunbduOa8tqCt5LY+on2XzWUeY1CespDcn/lcQQFHoj89HYsOHNarYN1cI+I1CihIz0M/s87o9kjA==}
     engines: {node: '>= 12.14.0', npm: '>= 4.0.0'}
     peerDependencies:
@@ -1382,15 +1391,15 @@ packages:
       common-errors: ~1.x.x
     dependencies:
       '@microfleet/amqp-coffee': 2.5.0
-      '@microfleet/core': 19.2.10(@microfleet/validation@11.1.3)(common-errors@1.2.0)
+      '@microfleet/core': 19.2.11(@microfleet/validation@11.1.3)(common-errors@1.2.0)
       '@microfleet/core-types': 2.2.10
-      '@microfleet/plugin-logger': 2.2.10(@microfleet/core@19.2.10)(common-errors@1.2.0)
-      '@microfleet/plugin-router': 2.2.10(@microfleet/core-types@2.2.10)(@microfleet/core@19.2.10)(@microfleet/plugin-logger@2.2.10)(@microfleet/utils@2.2.10)(common-errors@1.2.0)
-      '@microfleet/plugin-validator': 2.2.10(@microfleet/core-types@2.2.10)(@microfleet/core@19.2.10)(@microfleet/utils@2.2.10)
-      '@microfleet/transport-amqp': 17.5.0(common-errors@1.2.0)
+      '@microfleet/plugin-logger': 2.2.10(@microfleet/core@19.2.11)(common-errors@1.2.0)
+      '@microfleet/plugin-router': 2.2.10(@microfleet/core-types@2.2.10)(@microfleet/core@19.2.11)(@microfleet/plugin-logger@2.2.10)(@microfleet/utils@2.2.10)(common-errors@1.2.0)
+      '@microfleet/plugin-validator': 2.2.10(@microfleet/core-types@2.2.10)(@microfleet/core@19.2.11)(@microfleet/utils@2.2.10)
+      '@microfleet/transport-amqp': 17.7.0(common-errors@1.2.0)
       '@microfleet/utils': 2.2.10
       common-errors: 1.2.0
-      ms-socket.io-adapter-amqp: 9.0.1(@microfleet/amqp-coffee@2.5.0)(@microfleet/transport-amqp@17.5.0)(common-errors@1.2.0)
+      ms-socket.io-adapter-amqp: 9.0.1(@microfleet/amqp-coffee@2.5.0)(@microfleet/transport-amqp@17.7.0)(common-errors@1.2.0)
       socket.io: 4.7.2
     transitivePeerDependencies:
       - bufferutil
@@ -1398,7 +1407,7 @@ packages:
       - utf-8-validate
     dev: false
 
-  /@microfleet/plugin-validator@2.2.10(@microfleet/core-types@2.2.10)(@microfleet/core@19.2.10)(@microfleet/utils@2.2.10):
+  /@microfleet/plugin-validator@2.2.10(@microfleet/core-types@2.2.10)(@microfleet/core@19.2.11)(@microfleet/utils@2.2.10):
     resolution: {integrity: sha512-0BfHD5ImupaYN35DXTMyiVLyq4zoU4pkLq5CBfO6Uo9zc5e9RVhBO5di11f0v2WaZD88LdXXaOfG4+NZDXplmw==}
     engines: {node: '>= 12.15.0', npm: '>= 4.0.0'}
     peerDependencies:
@@ -1406,7 +1415,7 @@ packages:
       '@microfleet/core-types': ^2.2.10
       '@microfleet/utils': ^2.2.10
     dependencies:
-      '@microfleet/core': 19.2.10(@microfleet/validation@11.1.3)(common-errors@1.2.0)
+      '@microfleet/core': 19.2.11(@microfleet/validation@11.1.3)(common-errors@1.2.0)
       '@microfleet/core-types': 2.2.10
       '@microfleet/utils': 2.2.10
       '@microfleet/validation': 11.1.3(common-errors@1.2.0)
@@ -1417,38 +1426,44 @@ packages:
       - supports-color
     dev: false
 
-  /@microfleet/transport-amqp@17.5.0(common-errors@1.2.0):
-    resolution: {integrity: sha512-cOMM8wnBjO01v1IrJDlEp8Rkzkm/ivm/ha6hzGgUg9/RMGAqbXRhYIzW+gIwGVMuimDYMAyLy5m7fNoJFPRL8w==}
-    engines: {node: '>= 14.17.0'}
+  /@microfleet/transport-amqp@17.7.0(common-errors@1.2.0):
+    resolution: {integrity: sha512-TRgTfUxarDp5bRMNYxdG+uEO+U9Byb7CtzaQ3dXWbT6HQIz1TbLwUNZ/t6nK1L3ie3+PrCnnR3Gi9eOVEFzlLg==}
+    engines: {node: '>= 18.17.0'}
     peerDependencies:
       common-errors: ~1.x.x
     dependencies:
-      '@microfleet/amqp-coffee': 2.6.0
+      '@microfleet/amqp-coffee': 2.7.0
       '@types/common-errors': 1.0.5
-      async-cache-dedupe: 2.0.0
-      bluebird: 3.7.2
       common-errors: 1.2.0
       debug: 4.3.4(supports-color@8.1.1)
       eventemitter3: 5.0.1
       flatstr: 1.0.12
-      hashlru: 2.3.0
       hyperid: 3.1.1
       is: 3.3.0
       joi: 17.11.0
       json-stringify-safe: 5.0.1
       lodash: 4.17.21
+      mnemonist: 0.39.5
       pino: 8.16.1
       read-pkg: 5.2.0
+      reusify: 1.0.4
       safe-stable-stringify: 2.4.3
       sorted-array-functions: 1.3.0
-      type-fest: 4.6.0
-      uuid: 9.0.1
+      type-fest: 4.7.1
     transitivePeerDependencies:
       - supports-color
     dev: false
 
   /@microfleet/utils@2.2.10:
     resolution: {integrity: sha512-dbvhelEMlKM8Fq40PYO7S9tVpOlhx78hKm3nTEHsqB6dIqO/wVVXIjukxxqxPVhch4OQk+8ymA9iCKYpxS8TKw==}
+    engines: {node: '>= 12.15.0', npm: '>= 4.0.0'}
+    dependencies:
+      lodash: 4.17.21
+      read-pkg-up: 7.0.1
+    dev: false
+
+  /@microfleet/utils@2.2.11:
+    resolution: {integrity: sha512-ct52PcjYlShPVr/rMAiYfUWHrQJT84O0qI2U0W8dqJb/o+pRfArPD/U5O85rvJ9aWDuTXI9RiytMZKngBoerjQ==}
     engines: {node: '>= 12.15.0', npm: '>= 4.0.0'}
     dependencies:
       lodash: 4.17.21
@@ -2183,10 +2198,10 @@ packages:
 
   /@types/normalize-package-data@2.4.3:
     resolution: {integrity: sha512-ehPtgRgaULsFG8x0NeYJvmyH1hmlfsNLujHe9dQEia/7MAJYdzMSi19JtchUHjmBA6XC/75dK55mzZH+RyieSg==}
+    dev: true
 
   /@types/normalize-package-data@2.4.4:
     resolution: {integrity: sha512-37i+OaWTh9qeK4LSHPsyRC7NahnGotNuZvjLSgcPzblpHB3rrCJxAOgI5gCdKm7coonsaX1Of0ILiTcnZjbfxA==}
-    dev: true
 
   /@types/qs@6.9.10:
     resolution: {integrity: sha512-3Gnx08Ns1sEoCrWssEgTSJs/rsT2vhGP+Ja9cnnk9k4ALxinORlQneLXFeFKOTJMOeZUFD1s7w+w2AphTpvzZw==}
@@ -2694,13 +2709,6 @@ packages:
   /assertion-error@1.1.0:
     resolution: {integrity: sha512-jgsaNduz+ndvGyFt3uSuWqvy4lCnIJiovtouQN5JZHOKCS2QuhEdbcQHFhVksz2N2U9hXJo8odG7ETyWlEeuDw==}
     dev: true
-
-  /async-cache-dedupe@2.0.0:
-    resolution: {integrity: sha512-SrW6PbmCHRQBSpPG8mkPIZZC5AgC08sbzl56GyGemBLVdVUl8mQW4+WCYHp5XZfixIdkL40jKf3UlT/P6Q3p5w==}
-    dependencies:
-      mnemonist: 0.39.5
-      safe-stable-stringify: 2.4.3
-    dev: false
 
   /async-retry@1.3.3:
     resolution: {integrity: sha512-wfr/jstw9xNi/0teMHrRW7dsz3Lt5ARhYNZ2ewpadnhaIp5mbALhOAP+EAdsC7t4Z6wqsDVv9+W6gm1Dk9mEyw==}
@@ -4859,10 +4867,6 @@ packages:
       has-symbols: 1.0.3
     dev: true
 
-  /hashlru@2.3.0:
-    resolution: {integrity: sha512-0cMsjjIC8I+D3M44pOQdsy0OHXGLVz6Z0beRuufhKa0KfaD2wGwAev6jILzXsd3/vpnNQJmWyZtIILqM1N+n5A==}
-    dev: false
-
   /hasown@2.0.0:
     resolution: {integrity: sha512-vUptKVTpIJhcczKBbgnS+RtcuYMB8+oNzPK2/Hp3hanz8JmpATdmmgLgSaadVREkDm+e2giHwY3ZRkyjSIDDFA==}
     engines: {node: '>= 0.4'}
@@ -6076,7 +6080,7 @@ packages:
       - supports-color
     dev: false
 
-  /ms-socket.io-adapter-amqp@9.0.1(@microfleet/amqp-coffee@2.5.0)(@microfleet/transport-amqp@17.5.0)(common-errors@1.2.0):
+  /ms-socket.io-adapter-amqp@9.0.1(@microfleet/amqp-coffee@2.5.0)(@microfleet/transport-amqp@17.7.0)(common-errors@1.2.0):
     resolution: {integrity: sha512-sGaFwgPpnOZY4O5WhWLD4SKMPKSYTKF6AAFbw8Nf5mLRq1CBm837O6XKPWCR8dcO8wJvHqqamOfL7oGfrfRBlQ==}
     peerDependencies:
       '@microfleet/amqp-coffee': '>= 2'
@@ -6084,7 +6088,7 @@ packages:
       common-errors: ~1.x.x
     dependencies:
       '@microfleet/amqp-coffee': 2.5.0
-      '@microfleet/transport-amqp': 17.5.0(common-errors@1.2.0)
+      '@microfleet/transport-amqp': 17.7.0(common-errors@1.2.0)
       '@sindresorhus/is': 4.6.0
       bluebird: 3.7.2
       common-errors: 1.2.0
@@ -7018,7 +7022,7 @@ packages:
     resolution: {integrity: sha512-Ug69mNOpfvKDAc2Q8DRpMjjzdtrnv9HcSMX+4VsZxD1aZ6ZzrIE7rlzXBtWTyhULSMKg076AW6WR5iZpD0JiOg==}
     engines: {node: '>=8'}
     dependencies:
-      '@types/normalize-package-data': 2.4.3
+      '@types/normalize-package-data': 2.4.4
       normalize-package-data: 2.5.0
       parse-json: 5.2.0
       type-fest: 0.6.0
@@ -8081,6 +8085,12 @@ packages:
   /type-fest@4.6.0:
     resolution: {integrity: sha512-rLjWJzQFOq4xw7MgJrCZ6T1jIOvvYElXT12r+y0CC6u67hegDHaxcPqb2fZHOGlqxugGQPNB1EnTezjBetkwkw==}
     engines: {node: '>=16'}
+    dev: true
+
+  /type-fest@4.7.1:
+    resolution: {integrity: sha512-iWr8RUmzAJRfhZugX9O7nZE6pCxDU8CZ3QxsLuTnGcBLJpCaP2ll3s4eMTBoFnU/CeXY/5rfQSuAEsTGJO4y8A==}
+    engines: {node: '>=16'}
+    dev: false
 
   /typed-array-buffer@1.0.0:
     resolution: {integrity: sha512-Y8KTSIglk9OZEr8zywiIHG/kmQ7KWyjseXs1CbSo8vC42w7hg2HgYTxSWwP0+is7bWDc1H+Fo026CpHFwm8tkw==}
