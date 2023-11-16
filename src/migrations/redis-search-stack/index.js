@@ -31,7 +31,6 @@ const {
   FILES_HAS_NFT_OWNER_FIELD,
   FILES_HAS_REFERENCES_FIELD,
   FILES_IS_REFERENCED_FIELD,
-  FILES_LIST_SEARCH,
 } = require('../../constant');
 
 const FIELD_TO_TYPE = [
@@ -75,7 +74,7 @@ async function createSearchIndex(service) {
 
   await redis.call(
     'FT.CREATE',
-    `${keyPrefix}:${FILES_LIST_SEARCH}`,
+    `${keyPrefix}:files-list-v8`,
     'ON',
     'HASH',
     'PREFIX',
