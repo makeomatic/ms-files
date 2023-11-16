@@ -144,3 +144,5 @@ exports.FILES_REFERENCED_INDEX_KEY = (uploadId) => `${exports.FILES_INDEX_REFERE
 exports.UPLOAD_TYPE_GLB_EXTENDED = 'glb-extended';
 exports.UPLOAD_TYPE_PANORAMA_EQUIRECT = 'pano-equirect';
 exports.UPLOAD_TYPE_PANORAMA_CUBEMAP = 'pano-cubemap';
+
+exports.FILES_LIST_SEARCH = 'files-list-v9';

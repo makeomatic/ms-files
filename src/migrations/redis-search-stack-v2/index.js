@@ -31,6 +31,7 @@ const {
   FILES_HAS_NFT_OWNER_FIELD,
   FILES_HAS_REFERENCES_FIELD,
   FILES_IS_REFERENCED_FIELD,
+  FILES_IS_IN_SHOWROOM_FIELD,
   FILES_LIST_SEARCH,
 } = require('../../constant');
 
@@ -54,6 +55,7 @@ const FIELD_TO_TYPE = [
   [FILES_NAME_NORMALIZED_FIELD, 'AS', FILES_NAME_FIELD, 'TEXT', 'NOSTEM', 'SORTABLE'],
   [FILES_DESCRIPTION_FIELD, 'TEXT', 'NOSTEM', 'SORTABLE'],
   [FILES_WEBSITE_FIELD, 'TEXT', 'NOSTEM', 'SORTABLE'],
+  [FILES_IS_IN_SHOWROOM_FIELD, 'TAG', 'SORTABLE'],
   [FILES_PARENT_FIELD, 'TAG', 'SORTABLE'],
   [FILES_CLONED_AT_FIELD, 'NUMERIC', 'SORTABLE'],
   [FILES_IMMUTABLE_FIELD, 'TAG', 'SORTABLE'],
@@ -69,7 +71,7 @@ const FIELD_TO_TYPE = [
 ];
 
 // https://redis.io/docs/stack/search/reference/aggregations/#filter-expressions
-async function createSearchIndex(service) {
+async function createSearchIndexV2(service) {
   const { redis, config } = service;
   const { keyPrefix } = config.redis.options;
 
@@ -89,8 +91,7 @@ async function createSearchIndex(service) {
 }
 
 module.exports = {
-  script: createSearchIndex,
-  min: 1,
-  // WARNING Finished migration use redis-search-stack-v2 instead
-  final: 12,
+  script: createSearchIndexV2,
+  min: 13,
+  final: 14,
 };
