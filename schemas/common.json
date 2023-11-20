@@ -938,9 +938,11 @@
                 "anyOf": [
                   {
                     "type": "object",
+                    "additionalProperties": false,
                     "required": [
                       "title",
-                      "type"
+                      "type",
+                      "uploadId"
                     ],
                     "properties": {
                       "type": {
@@ -958,9 +960,12 @@
                   },
                   {
                     "type": "object",
+                    "additionalProperties": false,
                     "required": [
                       "title",
-                      "type"
+                      "type",
+                      "imageUrl",
+                      "originalImageUrl"
                     ],
                     "properties": {
                       "type": {
