@@ -907,6 +907,7 @@
             "supply",
             "image"
           ],
+          "additionalProperties": false,
           "properties": {
             "price": {
               "type": "string"
@@ -934,25 +935,50 @@
             "attributes": {
               "type": "array",
               "items": {
-                "type": "object",
-                "required": [
-                  "title",
-                  "type"
-                ],
-                "properties": {
-                  "title": {
-                    "type": "string"
+                "anyOf": [
+                  {
+                    "type": "object",
+                    "required": [
+                      "title",
+                      "type"
+                    ],
+                    "properties": {
+                      "type": {
+                        "type": "string",
+                        "const": "model"
+                      },
+                      "title": {
+                        "type": "string"
+                      },
+                      "uploadId": {
+                        "type": "string",
+                        "format": "uuid"
+                      }
+                    }
                   },
-                  "type": {
-                    "type": "string"
-                  },
-                  "url": {
-                    "type": "string"
-                  },
-                  "id": {
-                    "type": "string"
+                  {
+                    "type": "object",
+                    "required": [
+                      "title",
+                      "type"
+                    ],
+                    "properties": {
+                      "type": {
+                        "type": "string",
+                        "const": "image"
+                      },
+                      "title": {
+                        "type": "string"
+                      },
+                      "imageUrl": {
+                        "type": "string"
+                      },
+                      "originalImageUrl": {
+                        "type": "string"
+                      }
+                    }
                   }
-                }
+                ]
               }
             }
           }
