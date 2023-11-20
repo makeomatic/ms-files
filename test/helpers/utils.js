@@ -460,9 +460,14 @@ const nftMeta = {
     supply: 1,
     image: 'http://website.com/image.jpeg',
     attributes: [{
-      title: 'test',
+      title: 'test_image',
       type: 'image',
-      url: 'http://test.com',
+      imageUrl: 'f47bfb7e0c6ad240046c0c9839e17186/af378b9c-83fb-4be9-a204-e7e690334702/b7b91787-61bc-4e15-a18a-924198dc959f.jpeg',
+      originalImageUrl: 'f47bfb7e0c6ad240046c0c9839e17186/af378b9c-83fb-4be9-a204-e7e690334702/b7b91787-61bc-4e15-a18a-924198dc959f.jpeg',
+    }, {
+      title: 'test_model',
+      type: 'model',
+      uploadId: 'eda9b976-b467-4361-b9fc-b9162a14ee76',
     }],
   },
 };
