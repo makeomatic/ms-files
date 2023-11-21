@@ -4,6 +4,8 @@ const { v4: uuidv4 } = require('uuid');
 const md5 = require('md5');
 const sumBy = require('lodash/sumBy');
 const get = require('lodash/get');
+const omit = require('lodash/omit');
+
 const handlePipeline = require('../utils/pipeline-error');
 const stringify = require('../utils/stringify');
 const extension = require('../utils/extension');
@@ -173,7 +175,7 @@ async function initFileUpload({ params }) {
         md5: metadata.md5Hash,
         type: metadata.contentType,
         resource: filename,
-        extensionHeaders,
+        extensionHeaders: omit(extensionHeaders, 'content-encoding'),
         expires: Date.now() + (expires * 1000),
       });
     }
