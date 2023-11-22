@@ -509,8 +509,12 @@ describe('update suite', function suite() {
       assert.equal(fileInfo.file.nft.attributes[1].title, 'test_model');
       assert.equal(fileInfo.file.nft.attributes[1].type, 'model');
       assert.equal(
-        fileInfo.file.nft.attributes[1].uploadId,
+        fileInfo.file.nft.attributes[1].id,
         'eda9b976-b467-4361-b9fc-b9162a14ee76'
+      );
+      assert.equal(
+        fileInfo.file.nft.attributes[1].owner,
+        'test_owner'
       );
     });
   });
