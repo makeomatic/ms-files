@@ -468,6 +468,7 @@ describe('update suite', function suite() {
           title: 'test_model',
           type: 'model',
           id: 'eda9b976-b467-4361-b9fc-b9162a14ee76',
+          owner: 'test_owner',
         }],
       };
 
@@ -700,6 +701,7 @@ describe('update suite', function suite() {
               title: 'test_model',
               type: 'model',
               id: 'eda9b976-b467-4361-b9fc-b9162a14ee76',
+              owner: 'test_owner',
             }],
           },
         },
