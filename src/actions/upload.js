@@ -50,7 +50,6 @@ const { assertReferenceOnAccessChange } = require('../utils/check-data');
  */
 async function initFileUpload({ params }) {
   const {
-    files,
     meta,
     username,
     temp,
@@ -101,6 +100,8 @@ async function initFileUpload({ params }) {
 
   assertReferenceOnAccessChange({}, { access: { setPublic: isPublic }, directOnly })(meta);
 
+  // NOTE: params.files can be pre-processed
+  const { files } = params;
   const parts = await Promise.map(files, async ({ md5Hash, type, ...rest }) => {
     // generate filename
     const filename = [
