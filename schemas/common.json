@@ -942,7 +942,8 @@
                     "required": [
                       "title",
                       "type",
-                      "uploadId"
+                      "id",
+                      "owner"
                     ],
                     "properties": {
                       "type": {
@@ -952,9 +953,12 @@
                       "title": {
                         "type": "string"
                       },
-                      "uploadId": {
+                      "id": {
                         "type": "string",
                         "format": "uuid"
+                      },
+                      "owner": {
+                        "type": "string"
                       }
                     }
                   },

@@ -467,7 +467,7 @@ describe('update suite', function suite() {
         }, {
           title: 'test_model',
           type: 'model',
-          uploadId: 'eda9b976-b467-4361-b9fc-b9162a14ee76',
+          id: 'eda9b976-b467-4361-b9fc-b9162a14ee76',
         }],
       };
 
@@ -699,7 +699,7 @@ describe('update suite', function suite() {
             }, {
               title: 'test_model',
               type: 'model',
-              uploadId: 'eda9b976-b467-4361-b9fc-b9162a14ee76',
+              id: 'eda9b976-b467-4361-b9fc-b9162a14ee76',
             }],
           },
         },
