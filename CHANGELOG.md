@@ -1,3 +1,10 @@
+## [18.1.1](https://github.com/makeomatic/ms-files/compare/v18.1.0...v18.1.1) (2023-11-23)
+
+
+### Bug Fixes
+
+* **upload:** use pre-processed files for upload ([#309](https://github.com/makeomatic/ms-files/issues/309)) ([dbe6cfd](https://github.com/makeomatic/ms-files/commit/dbe6cfde38606df096a0b462602043085f4c8d35))
+
 # [18.1.0](https://github.com/makeomatic/ms-files/compare/v18.0.3...v18.1.0) (2023-11-16)
 
 
