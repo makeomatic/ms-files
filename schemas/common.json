@@ -988,6 +988,18 @@
           "items": {
             "type": "string"
           }
+        },
+        "customPreview": {
+          "oneOf": [
+            {
+              "type": "string",
+              "format": "uri"
+            },
+            {
+              "type": "string",
+              "const": ""
+            }
+          ]
         }
       }
     },
