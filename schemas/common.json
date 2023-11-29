@@ -992,8 +992,7 @@
         "previewCustom": {
           "oneOf": [
             {
-              "type": "string",
-              "format": "uri"
+              "$ref": "#/definitions/filename"
             },
             {
               "type": "string",
