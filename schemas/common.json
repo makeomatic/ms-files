@@ -989,7 +989,7 @@
             "type": "string"
           }
         },
-        "customPreview": {
+        "previewCustom": {
           "oneOf": [
             {
               "type": "string",
