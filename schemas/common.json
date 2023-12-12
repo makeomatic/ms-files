@@ -988,6 +988,17 @@
           "items": {
             "type": "string"
           }
+        },
+        "previewCustom": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/filename"
+            },
+            {
+              "type": "string",
+              "const": ""
+            }
+          ]
         }
       }
     },
