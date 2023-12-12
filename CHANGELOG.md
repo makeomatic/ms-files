@@ -1,3 +1,10 @@
+# [18.2.0](https://github.com/makeomatic/ms-files/compare/v18.1.1...v18.2.0) (2023-12-12)
+
+
+### Features
+
+* **update:** add previewCustom property to meta ([#310](https://github.com/makeomatic/ms-files/issues/310)) ([739a83c](https://github.com/makeomatic/ms-files/commit/739a83c1bc07b021c904c2672cb8d1e9b2898e9d))
+
 ## [18.1.1](https://github.com/makeomatic/ms-files/compare/v18.1.0...v18.1.1) (2023-11-23)
 
 
