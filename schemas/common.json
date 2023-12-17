@@ -4,8 +4,8 @@
     "owner": {
       "type": "string",
       "minLength": 1,
-      "maxLength": 50
-    },
+      "maxLength": 78
+    },    
     "uploadId": {
       "type": "string",
       "format": "uuid"

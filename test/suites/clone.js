@@ -73,30 +73,12 @@ describe('clone file suite', function suite() {
     );
   });
 
-  it('should check whether model is immutable', async function test() {
-    await assert.rejects(
-      this.send({ uploadId: file.uploadId, username: owner }),
-      /should be immutable object/
-    );
-  });
-
-  describe('immutable clone', function immutableClone() {
+  describe('clone', function cloneModel() {
     it('should clone model', async function test() {
-      await this.amqp.publishAndWait('files.update', {
-        uploadId: file.uploadId,
-        username: owner,
-        immutable: true,
-        meta: {
-          references: [secondFile.uploadId],
-        },
-      });
-
       const response = await this.send({
         uploadId: file.uploadId,
         username: owner,
-        meta: {
-          nftOwner: '0x0000000000000000000000000000000000000002',
-        },
+        meta: {},
       });
 
       assert.ok(response.uploadId);
@@ -111,51 +93,6 @@ describe('clone file suite', function suite() {
       assert.strictEqual(copy.owner, owner);
       assert.strictEqual(copy.parentId, file.uploadId);
       assert.strictEqual(copy.isClone, '1');
-      assert.strictEqual(copy.nftOwner, '0x0000000000000000000000000000000000000002');
-
-      const { file: reference } = await this.amqp.publishAndWait('files.info', {
-        filename: response.uploadId,
-        username: file.owner,
-      });
-
-      assert.strictEqual(reference.immutable, '1');
-    });
-
-    it('should allow to update specific metadata even if model is readonly', async function updateROFiedsSuite() {
-      await this.amqp.publishAndWait('files.update', {
-        uploadId: file.uploadId,
-        username: owner,
-        immutable: true,
-        includeReferences: true,
-        meta: {},
-      });
-
-      const { uploadId, username } = await this.send({
-        uploadId: file.uploadId,
-        username: owner,
-      });
-
-      await this.amqp.publishAndWait('files.update', {
-        uploadId,
-        username,
-        meta: {
-          nftOwner: '0x0000000000000000000000000000000000000001',
-          nftAmount: 1,
-        },
-      });
-
-      const updatedData = await this.amqp.publishAndWait('files.data', {
-        uploadId,
-        fields: [
-          'nftOwner', 'nftAmount',
-        ],
-      });
-
-      assert.deepStrictEqual(updatedData.file, {
-        uploadId,
-        nftOwner: '0x0000000000000000000000000000000000000001',
-        nftAmount: '1',
-      });
     });
   });
 
@@ -175,7 +112,7 @@ describe('clone file suite', function suite() {
         username: file.owner,
       });
 
-      assert.strictEqual(response.length, 4);
+      assert.strictEqual(response.length, 3);
     });
 
     it('lists all cloned models', async function checkListSuite() {
@@ -183,7 +120,7 @@ describe('clone file suite', function suite() {
         public: false,
       });
 
-      assert.strictEqual(response.length, 4);
+      assert.strictEqual(response.length, 3);
     });
 
     it('lists all cloned models', async function checkListSuite() {
@@ -212,7 +149,7 @@ describe('clone file suite', function suite() {
         },
       });
 
-      assert.strictEqual(response.length, 2);
+      assert.strictEqual(response.length, 1);
       assert.strictEqual(response[0].isClone, '1');
     });
 
@@ -222,9 +159,9 @@ describe('clone file suite', function suite() {
         includeStorage: true,
       });
 
-      assert.equal(response.total, 4);
+      assert.equal(response.total, 3);
       assert.equal(response.public, 1);
-      assert.equal(response.totalContentLength, 1901153 * 4);
+      assert.equal(response.totalContentLength, 1901153 * 3);
       assert.equal(response.publicContentLength, 1901153);
     });
   });

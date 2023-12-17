@@ -2,13 +2,9 @@ const { HttpStatusError } = require('common-errors');
 
 const {
   FILES_IMMUTABLE_FIELD,
-  FILES_NFT_OWNER_FIELD,
-  FILES_NFT_TOKEN_AMOUNT_FIELD,
   FILES_IS_CLONE_FIELD,
-  FILES_NFT_BLOCK_FIELD,
   FILES_IS_REFERENCED_FIELD,
   FILES_HAS_REFERENCES_FIELD,
-  FILES_REFERENCES_FIELD,
 } = require('../constant');
 
 function isImmutable(data) {
@@ -27,11 +23,7 @@ function assertImmutable(data) {
   return data;
 }
 
-const updatableFields = [
-  FILES_NFT_TOKEN_AMOUNT_FIELD,
-  FILES_NFT_OWNER_FIELD,
-  FILES_NFT_BLOCK_FIELD,
-];
+const updatableFields = [];
 
 function fieldUpdatePossible(metaToUpdate) {
   const nonUpdatableFields = Object.entries(metaToUpdate).filter(([key]) => !updatableFields.includes(key));
@@ -63,26 +55,14 @@ function hasOrIsReference(data) {
   return data[FILES_HAS_REFERENCES_FIELD] === '1' || data[FILES_IS_REFERENCED_FIELD] === '1';
 }
 
-function assertReferenceOnAccessChange(metaToUpdate = {}, params = {}) {
-  return function visibilityCheck(data) {
-    if (((params.access && typeof params.access.setPublic === 'boolean') || typeof params.directOnly === 'boolean')
-      && (
-        hasOrIsReference(data) || (metaToUpdate[FILES_REFERENCES_FIELD] && metaToUpdate[FILES_REFERENCES_FIELD].length > 1)
-      )
-    ) {
-      throw new HttpStatusError(400, 'should not have or be a reference');
+function assertNotReferenced() {
+  return function hasReferencesCheck(data) {
+    if (hasOrIsReference(data)) {
+      throw new HttpStatusError(400, 'should not be referenced');
     }
 
     return data;
   };
-}
-
-async function assertNotReferenced(data) {
-  if (data[FILES_IS_REFERENCED_FIELD] === '1') {
-    throw new HttpStatusError(400, 'should not be referenced');
-  }
-
-  return data;
 }
 
 module.exports = {
@@ -92,5 +72,4 @@ module.exports = {
   assertUpdatable,
   assertClonable,
   assertNotReferenced,
-  assertReferenceOnAccessChange,
 };

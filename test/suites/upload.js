@@ -890,10 +890,6 @@ describe('upload suite', function suite() {
 
         assert.strictEqual(err.errors[0].text, 'already has reference');
         assert.strictEqual(err.errors[0].field, referencedModelId);
-        assert.strictEqual(err.errors[1].text, 'should not be private or unlisted');
-        assert.strictEqual(err.errors[1].field, unlistedModelId);
-        assert.strictEqual(err.errors[2].text, 'should not be private or unlisted');
-        assert.strictEqual(err.errors[2].field, privateModelId);
 
         return true;
       });

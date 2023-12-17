@@ -34,7 +34,7 @@ const {
   FILES_NFT_FIELD,
   FILES_HAS_REFERENCES_FIELD,
 } = require('../constant');
-const { assertReferenceOnAccessChange } = require('../utils/check-data');
+const { assertNotReferenced } = require('../utils/check-data');
 
 /**
  * Initiates upload
@@ -98,7 +98,7 @@ async function initFileUpload({ params }) {
     verifyReferences(tempMeta, referencedInfo, newReferences);
   }
 
-  assertReferenceOnAccessChange({}, { access: { setPublic: isPublic }, directOnly })(meta);
+  assertNotReferenced({})(meta);
 
   // NOTE: params.files can be pre-processed
   const { files } = params;

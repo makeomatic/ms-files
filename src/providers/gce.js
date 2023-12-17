@@ -484,6 +484,18 @@ class GCETransport extends AbstractFileTransfer {
     // make sure it is wrapped, so that later we can do .catch(predicate, action)
     return Promise.resolve(file).call('delete');
   }
+
+  async copy(sourceFilename, destFilename) {
+    this.log.debug('copying file %s to %s', sourceFilename, destFilename)
+    const destination = this.bucket.file(destFilename);
+    const source = this.bucket.file(sourceFilename);
+
+    return source.copy(destination, {
+      preconditionOpts: {
+        ifGenerationMatch: 0
+      }
+    })
+  }
 }
 
 GCETransport.defaultOpts = {
