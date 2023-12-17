@@ -53,7 +53,7 @@ async function cloneFile(lock, ctx, params) {
     .return(uploadKey)
     .then(fetchData)
     .then(isProcessed)
-    .then(isUnlisted)
+    .then(isUnlisted);
 
   await lock.extend();
 
@@ -111,19 +111,19 @@ async function cloneFile(lock, ctx, params) {
   const copyPromises = JSON.parse(mergedData.files).map(async (file) => {
     const fileId = file.filename.split('/').pop();
     const newFileName = [prefix, newUploadId, fileId].join('/');
-    
+
     await provider.copy(file.filename, newFileName);
 
     return {
       ...file,
       filename: newFileName,
-      location: undefined
-    }
-  })
+      location: undefined,
+    };
+  });
 
-  mergedData.files = JSON.stringify(await Promise.all(copyPromises))
+  mergedData.files = JSON.stringify(await Promise.all(copyPromises));
 
-  console.debug('FILES >>>', mergedData.files)
+  console.debug('FILES >>>', mergedData.files);
 
   pipeline.hmset(newUploadKey, mergedData);
 

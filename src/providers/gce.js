@@ -486,15 +486,15 @@ class GCETransport extends AbstractFileTransfer {
   }
 
   async copy(sourceFilename, destFilename) {
-    this.log.debug('copying file %s to %s', sourceFilename, destFilename)
+    this.log.debug('copying file %s to %s', sourceFilename, destFilename);
     const destination = this.bucket.file(destFilename);
     const source = this.bucket.file(sourceFilename);
 
     return source.copy(destination, {
       preconditionOpts: {
-        ifGenerationMatch: 0
-      }
-    })
+        ifGenerationMatch: 0,
+      },
+    });
   }
 }
 
