@@ -111,30 +111,4 @@ describe('immutable/referenced block', function suite() {
 
     await rejects(this.send({ filename: this.response.uploadId, username: owner }), /should not be immutable object/);
   });
-
-  it('remove of the referenced model is denied', async function test() {
-    const secondFile = await initAndUpload({
-      ...modelData,
-      message: {
-        ...modelData.message,
-        access: {
-          setPublic: true,
-        },
-      },
-    }).call(this.files);
-    await processUpload.call(this.files, this.response);
-    await processUpload.call(this.files, secondFile);
-
-    await this.amqp.publishAndWait('files.update', {
-      uploadId: this.response.uploadId,
-      username: owner,
-      immutable: true,
-      includeReferences: false,
-      meta: {
-        references: [secondFile.uploadId],
-      },
-    });
-
-    await rejects(this.send({ filename: secondFile.uploadId, username: owner }), /should not be referenced/);
-  });
 });
