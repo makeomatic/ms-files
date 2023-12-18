@@ -714,29 +714,6 @@ describe('update suite', function suite() {
       );
     });
 
-    it('disallows to set directOnly for upload when referenced', async function test() {
-      // depends on previous test and upload already referenced
-      await assert.rejects(
-        this.send({
-          username,
-          uploadId,
-          directOnly: true,
-        }),
-        /should not have or be a reference/
-      );
-    });
-
-    it('disallows to set directOnly for upload with references', async function test() {
-      await assert.rejects(
-        this.send({
-          username,
-          uploadId: modelWithReference,
-          directOnly: true,
-        }),
-        /should not have or be a reference/
-      );
-    });
-
     it('removes reference', async function test() {
       await this.send({
         username,

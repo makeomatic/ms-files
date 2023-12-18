@@ -99,7 +99,6 @@ async function updateMeta(lock, ctx, params) {
     .then(hasAccess(username))
     .then(isAliasTaken(alias))
     .then(assertUpdatable(meta))
-    .then(assertNotReferenced(meta));
 
   // ensure we still hold the lock
   await lock.extend();
