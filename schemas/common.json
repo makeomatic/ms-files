@@ -750,7 +750,7 @@
         },
         "website": {
           "type": "string",
-          "format": "uri"
+          "format": "http-url"
         },
         "tags": {
           "$ref": "common#/definitions/tags"
