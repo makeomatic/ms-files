@@ -1,3 +1,10 @@
+## [18.2.2](https://github.com/makeomatic/ms-files/compare/v18.2.1...v18.2.2) (2023-12-21)
+
+
+### Bug Fixes
+
+* node 20.10 ([#313](https://github.com/makeomatic/ms-files/issues/313)) ([5e29f2a](https://github.com/makeomatic/ms-files/commit/5e29f2a45d3924bafb83773b64db4ead40e8d035))
+
 ## [18.2.1](https://github.com/makeomatic/ms-files/compare/v18.2.0...v18.2.1) (2023-12-21)
 
 
