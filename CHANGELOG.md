@@ -1,3 +1,10 @@
+## [18.2.1](https://github.com/makeomatic/ms-files/compare/v18.2.0...v18.2.1) (2023-12-21)
+
+
+### Bug Fixes
+
+* use http-url for website validation ([#312](https://github.com/makeomatic/ms-files/issues/312)) ([84e6e05](https://github.com/makeomatic/ms-files/commit/84e6e05f12e1fbc0c55896f29180a1ab98824cbc))
+
 # [18.2.0](https://github.com/makeomatic/ms-files/compare/v18.1.1...v18.2.0) (2023-12-12)
 
 
