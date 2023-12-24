@@ -38,6 +38,7 @@ const {
   FILES_REFERENCES_FIELD,
   FILES_NAME_FIELD,
   FILES_NAME_NORMALIZED_FIELD,
+  FILES_WEBSITE_FIELD,
 } = require('../constant');
 
 const { call } = Function.prototype;
@@ -149,6 +150,15 @@ async function updateMeta(lock, ctx, params) {
   // ensure that we do nothing if we don't have existing alias
   if (alias === '') {
     delete meta[FILES_ALIAS_FIELD]; // <-- this field is empty at this point
+  }
+
+  if (meta[FILES_WEBSITE_FIELD] === '') {
+    delete meta[FILES_WEBSITE_FIELD];
+
+    // remove field if existing early
+    if (data[FILES_WEBSITE_FIELD]) {
+      pipeline.hdel(key, FILES_WEBSITE_FIELD);
+    }
   }
 
   if (hasOwnProperty.call(meta, FILES_TAGS_FIELD) && data[FILES_TAGS_FIELD]) {
