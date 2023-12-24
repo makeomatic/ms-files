@@ -373,6 +373,26 @@ describe('update suite', function suite() {
     });
   });
 
+  describe('update website', function updateWebsite() {
+    it('able to unset website passing an empty string', async function test() {
+      const { uploadId } = this.response;
+      meta.website = '';
+
+      await this.send({
+        uploadId,
+        username,
+        meta,
+      }, 45000);
+
+      const fileInfo = await getInfo.call(this, {
+        filename: uploadId,
+        username,
+      });
+
+      assert.strictEqual(fileInfo.file.website, undefined, 'Website should be unseted');
+    });
+  })
+
   describe('playerSettings', function playerSettingsSuite() {
     it('able to change rotation mode', async function test() {
       const { uploadId } = this.response;
