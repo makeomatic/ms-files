@@ -1,6 +1,7 @@
 const { ActionTransport } = require('@microfleet/plugin-router');
 const Promise = require('bluebird');
 const { HttpStatusError } = require('common-errors');
+const { unset } = require('lodash');
 const handlePipeline = require('../utils/pipeline-error');
 const fetchData = require('../utils/fetch-data');
 const isProcessed = require('../utils/is-processed');
@@ -9,7 +10,7 @@ const hasAccess = require('../utils/has-access');
 const isAliasTaken = require('../utils/is-alias-taken');
 const stringify = require('../utils/stringify');
 const isValidBackgroundOrigin = require('../utils/is-valid-background-origin');
-const { assertUpdatable } = require('../utils/check-data');
+const { assertUpdatable, assertRemovable } = require('../utils/check-data');
 const { bustCache } = require('../utils/bust-cache');
 const { updateReferences, verifyReferences, isReferenceChanged, getReferenceData } = require('../utils/reference');
 const { normalizeForSearch } = require('../utils/normalize-name');
@@ -39,7 +40,6 @@ const {
   FILES_NAME_FIELD,
   FILES_NAME_NORMALIZED_FIELD,
   FILES_CATEGORIES_FIELD,
-  FILES_WEBSITE_FIELD,
 } = require('../constant');
 
 const { call } = Function.prototype;
@@ -82,6 +82,18 @@ function preProcessMetadata(data) {
   return data;
 }
 
+/**
+ * Process metadata remove operation
+ * @param  {Object} pipeline
+ * @param  {Object} meta
+ */
+function handleRemoveFromMeta(pipeline, key, meta) {
+  const { $remove } = meta;
+
+  pipeline.hdel(key, $remove);
+  unset(meta, $remove);
+}
+
 async function updateMeta(lock, ctx, params) {
   const { uploadId, username, directOnly, immutable, includeReferences } = params;
   const { redis } = ctx;
@@ -101,6 +113,7 @@ async function updateMeta(lock, ctx, params) {
     .then(hasAccess(username))
     .then(isAliasTaken(alias))
     .then(assertUpdatable(meta));
+    .then(assertRemovable(meta.$remove));
 
   // ensure we still hold the lock
   await lock.extend();
@@ -152,14 +165,7 @@ async function updateMeta(lock, ctx, params) {
     delete meta[FILES_ALIAS_FIELD]; // <-- this field is empty at this point
   }
 
-  if (meta[FILES_WEBSITE_FIELD] === '') {
-    delete meta[FILES_WEBSITE_FIELD];
-
-    // remove field if existing early
-    if (data[FILES_WEBSITE_FIELD]) {
-      pipeline.hdel(key, FILES_WEBSITE_FIELD);
-    }
-  }
+  handleRemoveFromMeta(pipeline, key, meta.$remove);
 
   if (hasOwnProperty.call(meta, FILES_TAGS_FIELD) && data[FILES_TAGS_FIELD]) {
     // @todo migrate all tags in files data to lowercase and then remove this tag.toLowerCase()
