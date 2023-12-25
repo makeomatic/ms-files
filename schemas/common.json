@@ -837,8 +837,16 @@
           "$ref": "common#/definitions/fitToSquare"
         },
         "backgroundImage": {
-          "type": "string",
-          "format": "uri"
+          "oneOf": [
+            {
+              "type": "string",
+              "format": "uri"
+            },
+            {
+              "type": "string",
+              "const": ""
+            }
+          ]
         },
         "type": {
           "type": "string",
