@@ -33,10 +33,20 @@ const updatableFields = [
   FILES_NFT_BLOCK_FIELD,
 ];
 
+const nonRemoveableFields = [
+  ...updatableFields,
+];
+
 function fieldUpdatePossible(metaToUpdate) {
   const nonUpdatableFields = Object.entries(metaToUpdate).filter(([key]) => !updatableFields.includes(key));
 
   return nonUpdatableFields.length === 0;
+}
+
+function fieldRemovePossible(metaToRemove = []) {
+  const nonRemovableFields = metaToRemove.filter((key) => !nonRemoveableFields.includes(key));
+
+  return nonRemovableFields.length === 0;
 }
 
 function assertClonable(metaToUpdate) {
@@ -53,6 +63,18 @@ function assertUpdatable(metaToUpdate = {}, isRemoveOp = false) {
   return function isUpdatePossibleCheck(data) {
     if (isImmutable(data) && (!fieldUpdatePossible(metaToUpdate) || isRemoveOp)) {
       throw new HttpStatusError(400, 'should not be immutable object');
+    }
+
+    return data;
+  };
+}
+
+function assertRemovable(metaToRemove = []) {
+  return function isRemovePossibleCheck(data) {
+    assertImmutable(data);
+
+    if (!fieldRemovePossible(metaToRemove)) {
+      throw new HttpStatusError(400, 'meta fields can not be removed');
     }
 
     return data;
@@ -93,4 +115,5 @@ module.exports = {
   assertClonable,
   assertNotReferenced,
   assertReferenceOnAccessChange,
+  assertRemovable,
 };
