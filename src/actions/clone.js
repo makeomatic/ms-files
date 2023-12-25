@@ -122,12 +122,7 @@ async function cloneFile(lock, ctx, params) {
   });
 
   mergedData.files = JSON.stringify(await Promise.all(copyPromises));
-
-  console.debug('FILES >>>', mergedData.files);
-
   pipeline.hmset(newUploadKey, mergedData);
-
-  await await ctx.hook.call(ctx, 'files:clone:before-pipeline-exec', pipeline, mergedData);
 
   handlePipeline(await pipeline.exec());
 
