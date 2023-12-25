@@ -768,16 +768,8 @@
           "$ref": "common#/definitions/fitToSquare"
         },
         "backgroundImage": {
-          "oneOf": [
-            {
-              "type": "string",
-              "format": "uri"
-            },
-            {
-              "type": "string",
-              "const": ""
-            }
-          ]
+          "type": "string",
+          "format": "uri"
         },
         "type": {
           "type": "string",
@@ -999,6 +991,14 @@
               "const": ""
             }
           ]
+        },
+        "$remove": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1
         }
       }
     },
