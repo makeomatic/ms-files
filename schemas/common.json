@@ -749,16 +749,8 @@
           "type": "boolean"
         },
         "website": {
-          "oneOf": [
-            {
-              "type": "string",
-              "format": "http-url"
-            },
-            {
-              "type": "string",
-              "const": ""
-            }
-          ]
+          "type": "string",
+          "format": "http-url"
         },
         "tags": {
           "$ref": "common#/definitions/tags"
@@ -776,16 +768,8 @@
           "$ref": "common#/definitions/fitToSquare"
         },
         "backgroundImage": {
-          "oneOf": [
-            {
-              "type": "string",
-              "format": "uri"
-            },
-            {
-              "type": "string",
-              "const": ""
-            }
-          ]
+          "type": "string",
+          "format": "uri"
         },
         "type": {
           "type": "string",
@@ -1007,6 +991,14 @@
               "const": ""
             }
           ]
+        },
+        "$remove": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1
         }
       }
     },
