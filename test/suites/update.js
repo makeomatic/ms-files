@@ -371,6 +371,73 @@ describe('update suite', function suite() {
 
       assert.strictEqual(fileInfo.file.description, 'foo', 'Description should be trimmed');
     });
+
+    it('remove description', async function test() {
+      const { uploadId } = this.response;
+
+      await this.send({
+        uploadId,
+        username,
+        meta: {
+          description: 'some-new-description',
+          $remove: ['description'],
+        },
+      }, 45000);
+
+      const fileInfo = await getInfo.call(this, {
+        filename: uploadId,
+        username,
+      });
+
+      assert.strictEqual(fileInfo.file.description, undefined, 'Description should be not exists');
+    });
+  });
+
+  describe('update website', function updateWebsite() {
+    it('failed to update wrong url', async function test() {
+      meta.website = 'wrong-url';
+
+      await assert.rejects(this.send({ uploadId: this.response.uploadId, username, meta }, 45000), {
+        statusCode: 400,
+      });
+    });
+
+    it('able to update website any website', async function test() {
+      const { uploadId } = this.response;
+      meta.website = faker.image.imageUrl();
+
+      await this.send({
+        uploadId,
+        username,
+        meta,
+      }, 45000);
+
+      const fileInfo = await getInfo.call(this, {
+        filename: uploadId,
+        username,
+      });
+
+      assert.strictEqual(fileInfo.file.website, meta.website, 'Website should be equal with update data');
+    });
+
+    it('able to unset website passing an empty string', async function test() {
+      const { uploadId } = this.response;
+
+      await this.send({
+        uploadId,
+        username,
+        meta: {
+          $remove: ['website'],
+        },
+      }, 45000);
+
+      const fileInfo = await getInfo.call(this, {
+        filename: uploadId,
+        username,
+      });
+
+      assert.strictEqual(fileInfo.file.website, undefined, 'Website must not exists');
+    });
   });
 
   describe('playerSettings', function playerSettingsSuite() {
@@ -530,10 +597,15 @@ describe('update suite', function suite() {
         });
     });
 
-    it('able to unset backgroundImage passing an empty string', function test() {
-      meta.backgroundImage = '';
-      return this
-        .send({ uploadId: this.response.uploadId, username, meta }, 45000)
+    it('remove backgroundImage', async function test() {
+      await this
+        .send({
+          uploadId: this.response.uploadId,
+          username,
+          meta: {
+            $remove: ['backgroundImage'],
+          },
+        }, 45000)
         .then(async (result) => {
           assert.equal(result, true);
 
@@ -542,7 +614,7 @@ describe('update suite', function suite() {
             username,
           });
 
-          assert.equal(verifyResult.file.backgroundImage, meta.backgroundImage);
+          assert.equal(verifyResult.file.backgroundImage, undefined, 'backgroundImage should be not exists');
         });
     });
 
@@ -559,7 +631,13 @@ describe('update suite', function suite() {
     let modelWithReference;
 
     before('upload-file', async function uploadFile() {
-      meta.backgroundImage = '';
+      await initAndUpload(backgroundData, false).call(this)
+        .then(downloadFile.bind(this))
+        .then(({ urls }) => {
+          [meta.backgroundImage] = urls;
+          return null;
+        });
+
       const uploaded = await initAndUpload({
         ...modelData,
         message: {
