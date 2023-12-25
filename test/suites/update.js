@@ -379,6 +379,7 @@ describe('update suite', function suite() {
         uploadId,
         username,
         meta: {
+          description: 'some-new-description',
           $remove: ['description'],
         },
       }, 45000);
@@ -638,7 +639,13 @@ describe('update suite', function suite() {
     let modelWithReference;
 
     before('upload-file', async function uploadFile() {
-      meta.backgroundImage = '';
+      await initAndUpload(backgroundData, false).call(this)
+        .then(downloadFile.bind(this))
+        .then(({ urls }) => {
+          [meta.backgroundImage] = urls;
+          return null;
+        });
+
       const uploaded = await initAndUpload({
         ...modelData,
         message: {
