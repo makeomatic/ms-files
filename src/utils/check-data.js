@@ -63,7 +63,9 @@ function assertUpdatable(metaToUpdate = {}, isRemoveOp = false) {
 
 function assertRemovable(metaToRemove = []) {
   return function isRemovePossibleCheck(data) {
-    assertImmutable(data);
+    if (isImmutable(data)) {
+      throw new HttpStatusError(400, 'should not be immutable object');
+    }
 
     if (!fieldRemovePossible(metaToRemove)) {
       throw new HttpStatusError(400, 'meta fields can not be removed');
