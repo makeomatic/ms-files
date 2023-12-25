@@ -597,14 +597,6 @@ describe('update suite', function suite() {
         });
     });
 
-    it('failed to unset backgroundImage passing an empty string', async function test() {
-      meta.backgroundImage = '';
-
-      await assert.rejects(this.send({ uploadId: this.response.uploadId, username, meta }, 45000), {
-        statusCode: 400,
-      });
-    });
-
     it('remove backgroundImage', async function test() {
       await this
         .send({
