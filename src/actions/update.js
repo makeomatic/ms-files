@@ -10,7 +10,7 @@ const hasAccess = require('../utils/has-access');
 const isAliasTaken = require('../utils/is-alias-taken');
 const stringify = require('../utils/stringify');
 const isValidBackgroundOrigin = require('../utils/is-valid-background-origin');
-const { assertUpdatable, assertReferenceOnAccessChange, assertRemovable } = require('../utils/check-data');
+const { assertUpdatable, assertReferenceOnAccessChange } = require('../utils/check-data');
 const { bustCache } = require('../utils/bust-cache');
 const { updateReferences, verifyReferences, isReferenceChanged, getReferenceData } = require('../utils/reference');
 const { normalizeForSearch } = require('../utils/normalize-name');
@@ -116,8 +116,7 @@ async function updateMeta(lock, ctx, params) {
     .then(hasAccess(username))
     .then(isAliasTaken(alias))
     .then(assertUpdatable(meta))
-    .then(assertReferenceOnAccessChange(meta, params))
-    .then(assertRemovable(meta.$remove));
+    .then(assertReferenceOnAccessChange(meta, params));
 
   // ensure we still hold the lock
   await lock.extend();
