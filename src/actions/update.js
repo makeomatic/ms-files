@@ -1,6 +1,7 @@
 const { ActionTransport } = require('@microfleet/plugin-router');
 const Promise = require('bluebird');
 const { HttpStatusError } = require('common-errors');
+const { pick, keys } = require('lodash');
 const handlePipeline = require('../utils/pipeline-error');
 const fetchData = require('../utils/fetch-data');
 const isProcessed = require('../utils/is-processed');
@@ -80,6 +81,27 @@ function preProcessMetadata(data) {
   return data;
 }
 
+/**
+ * Process metadata remove operation
+ * @param  {Object} pipeline
+ * @param  {Object} meta
+ */
+function handleRemoveFromMeta(pipeline, key, meta, data) {
+  const { $remove } = meta;
+
+  if ($remove && $remove.length > 0) {
+    const existsData = pick(data, $remove);
+    const esistsKeys = keys(existsData);
+
+    pipeline.hdel(key, esistsKeys);
+
+    $remove.forEach((removeKey) => {
+      delete meta[removeKey];
+    })
+    delete meta.$remove;
+  }
+}
+
 async function updateMeta(lock, ctx, params) {
   const { uploadId, username, directOnly, immutable, includeReferences } = params;
   const { redis } = ctx;
@@ -150,6 +172,8 @@ async function updateMeta(lock, ctx, params) {
   if (alias === '') {
     delete meta[FILES_ALIAS_FIELD]; // <-- this field is empty at this point
   }
+
+  handleRemoveFromMeta(pipeline, key, meta, data);
 
   if (hasOwnProperty.call(meta, FILES_TAGS_FIELD) && data[FILES_TAGS_FIELD]) {
     // @todo migrate all tags in files data to lowercase and then remove this tag.toLowerCase()
