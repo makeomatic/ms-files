@@ -17,12 +17,13 @@ global_job_config:
   prologue:
     commands:
       - set -e
-      - sem-version node 18
-      - curl -f https://get.pnpm.io/v6.16.js | node - add --global pnpm@8
+      - sem-version node 20.10
+      - corepack enable
+      - corepack install --global pnpm@8.x
       - checkout
       - cache restore node-$(checksum pnpm-lock.yaml)
       - pnpm i --frozen-lockfile --prefer-offline --ignore-scripts
-      - cache store node-$(checksum pnpm-lock.yaml) ~/.pnpm-store
+      - cache store node-$(checksum pnpm-lock.yaml) $(pnpm store path)
 
 blocks:
   - name: tests

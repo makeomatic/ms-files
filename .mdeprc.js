@@ -8,8 +8,6 @@ module.exports = exports = {
   http: false,
   services: ['rabbitmq'],
   test_framework: 'c8 ./node_modules/.bin/mocha',
-  nycCoverage: false,
-  nycReport: false,
   extras: {
     tester: {
       user: `${uid}:${uid}`
