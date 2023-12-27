@@ -80,7 +80,7 @@
   },
   "devDependencies": {
     "@faker-js/faker": "^8.3.1",
-    "@makeomatic/deploy": "^13.0.4",
+    "@makeomatic/deploy": "^13.0.5",
     "@microfleet/ioredis-lock": "^5.1.0",
     "@microfleet/validation": "^11.2.1",
     "@semantic-release/changelog": "^6.0.3",
