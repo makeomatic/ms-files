@@ -1,3 +1,12 @@
+## [18.2.3](https://github.com/makeomatic/ms-files/compare/v18.2.2...v18.2.3) (2023-12-27)
+
+
+### Bug Fixes
+
+* deploy tools ([cf8d8b1](https://github.com/makeomatic/ms-files/commit/cf8d8b111842488dcbd206daf051f9d154ef7259))
+* update deploy tools ([620e2af](https://github.com/makeomatic/ms-files/commit/620e2af397c210f321f8f880f4599d8b2947cfaa))
+* upgrade all deps ([d746db9](https://github.com/makeomatic/ms-files/commit/d746db9c1de35f1bc3db98b1c41f2973d5899f79))
+
 ## [18.2.2](https://github.com/makeomatic/ms-files/compare/v18.2.1...v18.2.2) (2023-12-21)
 
 
