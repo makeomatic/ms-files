@@ -151,8 +151,8 @@ devDependencies:
     specifier: ^8.3.1
     version: 8.3.1
   '@makeomatic/deploy':
-    specifier: ^13.0.3
-    version: 13.0.3(typescript@5.3.3)
+    specifier: ^13.0.4
+    version: 13.0.4(typescript@5.3.3)
   '@microfleet/ioredis-lock':
     specifier: ^5.1.0
     version: 5.1.0(ioredis@4.28.5)
@@ -924,8 +924,8 @@ packages:
       yargs: 16.0.3
     dev: false
 
-  /@makeomatic/deploy@13.0.3(typescript@5.3.3):
-    resolution: {integrity: sha512-2M/vIMLF73SrMbVU9WwQ5ibO24+w2wr3y4p1pc0a1W/5CaaPwcG61Vv25ci/iDaDnYSLme4VPaRnfsiAjPuDAQ==}
+  /@makeomatic/deploy@13.0.4(typescript@5.3.3):
+    resolution: {integrity: sha512-lSplVc1C/oJ73FYT6DrtY3AQikSkSp0DSAOnEKZxs3IfMmmAZsyz5g6+sbIfDT/rbnCfpN1XbgxCuJ3+pT+TUQ==}
     hasBin: true
     dependencies:
       '@commitlint/cli': 18.4.3(typescript@5.3.3)
