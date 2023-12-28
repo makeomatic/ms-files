@@ -1,3 +1,5 @@
+const isDigitOnly = /[0-9]*/;
+
 // Extracts username from an alias
 module.exports = async function extractMetadata(alias) {
   const { amqp, config } = this;
@@ -5,6 +7,11 @@ module.exports = async function extractMetadata(alias) {
 
   if (!alias) {
     return null;
+  }
+
+  // probably it's a tokenid
+  if (alias.length >= 39 && isDigitOnly.test(alias)) {
+    return alias;
   }
 
   // aliases can't change unless they are deleted, so just cache them internally
