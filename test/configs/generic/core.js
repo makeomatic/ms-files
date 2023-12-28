@@ -6,7 +6,15 @@ const cwd = process.cwd();
 require(`${cwd}/node_modules/dotenv`).config();
 const originalPredicate = require(`${cwd}/src/configs/router-amqp`).routerAmqp.retry.predicate;
 const Promise = require(`${cwd}/node_modules/bluebird`);
-const sinon = require(`${cwd}/node_modules/sinon`);
+
+let sinon;
+if (process.env.NODE_ENV !== 'production') {
+  sinon = require(`${cwd}/node_modules/sinon`);
+} else {
+  sinon = {
+    spy: (input) => input
+  }
+}
 
 exports.amqp = {
   transport: {

@@ -46,7 +46,7 @@
     "@microfleet/plugin-router-amqp": "^2.2.14",
     "@microfleet/plugin-router-hapi": "^2.2.14",
     "@microfleet/plugin-validator": "^2.2.14",
-    "@microfleet/transport-amqp": "^17.7.3",
+    "@microfleet/transport-amqp": "^17.8.0",
     "@microfleet/utils": "^2.2.14",
     "@sentry/node": "^7.91.0",
     "ali-oss": "^6.19.0",
@@ -64,7 +64,7 @@
     "lodash": "^4.17.21",
     "md5": "^2.3.0",
     "mime-types": "^2.1.35",
-    "moment": "^2.30.0",
+    "moment": "^2.30.1",
     "ms-conf": "^8.2.1",
     "ms-files-transport": "^1.0.2",
     "ms-perf": "^2.1.0",
@@ -87,7 +87,7 @@
     "@semantic-release/exec": "^6.0.3",
     "@semantic-release/git": "^10.0.1",
     "c8": "^8.0.1",
-    "chai": "^4.3.10",
+    "chai": "^5.0.0",
     "cross-env": "^7.0.3",
     "dotenv": "^16.3.1",
     "eslint": "^8.56.0",
@@ -101,8 +101,7 @@
     "rimraf": "^5.0.5",
     "semantic-release": "^22.0.12",
     "sinon": "^17.0.1",
-    "typescript": "^5.3.3",
-    "why-is-node-running": "^2.2.2"
+    "typescript": "^5.3.3"
   },
   "engines": {
     "node": ">= 12.14.0",

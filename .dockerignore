@@ -49,3 +49,4 @@ docker-release.sh
 .npmignore
 .nyc_output
 pk.json
+*.heapsnapshot

@@ -57,8 +57,8 @@ dependencies:
     specifier: ^2.2.14
     version: 2.2.14(@microfleet/core-types@2.2.14)(@microfleet/core@19.2.14)(@microfleet/utils@2.2.14)
   '@microfleet/transport-amqp':
-    specifier: ^17.7.3
-    version: 17.7.3(common-errors@1.2.0)
+    specifier: ^17.8.0
+    version: 17.8.0(common-errors@1.2.0)
   '@microfleet/utils':
     specifier: ^2.2.14
     version: 2.2.14
@@ -111,8 +111,8 @@ dependencies:
     specifier: ^2.1.35
     version: 2.1.35
   moment:
-    specifier: ^2.30.0
-    version: 2.30.0
+    specifier: ^2.30.1
+    version: 2.30.1
   ms-conf:
     specifier: ^8.2.1
     version: 8.2.1
@@ -172,8 +172,8 @@ devDependencies:
     specifier: ^8.0.1
     version: 8.0.1
   chai:
-    specifier: ^4.3.10
-    version: 4.3.10
+    specifier: ^5.0.0
+    version: 5.0.0
   cross-env:
     specifier: ^7.0.3
     version: 7.0.3
@@ -216,9 +216,6 @@ devDependencies:
   typescript:
     specifier: ^5.3.3
     version: 5.3.3
-  why-is-node-running:
-    specifier: ^2.2.2
-    version: 2.2.2
 
 packages:
 
@@ -967,19 +964,49 @@ packages:
       - utf-8-validate
     dev: true
 
-  /@microfleet/amqp-codec@2.5.0:
-    resolution: {integrity: sha512-OhWy3f1hblkBZh5hO6iYKq7fjfhZmTibvulaMOapzVgZPRit22GcfFbIO5+2qK1EakEZBgxmf0XYwMwnQHiM+A==}
+  /@makeomatic/ffi-napi@4.1.0:
+    resolution: {integrity: sha512-rbwk0wiWpVf6aXAKQpnHlp0Nv6bN6ow8kYH6CDfDp7o3QvdPORd99zGitjSil6AoURX2FiXuksesizo4IhthBg==}
+    engines: {node: '>=10'}
+    requiresBuild: true
+    dependencies:
+      '@makeomatic/ref-napi': 3.0.6
+      debug: 4.3.4(supports-color@8.1.1)
+      get-uv-event-loop-napi-h: 1.0.6
+      node-addon-api: 7.0.0
+      node-gyp-build: 4.7.1
+      ref-struct-di: 1.1.1
+    transitivePeerDependencies:
+      - supports-color
+    dev: false
+    optional: true
+
+  /@makeomatic/ref-napi@3.0.6:
+    resolution: {integrity: sha512-PNAcp1M1kQPL6xYu16KCVM9oAAqGDRB4nEWgxTvYrxXpYiiit2ClomQI9umnJ7gMpG8vnaSFhFA+6XzPnWxSNQ==}
+    engines: {node: '>= 10.0'}
+    requiresBuild: true
+    dependencies:
+      debug: 4.3.4(supports-color@8.1.1)
+      get-symbol-from-current-process-h: 1.0.2
+      node-addon-api: 7.0.0
+      node-gyp-build: 4.7.1
+    transitivePeerDependencies:
+      - supports-color
+    dev: false
+    optional: true
+
+  /@microfleet/amqp-codec@2.6.0:
+    resolution: {integrity: sha512-mYyWU/QptZeApzntVPOcvsyaxYqeEOfpmb+lSX5yU/CumbfexuvsqJGbBGlewgjORf1yv71lUoP3BdjA18eCXg==}
     dependencies:
       debug: 4.3.4(supports-color@8.1.1)
     transitivePeerDependencies:
       - supports-color
     dev: false
 
-  /@microfleet/amqp-coffee@2.7.2:
-    resolution: {integrity: sha512-pW0IjhxNp2TOIYZy+PyWaR5O3pvPSE6XdSbgEZUuFDuB73MiVZ52DhVXUyZqom14QZLAJx0oCRZItnE1rzS5IA==}
+  /@microfleet/amqp-coffee@2.8.0:
+    resolution: {integrity: sha512-+tV0h4RvEfhjeHSlDnUZPHmannY9Wwl1SgtZQrUkQ+A68rCetVCrDleW6cp1aV1+1o7DFggkr4rPD0PQ+r4KIg==}
     engines: {node: '>= 18.17'}
     dependencies:
-      '@microfleet/amqp-codec': 2.5.0
+      '@microfleet/amqp-codec': 2.6.0
       async: 3.2.5
       bl: 6.0.9
       bson: 6.2.0
@@ -989,8 +1016,8 @@ packages:
       lodash: 4.17.21
       read-pkg: 5.2.0
     optionalDependencies:
-      ffi-napi: 4.0.3
-      ref-napi: 3.0.3
+      '@makeomatic/ffi-napi': 4.1.0
+      '@makeomatic/ref-napi': 3.0.6
     transitivePeerDependencies:
       - supports-color
     dev: false
@@ -1028,7 +1055,7 @@ packages:
       common-errors: 1.2.0
       debug: 4.3.4(supports-color@8.1.1)
       eventemitter3: 5.0.1
-      type-fest: 4.8.3
+      type-fest: 4.9.0
       yargs-parser: 21.1.1
     transitivePeerDependencies:
       - supports-color
@@ -1075,7 +1102,7 @@ packages:
       '@microfleet/plugin-logger': 2.2.14(@microfleet/core@19.2.14)(common-errors@1.2.0)
       '@microfleet/plugin-router': 2.2.14(@microfleet/core-types@2.2.14)(@microfleet/core@19.2.14)(@microfleet/plugin-logger@2.2.14)(@microfleet/utils@2.2.14)(common-errors@1.2.0)
       '@microfleet/plugin-validator': 2.2.14(@microfleet/core-types@2.2.14)(@microfleet/core@19.2.14)(@microfleet/utils@2.2.14)
-      '@microfleet/transport-amqp': 17.7.3(common-errors@1.2.0)
+      '@microfleet/transport-amqp': 17.8.0(common-errors@1.2.0)
       bluebird: 3.7.2
       common-errors: 1.2.0
     transitivePeerDependencies:
@@ -1142,7 +1169,7 @@ packages:
       lsmod: 1.0.0
       pino: 8.17.2
       pino-abstract-transport: 1.1.0
-      pino-pretty: 10.3.0
+      pino-pretty: 10.3.1
       sonic-boom: 3.7.0
     transitivePeerDependencies:
       - supports-color
@@ -1255,13 +1282,13 @@ packages:
       '@microfleet/plugin-router': ^2.2.14
       common-errors: ~1.x.x
     dependencies:
-      '@microfleet/amqp-coffee': 2.7.2
+      '@microfleet/amqp-coffee': 2.8.0
       '@microfleet/core': 19.2.14(@microfleet/validation@11.2.1)(common-errors@1.2.0)
       '@microfleet/core-types': 2.2.14
       '@microfleet/plugin-amqp': 2.2.14(@microfleet/core@19.2.14)(@microfleet/plugin-logger@2.2.14)(@microfleet/plugin-router@2.2.14)(@microfleet/plugin-validator@2.2.14)(common-errors@1.2.0)
       '@microfleet/plugin-logger': 2.2.14(@microfleet/core@19.2.14)(common-errors@1.2.0)
       '@microfleet/plugin-router': 2.2.14(@microfleet/core-types@2.2.14)(@microfleet/core@19.2.14)(@microfleet/plugin-logger@2.2.14)(@microfleet/utils@2.2.14)(common-errors@1.2.0)
-      '@microfleet/transport-amqp': 17.7.3(common-errors@1.2.0)
+      '@microfleet/transport-amqp': 17.8.0(common-errors@1.2.0)
       bluebird: 3.7.2
       common-errors: 1.2.0
       lodash: 4.17.21
@@ -1310,7 +1337,7 @@ packages:
       '@microfleet/core': 19.2.14(@microfleet/validation@11.2.1)(common-errors@1.2.0)
       '@microfleet/core-types': 2.2.14
       '@microfleet/plugin-logger': 2.2.14(@microfleet/core@19.2.14)(common-errors@1.2.0)
-      '@microfleet/transport-amqp': 17.7.3(common-errors@1.2.0)
+      '@microfleet/transport-amqp': 17.8.0(common-errors@1.2.0)
       '@microfleet/utils': 2.2.14
       '@microfleet/validation': 11.2.1(common-errors@1.2.0)
       common-errors: 1.2.0
@@ -1332,16 +1359,16 @@ packages:
       '@microfleet/core': ^19.2.14
       common-errors: ~1.x.x
     dependencies:
-      '@microfleet/amqp-coffee': 2.7.2
+      '@microfleet/amqp-coffee': 2.8.0
       '@microfleet/core': 19.2.14(@microfleet/validation@11.2.1)(common-errors@1.2.0)
       '@microfleet/core-types': 2.2.14
       '@microfleet/plugin-logger': 2.2.14(@microfleet/core@19.2.14)(common-errors@1.2.0)
       '@microfleet/plugin-router': 2.2.14(@microfleet/core-types@2.2.14)(@microfleet/core@19.2.14)(@microfleet/plugin-logger@2.2.14)(@microfleet/utils@2.2.14)(common-errors@1.2.0)
       '@microfleet/plugin-validator': 2.2.14(@microfleet/core-types@2.2.14)(@microfleet/core@19.2.14)(@microfleet/utils@2.2.14)
-      '@microfleet/transport-amqp': 17.7.3(common-errors@1.2.0)
+      '@microfleet/transport-amqp': 17.8.0(common-errors@1.2.0)
       '@microfleet/utils': 2.2.14
       common-errors: 1.2.0
-      ms-socket.io-adapter-amqp: 9.0.1(@microfleet/amqp-coffee@2.7.2)(@microfleet/transport-amqp@17.7.3)(common-errors@1.2.0)
+      ms-socket.io-adapter-amqp: 9.0.1(@microfleet/amqp-coffee@2.8.0)(@microfleet/transport-amqp@17.8.0)(common-errors@1.2.0)
       socket.io: 4.7.2
     transitivePeerDependencies:
       - bufferutil
@@ -1368,13 +1395,13 @@ packages:
       - supports-color
     dev: false
 
-  /@microfleet/transport-amqp@17.7.3(common-errors@1.2.0):
-    resolution: {integrity: sha512-MDbPNRQjm5K1sN06w6ttkcxGPOggILaaEj3L6TIEOVwV5R5/oX14jpFGvL/93FAHtcXJcIME5RwbRtKugKzd0Q==}
+  /@microfleet/transport-amqp@17.8.0(common-errors@1.2.0):
+    resolution: {integrity: sha512-uRHuk6tgXN62HcnXeqxORnBKaxqlbE2NyriZfmZYeFqdiKyOYFAwHTfs26rXDqd4DnMKrDqvpKySVJ2OgxexoQ==}
     engines: {node: '>= 18.17.0'}
     peerDependencies:
       common-errors: ~1.x.x
     dependencies:
-      '@microfleet/amqp-coffee': 2.7.2
+      '@microfleet/amqp-coffee': 2.8.0
       '@types/common-errors': 1.0.5
       common-errors: 1.2.0
       debug: 4.3.4(supports-color@8.1.1)
@@ -1391,7 +1418,7 @@ packages:
       reusify: 1.0.4
       safe-stable-stringify: 2.4.3
       sorted-array-functions: 1.3.0
-      type-fest: 4.8.3
+      type-fest: 4.9.0
     transitivePeerDependencies:
       - supports-color
     dev: false
@@ -1738,7 +1765,7 @@ packages:
       issue-parser: 6.0.0
       lodash-es: 4.17.21
       mime: 4.0.1
-      p-filter: 4.0.0
+      p-filter: 4.1.0
       semantic-release: 22.0.12(typescript@5.3.3)
       url-join: 5.0.0
     transitivePeerDependencies:
@@ -2500,8 +2527,9 @@ packages:
     requiresBuild: true
     dev: false
 
-  /assertion-error@1.1.0:
-    resolution: {integrity: sha512-jgsaNduz+ndvGyFt3uSuWqvy4lCnIJiovtouQN5JZHOKCS2QuhEdbcQHFhVksz2N2U9hXJo8odG7ETyWlEeuDw==}
+  /assertion-error@2.0.1:
+    resolution: {integrity: sha512-Izi8RQcffqCeNVgFigKli1ssklIbpHnCYc6AknXGYoB6grJqyeby7jv12JUQgmTAnIDnbck1uxksT4dzN3PWBA==}
+    engines: {node: '>=12'}
     dev: true
 
   /async-retry@1.3.3:
@@ -2580,7 +2608,7 @@ packages:
     dependencies:
       buffer: 6.0.3
       inherits: 2.0.4
-      readable-stream: 4.5.1
+      readable-stream: 4.5.2
     dev: false
 
   /bluebird-retry@0.11.0(bluebird@3.7.2):
@@ -2630,7 +2658,7 @@ packages:
     engines: {node: ^6 || ^7 || ^8 || ^9 || ^10 || ^11 || ^12 || >=13.7}
     hasBin: true
     dependencies:
-      caniuse-lite: 1.0.30001571
+      caniuse-lite: 1.0.30001572
       electron-to-chromium: 1.4.616
       node-releases: 2.0.14
       update-browserslist-db: 1.0.13(browserslist@4.22.2)
@@ -2732,8 +2760,8 @@ packages:
     resolution: {integrity: sha512-Gmy6FhYlCY7uOElZUSbxo2UCDH8owEk996gkbrpsgGtrJLM3J7jGxl9Ic7Qwwj4ivOE5AWZWRMecDdF7hqGjFA==}
     engines: {node: '>=10'}
 
-  /caniuse-lite@1.0.30001571:
-    resolution: {integrity: sha512-tYq/6MoXhdezDLFZuCO/TKboTzuQ/xR5cFdgXPfDtM7/kchBO3b4VWghE/OAi/DV7tTdhmLjZiZBZi1fA/GheQ==}
+  /caniuse-lite@1.0.30001572:
+    resolution: {integrity: sha512-1Pbh5FLmn5y4+QhNyJE9j3/7dK44dGB83/ZMjv/qJk86TvDbjk0LosiZo0i0WB0Vx607qMX9jYrn1VLHCkN4rw==}
     dev: true
 
   /cardinal@2.1.1:
@@ -2744,17 +2772,15 @@ packages:
       redeyed: 2.1.1
     dev: true
 
-  /chai@4.3.10:
-    resolution: {integrity: sha512-0UXG04VuVbruMUYbJ6JctvH0YnC/4q3/AkT18q4NaITo91CUm0liMS9VqzT9vZhVQ/1eqPanMWjBM+Juhfb/9g==}
-    engines: {node: '>=4'}
+  /chai@5.0.0:
+    resolution: {integrity: sha512-HO5p0oEKd5M6HEcwOkNAThAE3j960vIZvVcc0t2tI06Dd0ATu69cEnMB2wOhC5/ZyQ6m67w3ePjU/HzXsSsdBA==}
+    engines: {node: '>=12'}
     dependencies:
-      assertion-error: 1.1.0
-      check-error: 1.0.3
-      deep-eql: 4.1.3
-      get-func-name: 2.0.2
-      loupe: 2.3.7
-      pathval: 1.1.1
-      type-detect: 4.0.8
+      assertion-error: 2.0.1
+      check-error: 2.0.0
+      deep-eql: 5.0.1
+      loupe: 3.0.1
+      pathval: 2.0.0
     dev: true
 
   /chalk@2.4.2:
@@ -2787,10 +2813,9 @@ packages:
     resolution: {integrity: sha1-wKHS86cJLgN3S/qD8UwPxXkKhmc=}
     dev: false
 
-  /check-error@1.0.3:
-    resolution: {integrity: sha512-iKEoDYaRmd1mxM90a2OEfWhjsjPpYPuQ+lMYsoxB126+t8fw7ySEO48nmDg5COTjxDI65/Y2OWpeEHk3ZOe8zg==}
-    dependencies:
-      get-func-name: 2.0.2
+  /check-error@2.0.0:
+    resolution: {integrity: sha512-tjLAOBHKVxtPoHe/SA7kNOMvhCRdCJ3vETdeY0RuAc9popf+hyaSV6ZEg9hr4cpWF7jmo/JSWEnLDrnijS9Tog==}
+    engines: {node: '>= 16'}
     dev: true
 
   /chokidar@3.5.3:
@@ -3176,11 +3201,9 @@ packages:
     engines: {node: '>=10'}
     dev: true
 
-  /deep-eql@4.1.3:
-    resolution: {integrity: sha512-WaEtAOpRA1MQ0eohqZjpGD8zdI0Ovsm8mmFhaDN8dvDZzyoUMcYDnf5Y6iu7HTXxf8JDS23qWa4a+hKCDyOPzw==}
+  /deep-eql@5.0.1:
+    resolution: {integrity: sha512-nwQCf6ne2gez3o1MxWifqkciwt0zhl0LO1/UwVu4uMBuPmflWM4oQ70XMqHqnBJA+nhzncaqL9HVL6KkHJ28lw==}
     engines: {node: '>=6'}
-    dependencies:
-      type-detect: 4.0.8
     dev: true
 
   /deep-extend@0.6.0:
@@ -4042,22 +4065,6 @@ packages:
     resolution: {integrity: sha512-ifCoaXsDrsdkWTtiNJX5uzHDsrck5TzfKKDcuFFTIrrc/BS076qgEIfoIy1VeZqViznfKiysPYTh/QeHtnIsYA==}
     dependencies:
       reusify: 1.0.4
-
-  /ffi-napi@4.0.3:
-    resolution: {integrity: sha512-PMdLCIvDY9mS32RxZ0XGb95sonPRal8aqRhLbeEtWKZTe2A87qRFG9HjOhvG8EX2UmQw5XNRMIOT+1MYlWmdeg==}
-    engines: {node: '>=10'}
-    requiresBuild: true
-    dependencies:
-      debug: 4.3.4(supports-color@8.1.1)
-      get-uv-event-loop-napi-h: 1.0.6
-      node-addon-api: 3.2.1
-      node-gyp-build: 4.7.1
-      ref-napi: 3.0.3
-      ref-struct-di: 1.1.1
-    transitivePeerDependencies:
-      - supports-color
-    dev: false
-    optional: true
 
   /figures@2.0.0:
     resolution: {integrity: sha512-Oa2M9atig69ZkfwiApY8F2Yy+tzMbazyvqv21R0NsSC8floSOC09BbT1ITWAdoMGQvJ/aZnR1KMwdx9tvHnTNA==}
@@ -5427,8 +5434,8 @@ packages:
     dev: false
     optional: true
 
-  /loupe@2.3.7:
-    resolution: {integrity: sha512-zSMINGVYkdpYSOBmLi0D1Uo7JU9nVdQKrHxC8eYlV+9YKK9WePqAlL7lSlorG/U2Fw1w0hTBmaa/jrQ3UbPHtA==}
+  /loupe@3.0.1:
+    resolution: {integrity: sha512-phbaE2fPsRe8cQ7Cy5Ze5p9JLmpiaqGT45RCUWYYjZgYPBoeC3vqrlYPj4BQ82ln60ZtM3Iq00PPC3FyUdS4Kw==}
     dependencies:
       get-func-name: 2.0.2
     dev: true
@@ -5664,8 +5671,8 @@ packages:
       yargs-unparser: 2.0.0
     dev: true
 
-  /moment@2.30.0:
-    resolution: {integrity: sha512-8XSlYFhOSJvnEJOas6RpDCNU2PYeVC+oE33d3Z9tIsXpD8LIgBeqrHPjP8es4b3fcJpf07D1PJWGDUfdbqDLnQ==}
+  /moment@2.30.1:
+    resolution: {integrity: sha512-uEmtNhbDOrWPFS+hdjFCBfy9f2YoyzRpwcl+DqpC6taX21FzsTLQVbMV/W7PzNSX6x/bhC1zA3c2UQ5NzH6how==}
     dev: false
 
   /ms-conf@8.2.1:
@@ -5703,15 +5710,15 @@ packages:
       - supports-color
     dev: false
 
-  /ms-socket.io-adapter-amqp@9.0.1(@microfleet/amqp-coffee@2.7.2)(@microfleet/transport-amqp@17.7.3)(common-errors@1.2.0):
+  /ms-socket.io-adapter-amqp@9.0.1(@microfleet/amqp-coffee@2.8.0)(@microfleet/transport-amqp@17.8.0)(common-errors@1.2.0):
     resolution: {integrity: sha512-sGaFwgPpnOZY4O5WhWLD4SKMPKSYTKF6AAFbw8Nf5mLRq1CBm837O6XKPWCR8dcO8wJvHqqamOfL7oGfrfRBlQ==}
     peerDependencies:
       '@microfleet/amqp-coffee': '>= 2'
       '@microfleet/transport-amqp': '>= 17'
       common-errors: ~1.x.x
     dependencies:
-      '@microfleet/amqp-coffee': 2.7.2
-      '@microfleet/transport-amqp': 17.7.3(common-errors@1.2.0)
+      '@microfleet/amqp-coffee': 2.8.0
+      '@microfleet/transport-amqp': 17.8.0(common-errors@1.2.0)
       '@sindresorhus/is': 4.6.0
       bluebird: 3.7.2
       common-errors: 1.2.0
@@ -5785,8 +5792,8 @@ packages:
       path-to-regexp: 1.8.0
     dev: true
 
-  /node-addon-api@3.2.1:
-    resolution: {integrity: sha512-mmcei9JghVNDYydghQmeDX8KoAm0FAiYyIcUt/N4nhyAipB17pllZQDOJD2fotxABnt4Mdz+dKTO7eftLg4d0A==}
+  /node-addon-api@7.0.0:
+    resolution: {integrity: sha512-vgbBJTS4m5/KkE16t5Ly0WW9hz46swAstv0hYYwMtbG7AznRhNyfLRe8HZAiWIpcHzoO7HxhLuBQj9rJ/Ho0ZA==}
     requiresBuild: true
     dev: false
     optional: true
@@ -6122,11 +6129,11 @@ packages:
     engines: {node: '>=12'}
     dev: true
 
-  /p-filter@4.0.0:
-    resolution: {integrity: sha512-3gxOrNadcyxj+YKFyRmRIEuCMGayNNJoXL7Zf1dqfdfoDsVB190bHfFfhqfcNEDFLfQP1q2uir2cBgIqnIT+cQ==}
+  /p-filter@4.1.0:
+    resolution: {integrity: sha512-37/tPdZ3oJwHaS3gNJdenCDB3Tz26i9sjhnguBtvN0vYlRIiDNnvTWkuh+0hETV9rLPdJ3rlL3yVOYPIAnM8rw==}
     engines: {node: '>=18'}
     dependencies:
-      p-map: 7.0.0
+      p-map: 7.0.1
     dev: true
 
   /p-is-promise@3.0.0:
@@ -6184,8 +6191,8 @@ packages:
     resolution: {integrity: sha512-y3b8Kpd8OAN444hxfBbFfj1FY/RjtTd8tzYwhUqNYXx0fXx2iX4maP4Qr6qhIKbQXI02wTLAda4fYUbDagTUFw==}
     engines: {node: '>=6'}
 
-  /p-map@7.0.0:
-    resolution: {integrity: sha512-EZl03dLKv3RypkrjlevZoNwQMSy4bAblWcR18zhonktnN4fUs3asFQKSe0awn982omGxamvbejqQKQYDJYHCEg==}
+  /p-map@7.0.1:
+    resolution: {integrity: sha512-2wnaR0XL/FDOj+TgpDuRb2KTjLnu3Fma6b1ZUwGY7LcqenMcvP/YFpjpbPKY6WVGsbuJZRuoUz8iPrt8ORnAFw==}
     engines: {node: '>=18'}
     dev: true
 
@@ -6238,7 +6245,7 @@ packages:
     dependencies:
       '@babel/code-frame': 7.23.5
       index-to-position: 0.1.2
-      type-fest: 4.8.3
+      type-fest: 4.9.0
     dev: true
 
   /path-exists@3.0.0:
@@ -6290,8 +6297,9 @@ packages:
     engines: {node: '>=12'}
     dev: true
 
-  /pathval@1.1.1:
-    resolution: {integrity: sha512-Dp6zGqpTdETdR63lehJYPeIOqpiNBNtc7BpWSLrOje7UaIsE5aY92r/AunQA7rsXvet3lrJ3JnZX29UPTKXyKQ==}
+  /pathval@2.0.0:
+    resolution: {integrity: sha512-vE7JKRyES09KiunauX7nd2Q9/L7lhok4smP9RZTDeD4MVs72Dp2qNFVz39Nz5a0FVEW0BJR6C0DYrq6unoziZA==}
+    engines: {node: '>= 14.16'}
     dev: true
 
   /pause-stream@0.0.11:
@@ -6325,11 +6333,11 @@ packages:
   /pino-abstract-transport@1.1.0:
     resolution: {integrity: sha512-lsleG3/2a/JIWUtf9Q5gUNErBqwIu1tUKTT3dUzaf5DySw9ra1wcqKjJjLX1VTY64Wk1eEOYsVGSaGfCK85ekA==}
     dependencies:
-      readable-stream: 4.5.1
+      readable-stream: 4.5.2
       split2: 4.2.0
 
-  /pino-pretty@10.3.0:
-    resolution: {integrity: sha512-JthvQW289q3454mhM3/38wFYGWPiBMR28T3CpDNABzoTQOje9UKS7XCJQSnjWF9LQGQkGd8D7h0oq+qwiM3jFA==}
+  /pino-pretty@10.3.1:
+    resolution: {integrity: sha512-az8JbIYeN/1iLj2t0jR9DV48/LQ3RC6hZPpapKPkb84Q+yTidMCpgWxIT3N0flnBDilyBQ1luWNpOeJptjdp/g==}
     hasBin: true
     dependencies:
       colorette: 2.0.20
@@ -6342,7 +6350,7 @@ packages:
       on-exit-leak-free: 2.1.2
       pino-abstract-transport: 1.1.0
       pump: 3.0.0
-      readable-stream: 4.5.1
+      readable-stream: 4.5.2
       secure-json-parse: 2.7.0
       sonic-boom: 3.7.0
       strip-json-comments: 3.1.1
@@ -6524,7 +6532,7 @@ packages:
     dependencies:
       find-up-simple: 1.0.0
       read-pkg: 9.0.1
-      type-fest: 4.8.3
+      type-fest: 4.9.0
     dev: true
 
   /read-pkg-up@7.0.1:
@@ -6551,7 +6559,7 @@ packages:
       '@types/normalize-package-data': 2.4.4
       normalize-package-data: 6.0.0
       parse-json: 8.1.0
-      type-fest: 4.8.3
+      type-fest: 4.9.0
       unicorn-magic: 0.1.0
     dev: true
 
@@ -6574,8 +6582,8 @@ packages:
       string_decoder: 1.3.0
       util-deprecate: 1.0.2
 
-  /readable-stream@4.5.1:
-    resolution: {integrity: sha512-uQjbf34vmf/asGnOHQEw07Q4llgMACQZTWWa4MmICS0IKJoHbLwKCy71H3eR99Dw5iYejc6W+pqZZEeqRtUFAw==}
+  /readable-stream@4.5.2:
+    resolution: {integrity: sha512-yjavECdqeZ3GLXNgRXgeQEdz9fvDDkNKyHnbHRFtOr7/LcfgBcmct7t/ET+HaCTqfh06OzoAxrkN/IfjJBVe+g==}
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
     dependencies:
       abort-controller: 3.0.0
@@ -6632,20 +6640,6 @@ packages:
     engines: {node: '>=4'}
     dependencies:
       redis-errors: 1.2.0
-
-  /ref-napi@3.0.3:
-    resolution: {integrity: sha512-LiMq/XDGcgodTYOMppikEtJelWsKQERbLQsYm0IOOnzhwE9xYZC7x8txNnFC9wJNOkPferQI4vD4ZkC0mDyrOA==}
-    engines: {node: '>= 10.0'}
-    requiresBuild: true
-    dependencies:
-      debug: 4.3.4(supports-color@8.1.1)
-      get-symbol-from-current-process-h: 1.0.2
-      node-addon-api: 3.2.1
-      node-gyp-build: 4.7.1
-    transitivePeerDependencies:
-      - supports-color
-    dev: false
-    optional: true
 
   /ref-struct-di@1.1.1:
     resolution: {integrity: sha512-2Xyn/0Qgz89VT+++WP0sTosdm9oeowLP23wRJYhG4BFdMUrLj3jhwHZNEytYNYgtPKLNTP3KJX4HEgBvM1/Y2g==}
@@ -6950,10 +6944,6 @@ packages:
       get-intrinsic: 1.2.2
       object-inspect: 1.13.1
 
-  /siginfo@2.0.0:
-    resolution: {integrity: sha512-ybx0WO1/8bSBLEWXZvEd7gMW3Sn3JFlW3TvX1nREbDLRNQNaeNN8WK0meBwPdAaOI7TtRRRJn/Es1zhrrCHu7g==}
-    dev: true
-
   /signal-exit@3.0.7:
     resolution: {integrity: sha512-wnD2ZE+l+SPC/uoS0vXeE9L1+0wuaMqKlfz9AMUo38JsyLSBWSFcHR1Rri62LZc12vLr1gb3jl7iwQhgwpAbGQ==}
     dev: true
@@ -7092,10 +7082,6 @@ packages:
   /split2@4.2.0:
     resolution: {integrity: sha512-UcjcJOWknrNkF6PLX83qcHM6KHgVKNkV62Y8a5uYDVv9ydGQVwAHMKqHdJje1VTWpljG0WYpCDhrCdAOYH4TWg==}
     engines: {node: '>= 10.x'}
-
-  /stackback@0.0.2:
-    resolution: {integrity: sha512-1XMJE5fQo1jGH6Y/7ebnwPOBEkIEnT4QF32d5R1+VXdXveM0IBMJt8zfaxX1P3QhVwrYe+576+jkANtSS2mBbw==}
-    dev: true
 
   /standard-as-callback@2.1.0:
     resolution: {integrity: sha512-qoRRSyROncaz1z0mvYqIE4lCd9p2R90i6GxW3uZv5ucSu8tU7B5HXUP1gG8pVZsYNVaXjk8ClXHPttLyxAL48A==}
@@ -7479,8 +7465,8 @@ packages:
     engines: {node: '>=14.16'}
     dev: true
 
-  /type-fest@4.8.3:
-    resolution: {integrity: sha512-//BaTm14Q/gHBn09xlnKNqfI8t6bmdzx2DXYfPBNofN0WUybCEUDcbCWcTa0oF09lzLjZgPphXAsvRiMK0V6Bw==}
+  /type-fest@4.9.0:
+    resolution: {integrity: sha512-KS/6lh/ynPGiHD/LnAobrEFq3Ad4pBzOlJ1wAnJx9N4EYoqFhMfLIBjUT2UEx4wg5ZE+cC1ob6DCSpppVo+rtg==}
     engines: {node: '>=16'}
 
   /typed-array-buffer@1.0.0:
@@ -7732,15 +7718,6 @@ packages:
     hasBin: true
     dependencies:
       isexe: 2.0.0
-
-  /why-is-node-running@2.2.2:
-    resolution: {integrity: sha512-6tSwToZxTOcotxHeA+qGCq1mVzKR3CwcJGmVcY+QE8SHy6TnpFnh8PAvPNHYr7EcuVeG0QSMxtYCuO1ta/G/oA==}
-    engines: {node: '>=8'}
-    hasBin: true
-    dependencies:
-      siginfo: 2.0.0
-      stackback: 0.0.2
-    dev: true
 
   /win-release@1.1.1:
     resolution: {integrity: sha512-iCRnKVvGxOQdsKhcQId2PXV1vV3J/sDPXKA4Oe9+Eti2nb2ESEsYHRYls/UjoUW3bIc5ZDO8dTH50A/5iVN+bw==}

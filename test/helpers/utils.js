@@ -5,7 +5,6 @@
 
 const Promise = require('bluebird');
 const assert = require('node:assert');
-// const log = require('why-is-node-running');
 const fs = require('fs');
 const path = require('path');
 const md5 = require('md5');
