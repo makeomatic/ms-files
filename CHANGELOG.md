@@ -1,3 +1,10 @@
+## [18.2.4](https://github.com/makeomatic/ms-files/compare/v18.2.3...v18.2.4) (2023-12-28)
+
+
+### Bug Fixes
+
+* @microfleet/amqp-coffee with fixed libffi ([190d46b](https://github.com/makeomatic/ms-files/commit/190d46bd7a9b0d4dfe078a820fc00dbbb58780d3))
+
 ## [18.2.3](https://github.com/makeomatic/ms-files/compare/v18.2.2...v18.2.3) (2023-12-27)
 
 
