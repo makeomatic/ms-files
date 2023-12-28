@@ -12,8 +12,8 @@ if (process.env.NODE_ENV !== 'production') {
   sinon = require(`${cwd}/node_modules/sinon`);
 } else {
   sinon = {
-    spy: (input) => input
-  }
+    spy: (input) => input,
+  };
 }
 
 exports.amqp = {
