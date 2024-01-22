@@ -1,3 +1,15 @@
+# [19.0.0](https://github.com/makeomatic/ms-files/compare/v18.2.4...v19.0.0) (2024-01-22)
+
+
+### Bug Fixes
+
+* upgrade to microfleet@20, remove opentracing ([#314](https://github.com/makeomatic/ms-files/issues/314)) ([6c28041](https://github.com/makeomatic/ms-files/commit/6c2804135514e35a77b5c7179e4bfec5a11b5cec))
+
+
+### BREAKING CHANGES
+
+* remove opentracing plugin from default config, upgrade to microfleet@20
+
 ## [18.2.4](https://github.com/makeomatic/ms-files/compare/v18.2.3...v18.2.4) (2023-12-28)
 
 
