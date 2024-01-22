@@ -14,7 +14,6 @@ exports.redis = {
 exports.plugins = [
   'validator',
   'logger',
-  'opentracing',
   'amqp',
   'hapi',
   'router',
