@@ -13,7 +13,6 @@ exports.name = 'ms-files';
 exports.plugins = [
   'validator',
   'logger',
-  'opentracing',
   'amqp',
   'hapi',
   'router',

@@ -2,6 +2,7 @@ const sinon = require('sinon');
 const { strict: assert } = require('assert');
 const { resolve } = require('path');
 const Redis = require('ioredis');
+const { glob } = require('glob');
 
 // helpers
 const {
@@ -64,7 +65,13 @@ describe('migrations testing suite', function suite() {
   });
 
   it('runs migration afterwards and restores keys', async () => {
-    await ctx.files.migrate('redis', resolve(__dirname, '../../../src/migrations'));
+    const files = await glob('*/index.js', { cwd: resolve(__dirname, '../../../src/migrations'), absolute: true });
+    const loadedMigrations = await Promise.all(files.map(async (file) => {
+      const mod = await import(file);
+      return mod.default || mod;
+    }));
+
+    await ctx.files.migrate('redis', loadedMigrations);
     const redis = getRedisMasterNode(ctx.files.redis, ctx.files);
     const { keyPrefix } = ctx.files.config.redis.options;
     const keys = await redis.keys(`${keyPrefix}${FILES_INDEX_UAT}*`);
@@ -91,7 +98,12 @@ describe('migrations testing suite', function suite() {
     const fileDataKey = FILES_DATA_INDEX_KEY(uploads[0]);
     await redis.hset(fileDataKey, FILES_NAME_FIELD, 'New Value');
 
-    await ctx.files.migrate('redis', resolve(__dirname, '../../../src/migrations'));
+    const files = await glob('*/index.js', { cwd: resolve(__dirname, '../../../src/migrations'), absolute: true });
+    const loadedMigrations = await Promise.all(files.map(async (file) => {
+      const mod = await import(file);
+      return mod.default || mod;
+    }));
+    await ctx.files.migrate('redis', loadedMigrations);
 
     const migratedData = await redis.hgetall(fileDataKey);
     assert.deepStrictEqual(migratedData[FILES_NAME_NORMALIZED_FIELD], 'new value');

@@ -17,7 +17,7 @@ global_job_config:
   prologue:
     commands:
       - set -e
-      - sem-version node 20.10
+      - sem-version node --lts
       - corepack enable
       - corepack install --global pnpm@8.x
       - checkout

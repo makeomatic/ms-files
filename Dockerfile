@@ -13,6 +13,7 @@ RUN \
   && update-ca-certificates \
   && chown node:node /src \
   && su -l node -c "cd /src && pnpm fetch --prod" \
+  && su -l node -c "rm -rf ~/.cache && pnpm store prune" \
   && apk del .buildDeps \
   && rm -rf \
     /tmp/* \

@@ -2,6 +2,7 @@ const Promise = require('bluebird');
 const { Microfleet, ConnectorsTypes } = require('@microfleet/core');
 const noop = require('lodash/noop');
 const fsort = require('redis-filtered-sort');
+const { glob } = require('glob');
 const deepmerge = require('@fastify/deepmerge')({
   mergeArray(options) {
     const { clone } = options;
@@ -27,13 +28,18 @@ class Files extends Microfleet {
    */
   constructor(opts) {
     super(opts);
-    const { config } = this;
 
     /**
      * Invoke this method to start post-processing of all pending files
      * @return {Promise}
      */
     this.postProcess = require('./post-process');
+  }
+
+  async register() {
+    await super.register();
+
+    const { config } = this;
 
     // extend with storage providers
     StorageProviders(this);
@@ -45,9 +51,22 @@ class Files extends Microfleet {
 
     // add migration connector
     if (config.migrations.enabled === true) {
-      this.addConnector(ConnectorsTypes.migration, () => (
-        this.migrate('redis', `${__dirname}/migrations`)
-      ));
+      this.addConnector(ConnectorsTypes.migration, async () => {
+        const files = await glob('*/*.{js,ts}', {
+          cwd: `${__dirname}/migrations`,
+          absolute: true,
+          ignore: ['*.d.ts', '**/*.d.ts', '*.d.mts', '**/*.d.mts', '*.d.cts', '**/*.d.cts'],
+        })
+          .then((migrationScripts) => Promise.all(migrationScripts.map(async (script) => {
+            const mod = await import(script);
+
+            this.log.info({ mod }, 'loaded %s', script);
+
+            return mod.default || mod;
+          })));
+
+        await this.migrate('redis', files);
+      });
     }
   }
 
@@ -135,7 +154,6 @@ class Files extends Microfleet {
    * @return {Promise}
    */
   async connect() {
-    this.log.debug('started connecting');
     await super.connect();
     await this.initWebhook();
     await Promise.mapSeries(this.providers, (provider) => {
