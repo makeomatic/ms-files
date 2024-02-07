@@ -1,4 +1,5 @@
 const isDigitOnly = /[0-9]*/;
+const UINT_MIN_LENGTH = 21;
 
 // Extracts username from an alias
 module.exports = async function extractMetadata(alias) {
@@ -10,7 +11,7 @@ module.exports = async function extractMetadata(alias) {
   }
 
   // probably it's a tokenid
-  if (alias.length >= 39 && isDigitOnly.test(alias)) {
+  if (UINT_MIN_LENGTH <= alias.length && isDigitOnly.test(alias)) {
     return alias;
   }
 
