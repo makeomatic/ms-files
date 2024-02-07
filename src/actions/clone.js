@@ -5,7 +5,6 @@ const Promise = require('bluebird');
 
 const fetchData = require('../utils/fetch-data');
 const isProcessed = require('../utils/is-processed');
-const isUnlisted = require('../utils/is-unlisted');
 const { bustCache } = require('../utils/bust-cache');
 const stringify = require('../utils/stringify');
 const handlePipeline = require('../utils/pipeline-error');
