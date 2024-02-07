@@ -1,11 +1,10 @@
 const { ActionTransport } = require('@microfleet/plugin-router');
 const { v4: uuidv4 } = require('uuid');
+const md5 = require('md5');
 const Promise = require('bluebird');
 
 const fetchData = require('../utils/fetch-data');
 const isProcessed = require('../utils/is-processed');
-const isUnlisted = require('../utils/is-unlisted');
-const { assertClonable } = require('../utils/check-data');
 const { bustCache } = require('../utils/bust-cache');
 const stringify = require('../utils/stringify');
 const handlePipeline = require('../utils/pipeline-error');
@@ -52,9 +51,7 @@ async function cloneFile(lock, ctx, params) {
     .bind(ctx)
     .return(uploadKey)
     .then(fetchData)
-    .then(isProcessed)
-    .then(isUnlisted)
-    .then(assertClonable(meta));
+    .then(isProcessed);
 
   await lock.extend();
 
@@ -106,9 +103,24 @@ async function cloneFile(lock, ctx, params) {
   // add mark to the original file
   pipeline.hset(uploadKey, FILES_HAS_CLONES_FIELD, 1);
 
-  pipeline.hmset(newUploadKey, mergedData);
+  const provider = ctx.provider('remove', params);
+  const prefix = md5(username);
 
-  await await ctx.hook.call(ctx, 'files:clone:before-pipeline-exec', pipeline, mergedData);
+  const copyPromises = JSON.parse(mergedData.files).map(async (file) => {
+    const fileId = file.filename.split('/').pop();
+    const newFileName = [prefix, newUploadId, fileId].join('/');
+
+    await provider.copy(file.filename, newFileName);
+
+    return {
+      ...file,
+      filename: newFileName,
+      location: undefined,
+    };
+  });
+
+  mergedData.files = JSON.stringify(await Promise.all(copyPromises));
+  pipeline.hmset(newUploadKey, mergedData);
 
   handlePipeline(await pipeline.exec());
 
