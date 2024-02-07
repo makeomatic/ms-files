@@ -52,8 +52,7 @@ async function cloneFile(lock, ctx, params) {
     .bind(ctx)
     .return(uploadKey)
     .then(fetchData)
-    .then(isProcessed)
-    .then(isUnlisted);
+    .then(isProcessed);
 
   await lock.extend();
 
