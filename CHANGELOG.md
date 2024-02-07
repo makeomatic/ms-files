@@ -1,3 +1,10 @@
+# [19.1.0](https://github.com/makeomatic/ms-files/compare/v19.0.0...v19.1.0) (2024-02-07)
+
+
+### Features
+
+* remove references cleanup fields ([#311](https://github.com/makeomatic/ms-files/issues/311)) ([aff42f7](https://github.com/makeomatic/ms-files/commit/aff42f7f3b5b5f2074f1073254ee442c7bd59f64))
+
 # [19.0.0](https://github.com/makeomatic/ms-files/compare/v18.2.4...v19.0.0) (2024-01-22)
 
 
