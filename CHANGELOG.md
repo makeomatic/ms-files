@@ -1,3 +1,10 @@
+## [19.1.1](https://github.com/makeomatic/ms-files/compare/v19.1.0...v19.1.1) (2024-02-29)
+
+
+### Bug Fixes
+
+* custom alias to id regex ([#317](https://github.com/makeomatic/ms-files/issues/317)) ([a5cdbd7](https://github.com/makeomatic/ms-files/commit/a5cdbd7ab532d1423c4d51cec0d66ce5280fe452))
+
 # [19.1.0](https://github.com/makeomatic/ms-files/compare/v19.0.0...v19.1.0) (2024-02-07)
 
 
