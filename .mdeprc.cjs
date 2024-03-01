@@ -10,11 +10,7 @@ module.exports = exports = {
   test_framework: 'c8 ./node_modules/.bin/mocha',
   extras: {
     tester: {
-      user: `${uid}:${uid}`,
-      environment: {
-        NCONF_NAMESPACE: 'MS_FILES',
-        DB: process.env.DB,
-      },
+      user: `${uid}:${uid}`
     }
   },
   pre: 'rimraf ./coverage/*',
