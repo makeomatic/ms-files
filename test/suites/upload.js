@@ -925,4 +925,49 @@ describe('upload suite', function suite() {
       await assert.rejects(uploadResult, /invalid reference/);
     });
   });
+
+  describe('upload zip and pkpass should pass validation successfully ', function zipAndPkpassSuite() {
+    it('uploads zip', async function test() {
+      const message = {
+        files: [{
+          contentLength: 1024 * 1024 * 10, // 10 MB
+          contentType: 'application/zip',
+          md5Hash: '499da7aeb8324608ee96ef947ae8aefe',
+          type: 'zip',
+        }],
+        resumable: false,
+        temp: false,
+        unlisted: false,
+        uploadType: 'zip',
+        username: 'any',
+        meta: {
+          name: 'pass.zip',
+        },
+      };
+      await this.send(message);
+    });
+
+    it('uploads pkpass', async function test() {
+      const message = {
+        files: [{
+          contentLength: 1024 * 1024 * 10, // 10 MB
+          contentType: 'application/vnd.apple.pkpass',
+          md5Hash: '499da7aeb8324608ee96ef947ae8aefe',
+          type: 'pkpass',
+        }],
+        access: {
+          setPublic: true,
+        },
+        resumable: false,
+        temp: false,
+        unlisted: false,
+        uploadType: 'pkpass',
+        username: 'any',
+        meta: {
+          name: 'pass.zip',
+        },
+      };
+      await this.send(message);
+    });
+  });
 });

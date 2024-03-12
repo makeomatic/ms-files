@@ -5,6 +5,8 @@ const {
   stopService,
 } = require('../helpers/utils');
 
+const BUCKET_NAME = process.env.TEST_BUCKET;
+
 describe('upload panorama suite', function suite() {
   before('start service', startService);
   after('stop service', stopService);
@@ -39,13 +41,13 @@ describe('upload panorama suite', function suite() {
       strictEqual(response.contentLength, 4905352);
       strictEqual(response.status, '1');
       strictEqual(response.owner, 'v@makeomatic.ru');
-      strictEqual(response.bucket.startsWith('makeomatic-13123'), true);
+      strictEqual(response.bucket.startsWith(BUCKET_NAME), true);
       strictEqual(response.uploadType, 'pano-equirect');
 
       strictEqual(response.files[0].contentType, 'image/jpeg');
       strictEqual(response.files[0].contentLength, 2452676);
       strictEqual(response.files[0].md5Hash !== undefined, true);
-      strictEqual(response.files[0].bucket.startsWith('makeomatic-13123'), true);
+      strictEqual(response.files[0].bucket.startsWith(BUCKET_NAME), true);
       strictEqual(response.files[0].type, 'c-preview');
       strictEqual(response.files[0].filename !== undefined, true);
       strictEqual(response.files[0].location !== undefined, true);
@@ -53,7 +55,7 @@ describe('upload panorama suite', function suite() {
       strictEqual(response.files[1].contentType, 'image/jpeg');
       strictEqual(response.files[1].contentLength, 2452676);
       strictEqual(response.files[1].md5Hash !== undefined, true);
-      strictEqual(response.files[1].bucket.startsWith('makeomatic-13123'), true);
+      strictEqual(response.files[1].bucket.startsWith(BUCKET_NAME), true);
       strictEqual(response.files[1].type, 'pano-equirect-image');
       strictEqual(response.files[1].filename !== undefined, true);
       strictEqual(response.files[1].location !== undefined, true);
@@ -182,13 +184,13 @@ describe('upload panorama suite', function suite() {
       strictEqual(response.contentLength, 17168732);
       strictEqual(response.status, '1');
       strictEqual(response.owner, 'v@makeomatic.ru');
-      strictEqual(response.bucket.startsWith('makeomatic-13123'), true);
+      strictEqual(response.bucket.startsWith(BUCKET_NAME), true);
       strictEqual(response.uploadType, 'pano-cubemap');
 
       strictEqual(response.files[0].contentType, 'image/jpeg');
       strictEqual(response.files[0].contentLength, 2452676);
       strictEqual(response.files[0].md5Hash !== undefined, true);
-      strictEqual(response.files[0].bucket.startsWith('makeomatic-13123'), true);
+      strictEqual(response.files[0].bucket.startsWith(BUCKET_NAME), true);
       strictEqual(response.files[0].type, 'c-preview');
       strictEqual(response.files[0].filename !== undefined, true);
       strictEqual(response.files[0].location !== undefined, true);
@@ -196,7 +198,7 @@ describe('upload panorama suite', function suite() {
       strictEqual(response.files[1].contentType, 'image/jpeg');
       strictEqual(response.files[1].contentLength, 2452676);
       strictEqual(response.files[1].md5Hash !== undefined, true);
-      strictEqual(response.files[1].bucket.startsWith('makeomatic-13123'), true);
+      strictEqual(response.files[1].bucket.startsWith(BUCKET_NAME), true);
       strictEqual(response.files[1].type, 'pano-cubemap-image');
       strictEqual(response.files[1].filename !== undefined, true);
       strictEqual(response.files[1].location !== undefined, true);
@@ -204,7 +206,7 @@ describe('upload panorama suite', function suite() {
       strictEqual(response.files[2].contentType, 'image/jpeg');
       strictEqual(response.files[2].contentLength, 2452676);
       strictEqual(response.files[2].md5Hash !== undefined, true);
-      strictEqual(response.files[2].bucket.startsWith('makeomatic-13123'), true);
+      strictEqual(response.files[2].bucket.startsWith(BUCKET_NAME), true);
       strictEqual(response.files[2].type, 'pano-cubemap-image');
       strictEqual(response.files[2].filename !== undefined, true);
       strictEqual(response.files[2].location !== undefined, true);
@@ -212,7 +214,7 @@ describe('upload panorama suite', function suite() {
       strictEqual(response.files[3].contentType, 'image/jpeg');
       strictEqual(response.files[3].contentLength, 2452676);
       strictEqual(response.files[3].md5Hash !== undefined, true);
-      strictEqual(response.files[3].bucket.startsWith('makeomatic-13123'), true);
+      strictEqual(response.files[3].bucket.startsWith(BUCKET_NAME), true);
       strictEqual(response.files[3].type, 'pano-cubemap-image');
       strictEqual(response.files[3].filename !== undefined, true);
       strictEqual(response.files[3].location !== undefined, true);
@@ -220,7 +222,7 @@ describe('upload panorama suite', function suite() {
       strictEqual(response.files[4].contentType, 'image/jpeg');
       strictEqual(response.files[4].contentLength, 2452676);
       strictEqual(response.files[4].md5Hash !== undefined, true);
-      strictEqual(response.files[4].bucket.startsWith('makeomatic-13123'), true);
+      strictEqual(response.files[4].bucket.startsWith(BUCKET_NAME), true);
       strictEqual(response.files[4].type, 'pano-cubemap-image');
       strictEqual(response.files[4].filename !== undefined, true);
       strictEqual(response.files[4].location !== undefined, true);
@@ -228,7 +230,7 @@ describe('upload panorama suite', function suite() {
       strictEqual(response.files[5].contentType, 'image/jpeg');
       strictEqual(response.files[5].contentLength, 2452676);
       strictEqual(response.files[5].md5Hash !== undefined, true);
-      strictEqual(response.files[5].bucket.startsWith('makeomatic-13123'), true);
+      strictEqual(response.files[5].bucket.startsWith(BUCKET_NAME), true);
       strictEqual(response.files[5].type, 'pano-cubemap-image');
       strictEqual(response.files[5].filename !== undefined, true);
       strictEqual(response.files[5].location !== undefined, true);
@@ -236,7 +238,7 @@ describe('upload panorama suite', function suite() {
       strictEqual(response.files[6].contentType, 'image/jpeg');
       strictEqual(response.files[6].contentLength, 2452676);
       strictEqual(response.files[6].md5Hash !== undefined, true);
-      strictEqual(response.files[6].bucket.startsWith('makeomatic-13123'), true);
+      strictEqual(response.files[6].bucket.startsWith(BUCKET_NAME), true);
       strictEqual(response.files[6].type, 'pano-cubemap-image');
       strictEqual(response.files[6].filename !== undefined, true);
       strictEqual(response.files[6].location !== undefined, true);
