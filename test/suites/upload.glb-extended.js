@@ -5,6 +5,8 @@ const {
   stopService,
 } = require('../helpers/utils');
 
+const BUCKET_NAME = process.env.TEST_BUCKET;
+
 describe('upload glb-extended suite', function suite() {
   before('start service', startService);
   after('stop service', stopService);
@@ -38,13 +40,13 @@ describe('upload glb-extended suite', function suite() {
     strictEqual(response.contentLength, 4905352);
     strictEqual(response.status, '1');
     strictEqual(response.owner, 'v@makeomatic.ru');
-    strictEqual(response.bucket.startsWith('makeomatic-13123'), true);
+    strictEqual(response.bucket.startsWith(BUCKET_NAME), true);
     strictEqual(response.uploadType, 'glb-extended');
 
     strictEqual(response.files[0].contentType, 'image/jpeg');
     strictEqual(response.files[0].contentLength, 2452676);
     strictEqual(response.files[0].md5Hash !== undefined, true);
-    strictEqual(response.files[0].bucket.startsWith('makeomatic-13123'), true);
+    strictEqual(response.files[0].bucket.startsWith(BUCKET_NAME), true);
     strictEqual(response.files[0].type, 'c-preview');
     strictEqual(response.files[0].filename !== undefined, true);
     strictEqual(response.files[0].filename.endsWith('.jpeg'), true);
@@ -54,7 +56,7 @@ describe('upload glb-extended suite', function suite() {
     strictEqual(response.files[1].contentType, 'model/gltf-binary');
     strictEqual(response.files[1].contentLength, 2452676);
     strictEqual(response.files[1].md5Hash !== undefined, true);
-    strictEqual(response.files[1].bucket.startsWith('makeomatic-13123'), true);
+    strictEqual(response.files[1].bucket.startsWith(BUCKET_NAME), true);
     strictEqual(response.files[1].type, 'c-gltf');
     strictEqual(response.files[1].filename !== undefined, true);
     strictEqual(response.files[1].filename.endsWith('.glb'), true);
@@ -98,13 +100,13 @@ describe('upload glb-extended suite', function suite() {
     strictEqual(response.contentLength, 7358028);
     strictEqual(response.status, '1');
     strictEqual(response.owner, 'v@makeomatic.ru');
-    strictEqual(response.bucket.startsWith('makeomatic-13123'), true);
+    strictEqual(response.bucket.startsWith(BUCKET_NAME), true);
     strictEqual(response.uploadType, 'glb-extended');
 
     strictEqual(response.files[0].contentType, 'image/jpeg');
     strictEqual(response.files[0].contentLength, 2452676);
     strictEqual(response.files[0].md5Hash !== undefined, true);
-    strictEqual(response.files[0].bucket.startsWith('makeomatic-13123'), true);
+    strictEqual(response.files[0].bucket.startsWith(BUCKET_NAME), true);
     strictEqual(response.files[0].type, 'c-preview');
     strictEqual(response.files[0].filename !== undefined, true);
     strictEqual(response.files[0].location !== undefined, true);
@@ -112,7 +114,7 @@ describe('upload glb-extended suite', function suite() {
     strictEqual(response.files[1].contentType, 'model/gltf-binary');
     strictEqual(response.files[1].contentLength, 2452676);
     strictEqual(response.files[1].md5Hash !== undefined, true);
-    strictEqual(response.files[1].bucket.startsWith('makeomatic-13123'), true);
+    strictEqual(response.files[1].bucket.startsWith(BUCKET_NAME), true);
     strictEqual(response.files[1].type, 'c-gltf');
     strictEqual(response.files[1].filename !== undefined, true);
     strictEqual(response.files[1].location !== undefined, true);
@@ -120,7 +122,7 @@ describe('upload glb-extended suite', function suite() {
     strictEqual(response.files[2].contentType, 'model/vnd.usdz+zip');
     strictEqual(response.files[2].contentLength, 2452676);
     strictEqual(response.files[2].md5Hash !== undefined, true);
-    strictEqual(response.files[2].bucket.startsWith('makeomatic-13123'), true);
+    strictEqual(response.files[2].bucket.startsWith(BUCKET_NAME), true);
     strictEqual(response.files[2].type, 'c-usdz');
     strictEqual(response.files[2].filename !== undefined, true);
     strictEqual(response.files[2].filename.endsWith('.usdz'), true);
@@ -155,7 +157,7 @@ describe('upload glb-extended suite', function suite() {
       {
         name: 'HttpStatusError',
         // eslint-disable-next-line max-len
-        message: 'upload validation failed: data/files/0/type must be equal to constant, data/files/0/contentType must be equal to one of the allowed values, data/files/1/type must be equal to constant, data/files must contain at least 1 and no more than 1 valid item(s), data must match "then" schema, data/files/1 must have required property \'contentEncoding\', data/files/1 must have required property \'decompressedLength\', data/files/1 must have required property \'source-sha256\', data/files/1/type must be equal to constant, data/files/1/contentType must be equal to constant, data/files/1/type must be equal to one of the allowed values, data/files/1/contentType must be equal to one of the allowed values, data/files/1/contentType must be equal to one of the allowed values, data/files/1/type must be equal to constant, data/files/1/contentType must be equal to one of the allowed values, data/files/1/contentLength must be <= 2097152, data/files/1/type must be equal to constant, data/files/1/contentType must be equal to one of the allowed values, data/files/1/type must be equal to constant, data/files/1/contentType must be equal to one of the allowed values, data/files/1/type must match pattern "^c-pack\\d+$", data/files/1/contentType must match pattern "^image/vnd.cappasity(\\+[a-z0-9]*)?$", data/files/1/type must be equal to constant, data/files/1/contentType must be equal to constant, data/files/1/type must be equal to constant, data/files/1/type must be equal to constant, data/files/1/contentType must be equal to one of the allowed values, data/files/1/type must be equal to constant, data/files/1/contentType must be equal to constant, data/files/1/type must be equal to constant, data/files/1/contentType must be equal to constant, data/files/1/type must be equal to constant, data/files/1/contentType must be equal to constant, data/files/1/type must be equal to constant, data/files/1/contentType must be equal to constant, data/files/1/type must be equal to constant, data/files/1/contentType must be equal to constant, data/files/1/type must be equal to constant, data/files/1/contentType must be equal to constant, data/files/1 must match a schema in anyOf',
+        message: 'upload validation failed: data/files/0/type must be equal to constant, data/files/0/contentType must be equal to one of the allowed values, data/files/1/type must be equal to constant, data/files must contain at least 1 and no more than 1 valid item(s), data must match "then" schema, data/files/1 must have required property \'contentEncoding\', data/files/1 must have required property \'decompressedLength\', data/files/1 must have required property \'source-sha256\', data/files/1/type must be equal to constant, data/files/1/contentType must be equal to constant, data/files/1/type must be equal to one of the allowed values, data/files/1/contentType must be equal to one of the allowed values, data/files/1/contentType must be equal to one of the allowed values, data/files/1/type must be equal to constant, data/files/1/contentType must be equal to one of the allowed values, data/files/1/contentLength must be <= 2097152, data/files/1/type must be equal to constant, data/files/1/contentType must be equal to one of the allowed values, data/files/1/type must be equal to constant, data/files/1/contentType must be equal to one of the allowed values, data/files/1/type must match pattern "^c-pack\\d+$", data/files/1/contentType must match pattern "^image/vnd.cappasity(\\+[a-z0-9]*)?$", data/files/1/type must be equal to constant, data/files/1/contentType must be equal to constant, data/files/1/type must be equal to constant, data/files/1/type must be equal to constant, data/files/1/contentType must be equal to one of the allowed values, data/files/1/type must be equal to constant, data/files/1/contentType must be equal to constant, data/files/1/type must be equal to constant, data/files/1/contentType must be equal to constant, data/files/1/type must be equal to constant, data/files/1/contentType must be equal to constant, data/files/1/type must be equal to constant, data/files/1/contentType must be equal to constant, data/files/1/type must be equal to constant, data/files/1/contentType must be equal to constant, data/files/1/type must be equal to constant, data/files/1/contentType must be equal to constant, data/files/1/type must be equal to constant, data/files/1/contentType must be equal to constant, data/files/1/type must be equal to constant, data/files/1/contentType must be equal to constant, data/files/1 must match a schema in anyOf',
       }
     );
   });
@@ -259,13 +261,13 @@ describe('upload glb-extended suite', function suite() {
     strictEqual(response.contentLength, 4905352);
     strictEqual(response.status, '1');
     strictEqual(response.owner, 'v@makeomatic.ru');
-    strictEqual(response.bucket.startsWith('makeomatic-13123'), true);
+    strictEqual(response.bucket.startsWith(BUCKET_NAME), true);
     strictEqual(response.uploadType, 'glb-extended');
 
     strictEqual(response.files[0].contentType, 'image/png');
     strictEqual(response.files[0].contentLength, 2452676);
     strictEqual(response.files[0].md5Hash !== undefined, true);
-    strictEqual(response.files[0].bucket.startsWith('makeomatic-13123'), true);
+    strictEqual(response.files[0].bucket.startsWith(BUCKET_NAME), true);
     strictEqual(response.files[0].type, 'c-preview');
     strictEqual(response.files[0].filename !== undefined, true);
     strictEqual(response.files[0].filename.endsWith('.png'), true);
