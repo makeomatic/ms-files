@@ -27,7 +27,9 @@
           { "$ref": "common#/definitions/c-nn-color-source" },
           { "$ref": "common#/definitions/c-nn-mask-source" },
           { "$ref": "common#/definitions/c-orig-color" },
-          { "$ref": "common#/definitions/c-orig-masks" }
+          { "$ref": "common#/definitions/c-orig-masks" },
+          { "$ref": "common#/definitions/zip" },
+          { "$ref": "common#/definitions/pkpass" }
         ]
       }
     },
@@ -102,7 +104,9 @@
         "pdf",
         "pano-equirect",
         "pano-cubemap",
-        "glb-extended"
+        "glb-extended",
+        "zip",
+        "pkpass"
       ]
     },
     "directOnly": {

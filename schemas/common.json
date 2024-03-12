@@ -615,6 +615,64 @@
         }
       }
     },
+    "zip": {
+      "type": "object",
+      "required": [
+        "type",
+        "contentType",
+        "contentLength",
+        "md5Hash"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "type": "string",
+          "const": "zip"
+        },
+        "contentType": {
+          "type": "string",
+          "const": "application/zip"
+        },
+        "contentLength": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 20000000
+        },
+        "md5Hash": {
+          "type": "string",
+          "pattern": "^[0-9A-Fa-f]{32}$"
+        }
+      }
+    },
+    "pkpass": {
+      "type": "object",
+      "required": [
+        "type",
+        "contentType",
+        "contentLength",
+        "md5Hash"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "type": "string",
+          "const": "pkpass"
+        },
+        "contentType": {
+          "type": "string",
+          "const": "application/vnd.apple.pkpass"
+        },
+        "contentLength": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 20000000
+        },
+        "md5Hash": {
+          "type": "string",
+          "pattern": "^[0-9A-Fa-f]{32}$"
+        }
+      }
+    },
     "arbitrary": {
       "type": "object",
       "required": [
