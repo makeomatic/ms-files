@@ -1,3 +1,10 @@
+# [19.2.0](https://github.com/makeomatic/ms-files/compare/v19.1.1...v19.2.0) (2024-03-12)
+
+
+### Features
+
+* zip and pkpass format files ([#318](https://github.com/makeomatic/ms-files/issues/318)) ([d75c9a4](https://github.com/makeomatic/ms-files/commit/d75c9a41f467a9773b86f0cd4ef2fdceedbab7ce))
+
 ## [19.1.1](https://github.com/makeomatic/ms-files/compare/v19.1.0...v19.1.1) (2024-02-29)
 
 
