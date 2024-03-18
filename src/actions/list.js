@@ -43,6 +43,40 @@ const k404Error = new Error('ELIST404');
 /**
  * Internal functions
  */
+
+const numberOrInf = (a, b, infRange) => {
+  if (typeof a === 'number') {
+    return a;
+  }
+
+  if (typeof b === 'number') {
+    return b;
+  }
+
+  return `${infRange}inf`;
+};
+
+const numericQueryRange = (actionTypeOrValue) => {
+  // eslint-disable-next-line no-nested-ternary
+  const lowerRange = actionTypeOrValue.gte || actionTypeOrValue.gt
+    ? (
+      actionTypeOrValue.gte
+        ? `${actionTypeOrValue.gte}`
+        : `(${actionTypeOrValue.gt}`
+    )
+    : '-inf';
+  // eslint-disable-next-line no-nested-ternary
+  const upperRange = actionTypeOrValue.lte || actionTypeOrValue.lt
+    ? (
+      actionTypeOrValue.lte
+        ? `${actionTypeOrValue.lte}`
+        : `(${actionTypeOrValue.lt}`
+    )
+    : '+inf';
+
+  return { upperRange, lowerRange };
+};
+
 async function interstore(ctx) {
   const { isPublic, temp, tags, redis, hasTags, uploadedAt, order, maxInterval, username, modelType } = ctx;
 
@@ -78,27 +112,30 @@ async function interstore(ctx) {
       uploadedAtIndex = FILES_INDEX_UAT;
     }
 
-    const lte = typeof uploadedAt.lte === 'number' ? uploadedAt.lte : '+inf';
-    const gte = typeof uploadedAt.gte === 'number' ? uploadedAt.gte : '-inf';
+    const lte = numberOrInf(uploadedAt.lte, uploadedAt.lt, '+');
+    const gte = numberOrInf(uploadedAt.gte, uploadedAt.gt, '-');
+
     const now = Date.now();
 
     // validation section to ensure we have interval that arent too large
     if (lte === '+inf' && gte === '-inf') {
-      throw new HttpStatusError(400, `uploadedAt.lte & uploadedAt.gte need to have a specific interval no more than ${maxInterval} ms`);
+      throw new HttpStatusError(400, `uploadedAt.{lte|lt} & uploadedAt.{gte|gt} need to have a specific interval no more than ${maxInterval} ms`);
     } else if (gte >= now) {
-      throw new HttpStatusError(400, 'uploadedAt.gte needs to be in the past');
+      throw new HttpStatusError(400, 'uploadedAt.{gte|gt} needs to be in the past');
     } else if (lte === '+inf' && now - gte > maxInterval) {
-      throw new HttpStatusError(400, `uploadedAt.gte needs to be greater than Now() - ${maxInterval} ms`);
+      throw new HttpStatusError(400, `uploadedAt.{gte|gt} needs to be greater than Now() - ${maxInterval} ms`);
     } else if (gte === '-inf') {
-      throw new HttpStatusError(400, 'do not use unbound uploadedAt.lte');
+      throw new HttpStatusError(400, 'do not use unbound uploadedAt.{lte|lt}');
     } else if (lte - gte > maxInterval) {
-      throw new HttpStatusError(400, `uploadedAt.lte - uploadedAt.gte must be less than ${maxInterval}`);
+      throw new HttpStatusError(400, `uploadedAt.{lte|lt} - uploadedAt.{gte|gt} must be less than ${maxInterval}`);
     }
 
+    const { upperRange, lowerRange } = numericQueryRange(uploadedAt);
+
     uploadedAtRequest = order === 'DESC'
-      ? ['zrevrangebyscore', uploadedAtIndex, lte, gte]
-      : ['zrangebyscore', uploadedAtIndex, gte, lte];
-    uploadedAtIndexInterstore = `${uploadedAtIndex}!${order}!${lte}!${gte}`;
+      ? ['zrevrangebyscore', uploadedAtIndex, upperRange, lowerRange]
+      : ['zrangebyscore', uploadedAtIndex, lowerRange, upperRange];
+    uploadedAtIndexInterstore = `${uploadedAtIndex}!${order}!${upperRange}!${lowerRange}`;
   }
 
   if (!hasTags && !uploadedAtIndex) {
@@ -376,9 +413,8 @@ async function redisSearch(ctx) {
       } else {
         query.push(`@${propName}:[${actionTypeOrValue} ${actionTypeOrValue}]`);
       }
-    } else if (actionTypeOrValue.gte || actionTypeOrValue.lte) {
-      const lowerRange = actionTypeOrValue.gte || '-inf';
-      const upperRange = actionTypeOrValue.lte || '+inf';
+    } else if (actionTypeOrValue.gte || actionTypeOrValue.lte || actionTypeOrValue.gt || actionTypeOrValue.lt) {
+      const { lowerRange, upperRange } = numericQueryRange(actionTypeOrValue);
       query.push(`@${propName}:[${lowerRange} ${upperRange}]`);
     } else if (actionTypeOrValue.exists !== undefined) {
       if (numericProps.includes(propName)) {
@@ -434,9 +470,8 @@ async function redisSearch(ctx) {
   }
 
   if (ctx.uploadedAt) {
-    const lte = typeof ctx.uploadedAt.lte === 'number' ? ctx.uploadedAt.lte : '+inf';
-    const gte = typeof ctx.uploadedAt.gte === 'number' ? ctx.uploadedAt.gte : '-inf';
-    args.push('FILTER', FILES_UPLOADED_AT_FIELD, gte, lte);
+    const { lowerRange, upperRange } = numericQueryRange(ctx.uploadedAt);
+    args.push('FILTER', FILES_UPLOADED_AT_FIELD, lowerRange, upperRange);
   }
 
   if (params.length > 0) {

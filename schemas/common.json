@@ -1077,7 +1077,7 @@
               "minLength": 1,
               "maxLength": 50
             },
-            "^(gte|lte)$": {
+            "^(gte|lte|gt|lt)$": {
               "type": "number"
             },
             "^(exists|isempty)$": {

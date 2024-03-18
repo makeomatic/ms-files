@@ -546,6 +546,9 @@ for (const redisSearchEnabled of [true, false].values()) {
       [{ gte: monthAgo.valueOf() }, [['isSameOrAfter', monthAgo]]],
       [{ gte: monthAgo.valueOf(), lte: dayAgo.valueOf() }, [['isSameOrAfter', monthAgo], ['isSameOrBefore', dayAgo]]],
       [{ gte: monthAgo.clone().add(1, 'day').valueOf(), lte: dayAgo.valueOf() }, [['isSameOrBefore', dayAgo]]],
+      [{ gt: monthAgo.valueOf() }, [['isAfter', monthAgo]]],
+      [{ gt: monthAgo.valueOf(), lt: dayAgo.valueOf() }, [['isAfter', monthAgo], ['isBefore', dayAgo]]],
+      [{ gt: monthAgo.clone().add(1, 'day').valueOf(), lt: dayAgo.valueOf() }, [['isBefore', dayAgo]]],
     ];
 
     const errors = [
