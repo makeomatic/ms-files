@@ -1,3 +1,10 @@
+## [19.2.1](https://github.com/makeomatic/ms-files/compare/v19.2.0...v19.2.1) (2024-03-18)
+
+
+### Bug Fixes
+
+* list action gt/lt queries ([#319](https://github.com/makeomatic/ms-files/issues/319)) ([6681cec](https://github.com/makeomatic/ms-files/commit/6681cec0865fbd52ec2b18d72324787fb9344a2e))
+
 # [19.2.0](https://github.com/makeomatic/ms-files/compare/v19.1.1...v19.2.0) (2024-03-12)
 
 
