@@ -575,13 +575,6 @@ for (const redisSearchEnabled of [true, false].values()) {
             data.files.forEach((file) => {
               assert.equal(file.owner, username);
               for (const [fn, compare] of verification.values()) {
-                console.debug({
-                  uploadedAt: +file[FILES_UPLOADED_AT_FIELD],
-                  compare,
-                  fn,
-                  compareStamp: compare.valueOf(),
-                  result: moment(+file[FILES_UPLOADED_AT_FIELD])[fn](compare),
-                });
                 assert(moment(+file[FILES_UPLOADED_AT_FIELD])[fn](compare), `${compare} ${fn} ${moment(+file[FILES_UPLOADED_AT_FIELD])}`);
               }
             });
