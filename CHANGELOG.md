@@ -1,3 +1,10 @@
+## [19.2.2](https://github.com/makeomatic/ms-files/compare/v19.2.1...v19.2.2) (2024-03-28)
+
+
+### Bug Fixes
+
+* files.list redisearch no filter query ([#320](https://github.com/makeomatic/ms-files/issues/320)) ([bde076a](https://github.com/makeomatic/ms-files/commit/bde076aa5c8532a7b396c5d9439ec1a00abe5551))
+
 ## [19.2.1](https://github.com/makeomatic/ms-files/compare/v19.2.0...v19.2.1) (2024-03-18)
 
 
