@@ -391,8 +391,9 @@ async function redisSearch(ctx) {
   }
 
   const { filter } = ctx;
+  const rebuiltFilter = ctx.uploadedAt ? { ...filter, uploadedAt: ctx.uploadedAt } : filter;
 
-  for (const [_propName, actionTypeOrValue] of Object.entries({ ...filter, uploadedAt: ctx.uploadedAt })) {
+  for (const [_propName, actionTypeOrValue] of Object.entries(rebuiltFilter)) {
     let propName = _propName;
     if (propName === '#') {
       propName = FILES_ID_FIELD;
