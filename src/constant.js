@@ -73,6 +73,7 @@ module.exports = exports = Object.setPrototypeOf({
   FILES_REFERENCES_FIELD: 'references',
   FILES_IS_REFERENCED_FIELD: 'isReferenced',
   FILES_IS_IN_SHOWROOM_FIELD: 'isInShowroom',
+  FILES_CATALOG_FIELD: 'catalog',
 
   // metatype of file
   FILES_TYPE_FIELD: 'type',

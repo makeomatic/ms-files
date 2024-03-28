@@ -36,6 +36,7 @@ const {
   FILES_NFT_COLLECTION_FIELD,
   FILES_IS_CLONE_FIELD,
   FILES_LIST_SEARCH,
+  FILES_CATALOG_FIELD,
 } = require('../constant');
 
 const k404Error = new Error('ELIST404');
@@ -352,6 +353,10 @@ async function redisSearch(ctx) {
   if (ctx.isPublic) {
     query.push(`@${FILES_PUBLIC_FIELD}:{1}`);
     query.push(`-@${FILES_DIRECT_ONLY_FIELD}:[1 1]`);
+  }
+
+  if (ctx[FILES_CATALOG_FIELD]) {
+    query.push(`@${FILES_CATALOG_FIELD}:{${ctx[FILES_CATALOG_FIELD].join(' | ')}`);
   }
 
   if (ctx.hasTags) {
