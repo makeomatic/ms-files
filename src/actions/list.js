@@ -393,7 +393,7 @@ async function redisSearch(ctx) {
 
   const { filter } = ctx;
 
-  for (const [_propName, actionTypeOrValue] of Object.entries(filter)) {
+  for (const [_propName, actionTypeOrValue] of Object.entries({ ...filter, uploadedAt: ctx.uploadedAt })) {
     let propName = _propName;
     if (propName === '#') {
       propName = FILES_ID_FIELD;
@@ -467,11 +467,6 @@ async function redisSearch(ctx) {
     args.push(query.join(' '));
   } else {
     args.push('*');
-  }
-
-  if (ctx.uploadedAt) {
-    const { lowerRange, upperRange } = numericQueryRange(ctx.uploadedAt);
-    args.push('FILTER', FILES_UPLOADED_AT_FIELD, lowerRange, upperRange);
   }
 
   if (params.length > 0) {
