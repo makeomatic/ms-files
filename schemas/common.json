@@ -25,8 +25,12 @@
       "maxLength": 75
     },
     "filename": {
-      "type": "string",
-      "pattern": "^[0-9A-Fa-f]{32}\/[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-4[0-9A-Fa-f]{3}-[89ABab][0-9A-Fa-f]{3}-[0-9A-Fa-f]{12}\/[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-4[0-9A-Fa-f]{3}-[89ABab][0-9A-Fa-f]{3}-[0-9A-Fa-f]{12}"
+      "oneOf": [{
+        "type": "string",
+        "pattern": "^[0-9A-Fa-f]{32}\/[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-4[0-9A-Fa-f]{3}-[89ABab][0-9A-Fa-f]{3}-[0-9A-Fa-f]{12}\/[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-4[0-9A-Fa-f]{3}-[89ABab][0-9A-Fa-f]{3}-[0-9A-Fa-f]{12}"
+      }, {
+        "$ref": "#/definitions/md5Hash"
+      }]
     },
     "controlsData": {
       "type": "array",
@@ -164,8 +168,7 @@
           "const": "gzip"
         },
         "md5Hash": {
-          "type": "string",
-          "pattern": "^[0-9A-Fa-f]{32}$"
+          "$ref": "#/definitions/md5Hash"
         },
         "source-sha256": {
           "type": "string",
@@ -219,8 +222,7 @@
           }
         },
         "md5Hash": {
-          "type": "string",
-          "pattern": "^[0-9A-Fa-f]{32}$"
+          "$ref": "#/definitions/md5Hash"
         },
         "platforms": {
           "$ref": "#/definitions/platforms"
@@ -251,8 +253,7 @@
           "maximum": 104857600
         },
         "md5Hash": {
-          "type": "string",
-          "pattern": "^[0-9A-Fa-f]{32}$"
+          "$ref": "#/definitions/md5Hash"
         },
         "platforms": {
           "$ref": "#/definitions/platforms"
@@ -288,8 +289,7 @@
           "maximum": 104857600
         },
         "md5Hash": {
-          "type": "string",
-          "pattern": "^[0-9A-Fa-f]{32}$"
+          "$ref": "#/definitions/md5Hash"
         },
         "platforms": {
           "$ref": "#/definitions/platforms"
@@ -323,8 +323,7 @@
           "maximum": 314572800
         },
         "md5Hash": {
-          "type": "string",
-          "pattern": "^[0-9A-Fa-f]{32}$"
+          "$ref": "#/definitions/md5Hash"
         },
         "platforms": {
           "$ref": "#/definitions/platforms"
@@ -355,8 +354,7 @@
           "maximum": 104857600
         },
         "md5Hash": {
-          "type": "string",
-          "pattern": "^[0-9A-Fa-f]{32}$"
+          "$ref": "#/definitions/md5Hash"
         },
         "platforms": {
           "$ref": "#/definitions/platforms"
@@ -387,8 +385,7 @@
           "maximum": 104857600
         },
         "md5Hash": {
-          "type": "string",
-          "pattern": "^[0-9A-Fa-f]{32}$"
+          "$ref": "#/definitions/md5Hash"
         },
         "platforms": {
           "$ref": "#/definitions/platforms"
@@ -419,8 +416,7 @@
           "maximum": 104857600
         },
         "md5Hash": {
-          "type": "string",
-          "pattern": "^[0-9A-Fa-f]{32}$"
+          "$ref": "#/definitions/md5Hash"
         },
         "platforms": {
           "$ref": "#/definitions/platforms"
@@ -451,8 +447,7 @@
           "maximum": 104857600
         },
         "md5Hash": {
-          "type": "string",
-          "pattern": "^[0-9A-Fa-f]{32}$"
+          "$ref": "#/definitions/md5Hash"
         },
         "platforms": {
           "$ref": "#/definitions/platforms"
@@ -483,8 +478,7 @@
           "maximum": 104857600
         },
         "md5Hash": {
-          "type": "string",
-          "pattern": "^[0-9A-Fa-f]{32}$"
+          "$ref": "#/definitions/md5Hash"
         },
         "platforms": {
           "$ref": "#/definitions/platforms"
@@ -515,8 +509,7 @@
           "maximum": 104857600
         },
         "md5Hash": {
-          "type": "string",
-          "pattern": "^[0-9A-Fa-f]{32}$"
+          "$ref": "#/definitions/md5Hash"
         },
         "platforms": {
           "$ref": "#/definitions/platforms"
@@ -547,8 +540,7 @@
           "maximum": 104857600
         },
         "md5Hash": {
-          "type": "string",
-          "pattern": "^[0-9A-Fa-f]{32}$"
+          "$ref": "#/definitions/md5Hash"
         },
         "platforms": {
           "$ref": "#/definitions/platforms"
@@ -582,8 +574,7 @@
           "maximum": 2097152
         },
         "md5Hash": {
-          "type": "string",
-          "pattern": "^[0-9A-Fa-f]{32}$"
+          "$ref": "#/definitions/md5Hash"
         }
       }
     },
@@ -621,8 +612,7 @@
           "maximum": 20000000
         },
         "md5Hash": {
-          "type": "string",
-          "pattern": "^[0-9A-Fa-f]{32}$"
+          "$ref": "#/definitions/md5Hash"
         }
       }
     },
@@ -650,8 +640,7 @@
           "maximum": 20000000
         },
         "md5Hash": {
-          "type": "string",
-          "pattern": "^[0-9A-Fa-f]{32}$"
+          "$ref": "#/definitions/md5Hash"
         }
       }
     },
@@ -679,8 +668,7 @@
           "maximum": 20000000
         },
         "md5Hash": {
-          "type": "string",
-          "pattern": "^[0-9A-Fa-f]{32}$"
+          "$ref": "#/definitions/md5Hash"
         }
       }
     },
@@ -713,8 +701,7 @@
           "maximum": 104857600
         },
         "md5Hash": {
-          "type": "string",
-          "pattern": "^[0-9A-Fa-f]{32}$"
+          "$ref": "#/definitions/md5Hash"
         },
         "contentEncoding": {
           "type": "string",
@@ -751,8 +738,7 @@
           "maximum": 100000000
         },
         "md5Hash": {
-          "type": "string",
-          "pattern": "^[0-9A-Fa-f]{32}$"
+          "$ref": "#/definitions/md5Hash"
         }
       }
     },
@@ -1178,8 +1164,7 @@
           "maximum": 20971520
         },
         "md5Hash": {
-          "type": "string",
-          "pattern": "^[0-9A-Fa-f]{32}$"
+          "$ref": "#/definitions/md5Hash"
         }
       }
     },
@@ -1210,8 +1195,7 @@
           "maximum": 20971520
         },
         "md5Hash": {
-          "type": "string",
-          "pattern": "^[0-9A-Fa-f]{32}$"
+          "$ref": "#/definitions/md5Hash"
         }
       }
     },
@@ -1225,6 +1209,10 @@
           "const": "c-preview"
         }
       }
+    },
+    "md5Hash": {
+      "type": "string",
+      "pattern": "^[0-9A-Fa-f]{32}$"
     }
   }
 }
