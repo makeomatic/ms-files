@@ -1,11 +1,26 @@
 // this file contains logic for selecting transport for uploading
 // input is upload opts
-const { FILES_BUCKET_FIELD, FILES_TEMP_FIELD } = require('../constant');
+const {
+  FILES_BUCKET_FIELD,
+  FILES_TEMP_FIELD,
+  UPLOAD_TYPE_CLOUDFLARE_STREAM,
+} = require('../constant');
+const ProviderCloudflareStream = require('../providers/cloudflare-stream');
 
 // action handler
 // if file is temporary, use provider index `1`
 // if it's permanent - use index 0
-function uploadSelector({ temp }) {
+function uploadSelector({ temp, uploadType }) {
+  if (uploadType === UPLOAD_TYPE_CLOUDFLARE_STREAM) {
+    const cloudflareStream = this.providers.find((provider) => provider instanceof ProviderCloudflareStream);
+
+    if (!cloudflareStream) {
+      throw new Error(`Missing provider for ${UPLOAD_TYPE_CLOUDFLARE_STREAM}`);
+    }
+
+    return cloudflareStream;
+  }
+
   return this.providers[temp ? 1 : 0];
 }
 
