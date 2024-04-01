@@ -104,7 +104,7 @@ async function initFileUpload({ params }) {
   const { files } = params;
   const parts = await Promise.map(files, async ({ md5Hash, type, ...rest }) => {
     // generate filename
-    const filename = [
+    let filename = [
       // name
       [prefix, uploadId, uuidv4()].join('/'),
       // extension
@@ -152,21 +152,29 @@ async function initFileUpload({ params }) {
       if (provider.rename) {
         // https://cloud.google.com/storage/docs/access-control/signed-urls#signing-resumable
         const initUploadURL = await createSignedURL('resumable', metadata);
-        location = await provider.initResumableUploadFromURL(initUploadURL, {
+        const resumableUpload = await provider.initResumableUploadFromURL(initUploadURL, {
           origin,
           md5Hash: metadata.md5Hash,
           contentType: metadata.contentType,
           headers: extensionHeaders,
         });
+        location = resumableUpload.location;
       } else {
-        location = await provider.initResumableUpload({
+        const resumableUpload = await provider.initResumableUpload({
           filename,
           origin,
           public: isPublic,
           metadata: {
             ...metadata,
+            username,
+            name: meta[FILES_NAME_FIELD],
           },
         });
+        location = resumableUpload.location;
+
+        if (resumableUpload.filename) {
+          filename = resumableUpload.filename;
+        }
       }
     } else {
       // simple upload
