@@ -13,6 +13,7 @@ const {
   UPLOAD_TYPE_GLB_EXTENDED,
   UPLOAD_TYPE_PANORAMA_EQUIRECT,
   UPLOAD_TYPE_PANORAMA_CUBEMAP,
+  UPLOAD_TYPE_CLOUDFLARE_STREAM,
 } = require('../constant');
 
 /*
@@ -369,6 +370,10 @@ const GREEN_LIGHT_STATUSES = Object.setPrototypeOf({
 
 // Actual code that populates .embed from predefined data
 module.exports = function getEmbeddedInfo(file) {
+  if (file.uploadType === UPLOAD_TYPE_CLOUDFLARE_STREAM) {
+    return file;
+  }
+
   if (GREEN_LIGHT_STATUSES[file.status] === true) {
     const dynamicOptions = getPlayerOpts(file.uploadId, file, this.config.apiDomain);
 
