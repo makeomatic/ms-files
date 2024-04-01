@@ -329,12 +329,12 @@ class GCETransport extends AbstractFileTransfer {
 
     this.log.debug('initiating resumable upload of %s', filename);
 
-    const [uri] = await this.bucket.file(filename, { generation }).createResumableUpload({
+    const [location] = await this.bucket.file(filename, { generation }).createResumableUpload({
       ...props,
       metadata,
     });
 
-    return uri;
+    return { location };
   }
 
   /**
@@ -368,7 +368,7 @@ class GCETransport extends AbstractFileTransfer {
       throw new HttpStatusError(422, `could not init resumable upload, empty location: ${body}`);
     }
 
-    return location;
+    return { location };
   }
 
   /**

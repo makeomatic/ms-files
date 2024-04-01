@@ -57,6 +57,14 @@ class ProviderFactory {
 
     return provider;
   }
+
+  // eslint-disable-next-line class-methods-use-this
+  getProviderCloudflareStream(transport) {
+    const ProviderCloudflareStream = require('./cloudflare-stream');
+    const provider = new ProviderCloudflareStream(transport);
+
+    return provider;
+  }
 }
 
 module.exports = ProviderFactory;

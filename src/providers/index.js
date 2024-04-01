@@ -54,6 +54,12 @@ function initProviders(service) {
         factory.getProviderOSS(transport)
       );
     }
+
+    if (transport.name === 'cloudflare-stream') {
+      service.providers.push(
+        factory.getProviderCloudflareStream(transport)
+      );
+    }
   }
 
   // create providerByBucket map for fast access
