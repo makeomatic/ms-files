@@ -103,7 +103,7 @@ async function cloneFile(lock, ctx, params) {
   // add mark to the original file
   pipeline.hset(uploadKey, FILES_HAS_CLONES_FIELD, 1);
 
-  const provider = ctx.provider('remove', uploadData);
+  const provider = ctx.provider('remove', params, undefined, uploadData);
   const prefix = md5(username);
 
   const copyPromises = JSON.parse(mergedData.files).map(async (file) => {

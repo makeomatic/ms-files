@@ -37,6 +37,7 @@ function overrideConfig() {
       // its not a public name!
       cname: 'gce',
     }, {
+      alias: 'cloudflare-stream',
       name: 'cloudflare-stream',
       options: {
         accountId: process.env.CLOUDFLARE_STREAM_ACCOUNT_ID,
@@ -45,7 +46,6 @@ function overrideConfig() {
       },
       keys: [{
         id: process.env.CLOUDFLARE_STREAM_KEY_ID,
-        // eslint-disable-next-line max-len
         jwk: process.env.CLOUDFLARE_STREAM_KEY_JWK,
       }],
       expiry: 600,
