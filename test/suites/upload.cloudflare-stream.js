@@ -1,16 +1,20 @@
 const fs = require('node:fs/promises');
 const path = require('node:path');
 const { equal, rejects, match, deepEqual } = require('node:assert/strict');
+const crypto = require('node:crypto');
 const md5 = require('md5');
 const tus = require('tus-js-client');
 const { fetch } = require('undici');
 const { validate: validateUuid } = require('uuid');
 const { delay } = require('bluebird');
+const dotenv = require('dotenv');
 
 const {
   startService,
   stopService,
 } = require('../helpers/utils');
+
+dotenv.config({ path: path.resolve(__dirname, '../.env') });
 
 function overrideConfig() {
   this.configOverride = {
@@ -72,6 +76,60 @@ const uploadFile = (location, file) => new Promise((resolve, reject) => {
 
   upload.start();
 });
+
+const getWebhookBody = ({ uid }) => {
+  const body = {
+    uid,
+    creator: null,
+    thumbnail: 'https://customer-f33zs165nr7gyfy4.cloudflarestream.com/6b9e68b07dfee8cc2d116e4c51d6a957/thumbnails/thumbnail.jpg',
+    thumbnailTimestampPct: 0,
+    readyToStream: true,
+    status: {
+      state: 'ready',
+      pctComplete: '39.000000',
+      errorReasonCode: '',
+      errorReasonText: '',
+    },
+    meta: {
+      filename: 'small.mp4',
+      filetype: 'video/mp4',
+      name: 'small.mp4',
+      relativePath: 'null',
+      type: 'video/mp4',
+    },
+    created: '2022-06-30T17:53:12.512033Z',
+    modified: '2022-06-30T17:53:21.774299Z',
+    size: 383631,
+    preview: 'https://customer-f33zs165nr7gyfy4.cloudflarestream.com/6b9e68b07dfee8cc2d116e4c51d6a957/watch',
+    allowedOrigins: [],
+    requireSignedURLs: false,
+    uploaded: '2022-06-30T17:53:12.511981Z',
+    uploadExpiry: '2022-07-01T17:53:12.511973Z',
+    maxSizeBytes: null,
+    maxDurationSeconds: null,
+    duration: 5.5,
+    input: {
+      width: 560,
+      height: 320,
+    },
+    playback: {
+      hls: 'https://customer-f33zs165nr7gyfy4.cloudflarestream.com/6b9e68b07dfee8cc2d116e4c51d6a957/manifest/video.m3u8',
+      dash: 'https://customer-f33zs165nr7gyfy4.cloudflarestream.com/6b9e68b07dfee8cc2d116e4c51d6a957/manifest/video.mpd',
+    },
+    watermark: null,
+  };
+
+  return JSON.stringify(body);
+};
+
+const getWebhookSignature = (body) => {
+  const key = 'secret from the Cloudflare API';
+  const time = Math.floor(Date.now() / 1000);
+  const signatureSourceString = `${time}.${body}`;
+  const hash = crypto.createHmac('sha256', key).update(signatureSourceString);
+
+  return `time=${time},sig1=${hash.digest('hex')}`;
+};
 
 describe('upload cloudflare-stream suite', function suite() {
   let filename;
@@ -139,17 +197,20 @@ describe('upload cloudflare-stream suite', function suite() {
     uploadId = response.uploadId;
   });
 
-  it('should be able to finish processing of the uploaded video', async () => {
-    const { amqp } = this.ctx;
-
-    const response = await amqp.publishAndWait('files.finish', {
-      filename,
-      await: true,
+  it('should be able to finish processing of the uploaded video using webhook', async () => {
+    const body = getWebhookBody({ uid: filename });
+    const response = await fetch('http://localhost:3000/files/cloudflare-stream', {
+      body,
+      method: 'POST',
+      headers: {
+        'Webhook-Signature': getWebhookSignature(body),
+      },
     });
 
-    equal(response.status, '3');
-    equal(response.uploaded, '1');
-    match(response.uploadedAt, /^\d+$/);
+    equal(response.status, 200);
+    equal(response.statusText, 'OK');
+
+    await delay(1000);
   });
 
   it('should be able to get error if finish processing of unknown video', async () => {
