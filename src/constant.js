@@ -146,9 +146,13 @@ exports.FILES_USER_INDEX_UAT_KEY = (username) => `${exports.FILES_INDEX_UAT}:${u
 exports.FILES_USER_INDEX_UAT_PUBLIC_KEY = (username) => `${exports.FILES_USER_INDEX_UAT_KEY(username)}:pub`;
 exports.FILES_REFERENCED_INDEX_KEY = (uploadId) => `${exports.FILES_INDEX_REFERENCED}:${uploadId}`;
 
-exports.UPLOAD_TYPE_GLB_EXTENDED = 'glb-extended';
-exports.UPLOAD_TYPE_PANORAMA_EQUIRECT = 'pano-equirect';
-exports.UPLOAD_TYPE_PANORAMA_CUBEMAP = 'pano-cubemap';
 exports.UPLOAD_TYPE_CLOUDFLARE_STREAM = 'cloudflare-stream';
+exports.UPLOAD_TYPE_GLB_EXTENDED = 'glb-extended';
+exports.UPLOAD_TYPE_PANORAMA_CUBEMAP = 'pano-cubemap';
+exports.UPLOAD_TYPE_PANORAMA_EQUIRECT = 'pano-equirect';
 
 exports.FILES_LIST_SEARCH = 'files-list-v10';
+
+exports.TRANSPORT_NAME_GCE = 'gce';
+exports.TRANSPORT_NAME_OSS = 'oss';
+exports.TRANSPORT_NAME_CLOUDFLARE_STREAM = 'cloudflare-stream';

@@ -2,6 +2,11 @@ const Promise = require('bluebird');
 const { Microfleet, PluginTypes } = require('@microfleet/core');
 const { strict: assert } = require('assert');
 const ProviderFactory = require('./factory');
+const {
+  TRANSPORT_NAME_GCE,
+  TRANSPORT_NAME_OSS,
+  TRANSPORT_NAME_CLOUDFLARE_STREAM,
+} = require('../constant');
 
 /**
  * Connects array of providers
@@ -41,24 +46,28 @@ function initProviders(service) {
     return service.config.selectTransport.apply(service, args);
   };
   service.providers = [];
+  service.providersByName = Object.create(null);
 
   for (const transport of service.config.transport) {
-    if (transport.name === 'gce') {
-      service.providers.push(
-        factory.getProviderGCE(transport)
-      );
+    if (transport.name === TRANSPORT_NAME_GCE) {
+      const provider = factory.getProviderGCE(transport);
+
+      service.providers.push(provider);
+      service.providersByName[TRANSPORT_NAME_GCE] = provider;
     }
 
-    if (transport.name === 'oss') {
-      service.providers.push(
-        factory.getProviderOSS(transport)
-      );
+    if (transport.name === TRANSPORT_NAME_OSS) {
+      const provider = factory.getProviderOSS(transport);
+
+      service.providers.push(provider);
+      service.providersByName[TRANSPORT_NAME_OSS] = provider;
     }
 
-    if (transport.name === 'cloudflare-stream') {
-      service.providers.push(
-        factory.getProviderCloudflareStream(transport)
-      );
+    if (transport.name === TRANSPORT_NAME_CLOUDFLARE_STREAM) {
+      const provider = factory.getProviderCloudflareStream(transport);
+
+      service.providers.push(provider);
+      service.providersByName[TRANSPORT_NAME_CLOUDFLARE_STREAM] = provider;
     }
   }
 
