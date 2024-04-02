@@ -46,28 +46,24 @@ function initProviders(service) {
     return service.config.selectTransport.apply(service, args);
   };
   service.providers = [];
-  service.providersByName = Object.create(null);
 
   for (const transport of service.config.transport) {
     if (transport.name === TRANSPORT_NAME_GCE) {
-      const provider = factory.getProviderGCE(transport);
-
-      service.providers.push(provider);
-      service.providersByName[TRANSPORT_NAME_GCE] = provider;
+      service.providers.push(
+        factory.getProviderGCE(transport)
+      );
     }
 
     if (transport.name === TRANSPORT_NAME_OSS) {
-      const provider = factory.getProviderOSS(transport);
-
-      service.providers.push(provider);
-      service.providersByName[TRANSPORT_NAME_OSS] = provider;
+      service.providers.push(
+        factory.getProviderOSS(transport)
+      );
     }
 
     if (transport.name === TRANSPORT_NAME_CLOUDFLARE_STREAM) {
-      const provider = factory.getProviderCloudflareStream(transport);
-
-      service.providers.push(provider);
-      service.providersByName[TRANSPORT_NAME_CLOUDFLARE_STREAM] = provider;
+      service.providers.push(
+        factory.getProviderCloudflareStream(transport)
+      );
     }
   }
 
@@ -76,9 +72,22 @@ function initProviders(service) {
     map[provider.getBucketName()] = provider;
     return map;
   }, {});
+  const providersByAlias = service.providers.reduce((map, provider) => {
+    const alias = provider?.config?.alias;
+
+    if (alias) {
+      if (map[alias]) {
+        throw new Error(`Duplicate provider alias ${alias}`);
+      }
+
+      map[alias] = provider;
+    }
+    return map;
+  }, {});
 
   // store references
   service.providersByBucket = Object.setPrototypeOf(providersByBucket, null);
+  service.providersByAlias = Object.setPrototypeOf(providersByAlias, null);
 
   // internal plugin API
   service.addConnector(PluginTypes.database, connectProviders(service.providers));
