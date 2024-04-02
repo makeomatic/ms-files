@@ -72,8 +72,8 @@ dependencies:
     specifier: ^3.7.2
     version: 3.7.2
   cloudflare:
-    specifier: 3.0.0-beta.14
-    version: 3.0.0-beta.14
+    specifier: 3.0.0
+    version: 3.0.0
   cluster-key-slot:
     specifier: ^1.1.2
     version: 1.1.2
@@ -3574,8 +3574,8 @@ packages:
       strip-ansi: 6.0.1
       wrap-ansi: 7.0.0
 
-  /cloudflare@3.0.0-beta.14:
-    resolution: {integrity: sha512-IhvvRie2WwofYUoFqW4i4KSPlo6kmMFeAbGlLW7N9e15FLRnHoWG1QlTqrF9cwnoDgRJDv0wYcWLAx0iPRaTug==}
+  /cloudflare@3.0.0:
+    resolution: {integrity: sha512-HpEwvTDgshAFcX+kg0L6tjurl7G0EafXqF/Z0iXSC0MnSGw2mpfS3yfFYq8XtEV1SoWZSVJs70GzaHrLsVo2xw==}
     dependencies:
       '@types/node': 18.19.43
       '@types/node-fetch': 2.6.11
