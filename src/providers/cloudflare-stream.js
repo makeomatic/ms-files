@@ -4,25 +4,24 @@ const AbstractFileTransfer = require('ms-files-transport');
 const Cloudflare = require('cloudflare');
 const { HttpStatusError } = require('common-errors');
 
+const {
+  FILES_CONTENT_LENGTH_FIELD,
+  FILES_NAME_FIELD,
+} = require('../constant');
+
+const NotImplementedHttpError = new HttpStatusError(501, 'Method \'copy\' is not implemented');
+
 const toBase64 = (value) => Buffer.from(value).toString('base64');
 const nowPlusSeconds = (seconds) => (new Date(Date.now() + 1000 * seconds)).toISOString();
 const nowPlus30Days = () => nowPlusSeconds(2592000);
-const NotImplementedHttpError = new HttpStatusError(501, 'Method \'copy\' is not implemented');
-
-const arrayBufferToBase64Url = (buffer) => btoa(String.fromCharCode(...new Uint8Array(buffer)))
-  .replace(/=/g, '')
-  .replace(/\+/g, '-')
-  .replace(/\//g, '_');
-
-const objectToBase64url = (payload) => arrayBufferToBase64Url(
-  new TextEncoder().encode(JSON.stringify(payload))
-);
+const arrayBufferToBase64Url = (buffer) => Buffer.from(buffer).toString('base64url');
+const objectToBase64url = (payload) => arrayBufferToBase64Url(JSON.stringify(payload));
 
 class CloudflareStreamTransport extends AbstractFileTransfer {
   constructor(config) {
     super();
 
-    ok(config?.keys);
+    ok(config?.keys?.[0]);
     ok(config?.options?.accountId);
     ok(config?.options?.apiToken);
     ok(config?.options?.customerSubdomain);
@@ -55,14 +54,15 @@ class CloudflareStreamTransport extends AbstractFileTransfer {
     return Promise.resolve();
   }
 
-  async initResumableUpload(opts) {
-    const { cloudflare, config, expiry } = this;
+  async initResumableUpload(opts, uploadParams) {
+    const { cloudflare, config, expiry, maxDurationSeconds } = this;
+    const { metadata: { [FILES_CONTENT_LENGTH_FIELD]: contentLength } } = opts;
+    const { username, meta: { [FILES_NAME_FIELD]: name } } = uploadParams;
     const { accountId } = config.options;
-    const { metadata } = opts;
-    const { contentLength, username, name } = metadata;
+
     const uploadMetadata = [
       'requireSignedURLs',
-      `maxDurationSeconds ${toBase64('1800')}`,
+      `maxDurationSeconds ${toBase64(String(maxDurationSeconds))}`,
       `expiry ${toBase64(nowPlusSeconds(expiry))}`,
     ];
 

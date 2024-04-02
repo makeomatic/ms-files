@@ -10,7 +10,6 @@ const extension = require('../utils/extension');
 const isValidBackgroundOrigin = require('../utils/is-valid-background-origin');
 const { getReferenceData, verifyReferences } = require('../utils/reference');
 const { normalizeForSearch } = require('../utils/normalize-name');
-const { FILES_NAME_FIELD, FILES_NAME_NORMALIZED_FIELD } = require('../constant');
 
 const {
   FIELDS_TO_STRINGIFY,
@@ -22,6 +21,8 @@ const {
   FILES_HAS_REFERENCES_FIELD,
   FILES_ID_FIELD,
   FILES_INDEX_TEMP,
+  FILES_NAME_FIELD,
+  FILES_NAME_NORMALIZED_FIELD,
   FILES_NFT_FIELD,
   FILES_OWNER_FIELD,
   FILES_POST_ACTION,
@@ -161,16 +162,17 @@ async function initFileUpload({ params }) {
         });
         location = resumableUpload.location;
       } else {
-        const resumableUpload = await provider.initResumableUpload({
-          filename,
-          origin,
-          public: isPublic,
-          metadata: {
-            ...metadata,
-            username,
-            name: meta[FILES_NAME_FIELD],
+        const resumableUpload = await provider.initResumableUpload(
+          {
+            filename,
+            origin,
+            public: isPublic,
+            metadata: {
+              ...metadata,
+            },
           },
-        });
+          params
+        );
         location = resumableUpload.location;
 
         if (resumableUpload.filename) {
