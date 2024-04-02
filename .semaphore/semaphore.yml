@@ -31,7 +31,6 @@ blocks:
     task:
       secrets:
       - name: gcs-oss-keys
-      - name: cloudflare-stream
       jobs:
       - name: build typescript project
         matrix:
