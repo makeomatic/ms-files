@@ -3,19 +3,19 @@
 const {
   FILES_BUCKET_FIELD,
   FILES_TEMP_FIELD,
+  TRANSPORT_NAME_CLOUDFLARE_STREAM,
   UPLOAD_TYPE_CLOUDFLARE_STREAM,
 } = require('../constant');
-const ProviderCloudflareStream = require('../providers/cloudflare-stream');
 
 // action handler
 // if file is temporary, use provider index `1`
 // if it's permanent - use index 0
 function uploadSelector({ temp, uploadType }) {
   if (uploadType === UPLOAD_TYPE_CLOUDFLARE_STREAM) {
-    const cloudflareStream = this.providers.find((provider) => provider instanceof ProviderCloudflareStream);
+    const cloudflareStream = this.providersByName[TRANSPORT_NAME_CLOUDFLARE_STREAM];
 
     if (!cloudflareStream) {
-      throw new Error(`Missing provider for ${UPLOAD_TYPE_CLOUDFLARE_STREAM}`);
+      throw new Error(`Missing provider ${TRANSPORT_NAME_CLOUDFLARE_STREAM}`);
     }
 
     return cloudflareStream;
