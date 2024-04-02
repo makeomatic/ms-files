@@ -143,7 +143,7 @@ class CloudflareStreamTransport extends AbstractFileTransfer {
     };
 
     const token = `${objectToBase64url(headers)}.${objectToBase64url(data)}`;
-    const jwk = JSON.parse(atob(jwkKey));
+    const jwk = JSON.parse(Buffer.from(jwkKey, 'base64'));
     const algorithm = {
       name: 'RSASSA-PKCS1-v1_5',
       hash: 'SHA-256',
