@@ -128,6 +128,9 @@ dependencies:
   redis-filtered-sort:
     specifier: ^2.5.0
     version: 2.5.0(ioredis@4.28.5)
+  safe-stable-stringify:
+    specifier: ^2.4.3
+    version: 2.4.3
   undici:
     specifier: ^6.10.2
     version: 6.10.2
