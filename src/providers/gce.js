@@ -8,6 +8,8 @@ const { Storage } = require('@google-cloud/storage');
 const { fetch } = require('undici');
 const { HttpStatusError } = require('common-errors');
 
+const { TRANSPORT_NAME_GCE } = require('../constant');
+
 // for some reason it doesn't go through it if we just do the obj
 const unwrap = (datum) => datum[0];
 // default signed URL expiration time
@@ -499,7 +501,7 @@ class GCETransport extends AbstractFileTransfer {
 }
 
 GCETransport.defaultOpts = {
-  name: 'gce',
+  name: TRANSPORT_NAME_GCE,
   gce: {
     // specify authentication options
     // here
