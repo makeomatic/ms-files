@@ -3,7 +3,7 @@
 const {
   FILES_BUCKET_FIELD,
   FILES_TEMP_FIELD,
-  TRANSPORT_NAME_CLOUDFLARE_STREAM,
+  PROVIDER_CLOUDFLARE_MISSING_ERROR,
   UPLOAD_TYPE_CLOUDFLARE_STREAM,
 } = require('../constant');
 
@@ -11,9 +11,7 @@ function selectCloudflareStreamProvider(service) {
   const cloudflareStream = service.providersByAlias['cloudflare-stream'];
 
   if (!cloudflareStream) {
-    throw new Error(
-      `Missing provider for ${UPLOAD_TYPE_CLOUDFLARE_STREAM}. You may not have set an alias for ${TRANSPORT_NAME_CLOUDFLARE_STREAM}`
-    );
+    throw PROVIDER_CLOUDFLARE_MISSING_ERROR;
   }
 
   return cloudflareStream;

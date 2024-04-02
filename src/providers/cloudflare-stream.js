@@ -161,6 +161,21 @@ class CloudflareStreamTransport extends AbstractFileTransfer {
   async copy() {
     throw NotImplementedHttpError;
   }
+
+  // eslint-disable-next-line class-methods-use-this
+  validateWebhook(signature, body) {
+    const key = 'secret from the Cloudflare API';
+    const [time, sig1] = signature.split(',');
+    const [, timeValue] = time.split('=');
+
+    // @todo At this point, you should discard requests with timestamps that are too old for your application.
+
+    const [, sig1Value] = sig1.split('=');
+    const signatureSourceString = `${timeValue}.${body}`;
+    const hash = crypto.createHmac('sha256', key).update(signatureSourceString);
+
+    return sig1Value === hash.digest('hex');
+  }
 }
 
 CloudflareStreamTransport.defaultOpts = {};
