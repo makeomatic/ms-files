@@ -47,7 +47,6 @@ function cleanupFileProvider(files, provider, log, opts = { concurrency: 20 }) {
 async function removeFile({ params }) {
   const { filename, username, softDelete } = params;
   const { redis, log } = this;
-  const provider = this.provider('remove', params);
   const key = `${FILES_DATA}:${filename}`;
 
   const data = await Promise
@@ -56,6 +55,7 @@ async function removeFile({ params }) {
     .then(isUnlisted)
     .then(hasAccess(username))
     .then(assertUpdatable({}, true));
+  const provider = this.provider('remove', params, undefined, data);
 
   if (!softDelete && !isClone(data)) {
     // we do not track this
