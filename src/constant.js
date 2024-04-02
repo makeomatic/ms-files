@@ -153,6 +153,8 @@ exports.UPLOAD_TYPE_PANORAMA_EQUIRECT = 'pano-equirect';
 
 exports.FILES_LIST_SEARCH = 'files-list-v10';
 
+exports.TRANSPORT_NAME_CLOUDFLARE_STREAM = 'cloudflare-stream';
 exports.TRANSPORT_NAME_GCE = 'gce';
 exports.TRANSPORT_NAME_OSS = 'oss';
-exports.TRANSPORT_NAME_CLOUDFLARE_STREAM = 'cloudflare-stream';
+
+exports.PROVIDER_CLOUDFLARE_MISSING_ERROR = new HttpStatusError(501, 'Missing provider \'cloudflare-stream\'. You may not have set an alias for it');
