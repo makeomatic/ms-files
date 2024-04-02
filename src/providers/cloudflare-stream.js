@@ -3,6 +3,7 @@ const crypto = require('node:crypto');
 const AbstractFileTransfer = require('ms-files-transport');
 const Cloudflare = require('cloudflare');
 const { HttpStatusError } = require('common-errors');
+const stringify = require('safe-stable-stringify');
 
 const {
   FILES_CONTENT_LENGTH_FIELD,
@@ -15,13 +16,14 @@ const toBase64 = (value) => Buffer.from(value).toString('base64');
 const nowPlusSeconds = (seconds) => (new Date(Date.now() + 1000 * seconds)).toISOString();
 const nowPlus30Days = () => nowPlusSeconds(2592000);
 const arrayBufferToBase64Url = (buffer) => Buffer.from(buffer).toString('base64url');
-const objectToBase64url = (payload) => arrayBufferToBase64Url(JSON.stringify(payload));
+const objectToBase64url = (payload) => arrayBufferToBase64Url(stringify(payload));
 
 class CloudflareStreamTransport extends AbstractFileTransfer {
   constructor(config) {
     super();
 
-    ok(config?.keys?.[0]);
+    ok(config?.keys?.[0]?.id);
+    ok(config?.keys?.[0]?.jwk);
     ok(config?.options?.accountId);
     ok(config?.options?.apiToken);
     ok(config?.options?.customerSubdomain);
