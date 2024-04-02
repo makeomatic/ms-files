@@ -33,7 +33,7 @@ async function cloudflareWebhookAction(request) {
   const { status, uid } = parseBodyJson(body);
 
   if (status.state === STATUS_STATE_READY) {
-    this.dispatch('finish', { params: { filename: uid } });
+    await this.dispatch('finish', { params: { filename: uid } });
   }
 
   // @todo handle status.state === error
