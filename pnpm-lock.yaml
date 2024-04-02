@@ -72,8 +72,8 @@ dependencies:
     specifier: ^3.7.2
     version: 3.7.2
   cloudflare:
-    specifier: 3.0.0-beta.14
-    version: 3.0.0-beta.14
+    specifier: 3.0.0
+    version: 3.0.0
   cluster-key-slot:
     specifier: ^1.1.2
     version: 1.1.2
@@ -190,8 +190,8 @@ devDependencies:
     specifier: ^6.1.1
     version: 6.1.1(eslint@8.57.0)
   eslint-plugin-unicorn:
-    specifier: ^50.0.1
-    version: 50.0.1(eslint@8.57.0)
+    specifier: ^51.0.1
+    version: 51.0.1(eslint@8.57.0)
   json:
     specifier: ^11.0.0
     version: 11.0.0
@@ -3155,8 +3155,8 @@ packages:
       strip-ansi: 6.0.1
       wrap-ansi: 7.0.0
 
-  /cloudflare@3.0.0-beta.14:
-    resolution: {integrity: sha512-IhvvRie2WwofYUoFqW4i4KSPlo6kmMFeAbGlLW7N9e15FLRnHoWG1QlTqrF9cwnoDgRJDv0wYcWLAx0iPRaTug==}
+  /cloudflare@3.0.0:
+    resolution: {integrity: sha512-HpEwvTDgshAFcX+kg0L6tjurl7G0EafXqF/Z0iXSC0MnSGw2mpfS3yfFYq8XtEV1SoWZSVJs70GzaHrLsVo2xw==}
     dependencies:
       '@types/node': 18.19.31
       '@types/node-fetch': 2.6.11
@@ -4061,8 +4061,8 @@ packages:
       strip-indent: 3.0.0
     dev: true
 
-  /eslint-plugin-unicorn@50.0.1(eslint@8.57.0):
-    resolution: {integrity: sha512-KxenCZxqSYW0GWHH18okDlOQcpezcitm5aOSz6EnobyJ6BIByiPDviQRjJIUAjG/tMN11958MxaQ+qCoU6lfDA==}
+  /eslint-plugin-unicorn@51.0.1(eslint@8.57.0):
+    resolution: {integrity: sha512-MuR/+9VuB0fydoI0nIn2RDA5WISRn4AsJyNSaNKLVwie9/ONvQhxOBbkfSICBPnzKrB77Fh6CZZXjgTt/4Latw==}
     engines: {node: '>=16'}
     peerDependencies:
       eslint: '>=8.56.0'
