@@ -11,6 +11,7 @@ const {
 } = require('../constant');
 
 const NotImplementedHttpError = new HttpStatusError(501, 'Method \'copy\' is not implemented');
+const FileTooLargeHttpError = new HttpStatusError(413, 'The file cannot be larger than 200 MB. For files larger than 200 MB, use resumable upload.');
 
 const toBase64 = (value) => Buffer.from(value).toString('base64');
 const nowPlusSeconds = (seconds) => (new Date(Date.now() + 1000 * seconds)).toISOString();
@@ -31,9 +32,9 @@ class CloudflareStreamTransport extends AbstractFileTransfer {
 
     this.cloudflare = new Cloudflare({ apiToken: config.options.apiToken });
     this.config = config;
-    this.expiry = config.expiry || 600; // 10m
     this.keys = config.keys;
     this.maxDurationSeconds = config.maxDurationSeconds || 1800; // 30m
+    this.rename = false;
     this.urlExpire = config.urlExpire || 3600; // 1h
     this.webhookSecret = null;
 
@@ -58,17 +59,86 @@ class CloudflareStreamTransport extends AbstractFileTransfer {
     return Promise.resolve();
   }
 
-  async initResumableUpload(opts, uploadParams) {
-    const { cloudflare, config, expiry, maxDurationSeconds } = this;
+  // NOTE: Use it for files smaller than 200MB
+  async initUpload(opts, uploadParams) {
+    const { cloudflare, config, maxDurationSeconds } = this;
     const { metadata: { [FILES_CONTENT_LENGTH_FIELD]: contentLength } } = opts;
-    const { username, meta: { [FILES_NAME_FIELD]: name } } = uploadParams;
+    const {
+      username,
+      expires,
+      origin,
+      meta: {
+        [FILES_NAME_FIELD]: name,
+      },
+    } = uploadParams;
+    const { accountId } = config.options;
+
+    if (contentLength > 209715200 /* 200 MB */) {
+      throw FileTooLargeHttpError;
+    }
+
+    const params = {
+      maxDurationSeconds,
+      account_id: accountId,
+      creator: username,
+      expiry: nowPlusSeconds(expires),
+      requireSignedURLs: true,
+      meta: {},
+    };
+
+    if (name) {
+      params.meta.name = name;
+    }
+
+    if (origin) {
+      params.allowedOrigins = [origin];
+    }
+
+    if (process.env.NODE_ENV === 'test') {
+      params.scheduledDeletion = nowPlus30Days();
+    }
+
+    const { uid, uploadURL } = await cloudflare.stream.directUpload.create(params);
+
+    return {
+      location: uploadURL,
+      filename: uid,
+    };
+  }
+
+  // NOTE: Use it for files bigger than 200MB
+  //
+  // Important: Cloudflare Stream requires a minimum chunk size of 5,242,880 bytes
+  // when using TUS, unless the entire file is less than this amount.
+  // We recommend increasing the chunk size to 52,428,800 bytes
+  // for better performance when the client connection is expected to be reliable.
+  // Maximum chunk size can be 209,715,200 bytes.
+  //
+  // Important: Cloudflare Stream requires a chunk size divisible by 256KiB (256x1024 bytes).
+  // Please round your desired chunk size to the nearest multiple of 256KiB.
+  // The final chunk of an upload or uploads that fit within a single chunk are exempt from this requirement.
+  async initResumableUpload(opts, uploadParams) {
+    const { cloudflare, config, maxDurationSeconds } = this;
+    const { metadata: { [FILES_CONTENT_LENGTH_FIELD]: contentLength } } = opts;
+    const {
+      username,
+      expires,
+      origin,
+      meta: {
+        [FILES_NAME_FIELD]: name,
+      },
+    } = uploadParams;
     const { accountId } = config.options;
 
     const uploadMetadata = [
       'requireSignedURLs',
       `maxDurationSeconds ${toBase64(String(maxDurationSeconds))}`,
-      `expiry ${toBase64(nowPlusSeconds(expiry))}`,
+      `expiry ${toBase64(nowPlusSeconds(expires))}`,
     ];
+
+    if (origin) {
+      uploadMetadata.push(`allowedOrigins ${toBase64(origin)}`);
+    }
 
     if (name) {
       uploadMetadata.push(`name ${toBase64(name)}`);
@@ -90,7 +160,6 @@ class CloudflareStreamTransport extends AbstractFileTransfer {
         direct_user: 'true',
       },
     };
-    // wrap error?
     const { response } = await cloudflare.stream.create(params, options).withResponse();
 
     return {
