@@ -181,7 +181,18 @@ async function initFileUpload({ params }) {
       }
     } else {
       // simple upload
-      location = await createSignedURL('write', metadata);
+      // eslint-disable-next-line no-lonely-if
+      if (provider.initUpload) {
+        const upload = await provider.initUpload({ metadata }, params);
+
+        location = upload.location;
+
+        if (upload.filename) {
+          filename = upload.filename;
+        }
+      } else {
+        location = await createSignedURL('write', metadata);
+      }
     }
 
     return {
