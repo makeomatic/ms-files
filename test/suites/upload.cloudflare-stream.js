@@ -8,6 +8,7 @@ const { fetch } = require('undici');
 const { validate: validateUuid } = require('uuid');
 const { delay } = require('bluebird');
 const dotenv = require('dotenv');
+const { stub } = require('sinon');
 
 const {
   startService,
@@ -55,6 +56,7 @@ function overrideConfig() {
       expiry: 600,
       urlExpire: 3600,
       maxDurationSeconds: 1800,
+      notificationUrl: 'https://localhost:443',
     }],
   };
 }
@@ -122,8 +124,7 @@ const getWebhookBody = ({ uid }) => {
   return JSON.stringify(body);
 };
 
-const getWebhookSignature = (body) => {
-  const key = 'secret from the Cloudflare API';
+const getWebhookSignature = (body, key) => {
   const time = Math.floor(Date.now() / 1000);
   const signatureSourceString = `${time}.${body}`;
   const hash = crypto.createHmac('sha256', key).update(signatureSourceString);
@@ -198,17 +199,21 @@ describe('upload cloudflare-stream suite', function suite() {
   });
 
   it('should be able to finish processing of the uploaded video using webhook', async () => {
+    const key = 'secret from the Cloudflare API';
     const body = getWebhookBody({ uid: filename });
+    const providerStub = stub(provider, 'webhookSecret').value(key);
     const response = await fetch('http://localhost:3000/files/cloudflare-stream', {
       body,
       method: 'POST',
       headers: {
-        'Webhook-Signature': getWebhookSignature(body),
+        'Webhook-Signature': getWebhookSignature(body, key),
       },
     });
 
     equal(response.status, 200);
     equal(response.statusText, 'OK');
+
+    providerStub.reset();
 
     await delay(1000);
   });

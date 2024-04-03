@@ -14,7 +14,7 @@ const NotImplementedHttpError = new HttpStatusError(501, 'Method \'copy\' is not
 
 const toBase64 = (value) => Buffer.from(value).toString('base64');
 const nowPlusSeconds = (seconds) => (new Date(Date.now() + 1000 * seconds)).toISOString();
-const nowPlus30Days = () => nowPlusSeconds(2592000);
+const nowPlus30Days = () => nowPlusSeconds(2592001);
 const arrayBufferToBase64Url = (buffer) => Buffer.from(buffer).toString('base64url');
 const objectToBase64url = (payload) => arrayBufferToBase64Url(stringify(payload));
 
@@ -24,6 +24,7 @@ class CloudflareStreamTransport extends AbstractFileTransfer {
 
     ok(config?.keys?.[0]?.id);
     ok(config?.keys?.[0]?.jwk);
+    ok(config?.notificationUrl);
     ok(config?.options?.accountId);
     ok(config?.options?.apiToken);
     ok(config?.options?.customerSubdomain);
@@ -34,6 +35,7 @@ class CloudflareStreamTransport extends AbstractFileTransfer {
     this.keys = config.keys;
     this.maxDurationSeconds = config.maxDurationSeconds || 1800; // 30m
     this.urlExpire = config.urlExpire || 3600; // 1h
+    this.webhookSecret = null;
 
     // backward compatibility for src/actions/upload.js:78
     this._bucket = { name: this.getBucketName() };
@@ -162,9 +164,26 @@ class CloudflareStreamTransport extends AbstractFileTransfer {
     throw NotImplementedHttpError;
   }
 
-  // eslint-disable-next-line class-methods-use-this
+  async initWebhook() {
+    if (process.env.NODE_ENV === 'test') {
+      return;
+    }
+
+    const { cloudflare, config } = this;
+    const { notificationUrl, options } = config;
+    const { accountId } = options;
+
+    // NOTE: Only one webhook subscription is allowed per-account.
+    const { secret } = await cloudflare.stream.webhooks.update({
+      notificationUrl,
+      account_id: accountId,
+    });
+
+    this.webhookSecret = secret;
+  }
+
   validateWebhook(signature, body) {
-    const key = 'secret from the Cloudflare API';
+    const key = this.webhookSecret;
     const [time, sig1] = signature.split(',');
     const [, timeValue] = time.split('=');
 
