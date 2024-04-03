@@ -842,6 +842,76 @@ for (const redisSearchEnabled of [true, false].values()) {
           assert.equal(list.pages, 0);
         });
       });
+
+      describe('catalog list', function catalogTestSuite() {
+        if (!redisSearchEnabled) {
+          return;
+        }
+        before('upload', async function pretest() {
+          const { uploadId } = await initAndUpload(modelData, false).call(this);
+          return this.amqp.publishAndWait(updateRoute, {
+            uploadId,
+            username,
+            meta: {
+              ...meta,
+              categories: ['_s1_c1', '_s1_c2'],
+            },
+          });
+        });
+
+        before('pre-upload file #2', async function pretest() {
+          const { uploadId } = await initAndUpload(modelData, false).call(this);
+
+          // this file should not be returned by search as tag search is using `AND`
+          return this.amqp.publishAndWait(updateRoute, {
+            uploadId,
+            username,
+            meta: {
+              ...meta,
+              categories: ['_s1_c3', '_s1_c4'],
+            },
+          });
+        });
+
+        it('should filter by catalog categories', async function test() {
+          const list = await this.amqp.publishAndWait('files.list', {
+            filter: {},
+            order: 'ASC',
+            offset: 0,
+            limit: 10,
+            owner: username,
+            categories: ['_s1_c2'],
+          });
+
+          assert.deepEqual(list.files[0].categories, ['_s1_c1', '_s1_c2']);
+        });
+
+        it('should return empty no categories', async function test() {
+          const list = await this.amqp.publishAndWait('files.list', {
+            filter: {},
+            order: 'ASC',
+            offset: 0,
+            limit: 10,
+            owner: username,
+            categories: ['_s222_c2'],
+          });
+
+          assert.equal(list.pages, 0);
+        });
+
+        it('should return both', async function test() {
+          const list = await this.amqp.publishAndWait('files.list', {
+            filter: {},
+            order: 'ASC',
+            offset: 0,
+            limit: 10,
+            owner: username,
+            categories: ['_s1_c2', '_s1_c4'],
+          });
+
+          assert.equal(list.files.length, 2);
+        });
+      });
     });
   });
 }
