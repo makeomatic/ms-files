@@ -23,7 +23,6 @@ const {
   FILES_DIRECT_ONLY_FIELD,
   FILES_UNLISTED_FIELD,
   FILES_TAGS_FIELD,
-  FILES_UPLOADED_AT_FIELD,
   FILES_ID_FIELD,
   FILES_HAS_NFT,
   FILES_TEMP_FIELD,
@@ -397,8 +396,9 @@ async function redisSearch(ctx) {
   }
 
   const { filter } = ctx;
+  const rebuiltFilter = ctx.uploadedAt ? { ...filter, uploadedAt: ctx.uploadedAt } : filter;
 
-  for (const [_propName, actionTypeOrValue] of Object.entries(filter)) {
+  for (const [_propName, actionTypeOrValue] of Object.entries(rebuiltFilter)) {
     let propName = _propName;
     if (propName === '#') {
       propName = FILES_ID_FIELD;
@@ -472,11 +472,6 @@ async function redisSearch(ctx) {
     args.push(query.join(' '));
   } else {
     args.push('*');
-  }
-
-  if (ctx.uploadedAt) {
-    const { lowerRange, upperRange } = numericQueryRange(ctx.uploadedAt);
-    args.push('FILTER', FILES_UPLOADED_AT_FIELD, lowerRange, upperRange);
   }
 
   if (params.length > 0) {
