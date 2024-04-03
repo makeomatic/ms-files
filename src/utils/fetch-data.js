@@ -6,7 +6,7 @@ const calcSlot = require('cluster-key-slot');
 const fs = require('fs');
 const is = require('is');
 const safeParse = require('./safe-parse');
-const { FIELDS_TO_STRINGIFY, FILES_TAGS_FIELD, FILE_MISSING_ERROR } = require('../constant');
+const { FIELDS_TO_STRINGIFY, FILES_TAGS_FIELD, FILE_MISSING_ERROR, FIELDS_TO_UNTAG } = require('../constant');
 
 /**
  * Helper constants
@@ -26,6 +26,8 @@ function remapData(field, index) {
     this.output[field] = safeParse(value, []);
   } else if (hasOwnProperty.call(STRINGIFY_FIELDS, field)) {
     this.output[field] = safeParse(value);
+  } else if (FIELDS_TO_UNTAG[field]) {
+    this.output[field] = value.split(', ');
   } else {
     this.output[field] = value;
   }

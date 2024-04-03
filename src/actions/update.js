@@ -38,6 +38,7 @@ const {
   FILES_REFERENCES_FIELD,
   FILES_NAME_FIELD,
   FILES_NAME_NORMALIZED_FIELD,
+  FILES_CATEGORIES_FIELD,
 } = require('../constant');
 
 const { call } = Function.prototype;
@@ -225,6 +226,10 @@ async function updateMeta(lock, ctx, params) {
     // renaming file, adjust normalized name, too
     if (meta[FILES_NAME_FIELD]) {
       meta[FILES_NAME_NORMALIZED_FIELD] = normalizeForSearch(meta[FILES_NAME_FIELD]);
+    }
+
+    if (meta[FILES_CATEGORIES_FIELD]) {
+      meta[FILES_CATEGORIES_FIELD] = meta[FILES_CATEGORIES_FIELD].join(', ');
     }
 
     pipeline.hmset(key, meta);
