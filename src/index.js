@@ -78,12 +78,21 @@ class Files extends Microfleet {
     const { redis } = this;
     return Promise
       .map(this.providers, (provider, idx) => {
-        const hookId = `${WEBHOOK_RESOURCE_ID}_${idx}`;
-        return Promise
-          .bind(provider)
-          .then(() => process.env[hookId] || redis.get(hookId))
-          .then(provider.setupChannel)
-          .then((resourceId) => resourceId && redis.set(hookId, resourceId));
+        if (provider.setupChannel) {
+          const hookId = `${WEBHOOK_RESOURCE_ID}_${idx}`;
+
+          return Promise
+            .bind(provider)
+            .then(() => process.env[hookId] || redis.get(hookId))
+            .then(provider.setupChannel)
+            .then((resourceId) => resourceId && redis.set(hookId, resourceId));
+        }
+
+        if (provider.initWebhook) {
+          return provider.initWebhook();
+        }
+
+        return Promise.resolve();
       });
   }
 
