@@ -33,7 +33,7 @@ const {
   FILES_IS_REFERENCED_FIELD,
   FILES_IS_IN_SHOWROOM_FIELD,
   FILES_LIST_SEARCH,
-  FILES_CATALOG_FIELD,
+  FILES_CATEGORIES_FIELD,
 } = require('../../constant');
 
 const FIELD_TO_TYPE = [
@@ -69,7 +69,7 @@ const FIELD_TO_TYPE = [
   [FILES_HAS_NFT_OWNER_FIELD, 'NUMERIC', 'SORTABLE'],
   [FILES_HAS_REFERENCES_FIELD, 'NUMERIC', 'SORTABLE'],
   [FILES_IS_REFERENCED_FIELD, 'NUMERIC', 'SORTABLE'],
-  [FILES_CATALOG_FIELD, 'TAG'],
+  [FILES_CATEGORIES_FIELD, 'TAG'],
 ];
 
 // https://redis.io/docs/stack/search/reference/aggregations/#filter-expressions
@@ -94,6 +94,6 @@ async function createSearchIndexV2(service) {
 
 module.exports = {
   script: createSearchIndexV2,
-  min: 15,
-  final: 16,
+  min: 13,
+  final: 15,
 };

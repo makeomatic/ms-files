@@ -38,7 +38,7 @@ const {
   FILES_REFERENCES_FIELD,
   FILES_NAME_FIELD,
   FILES_NAME_NORMALIZED_FIELD,
-  FILES_CATALOG_FIELD,
+  FILES_CATEGORIES_FIELD,
 } = require('../constant');
 
 const { call } = Function.prototype;
@@ -228,8 +228,8 @@ async function updateMeta(lock, ctx, params) {
       meta[FILES_NAME_NORMALIZED_FIELD] = normalizeForSearch(meta[FILES_NAME_FIELD]);
     }
 
-    if (meta[FILES_CATALOG_FIELD]) {
-      meta[FILES_CATALOG_FIELD] = meta[FILES_CATALOG_FIELD].join(', ');
+    if (meta[FILES_CATEGORIES_FIELD]) {
+      meta[FILES_CATEGORIES_FIELD] = meta[FILES_CATEGORIES_FIELD].join(', ');
     }
 
     pipeline.hmset(key, meta);

@@ -36,7 +36,7 @@ const {
   FILES_NFT_COLLECTION_FIELD,
   FILES_IS_CLONE_FIELD,
   FILES_LIST_SEARCH,
-  FILES_CATALOG_FIELD,
+  FILES_CATEGORIES_FIELD,
 } = require('../constant');
 
 const k404Error = new Error('ELIST404');
@@ -355,8 +355,8 @@ async function redisSearch(ctx) {
     query.push(`-@${FILES_DIRECT_ONLY_FIELD}:[1 1]`);
   }
 
-  if (ctx[FILES_CATALOG_FIELD]) {
-    query.push(`@${FILES_CATALOG_FIELD}:{${ctx[FILES_CATALOG_FIELD].join(' | ')}`);
+  if (ctx[FILES_CATEGORIES_FIELD]) {
+    query.push(`@${FILES_CATEGORIES_FIELD}:{ ${ctx[FILES_CATEGORIES_FIELD].join(' | ')} }`);
   }
 
   if (ctx.hasTags) {
@@ -541,6 +541,7 @@ async function listFiles({ params }) {
     modelType,
     nftOwner,
     temp,
+    categories,
     expiration = 30000,
   } = params;
 
@@ -595,6 +596,7 @@ async function listFiles({ params }) {
     username: '',
     nftOwner,
     modelType,
+    categories,
   };
 
   try {
