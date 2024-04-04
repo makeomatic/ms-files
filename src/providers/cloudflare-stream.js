@@ -20,6 +20,14 @@ const arrayBufferToBase64Url = (buffer) => Buffer.from(buffer).toString('base64u
 const objectToBase64url = (payload) => arrayBufferToBase64Url(stringify(payload));
 
 class CloudflareStreamTransport extends AbstractFileTransfer {
+  static filenameWithPrefix(filename) {
+    return `cfs:${filename}`;
+  }
+
+  static removeFilenamePrefix(filename) {
+    return filename.split(':')[1];
+  }
+
   constructor(config) {
     super();
 
@@ -102,7 +110,7 @@ class CloudflareStreamTransport extends AbstractFileTransfer {
 
     return {
       location: uploadURL,
-      filename: uid,
+      filename: CloudflareStreamTransport.filenameWithPrefix(uid),
     };
   }
 
@@ -164,7 +172,9 @@ class CloudflareStreamTransport extends AbstractFileTransfer {
 
     return {
       location: response.headers.get('location'),
-      filename: response.headers.get('stream-media-id'),
+      filename: CloudflareStreamTransport.filenameWithPrefix(
+        response.headers.get('stream-media-id')
+      ),
     };
   }
 
@@ -173,7 +183,10 @@ class CloudflareStreamTransport extends AbstractFileTransfer {
     const { accountId } = config.options;
 
     try {
-      await cloudflare.stream.get(filename, { account_id: accountId });
+      await cloudflare.stream.get(
+        CloudflareStreamTransport.removeFilenamePrefix(filename),
+        { account_id: accountId }
+      );
     } catch (error) {
       if (error.status === 404) {
         return false;
@@ -189,7 +202,10 @@ class CloudflareStreamTransport extends AbstractFileTransfer {
     const { cloudflare, config } = this;
     const { accountId } = config.options;
 
-    return cloudflare.stream.delete(filename, { account_id: accountId });
+    return cloudflare.stream.delete(
+      CloudflareStreamTransport.removeFilenamePrefix(filename),
+      { account_id: accountId }
+    );
   }
 
   randomKey() {
@@ -210,7 +226,7 @@ class CloudflareStreamTransport extends AbstractFileTransfer {
       kid: keyId,
     };
     const data = {
-      sub: filename,
+      sub: CloudflareStreamTransport.removeFilenamePrefix(filename),
       kid: keyId,
       exp: expiresIn,
     };
