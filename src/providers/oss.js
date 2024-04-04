@@ -53,6 +53,11 @@ class OSSTransport extends AbstractFileTransfer {
   close() {
     return Promise.resolve();
   }
+
+  // eslint-disable-next-line class-methods-use-this
+  canCopy() {
+    return false;
+  }
 }
 
 OSSTransport.defaultOpts = {};

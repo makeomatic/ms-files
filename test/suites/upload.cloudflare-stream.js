@@ -1,6 +1,6 @@
 const fs = require('node:fs/promises');
 const path = require('node:path');
-const { equal, rejects, match, deepEqual } = require('node:assert/strict');
+const { equal, rejects, match, deepEqual, ok } = require('node:assert/strict');
 const crypto = require('node:crypto');
 const md5 = require('md5');
 const tus = require('tus-js-client');
@@ -8,7 +8,7 @@ const { fetch } = require('undici');
 const { validate: validateUuid } = require('uuid');
 const { delay } = require('bluebird');
 const dotenv = require('dotenv');
-const { stub } = require('sinon');
+const { stub, spy } = require('sinon');
 
 const {
   startService,
@@ -166,7 +166,7 @@ describe('cloudflare-stream suite', () => {
       return null;
     });
 
-    it('should be able to upload video to cloudflare (resumable)', async () => {
+    it('should be able to upload video to cloudflare', async () => {
       const { amqp } = this.ctx;
       const videoFile = await fs.readFile(path.resolve(__dirname, '../fixtures', 'video_sample.mp4'));
 
@@ -304,21 +304,6 @@ describe('cloudflare-stream suite', () => {
       equal(response.file.alias, 'stupidogatto');
     });
 
-    it('should not be able to clone uploaded video', async () => {
-      const { amqp } = this.ctx;
-
-      await rejects(
-        async () => amqp.publishAndWait('files.clone', {
-          uploadId,
-          username: 'v@makeomatic.ru',
-        }),
-        {
-          statusCode: 501,
-          message: 'Method \'copy\' is not implemented',
-        }
-      );
-    });
-
     it('should be able to download uploaded video', async () => {
       const { amqp } = this.ctx;
 
@@ -351,6 +336,7 @@ describe('cloudflare-stream suite', () => {
 
     it('should be able to remove uploaded video', async () => {
       const { amqp } = this.ctx;
+      const providerSpy = spy(provider, 'remove');
 
       const response = await amqp.publishAndWait('files.remove', {
         filename: uploadId,
@@ -358,6 +344,7 @@ describe('cloudflare-stream suite', () => {
       });
 
       deepEqual(response, [1, 1, 1, 1]);
+      ok(providerSpy.calledOnceWithExactly(filename));
 
       filename = undefined;
     });
@@ -498,43 +485,6 @@ describe('cloudflare-stream suite', () => {
       equal(response.file.files[0].filename, filename);
     });
 
-    it('should be able to update and get data of uploaded video', async () => {
-      const { amqp } = this.ctx;
-
-      const result = await amqp.publishAndWait('files.update', {
-        uploadId,
-        username: 'v@makeomatic.ru',
-        meta: {
-          alias: 'stupidogatto',
-        },
-      });
-
-      equal(result, true);
-
-      const response = await amqp.publishAndWait('files.data', {
-        uploadId,
-        fields: ['alias'],
-      });
-
-      equal(response.file.uploadId, uploadId);
-      equal(response.file.alias, 'stupidogatto');
-    });
-
-    it('should not be able to clone uploaded video', async () => {
-      const { amqp } = this.ctx;
-
-      await rejects(
-        async () => amqp.publishAndWait('files.clone', {
-          uploadId,
-          username: 'v@makeomatic.ru',
-        }),
-        {
-          statusCode: 501,
-          message: 'Method \'copy\' is not implemented',
-        }
-      );
-    });
-
     it('should be able to download uploaded video', async () => {
       const { amqp } = this.ctx;
 
@@ -567,15 +517,177 @@ describe('cloudflare-stream suite', () => {
 
     it('should be able to remove uploaded video', async () => {
       const { amqp } = this.ctx;
+      const providerSpy = spy(provider, 'remove');
 
       const response = await amqp.publishAndWait('files.remove', {
         filename: uploadId,
         username: 'v@makeomatic.ru',
       });
 
-      deepEqual(response, [1, 1, 1, 1]);
+      deepEqual(response, [1, 1, 1]);
+      ok(providerSpy.calledOnceWithExactly(filename));
 
       filename = undefined;
+    });
+  });
+
+  describe('clone file', function suite() {
+    let filename;
+    let provider;
+    let uploadId;
+    let clonedUploadId;
+
+    before(overrideConfig);
+    before('start service', startService);
+    before('get provider', function getProvide() {
+      provider = this.files.provider('upload', { uploadType: 'cloudflare-stream' });
+    });
+
+    after('stop service', stopService);
+    after('remove video', async () => {
+      if (filename !== undefined) {
+        return provider.remove(filename);
+      }
+
+      return null;
+    });
+
+    it('should be able to upload video to cloudflare', async () => {
+      const { amqp } = this.ctx;
+      const videoFile = await fs.readFile(path.resolve(__dirname, '../fixtures', 'video_sample.mp4'));
+
+      const response = await amqp.publishAndWait('files.upload', {
+        username: 'v@makeomatic.ru',
+        uploadType: 'cloudflare-stream',
+        resumable: false,
+        files: [{
+          contentType: 'video/mp4',
+          contentLength: videoFile.length,
+          md5Hash: md5(videoFile).toString('hex'),
+          type: 'video',
+        }],
+        meta: {
+          name: 'Funny cat video',
+        },
+      });
+
+      const { location } = response.files[0];
+      const uploadResult = await uploadFile(location, videoFile);
+
+      equal(uploadResult, '');
+
+      filename = response.files[0].filename;
+      uploadId = response.uploadId;
+    });
+
+    it('should be able to finish processing of the uploaded video using webhook', async () => {
+      const key = 'secret from the Cloudflare API';
+      const body = getWebhookBody({
+        uid: CloudflareStreamTransport.removeFilenamePrefix(filename),
+      });
+      const providerStub = stub(provider, 'webhookSecret').value(key);
+      const response = await fetch('http://localhost:3000/files/cloudflare-stream', {
+        body,
+        method: 'POST',
+        headers: {
+          'Webhook-Signature': getWebhookSignature(body, key),
+        },
+      });
+
+      equal(response.status, 200);
+      equal(response.statusText, 'OK');
+
+      providerStub.reset();
+
+      await delay(1000);
+    });
+
+    it('should be able to clone uploaded video', async () => {
+      const { amqp } = this.ctx;
+
+      const response = await amqp.publishAndWait('files.clone', {
+        uploadId,
+        username: 'v@makeomatic.ru',
+      });
+
+      equal(response.username, 'v@makeomatic.ru');
+      equal(validateUuid(response.uploadId), true);
+
+      clonedUploadId = response.uploadId;
+    });
+
+    it('should be able to get info about cloned file', async () => {
+      const { amqp } = this.ctx;
+
+      const response = await amqp.publishAndWait('files.info', {
+        filename: clonedUploadId,
+        username: 'v@makeomatic.ru',
+      });
+
+      equal(response.username, 'v@makeomatic.ru');
+      equal(response.file.uploadId, clonedUploadId);
+      match(response.file.uploadedAt, /^\d+$/);
+      equal(response.file.contentLength, '67328');
+      equal(response.file.status, '3');
+      equal(response.file.uploadType, 'cloudflare-stream');
+      match(response.file.startedAt, /^\d+$/);
+      equal(response.file.parts, '1');
+      equal(response.file.bucket, process.env.CLOUDFLARE_STREAM_CUSTOMER_SUBDOMAIN);
+      equal(response.file.name, 'Funny cat video');
+      equal(response.file.owner, 'v@makeomatic.ru');
+      equal(response.file.name_n, 'funny cat video');
+      equal(response.file.uploaded, '1');
+      equal(response.file.embed, undefined);
+
+      equal(response.file.files[0].contentType, 'video/mp4');
+      equal(response.file.files[0].contentLength, 67328);
+      equal(response.file.files[0].md5Hash, 'SOPY6SYV/g1I3Awko1WazQ==');
+      equal(response.file.files[0].bucket, process.env.CLOUDFLARE_STREAM_CUSTOMER_SUBDOMAIN);
+      equal(response.file.files[0].type, 'video');
+      equal(response.file.files[0].filename, filename);
+    });
+
+    it('should be able to download uploaded video', async () => {
+      const { amqp } = this.ctx;
+
+      const response = await amqp.publishAndWait('files.download', {
+        uploadId: clonedUploadId,
+        username: 'v@makeomatic.ru',
+      });
+
+      equal(response.uploadId, clonedUploadId);
+      equal(response.name, 'Funny cat video');
+      equal(response.username, 'v@makeomatic.ru');
+
+      equal(response.files[0].contentType, 'video/mp4');
+      equal(response.files[0].contentLength, 67328);
+      equal(response.files[0].md5Hash, 'SOPY6SYV/g1I3Awko1WazQ==');
+      equal(response.files[0].bucket, process.env.CLOUDFLARE_STREAM_CUSTOMER_SUBDOMAIN);
+      equal(response.files[0].type, 'video');
+      equal(response.files[0].filename, filename);
+
+      // eslint-disable-next-line max-len
+      match(response.urls[0], new RegExp(`^https:\\/\\/${process.env.CLOUDFLARE_STREAM_CUSTOMER_SUBDOMAIN}\\/[A-Za-z0-9]+\\.[A-Za-z0-9]+\\.[A-Za-z0-9-_]+\\/manifest\\/video\\.m3u8$`));
+
+      await delay(10000);
+
+      const { status, headers } = await fetch(response.urls[0]);
+
+      equal(status, 200);
+      equal(headers.get('content-type'), 'application/x-mpegURL');
+    });
+
+    it('should be able to remove file from cloudflare', async () => {
+      const { amqp } = this.ctx;
+      const providerSpy = spy(provider, 'remove');
+
+      const response = await amqp.publishAndWait('files.remove', {
+        filename: uploadId,
+        username: 'v@makeomatic.ru',
+      });
+
+      deepEqual(response, [1, 1, 1]);
+      ok(providerSpy.notCalled);
     });
   });
 });
