@@ -14,6 +14,7 @@ const {
   startService,
   stopService,
 } = require('../helpers/utils');
+const CloudflareStreamTransport = require('../../src/providers/cloudflare-stream');
 
 dotenv.config({ path: path.resolve(__dirname, '../.env') });
 
@@ -216,7 +217,9 @@ describe('cloudflare-stream suite', () => {
 
     it('should be able to finish processing of the uploaded video using webhook', async () => {
       const key = 'secret from the Cloudflare API';
-      const body = getWebhookBody({ uid: filename });
+      const body = getWebhookBody({
+        uid: CloudflareStreamTransport.removeFilenamePrefix(filename),
+      });
       const providerStub = stub(provider, 'webhookSecret').value(key);
       const response = await fetch('http://localhost:3000/files/cloudflare-stream', {
         body,
@@ -239,7 +242,7 @@ describe('cloudflare-stream suite', () => {
 
       await rejects(
         async () => amqp.publishAndWait('files.finish', {
-          filename: '55b4953dc4e2371cb742f9c74f825c47',
+          filename: 'cfs:55b4953dc4e2371cb742f9c74f825c47',
         }),
         {
           statusCode: 200,
@@ -430,7 +433,9 @@ describe('cloudflare-stream suite', () => {
 
     it('should be able to finish processing of the uploaded video using webhook', async () => {
       const key = 'secret from the Cloudflare API';
-      const body = getWebhookBody({ uid: filename });
+      const body = getWebhookBody({
+        uid: CloudflareStreamTransport.removeFilenamePrefix(filename),
+      });
       const providerStub = stub(provider, 'webhookSecret').value(key);
       const response = await fetch('http://localhost:3000/files/cloudflare-stream', {
         body,
@@ -453,7 +458,7 @@ describe('cloudflare-stream suite', () => {
 
       await rejects(
         async () => amqp.publishAndWait('files.finish', {
-          filename: '55b4953dc4e2371cb742f9c74f825c47',
+          filename: 'cfs:55b4953dc4e2371cb742f9c74f825c47',
         }),
         {
           statusCode: 200,
