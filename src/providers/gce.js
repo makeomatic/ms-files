@@ -498,6 +498,11 @@ class GCETransport extends AbstractFileTransfer {
       },
     });
   }
+
+  // eslint-disable-next-line class-methods-use-this
+  canCopy() {
+    return true;
+  }
 }
 
 GCETransport.defaultOpts = {
