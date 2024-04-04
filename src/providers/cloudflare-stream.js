@@ -10,7 +10,6 @@ const {
   FILES_NAME_FIELD,
 } = require('../constant');
 
-const NotImplementedHttpError = new HttpStatusError(501, 'Method \'copy\' is not implemented');
 const FileTooLargeHttpError = new HttpStatusError(413, 'The file cannot be larger than 200 MB. For files larger than 200 MB, use resumable upload.');
 
 const toBase64 = (value) => Buffer.from(value).toString('base64');
@@ -65,6 +64,11 @@ class CloudflareStreamTransport extends AbstractFileTransfer {
   // eslint-disable-next-line class-methods-use-this
   close() {
     return Promise.resolve();
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  canCopy() {
+    return false;
   }
 
   // NOTE: Use it for files smaller than 200MB
@@ -242,11 +246,6 @@ class CloudflareStreamTransport extends AbstractFileTransfer {
     const signedToken = `${token}.${arrayBufferToBase64Url(signature)}`;
 
     return `https://${customerSubdomain}/${signedToken}/manifest/video.m3u8`;
-  }
-
-  // eslint-disable-next-line class-methods-use-this
-  async copy() {
-    throw NotImplementedHttpError;
   }
 
   async initWebhook() {

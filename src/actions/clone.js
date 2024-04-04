@@ -104,22 +104,26 @@ async function cloneFile(lock, ctx, params) {
   pipeline.hset(uploadKey, FILES_HAS_CLONES_FIELD, 1);
 
   const provider = ctx.provider('remove', params, undefined, uploadData);
-  const prefix = md5(username);
 
-  const copyPromises = JSON.parse(mergedData.files).map(async (file) => {
-    const fileId = file.filename.split('/').pop();
-    const newFileName = [prefix, newUploadId, fileId].join('/');
+  if (provider.canCopy()) {
+    const prefix = md5(username);
 
-    await provider.copy(file.filename, newFileName);
+    const copyPromises = JSON.parse(mergedData.files).map(async (file) => {
+      const fileId = file.filename.split('/').pop();
+      const newFileName = [prefix, newUploadId, fileId].join('/');
 
-    return {
-      ...file,
-      filename: newFileName,
-      location: undefined,
-    };
-  });
+      await provider.copy(file.filename, newFileName);
 
-  mergedData.files = JSON.stringify(await Promise.all(copyPromises));
+      return {
+        ...file,
+        filename: newFileName,
+        location: undefined,
+      };
+    });
+
+    mergedData.files = JSON.stringify(await Promise.all(copyPromises));
+  }
+
   pipeline.hmset(newUploadKey, mergedData);
 
   handlePipeline(await pipeline.exec());
