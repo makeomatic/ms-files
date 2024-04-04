@@ -31,7 +31,8 @@ async function cloudflareWebhookAction(request) {
     throw malformedRequestError;
   }
 
-  const { status, uid } = parseBodyJson(body);
+  const message = parseBodyJson(body);
+  const { status, uid } = message;
 
   if (status.state === STATUS_STATE_READY) {
     await this.dispatch('finish', {
@@ -39,9 +40,9 @@ async function cloudflareWebhookAction(request) {
         filename: CloudflareStreamTransport.filenameWithPrefix(uid),
       },
     });
+  } else {
+    this.log.error({ message }, 'failed cloudflare-stream webhook');
   }
-
-  // @todo handle status.state === error
 
   return RESPONSE_OK;
 }
