@@ -2,6 +2,7 @@ const { ActionTransport } = require('@microfleet/plugin-router');
 const { HttpStatusError } = require('common-errors');
 
 const { PROVIDER_CLOUDFLARE_MISSING_ERROR } = require('../constant');
+const CloudflareStreamTransport = require('../providers/cloudflare-stream');
 
 const malformedRequestError = new HttpStatusError(400, 'Malformed request');
 const parseJsonError = new HttpStatusError(400, 'Parse body json error');
@@ -33,7 +34,11 @@ async function cloudflareWebhookAction(request) {
   const { status, uid } = parseBodyJson(body);
 
   if (status.state === STATUS_STATE_READY) {
-    await this.dispatch('finish', { params: { filename: uid } });
+    await this.dispatch('finish', {
+      params: {
+        filename: CloudflareStreamTransport.filenameWithPrefix(uid),
+      },
+    });
   }
 
   // @todo handle status.state === error
