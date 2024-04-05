@@ -369,8 +369,15 @@ const GREEN_LIGHT_STATUSES = Object.setPrototypeOf({
 }, null);
 
 // Actual code that populates .embed from predefined data
-module.exports = function getEmbeddedInfo(file) {
+module.exports = async function getEmbeddedInfo(file) {
   if (file.uploadType === UPLOAD_TYPE_CLOUDFLARE_STREAM) {
+    const cloudflareStream = this.providersByAlias['cloudflare-stream'];
+    const filename = file.files[0]?.filename;
+
+    if (cloudflareStream && filename) {
+      file.preview = await cloudflareStream.getThumbnailUrlSigned(filename);
+    }
+
     return file;
   }
 
