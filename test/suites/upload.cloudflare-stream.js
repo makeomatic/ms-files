@@ -78,8 +78,8 @@ const uploadFileResumable = (location, file) => new Promise((resolve, reject) =>
   const upload = new tus.Upload(file, {
     endpoint: location,
     metadata: {
-      filename: 'README.md',
-      filetype: 'text/plain',
+      filename: 'video.mp4',
+      filetype: 'video/mp4',
     },
     onError(error) {
       reject(error);
@@ -106,9 +106,9 @@ const getWebhookBody = ({ uid }) => {
       errorReasonText: '',
     },
     meta: {
-      filename: 'small.mp4',
+      filename: 'video.mp4',
       filetype: 'video/mp4',
-      name: 'small.mp4',
+      name: 'video.mp4',
       relativePath: 'null',
       type: 'video/mp4',
     },
