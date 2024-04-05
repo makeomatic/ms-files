@@ -21,8 +21,8 @@ describe('cappasity-info-post hook test suite', function suite() {
   });
 
   describe('get embedded info', function modelSuite() {
-    it('should be able to set embed code', function test() {
-      const embeddedFile = this.boundHook(file);
+    it('should be able to set embed code', async function test() {
+      const embeddedFile = await this.boundHook(file);
 
       assert.ok(embeddedFile.embed);
 
