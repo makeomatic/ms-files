@@ -1,7 +1,11 @@
 const Promise = require('bluebird');
 const { HttpStatusError } = require('common-errors');
 const debug = require('debug')('process-pre');
-const { FILES_OWNER_FIELD, CAPPASITY_TYPE_MAP } = require('../constant');
+const {
+  CAPPASITY_TYPE_MAP,
+  FILES_OWNER_FIELD,
+  UPLOAD_TYPE_CLOUDFLARE_STREAM,
+} = require('../constant');
 
 function parseMeta(data) {
   const parsedFiles = typeof data.files === 'string' ? JSON.parse(data.files) : data.files;
@@ -9,6 +13,10 @@ function parseMeta(data) {
 
   let textures = 0;
   parsedFiles.forEach(({ type, filename }) => {
+    if (data.uploadType === UPLOAD_TYPE_CLOUDFLARE_STREAM && type === 'video' && !output.preview) {
+      output.preview = filename;
+    }
+
     const responsibility = CAPPASITY_TYPE_MAP[type];
 
     /** skip for simple uploads */
