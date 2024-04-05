@@ -372,10 +372,9 @@ const GREEN_LIGHT_STATUSES = Object.setPrototypeOf({
 module.exports = async function getEmbeddedInfo(file) {
   if (file.uploadType === UPLOAD_TYPE_CLOUDFLARE_STREAM) {
     const cloudflareStream = this.providersByAlias['cloudflare-stream'];
-    const filename = file.files[0]?.filename;
 
-    if (cloudflareStream && filename) {
-      file.preview = await cloudflareStream.getThumbnailUrlSigned(filename);
+    if (cloudflareStream && file.preview) {
+      file.preview = await cloudflareStream.getThumbnailUrlSigned(file.preview);
     }
 
     return file;
