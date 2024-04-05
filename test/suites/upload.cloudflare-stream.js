@@ -20,6 +20,17 @@ dotenv.config({ path: path.resolve(__dirname, '../.env') });
 
 function overrideConfig() {
   this.configOverride = {
+    hooks: {
+      'files:upload:pre': [],
+      // eslint-disable-next-line import/no-dynamic-require
+      'files:process:pre': require(`${process.cwd()}/src/custom/cappasity-process-pre`),
+      'files:process:post': [],
+      'files:info:pre': (alias) => alias,
+      'files:update:pre': [],
+      'files:download:alias': (username) => username,
+      // eslint-disable-next-line import/no-dynamic-require
+      'files:info:post': require(`${process.cwd()}/src/custom/cappasity-info-post`),
+    },
     selectTransport: require('../../src/custom/cappasity-select-bucket'),
     transport: [{
       name: 'gce',
