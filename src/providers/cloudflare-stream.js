@@ -218,9 +218,8 @@ class CloudflareStreamTransport extends AbstractFileTransfer {
     return keys[Math.floor(Math.random() * keys.length)];
   }
 
-  async getDownloadUrlSigned(filename) {
-    const { config, urlExpire } = this;
-    const { customerSubdomain } = config.options;
+  async getSignedToken(filename) {
+    const { urlExpire } = this;
     const { id: keyId, jwk: jwkKey } = this.randomKey();
 
     const encoder = new TextEncoder();
@@ -230,7 +229,7 @@ class CloudflareStreamTransport extends AbstractFileTransfer {
       kid: keyId,
     };
     const data = {
-      sub: CloudflareStreamTransport.removeFilenamePrefix(filename),
+      sub: filename,
       kid: keyId,
       exp: expiresIn,
     };
@@ -245,7 +244,27 @@ class CloudflareStreamTransport extends AbstractFileTransfer {
     const signature = await crypto.subtle.sign({ name: 'RSASSA-PKCS1-v1_5' }, key, encoder.encode(token));
     const signedToken = `${token}.${arrayBufferToBase64Url(signature)}`;
 
+    return signedToken;
+  }
+
+  async getDownloadUrlSigned(filename) {
+    const { config } = this;
+    const { customerSubdomain } = config.options;
+    const signedToken = await this.getSignedToken(
+      CloudflareStreamTransport.removeFilenamePrefix(filename)
+    );
+
     return `https://${customerSubdomain}/${signedToken}/manifest/video.m3u8`;
+  }
+
+  async getThumbnailUrlSigned(filename) {
+    const { config } = this;
+    const { customerSubdomain } = config.options;
+    const signedToken = await this.getSignedToken(
+      CloudflareStreamTransport.removeFilenamePrefix(filename)
+    );
+
+    return `https://${customerSubdomain}/${signedToken}/thumbnails/thumbnail.jpg`;
   }
 
   async initWebhook() {

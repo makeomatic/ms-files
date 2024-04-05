@@ -272,6 +272,12 @@ describe('cloudflare-stream suite', () => {
       equal(response.file.owner, 'v@makeomatic.ru');
       equal(response.file.name_n, 'funny cat video');
       equal(response.file.uploaded, '1');
+      match(
+        response.file.preview,
+        // eslint-disable-next-line max-len
+        new RegExp(`^https:\\/\\/${process.env.CLOUDFLARE_STREAM_CUSTOMER_SUBDOMAIN}\\/[A-Za-z0-9]+\\.[A-Za-z0-9]+\\.[A-Za-z0-9-_]+\\/thumbnails\\/thumbnail\\.jpg$`)
+      );
+
       equal(response.file.embed, undefined);
 
       equal(response.file.files[0].contentType, 'video/mp4');
@@ -323,8 +329,11 @@ describe('cloudflare-stream suite', () => {
       equal(response.files[0].type, 'video');
       equal(response.files[0].filename, filename);
 
-      // eslint-disable-next-line max-len
-      match(response.urls[0], new RegExp(`^https:\\/\\/${process.env.CLOUDFLARE_STREAM_CUSTOMER_SUBDOMAIN}\\/[A-Za-z0-9]+\\.[A-Za-z0-9]+\\.[A-Za-z0-9-_]+\\/manifest\\/video\\.m3u8$`));
+      match(
+        response.urls[0],
+        // eslint-disable-next-line max-len
+        new RegExp(`^https:\\/\\/${process.env.CLOUDFLARE_STREAM_CUSTOMER_SUBDOMAIN}\\/[A-Za-z0-9]+\\.[A-Za-z0-9]+\\.[A-Za-z0-9-_]+\\/manifest\\/video\\.m3u8$`)
+      );
 
       await delay(10000);
 
@@ -475,6 +484,11 @@ describe('cloudflare-stream suite', () => {
       equal(response.file.owner, 'v@makeomatic.ru');
       equal(response.file.name_n, 'funny cat video');
       equal(response.file.uploaded, '1');
+      match(
+        response.file.preview,
+        // eslint-disable-next-line max-len
+        new RegExp(`^https:\\/\\/${process.env.CLOUDFLARE_STREAM_CUSTOMER_SUBDOMAIN}\\/[A-Za-z0-9]+\\.[A-Za-z0-9]+\\.[A-Za-z0-9-_]+\\/thumbnails\\/thumbnail\\.jpg$`)
+      );
       equal(response.file.embed, undefined);
 
       equal(response.file.files[0].contentType, 'video/mp4');
@@ -504,8 +518,11 @@ describe('cloudflare-stream suite', () => {
       equal(response.files[0].type, 'video');
       equal(response.files[0].filename, filename);
 
-      // eslint-disable-next-line max-len
-      match(response.urls[0], new RegExp(`^https:\\/\\/${process.env.CLOUDFLARE_STREAM_CUSTOMER_SUBDOMAIN}\\/[A-Za-z0-9]+\\.[A-Za-z0-9]+\\.[A-Za-z0-9-_]+\\/manifest\\/video\\.m3u8$`));
+      match(
+        response.urls[0],
+        // eslint-disable-next-line max-len
+        new RegExp(`^https:\\/\\/${process.env.CLOUDFLARE_STREAM_CUSTOMER_SUBDOMAIN}\\/[A-Za-z0-9]+\\.[A-Za-z0-9]+\\.[A-Za-z0-9-_]+\\/manifest\\/video\\.m3u8$`)
+      );
 
       await delay(10000);
 
@@ -637,6 +654,11 @@ describe('cloudflare-stream suite', () => {
       equal(response.file.owner, 'v@makeomatic.ru');
       equal(response.file.name_n, 'funny cat video');
       equal(response.file.uploaded, '1');
+      match(
+        response.file.preview,
+        // eslint-disable-next-line max-len
+        new RegExp(`^https:\\/\\/${process.env.CLOUDFLARE_STREAM_CUSTOMER_SUBDOMAIN}\\/[A-Za-z0-9]+\\.[A-Za-z0-9]+\\.[A-Za-z0-9-_]+\\/thumbnails\\/thumbnail\\.jpg$`)
+      );
       equal(response.file.embed, undefined);
 
       equal(response.file.files[0].contentType, 'video/mp4');
@@ -666,8 +688,11 @@ describe('cloudflare-stream suite', () => {
       equal(response.files[0].type, 'video');
       equal(response.files[0].filename, filename);
 
-      // eslint-disable-next-line max-len
-      match(response.urls[0], new RegExp(`^https:\\/\\/${process.env.CLOUDFLARE_STREAM_CUSTOMER_SUBDOMAIN}\\/[A-Za-z0-9]+\\.[A-Za-z0-9]+\\.[A-Za-z0-9-_]+\\/manifest\\/video\\.m3u8$`));
+      match(
+        response.urls[0],
+        // eslint-disable-next-line max-len
+        new RegExp(`^https:\\/\\/${process.env.CLOUDFLARE_STREAM_CUSTOMER_SUBDOMAIN}\\/[A-Za-z0-9]+\\.[A-Za-z0-9]+\\.[A-Za-z0-9-_]+\\/manifest\\/video\\.m3u8$`)
+      );
 
       await delay(10000);
 
