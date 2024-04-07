@@ -5,7 +5,7 @@
       "type": "string",
       "minLength": 1,
       "maxLength": 78
-    },    
+    },
     "uploadId": {
       "type": "string",
       "format": "uuid"
@@ -34,6 +34,17 @@
       "maxItems": 29,
       "items": {
         "type": "number"
+      }
+    },
+    "categories": {
+      "type": "array",
+      "maxItems": 500,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 6,
+        "maxLength": 13,
+        "pattern": "^_s\\d+_c\\d+$"
       }
     },
     "fitToSquare": {
@@ -1057,6 +1068,9 @@
               "const": ""
             }
           ]
+        },
+        "categories": {
+          "$ref": "common#/definitions/categories"
         }
       }
     },

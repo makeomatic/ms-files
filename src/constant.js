@@ -73,6 +73,7 @@ module.exports = exports = Object.setPrototypeOf({
   FILES_REFERENCES_FIELD: 'references',
   FILES_IS_REFERENCED_FIELD: 'isReferenced',
   FILES_IS_IN_SHOWROOM_FIELD: 'isInShowroom',
+  FILES_CATEGORIES_FIELD: 'categories',
 
   // metatype of file
   FILES_TYPE_FIELD: 'type',
@@ -119,6 +120,10 @@ exports.FIELDS_TO_STRINGIFY = [
   exports.FILES_REFERENCES_FIELD,
 ];
 
+exports.FIELDS_TO_UNTAG = {
+  [exports.FILES_CATEGORIES_FIELD]: true,
+};
+
 exports.CAPPASITY_3D_MODEL = 'model';
 exports.CAPPASITY_IMAGE_MODEL = 'simple';
 exports.CAPPASITY_TYPE_MAP = Object.setPrototypeOf({
@@ -145,4 +150,4 @@ exports.UPLOAD_TYPE_GLB_EXTENDED = 'glb-extended';
 exports.UPLOAD_TYPE_PANORAMA_EQUIRECT = 'pano-equirect';
 exports.UPLOAD_TYPE_PANORAMA_CUBEMAP = 'pano-cubemap';
 
-exports.FILES_LIST_SEARCH = 'files-list-v9';
+exports.FILES_LIST_SEARCH = 'files-list-v10';
