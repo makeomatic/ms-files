@@ -1,3 +1,10 @@
+# [19.3.0](https://github.com/makeomatic/ms-files/compare/v19.2.2...v19.3.0) (2024-04-08)
+
+
+### Features
+
+* catalog ([#322](https://github.com/makeomatic/ms-files/issues/322)) ([d261437](https://github.com/makeomatic/ms-files/commit/d261437976eddb4e888abadb37e363f03ff4c5d3))
+
 ## [19.2.2](https://github.com/makeomatic/ms-files/compare/v19.2.1...v19.2.2) (2024-03-28)
 
 
