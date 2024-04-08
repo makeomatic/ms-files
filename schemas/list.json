@@ -166,6 +166,9 @@
         "modelType": {
             "type": "string",
             "enum": ["3d", "nft"]
+        },
+        "categories": {
+            "$ref": "common#/definitions/categories"
         }
     }
 }
