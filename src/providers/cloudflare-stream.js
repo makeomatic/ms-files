@@ -37,6 +37,7 @@ class CloudflareStreamTransport extends AbstractFileTransfer {
     ok(config?.options?.apiToken);
     ok(config?.options?.customerSubdomain);
 
+    this.alwaysRequireSignedURLs = config.alwaysRequireSignedURLs ?? true;
     this.cloudflare = new Cloudflare({ apiToken: config.options.apiToken });
     this.config = config;
     this.keys = config.keys;
@@ -73,17 +74,11 @@ class CloudflareStreamTransport extends AbstractFileTransfer {
 
   // NOTE: Use it for files smaller than 200MB
   async initUpload(opts, uploadParams) {
-    const { cloudflare, config, maxDurationSeconds } = this;
-    const { metadata: { [FILES_CONTENT_LENGTH_FIELD]: contentLength } } = opts;
-    const {
-      username,
-      expires,
-      origin,
-      meta: {
-        [FILES_NAME_FIELD]: name,
-      },
-    } = uploadParams;
+    const { alwaysRequireSignedURLs, cloudflare, config, maxDurationSeconds } = this;
     const { accountId } = config.options;
+    const { metadata: { [FILES_CONTENT_LENGTH_FIELD]: contentLength } } = opts;
+    const { access, expires, origin, username, meta: { [FILES_NAME_FIELD]: name } } = uploadParams;
+    const setPublic = (access && access.setPublic) || false;
 
     if (contentLength > 209715200 /* 200 MB */) {
       throw FileTooLargeHttpError;
@@ -94,7 +89,7 @@ class CloudflareStreamTransport extends AbstractFileTransfer {
       account_id: accountId,
       creator: username,
       expiry: nowPlusSeconds(expires),
-      requireSignedURLs: true,
+      requireSignedURLs: alwaysRequireSignedURLs || !setPublic,
       meta: {},
     };
 
@@ -130,23 +125,20 @@ class CloudflareStreamTransport extends AbstractFileTransfer {
   // Please round your desired chunk size to the nearest multiple of 256KiB.
   // The final chunk of an upload or uploads that fit within a single chunk are exempt from this requirement.
   async initResumableUpload(opts, uploadParams) {
-    const { cloudflare, config, maxDurationSeconds } = this;
-    const { metadata: { [FILES_CONTENT_LENGTH_FIELD]: contentLength } } = opts;
-    const {
-      username,
-      expires,
-      origin,
-      meta: {
-        [FILES_NAME_FIELD]: name,
-      },
-    } = uploadParams;
+    const { alwaysRequireSignedURLs, cloudflare, config, maxDurationSeconds } = this;
     const { accountId } = config.options;
+    const { metadata: { [FILES_CONTENT_LENGTH_FIELD]: contentLength } } = opts;
+    const { access, expires, origin, username, meta: { [FILES_NAME_FIELD]: name } } = uploadParams;
+    const setPublic = (access && access.setPublic) || false;
 
     const uploadMetadata = [
-      'requireSignedURLs',
       `maxDurationSeconds ${toBase64(String(maxDurationSeconds))}`,
       `expiry ${toBase64(nowPlusSeconds(expires))}`,
     ];
+
+    if (alwaysRequireSignedURLs || !setPublic) {
+      uploadMetadata.push('requireSignedURLs');
+    }
 
     if (origin) {
       uploadMetadata.push(`allowedOrigins ${toBase64(origin)}`);
@@ -257,6 +249,19 @@ class CloudflareStreamTransport extends AbstractFileTransfer {
     return `https://${customerSubdomain}/${signedToken}/manifest/video.m3u8`;
   }
 
+  async getDownloadUrl(filename) {
+    const { alwaysRequireSignedURLs } = this;
+
+    if (alwaysRequireSignedURLs) {
+      return this.getDownloadUrlSigned(filename);
+    }
+
+    const { config } = this;
+    const { customerSubdomain } = config.options;
+
+    return `https://${customerSubdomain}/${CloudflareStreamTransport.removeFilenamePrefix(filename)}/manifest/video.m3u8`;
+  }
+
   async getThumbnailUrlSigned(filename) {
     const { config } = this;
     const { customerSubdomain } = config.options;
@@ -297,6 +302,26 @@ class CloudflareStreamTransport extends AbstractFileTransfer {
     const hash = crypto.createHmac('sha256', key).update(signatureSourceString);
 
     return sig1Value === hash.digest('hex');
+  }
+
+  // eslint-disable-next-line no-unused-vars
+  async makePublic(filename) {
+    const { alwaysRequireSignedURLs } = this;
+
+    if (alwaysRequireSignedURLs) {
+      // eslint-disable-next-line no-useless-return
+      return;
+    }
+  }
+
+  // eslint-disable-next-line no-unused-vars
+  async makePrivate(filename) {
+    const { alwaysRequireSignedURLs } = this;
+
+    if (alwaysRequireSignedURLs) {
+      // eslint-disable-next-line no-useless-return
+      return;
+    }
   }
 }
 
