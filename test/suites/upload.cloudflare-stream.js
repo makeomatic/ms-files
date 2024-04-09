@@ -18,7 +18,7 @@ const CloudflareStreamTransport = require('../../src/providers/cloudflare-stream
 
 dotenv.config({ path: path.resolve(__dirname, '../.env') });
 
-function overrideConfig() {
+const overrideConfig = (config = {}) => function override() {
   this.configOverride = {
     hooks: {
       'files:upload:pre': [],
@@ -68,9 +68,10 @@ function overrideConfig() {
       urlExpire: 3600,
       maxDurationSeconds: 1800,
       notificationUrl: 'https://localhost:443',
+      alwaysRequireSignedURLs: config.alwaysRequireSignedURLs ?? true,
     }],
   };
-}
+};
 
 const uploadFile = async (location, file) => {
   const formData = new FormData();
@@ -156,13 +157,90 @@ const getWebhookSignature = (body, key) => {
   return `time=${time},sig1=${hash.digest('hex')}`;
 };
 
+const assertUpload = (response) => {
+  equal(response.name, 'Funny cat video');
+  equal(response.name_n, 'funny cat video');
+  equal(validateUuid(response.uploadId), true);
+  equal(Number.isInteger(response.startedAt), true);
+  equal(response.parts, 1);
+  equal(response.contentLength, 67328);
+  equal(response.status, '1');
+  equal(response.owner, 'v@makeomatic.ru');
+  equal(response.bucket, process.env.CLOUDFLARE_STREAM_CUSTOMER_SUBDOMAIN);
+  equal(response.uploadType, 'cloudflare-stream');
+
+  equal(response.files[0].contentType, 'video/mp4');
+  equal(response.files[0].contentLength, 67328);
+  equal(response.files[0].md5Hash, 'SOPY6SYV/g1I3Awko1WazQ==');
+  equal(response.files[0].bucket, process.env.CLOUDFLARE_STREAM_CUSTOMER_SUBDOMAIN);
+  equal(response.files[0].type, 'video');
+  equal(response.files[0].filename !== undefined, true);
+  equal(response.files[0].location !== undefined, true);
+};
+
+const assertDownload = async (response, uploadId, filename) => {
+  equal(response.uploadId, uploadId);
+  equal(response.name, 'Funny cat video');
+  equal(response.username, 'v@makeomatic.ru');
+
+  equal(response.files[0].contentType, 'video/mp4');
+  equal(response.files[0].contentLength, 67328);
+  equal(response.files[0].md5Hash, 'SOPY6SYV/g1I3Awko1WazQ==');
+  equal(response.files[0].bucket, process.env.CLOUDFLARE_STREAM_CUSTOMER_SUBDOMAIN);
+  equal(response.files[0].type, 'video');
+  equal(response.files[0].filename, filename);
+
+  match(
+    response.urls[0],
+    // eslint-disable-next-line max-len
+    new RegExp(`^https:\\/\\/${process.env.CLOUDFLARE_STREAM_CUSTOMER_SUBDOMAIN}\\/[A-Za-z0-9]+\\.[A-Za-z0-9]+\\.[A-Za-z0-9-_]+\\/manifest\\/video\\.m3u8$`)
+  );
+
+  await delay(10000);
+
+  const { status, headers } = await fetch(response.urls[0]);
+
+  equal(status, 200);
+  equal(headers.get('content-type'), 'application/x-mpegURL');
+};
+
+const assertInfo = (response, uploadId, filename) => {
+  equal(response.username, 'v@makeomatic.ru');
+  equal(response.file.uploadId, uploadId);
+  match(response.file.uploadedAt, /^\d+$/);
+  equal(response.file.contentLength, '67328');
+  equal(response.file.status, '3');
+  equal(response.file.uploadType, 'cloudflare-stream');
+  match(response.file.startedAt, /^\d+$/);
+  equal(response.file.parts, '1');
+  equal(response.file.bucket, process.env.CLOUDFLARE_STREAM_CUSTOMER_SUBDOMAIN);
+  equal(response.file.name, 'Funny cat video');
+  equal(response.file.owner, 'v@makeomatic.ru');
+  equal(response.file.name_n, 'funny cat video');
+  equal(response.file.uploaded, '1');
+  match(
+    response.file.preview,
+    // eslint-disable-next-line max-len
+    new RegExp(`^https:\\/\\/${process.env.CLOUDFLARE_STREAM_CUSTOMER_SUBDOMAIN}\\/[A-Za-z0-9]+\\.[A-Za-z0-9]+\\.[A-Za-z0-9-_]+\\/thumbnails\\/thumbnail\\.jpg$`)
+  );
+
+  equal(response.file.embed, undefined);
+
+  equal(response.file.files[0].contentType, 'video/mp4');
+  equal(response.file.files[0].contentLength, 67328);
+  equal(response.file.files[0].md5Hash, 'SOPY6SYV/g1I3Awko1WazQ==');
+  equal(response.file.files[0].bucket, process.env.CLOUDFLARE_STREAM_CUSTOMER_SUBDOMAIN);
+  equal(response.file.files[0].type, 'video');
+  equal(response.file.files[0].filename, filename);
+};
+
 describe('cloudflare-stream suite', () => {
   describe('simple upload', function suite() {
     let filename;
     let provider;
     let uploadId;
 
-    before(overrideConfig);
+    before(overrideConfig());
     before('start service', startService);
     before('get provider', function getProvide() {
       provider = this.files.provider('upload', { uploadType: 'cloudflare-stream' });
@@ -198,24 +276,7 @@ describe('cloudflare-stream suite', () => {
         }],
       });
 
-      equal(response.name, 'Funny cat video');
-      equal(response.name_n, 'funny cat video');
-      equal(validateUuid(response.uploadId), true);
-      equal(Number.isInteger(response.startedAt), true);
-      equal(response.parts, 1);
-      equal(response.contentLength, 67328);
-      equal(response.status, '1');
-      equal(response.owner, 'v@makeomatic.ru');
-      equal(response.bucket, process.env.CLOUDFLARE_STREAM_CUSTOMER_SUBDOMAIN);
-      equal(response.uploadType, 'cloudflare-stream');
-
-      equal(response.files[0].contentType, 'video/mp4');
-      equal(response.files[0].contentLength, 67328);
-      equal(response.files[0].md5Hash, 'SOPY6SYV/g1I3Awko1WazQ==');
-      equal(response.files[0].bucket, process.env.CLOUDFLARE_STREAM_CUSTOMER_SUBDOMAIN);
-      equal(response.files[0].type, 'video');
-      equal(response.files[0].filename !== undefined, true);
-      equal(response.files[0].location !== undefined, true);
+      assertUpload(response);
 
       const { location } = response.files[0];
       const uploadResult = await uploadFile(location, videoFile);
@@ -270,33 +331,7 @@ describe('cloudflare-stream suite', () => {
         username: 'v@makeomatic.ru',
       });
 
-      equal(response.username, 'v@makeomatic.ru');
-      equal(response.file.uploadId, uploadId);
-      match(response.file.uploadedAt, /^\d+$/);
-      equal(response.file.contentLength, '67328');
-      equal(response.file.status, '3');
-      equal(response.file.uploadType, 'cloudflare-stream');
-      match(response.file.startedAt, /^\d+$/);
-      equal(response.file.parts, '1');
-      equal(response.file.bucket, process.env.CLOUDFLARE_STREAM_CUSTOMER_SUBDOMAIN);
-      equal(response.file.name, 'Funny cat video');
-      equal(response.file.owner, 'v@makeomatic.ru');
-      equal(response.file.name_n, 'funny cat video');
-      equal(response.file.uploaded, '1');
-      match(
-        response.file.preview,
-        // eslint-disable-next-line max-len
-        new RegExp(`^https:\\/\\/${process.env.CLOUDFLARE_STREAM_CUSTOMER_SUBDOMAIN}\\/[A-Za-z0-9]+\\.[A-Za-z0-9]+\\.[A-Za-z0-9-_]+\\/thumbnails\\/thumbnail\\.jpg$`)
-      );
-
-      equal(response.file.embed, undefined);
-
-      equal(response.file.files[0].contentType, 'video/mp4');
-      equal(response.file.files[0].contentLength, 67328);
-      equal(response.file.files[0].md5Hash, 'SOPY6SYV/g1I3Awko1WazQ==');
-      equal(response.file.files[0].bucket, process.env.CLOUDFLARE_STREAM_CUSTOMER_SUBDOMAIN);
-      equal(response.file.files[0].type, 'video');
-      equal(response.file.files[0].filename, filename);
+      assertInfo(response, uploadId, filename);
     });
 
     it('should be able to update and get data of uploaded video', async () => {
@@ -329,29 +364,53 @@ describe('cloudflare-stream suite', () => {
         username: 'v@makeomatic.ru',
       });
 
-      equal(response.uploadId, uploadId);
-      equal(response.name, 'Funny cat video');
-      equal(response.username, 'v@makeomatic.ru');
+      await assertDownload(response, uploadId, filename);
+    });
 
-      equal(response.files[0].contentType, 'video/mp4');
-      equal(response.files[0].contentLength, 67328);
-      equal(response.files[0].md5Hash, 'SOPY6SYV/g1I3Awko1WazQ==');
-      equal(response.files[0].bucket, process.env.CLOUDFLARE_STREAM_CUSTOMER_SUBDOMAIN);
-      equal(response.files[0].type, 'video');
-      equal(response.files[0].filename, filename);
+    it('should be able to set public access', async () => {
+      const { amqp } = this.ctx;
 
-      match(
-        response.urls[0],
-        // eslint-disable-next-line max-len
-        new RegExp(`^https:\\/\\/${process.env.CLOUDFLARE_STREAM_CUSTOMER_SUBDOMAIN}\\/[A-Za-z0-9]+\\.[A-Za-z0-9]+\\.[A-Za-z0-9-_]+\\/manifest\\/video\\.m3u8$`)
-      );
+      const response = await amqp.publishAndWait('files.access', {
+        uploadId,
+        username: 'v@makeomatic.ru',
+        setPublic: true,
+      });
 
-      await delay(10000);
+      deepEqual(response, [1, 1, 1, 1, 1]);
+    });
 
-      const { status, headers } = await fetch(response.urls[0]);
+    it('should be able to download uploaded video public file', async () => {
+      const { amqp } = this.ctx;
 
-      equal(status, 200);
-      equal(headers.get('content-type'), 'application/x-mpegURL');
+      const response = await amqp.publishAndWait('files.download', {
+        uploadId,
+        username: 'v@makeomatic.ru',
+      });
+
+      await assertDownload(response, uploadId, filename);
+    });
+
+    it('should be able to set private access', async () => {
+      const { amqp } = this.ctx;
+
+      const response = await amqp.publishAndWait('files.access', {
+        uploadId,
+        username: 'v@makeomatic.ru',
+        setPublic: false,
+      });
+
+      deepEqual(response, [1, 1, 1, 1, 1]);
+    });
+
+    it('should be able to download uploaded video private file', async () => {
+      const { amqp } = this.ctx;
+
+      const response = await amqp.publishAndWait('files.download', {
+        uploadId,
+        username: 'v@makeomatic.ru',
+      });
+
+      await assertDownload(response, uploadId, filename);
     });
 
     it('should be able to remove uploaded video', async () => {
@@ -375,7 +434,7 @@ describe('cloudflare-stream suite', () => {
     let provider;
     let uploadId;
 
-    before(overrideConfig);
+    before(overrideConfig());
     before('start service', startService);
     before('get provider', function getProvide() {
       provider = this.files.provider('upload', { uploadType: 'cloudflare-stream' });
@@ -410,24 +469,7 @@ describe('cloudflare-stream suite', () => {
         }],
       });
 
-      equal(response.name, 'Funny cat video');
-      equal(response.name_n, 'funny cat video');
-      equal(validateUuid(response.uploadId), true);
-      equal(Number.isInteger(response.startedAt), true);
-      equal(response.parts, 1);
-      equal(response.contentLength, 67328);
-      equal(response.status, '1');
-      equal(response.owner, 'v@makeomatic.ru');
-      equal(response.bucket, process.env.CLOUDFLARE_STREAM_CUSTOMER_SUBDOMAIN);
-      equal(response.uploadType, 'cloudflare-stream');
-
-      equal(response.files[0].contentType, 'video/mp4');
-      equal(response.files[0].contentLength, 67328);
-      equal(response.files[0].md5Hash, 'SOPY6SYV/g1I3Awko1WazQ==');
-      equal(response.files[0].bucket, process.env.CLOUDFLARE_STREAM_CUSTOMER_SUBDOMAIN);
-      equal(response.files[0].type, 'video');
-      equal(response.files[0].filename !== undefined, true);
-      equal(response.files[0].location !== undefined, true);
+      assertUpload(response);
 
       const { location } = response.files[0];
       const uploadResult = await uploadFileResumable(location, videoFile);
@@ -460,56 +502,6 @@ describe('cloudflare-stream suite', () => {
       await delay(1000);
     });
 
-    it('should be able to get error if finish processing of unknown video', async () => {
-      const { amqp } = this.ctx;
-
-      await rejects(
-        async () => amqp.publishAndWait('files.finish', {
-          filename: 'cfs:55b4953dc4e2371cb742f9c74f825c47',
-        }),
-        {
-          statusCode: 200,
-          message: '404: could not find upload',
-        }
-      );
-    });
-
-    it('should be able to get info about uploaded video', async () => {
-      const { amqp } = this.ctx;
-
-      const response = await amqp.publishAndWait('files.info', {
-        filename: uploadId,
-        username: 'v@makeomatic.ru',
-      });
-
-      equal(response.username, 'v@makeomatic.ru');
-      equal(response.file.uploadId, uploadId);
-      match(response.file.uploadedAt, /^\d+$/);
-      equal(response.file.contentLength, '67328');
-      equal(response.file.status, '3');
-      equal(response.file.uploadType, 'cloudflare-stream');
-      match(response.file.startedAt, /^\d+$/);
-      equal(response.file.parts, '1');
-      equal(response.file.bucket, process.env.CLOUDFLARE_STREAM_CUSTOMER_SUBDOMAIN);
-      equal(response.file.name, 'Funny cat video');
-      equal(response.file.owner, 'v@makeomatic.ru');
-      equal(response.file.name_n, 'funny cat video');
-      equal(response.file.uploaded, '1');
-      match(
-        response.file.preview,
-        // eslint-disable-next-line max-len
-        new RegExp(`^https:\\/\\/${process.env.CLOUDFLARE_STREAM_CUSTOMER_SUBDOMAIN}\\/[A-Za-z0-9]+\\.[A-Za-z0-9]+\\.[A-Za-z0-9-_]+\\/thumbnails\\/thumbnail\\.jpg$`)
-      );
-      equal(response.file.embed, undefined);
-
-      equal(response.file.files[0].contentType, 'video/mp4');
-      equal(response.file.files[0].contentLength, 67328);
-      equal(response.file.files[0].md5Hash, 'SOPY6SYV/g1I3Awko1WazQ==');
-      equal(response.file.files[0].bucket, process.env.CLOUDFLARE_STREAM_CUSTOMER_SUBDOMAIN);
-      equal(response.file.files[0].type, 'video');
-      equal(response.file.files[0].filename, filename);
-    });
-
     it('should be able to download uploaded video', async () => {
       const { amqp } = this.ctx;
 
@@ -518,44 +510,7 @@ describe('cloudflare-stream suite', () => {
         username: 'v@makeomatic.ru',
       });
 
-      equal(response.uploadId, uploadId);
-      equal(response.name, 'Funny cat video');
-      equal(response.username, 'v@makeomatic.ru');
-
-      equal(response.files[0].contentType, 'video/mp4');
-      equal(response.files[0].contentLength, 67328);
-      equal(response.files[0].md5Hash, 'SOPY6SYV/g1I3Awko1WazQ==');
-      equal(response.files[0].bucket, process.env.CLOUDFLARE_STREAM_CUSTOMER_SUBDOMAIN);
-      equal(response.files[0].type, 'video');
-      equal(response.files[0].filename, filename);
-
-      match(
-        response.urls[0],
-        // eslint-disable-next-line max-len
-        new RegExp(`^https:\\/\\/${process.env.CLOUDFLARE_STREAM_CUSTOMER_SUBDOMAIN}\\/[A-Za-z0-9]+\\.[A-Za-z0-9]+\\.[A-Za-z0-9-_]+\\/manifest\\/video\\.m3u8$`)
-      );
-
-      await delay(10000);
-
-      const { status, headers } = await fetch(response.urls[0]);
-
-      equal(status, 200);
-      equal(headers.get('content-type'), 'application/x-mpegURL');
-    });
-
-    it('should be able to remove uploaded video', async () => {
-      const { amqp } = this.ctx;
-      const providerSpy = spy(provider, 'remove');
-
-      const response = await amqp.publishAndWait('files.remove', {
-        filename: uploadId,
-        username: 'v@makeomatic.ru',
-      });
-
-      deepEqual(response, [1, 1, 1]);
-      ok(providerSpy.calledOnceWithExactly(filename));
-
-      filename = undefined;
+      await assertDownload(response, uploadId, filename);
     });
   });
 
@@ -565,7 +520,7 @@ describe('cloudflare-stream suite', () => {
     let uploadId;
     let clonedUploadId;
 
-    before(overrideConfig);
+    before(overrideConfig());
     before('start service', startService);
     before('get provider', function getProvide() {
       provider = this.files.provider('upload', { uploadType: 'cloudflare-stream' });
@@ -652,32 +607,7 @@ describe('cloudflare-stream suite', () => {
         username: 'v@makeomatic.ru',
       });
 
-      equal(response.username, 'v@makeomatic.ru');
-      equal(response.file.uploadId, clonedUploadId);
-      match(response.file.uploadedAt, /^\d+$/);
-      equal(response.file.contentLength, '67328');
-      equal(response.file.status, '3');
-      equal(response.file.uploadType, 'cloudflare-stream');
-      match(response.file.startedAt, /^\d+$/);
-      equal(response.file.parts, '1');
-      equal(response.file.bucket, process.env.CLOUDFLARE_STREAM_CUSTOMER_SUBDOMAIN);
-      equal(response.file.name, 'Funny cat video');
-      equal(response.file.owner, 'v@makeomatic.ru');
-      equal(response.file.name_n, 'funny cat video');
-      equal(response.file.uploaded, '1');
-      match(
-        response.file.preview,
-        // eslint-disable-next-line max-len
-        new RegExp(`^https:\\/\\/${process.env.CLOUDFLARE_STREAM_CUSTOMER_SUBDOMAIN}\\/[A-Za-z0-9]+\\.[A-Za-z0-9]+\\.[A-Za-z0-9-_]+\\/thumbnails\\/thumbnail\\.jpg$`)
-      );
-      equal(response.file.embed, undefined);
-
-      equal(response.file.files[0].contentType, 'video/mp4');
-      equal(response.file.files[0].contentLength, 67328);
-      equal(response.file.files[0].md5Hash, 'SOPY6SYV/g1I3Awko1WazQ==');
-      equal(response.file.files[0].bucket, process.env.CLOUDFLARE_STREAM_CUSTOMER_SUBDOMAIN);
-      equal(response.file.files[0].type, 'video');
-      equal(response.file.files[0].filename, filename);
+      assertInfo(response, clonedUploadId, filename);
     });
 
     it('should be able to download uploaded video', async () => {
@@ -688,29 +618,7 @@ describe('cloudflare-stream suite', () => {
         username: 'v@makeomatic.ru',
       });
 
-      equal(response.uploadId, clonedUploadId);
-      equal(response.name, 'Funny cat video');
-      equal(response.username, 'v@makeomatic.ru');
-
-      equal(response.files[0].contentType, 'video/mp4');
-      equal(response.files[0].contentLength, 67328);
-      equal(response.files[0].md5Hash, 'SOPY6SYV/g1I3Awko1WazQ==');
-      equal(response.files[0].bucket, process.env.CLOUDFLARE_STREAM_CUSTOMER_SUBDOMAIN);
-      equal(response.files[0].type, 'video');
-      equal(response.files[0].filename, filename);
-
-      match(
-        response.urls[0],
-        // eslint-disable-next-line max-len
-        new RegExp(`^https:\\/\\/${process.env.CLOUDFLARE_STREAM_CUSTOMER_SUBDOMAIN}\\/[A-Za-z0-9]+\\.[A-Za-z0-9]+\\.[A-Za-z0-9-_]+\\/manifest\\/video\\.m3u8$`)
-      );
-
-      await delay(10000);
-
-      const { status, headers } = await fetch(response.urls[0]);
-
-      equal(status, 200);
-      equal(headers.get('content-type'), 'application/x-mpegURL');
+      await assertDownload(response, clonedUploadId, filename);
     });
 
     it('should be able to remove file from cloudflare', async () => {

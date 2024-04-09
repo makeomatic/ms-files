@@ -3,6 +3,8 @@ const Promise = require('bluebird');
 const AbstractFileTransfer = require('ms-files-transport');
 const OSS = require('ali-oss');
 
+const { encodeURI } = require('../utils/encode-uri');
+
 class OSSTransport extends AbstractFileTransfer {
   constructor(config) {
     super();
@@ -28,6 +30,11 @@ class OSSTransport extends AbstractFileTransfer {
   // @todo interface
   getBucketName() {
     return this.config.options.bucket;
+  }
+
+  // @todo interface
+  getDownloadUrl(filename) {
+    return `${this.cname}/${encodeURI(filename, false)}`;
   }
 
   // @todo interface

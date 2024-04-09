@@ -9,6 +9,7 @@ const { fetch } = require('undici');
 const { HttpStatusError } = require('common-errors');
 
 const { TRANSPORT_NAME_GCE } = require('../constant');
+const { encodeURI } = require('../utils/encode-uri');
 
 // for some reason it doesn't go through it if we just do the obj
 const unwrap = (datum) => datum[0];
@@ -295,6 +296,11 @@ class GCETransport extends AbstractFileTransfer {
     };
 
     return file.getSignedUrl(settings).then(unwrap);
+  }
+
+  // @todo interface
+  getDownloadUrl(filename) {
+    return `${this.cname}/${encodeURI(filename, false)}`;
   }
 
   // @todo interface
