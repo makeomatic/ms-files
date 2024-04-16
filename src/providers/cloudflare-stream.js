@@ -21,15 +21,15 @@ const objectToBase64url = (payload) => arrayBufferToBase64Url(stringify(payload)
 // @todo use stream.edit() method when it comes
 // https://github.com/cloudflare/cloudflare-typescript/discussions/135#discussioncomment-9045617
 const streamEdit = async (cloudflare, params, options) => {
-  const { account_id, identifier, ...body } = params;
+  const { account_id: accountId, identifier, ...body } = params;
   return (
-    cloudflare.post(`/accounts/${account_id}/stream/${identifier}`, {
+    cloudflare.post(`/accounts/${accountId}/stream/${identifier}`, {
       body,
       ...options,
       headers: { ...options?.headers },
     })
   )._thenUnwrap((obj) => obj.result);
-}
+};
 
 class CloudflareStreamTransport extends AbstractFileTransfer {
   static filenameWithPrefix(filename) {
@@ -51,7 +51,11 @@ class CloudflareStreamTransport extends AbstractFileTransfer {
     ok(config?.options?.customerSubdomain);
 
     this.alwaysRequireSignedURLs = config.alwaysRequireSignedURLs ?? true;
-    this.cloudflare = new Cloudflare({ apiToken: config.options.apiToken });
+    this.cloudflare = new Cloudflare({
+      apiToken: config.options.apiToken,
+      maxRetries: config.options.maxRetries, // default is 2
+      timeout: config.options.timeout, // default is 1 minute
+    });
     this.config = config;
     this.keys = config.keys;
     this.maxDurationSeconds = config.maxDurationSeconds || 1800; // 30m
