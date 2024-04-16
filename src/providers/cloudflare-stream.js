@@ -18,6 +18,19 @@ const nowPlus30Days = () => nowPlusSeconds(2592001);
 const arrayBufferToBase64Url = (buffer) => Buffer.from(buffer).toString('base64url');
 const objectToBase64url = (payload) => arrayBufferToBase64Url(stringify(payload));
 
+// @todo use stream.edit() method when it comes
+// https://github.com/cloudflare/cloudflare-typescript/discussions/135#discussioncomment-9045617
+const streamEdit = async (cloudflare, params, options) => {
+  const { account_id, identifier, ...body } = params;
+  return (
+    cloudflare.post(`/accounts/${account_id}/stream/${identifier}`, {
+      body,
+      ...options,
+      headers: { ...options?.headers },
+    })
+  )._thenUnwrap((obj) => obj.result);
+}
+
 class CloudflareStreamTransport extends AbstractFileTransfer {
   static filenameWithPrefix(filename) {
     return `cfs:${filename}`;
@@ -304,24 +317,26 @@ class CloudflareStreamTransport extends AbstractFileTransfer {
     return sig1Value === hash.digest('hex');
   }
 
-  // eslint-disable-next-line no-unused-vars
   async makePublic(filename) {
-    const { alwaysRequireSignedURLs } = this;
+    const { alwaysRequireSignedURLs, cloudflare, config } = this;
+    const { accountId } = config.options;
 
-    if (alwaysRequireSignedURLs) {
-      // eslint-disable-next-line no-useless-return
-      return;
-    }
+    return streamEdit(cloudflare, {
+      account_id: accountId,
+      identifier: CloudflareStreamTransport.removeFilenamePrefix(filename),
+      requireSignedURLs: alwaysRequireSignedURLs,
+    });
   }
 
-  // eslint-disable-next-line no-unused-vars
   async makePrivate(filename) {
-    const { alwaysRequireSignedURLs } = this;
+    const { cloudflare, config } = this;
+    const { accountId } = config.options;
 
-    if (alwaysRequireSignedURLs) {
-      // eslint-disable-next-line no-useless-return
-      return;
-    }
+    return streamEdit(cloudflare, {
+      account_id: accountId,
+      identifier: CloudflareStreamTransport.removeFilenamePrefix(filename),
+      requireSignedURLs: false,
+    });
   }
 }
 
