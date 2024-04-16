@@ -178,7 +178,10 @@ const assertUpload = (response) => {
   equal(response.files[0].location !== undefined, true);
 };
 
-const assertDownload = async (response, uploadId, filename) => {
+const assertDownload = async (response, uploadId, filename, signedURLs = true) => {
+  const domain = process.env.CLOUDFLARE_STREAM_CUSTOMER_SUBDOMAIN;
+  const uid = CloudflareStreamTransport.removeFilenamePrefix(filename);
+
   equal(response.uploadId, uploadId);
   equal(response.name, 'Funny cat video');
   equal(response.username, 'v@makeomatic.ru');
@@ -186,14 +189,16 @@ const assertDownload = async (response, uploadId, filename) => {
   equal(response.files[0].contentType, 'video/mp4');
   equal(response.files[0].contentLength, 67328);
   equal(response.files[0].md5Hash, 'SOPY6SYV/g1I3Awko1WazQ==');
-  equal(response.files[0].bucket, process.env.CLOUDFLARE_STREAM_CUSTOMER_SUBDOMAIN);
+  equal(response.files[0].bucket, domain);
   equal(response.files[0].type, 'video');
   equal(response.files[0].filename, filename);
 
   match(
     response.urls[0],
     // eslint-disable-next-line max-len
-    new RegExp(`^https:\\/\\/${process.env.CLOUDFLARE_STREAM_CUSTOMER_SUBDOMAIN}\\/[A-Za-z0-9]+\\.[A-Za-z0-9]+\\.[A-Za-z0-9-_]+\\/manifest\\/video\\.m3u8$`)
+    signedURLs
+      ? new RegExp(`^https:\\/\\/${domain}\\/[A-Za-z0-9]+\\.[A-Za-z0-9]+\\.[A-Za-z0-9-_]+\\/manifest\\/video\\.m3u8$`)
+      : new RegExp(`^https:\\/\\/${domain}\\/${uid}\\/manifest\\/video\\.m3u8$`)
   );
 
   await delay(10000);
@@ -425,6 +430,7 @@ describe('cloudflare-stream suite', () => {
       deepEqual(response, [1, 1, 1, 1]);
       ok(providerSpy.calledOnceWithExactly(filename));
 
+      providerSpy.restore();
       filename = undefined;
     });
   });
@@ -632,6 +638,229 @@ describe('cloudflare-stream suite', () => {
 
       deepEqual(response, [1, 1, 1]);
       ok(providerSpy.notCalled);
+
+      providerSpy.restore();
+    });
+  });
+
+  describe('access (without alwaysRequireSignedURLs, private first)', function suite() {
+    let filename;
+    let provider;
+    let uploadId;
+
+    before(overrideConfig({ alwaysRequireSignedURLs: false }));
+    before('start service', startService);
+    before('get provider', function getProvide() {
+      provider = this.files.provider('upload', { uploadType: 'cloudflare-stream' });
+    });
+
+    after('stop service', stopService);
+    after('remove video', async () => {
+      if (filename !== undefined) {
+        return provider.remove(filename);
+      }
+
+      return null;
+    });
+
+    it('should be able to upload video to cloudflare', async () => {
+      const { amqp } = this.ctx;
+      const videoFile = await fs.readFile(path.resolve(__dirname, '../fixtures', 'video_sample.mp4'));
+
+      const response = await amqp.publishAndWait('files.upload', {
+        username: 'v@makeomatic.ru',
+        uploadType: 'cloudflare-stream',
+        resumable: false,
+        expires: 600,
+        origin: 'localhost:433',
+        meta: {
+          name: 'Funny cat video',
+        },
+        files: [{
+          contentType: 'video/mp4',
+          contentLength: videoFile.length,
+          md5Hash: md5(videoFile).toString('hex'),
+          type: 'video',
+        }],
+      });
+
+      assertUpload(response);
+
+      const { location } = response.files[0];
+      const uploadResult = await uploadFile(location, videoFile);
+
+      equal(uploadResult, '');
+
+      filename = response.files[0].filename;
+      uploadId = response.uploadId;
+    });
+
+    it('should be able to finish processing of the uploaded video using webhook', async () => {
+      const key = 'secret from the Cloudflare API';
+      const body = getWebhookBody({
+        uid: CloudflareStreamTransport.removeFilenamePrefix(filename),
+      });
+      const providerStub = stub(provider, 'webhookSecret').value(key);
+      const response = await fetch('http://localhost:3000/files/cloudflare-stream', {
+        body,
+        method: 'POST',
+        headers: {
+          'Webhook-Signature': getWebhookSignature(body, key),
+        },
+      });
+
+      equal(response.status, 200);
+      equal(response.statusText, 'OK');
+
+      providerStub.reset();
+
+      await delay(1000);
+    });
+
+    it('should be able to download uploaded video', async () => {
+      const { amqp } = this.ctx;
+
+      const response = await amqp.publishAndWait('files.download', {
+        uploadId,
+        username: 'v@makeomatic.ru',
+      });
+
+      await assertDownload(response, uploadId, filename);
+    });
+
+    it('should be able to set public access', async () => {
+      const { amqp } = this.ctx;
+
+      const response = await amqp.publishAndWait('files.access', {
+        uploadId,
+        username: 'v@makeomatic.ru',
+        setPublic: true,
+      });
+
+      deepEqual(response, [1, 1, 1, 1, 1]);
+    });
+
+    it('should be able to download uploaded video public file', async () => {
+      const { amqp } = this.ctx;
+
+      const response = await amqp.publishAndWait('files.download', {
+        uploadId,
+        username: 'v@makeomatic.ru',
+      });
+
+      await assertDownload(response, uploadId, filename, false);
+    });
+  });
+
+  describe('access (without alwaysRequireSignedURLs, public first)', function suite() {
+    let filename;
+    let provider;
+    let uploadId;
+
+    before(overrideConfig({ alwaysRequireSignedURLs: false }));
+    before('start service', startService);
+    before('get provider', function getProvide() {
+      provider = this.files.provider('upload', { uploadType: 'cloudflare-stream' });
+    });
+
+    after('stop service', stopService);
+    after('remove video', async () => {
+      if (filename !== undefined) {
+        return provider.remove(filename);
+      }
+
+      return null;
+    });
+
+    it('should be able to upload video to cloudflare', async () => {
+      const { amqp } = this.ctx;
+      const videoFile = await fs.readFile(path.resolve(__dirname, '../fixtures', 'video_sample.mp4'));
+
+      const response = await amqp.publishAndWait('files.upload', {
+        username: 'v@makeomatic.ru',
+        uploadType: 'cloudflare-stream',
+        resumable: false,
+        expires: 600,
+        origin: 'localhost:433',
+        meta: {
+          name: 'Funny cat video',
+        },
+        access: {
+          setPublic: true,
+        },
+        files: [{
+          contentType: 'video/mp4',
+          contentLength: videoFile.length,
+          md5Hash: md5(videoFile).toString('hex'),
+          type: 'video',
+        }],
+      });
+
+      assertUpload(response);
+
+      const { location } = response.files[0];
+      const uploadResult = await uploadFile(location, videoFile);
+
+      equal(uploadResult, '');
+
+      filename = response.files[0].filename;
+      uploadId = response.uploadId;
+    });
+
+    it('should be able to finish processing of the uploaded video using webhook', async () => {
+      const key = 'secret from the Cloudflare API';
+      const body = getWebhookBody({
+        uid: CloudflareStreamTransport.removeFilenamePrefix(filename),
+      });
+      const providerStub = stub(provider, 'webhookSecret').value(key);
+      const response = await fetch('http://localhost:3000/files/cloudflare-stream', {
+        body,
+        method: 'POST',
+        headers: {
+          'Webhook-Signature': getWebhookSignature(body, key),
+        },
+      });
+
+      equal(response.status, 200);
+      equal(response.statusText, 'OK');
+
+      providerStub.reset();
+
+      await delay(1000);
+    });
+
+    it('should be able to download uploaded video', async () => {
+      const { amqp } = this.ctx;
+
+      const response = await amqp.publishAndWait('files.download', {
+        uploadId,
+        username: 'v@makeomatic.ru',
+      });
+
+      await assertDownload(response, uploadId, filename, false);
+    });
+
+    it('should be able to set private access', async () => {
+      const { amqp } = this.ctx;
+
+      const response = await amqp.publishAndWait('files.access', {
+        uploadId,
+        username: 'v@makeomatic.ru',
+        setPublic: false,
+      });
+
+      deepEqual(response, [1, 1, 1, 1, 1]);
+    });
+
+    it('should be able to download uploaded video private file', async () => {
+      const { amqp } = this.ctx;
+
+      const response = await amqp.publishAndWait('files.download', {
+        uploadId,
+        username: 'v@makeomatic.ru',
+      });
+
+      await assertDownload(response, uploadId, filename);
     });
   });
 });
