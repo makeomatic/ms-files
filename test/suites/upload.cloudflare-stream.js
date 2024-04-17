@@ -241,6 +241,11 @@ const assertInfo = async (response, uploadId, filename, signedURLs = true) => {
   equal(response.file.files[0].type, 'video');
   equal(response.file.files[0].filename, filename);
 
+  equal(response.file[filename].duration, 5.5);
+  equal(response.file[filename].height, 320);
+  equal(response.file[filename].size, 383631);
+  equal(response.file[filename].width, 560);
+
   const { status, headers } = await fetch(response.file.preview);
 
   equal(status, 200);
