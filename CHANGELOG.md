@@ -1,3 +1,10 @@
+## [19.3.1](https://github.com/makeomatic/ms-files/compare/v19.3.0...v19.3.1) (2024-04-17)
+
+
+### Bug Fixes
+
+* normalize multi search ([#325](https://github.com/makeomatic/ms-files/issues/325)) ([6c63067](https://github.com/makeomatic/ms-files/commit/6c63067ba44e1413bbfa927f46788f5cf67383de))
+
 # [19.3.0](https://github.com/makeomatic/ms-files/compare/v19.2.2...v19.3.0) (2024-04-08)
 
 
