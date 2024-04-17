@@ -1,5 +1,6 @@
 const { ActionTransport } = require('@microfleet/plugin-router');
 const { HttpStatusError } = require('common-errors');
+const stringify = require('safe-stable-stringify');
 
 const { PROVIDER_CLOUDFLARE_MISSING_ERROR } = require('../constant');
 const CloudflareStreamTransport = require('../providers/cloudflare-stream');
@@ -34,15 +35,34 @@ async function cloudflareWebhookAction(request) {
   const message = parseBodyJson(body);
   const { status, uid } = message;
 
-  if (status.state === STATUS_STATE_READY) {
-    await this.dispatch('finish', {
-      params: {
-        filename: CloudflareStreamTransport.filenameWithPrefix(uid),
-      },
-    });
-  } else {
+  if (status.state !== STATUS_STATE_READY) {
     this.log.error({ message }, 'failed cloudflare-stream webhook');
+
+    return RESPONSE_OK;
   }
+
+  const filename = CloudflareStreamTransport.filenameWithPrefix(uid);
+  const { uploadId, owner } = await this.dispatch('finish', {
+    params: {
+      filename,
+      await: true,
+    },
+  });
+
+  await this.dispatch('update', {
+    params: {
+      uploadId,
+      username: owner,
+      meta: {
+        [filename]: stringify({
+          duration: message.duration,
+          height: message.input.height,
+          size: message.size,
+          width: message.input.width,
+        }),
+      },
+    },
+  });
 
   return RESPONSE_OK;
 }
