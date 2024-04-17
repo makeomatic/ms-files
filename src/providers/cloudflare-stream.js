@@ -275,8 +275,9 @@ class CloudflareStreamTransport extends AbstractFileTransfer {
 
     const { config } = this;
     const { customerSubdomain } = config.options;
+    const uid = CloudflareStreamTransport.removeFilenamePrefix(filename);
 
-    return `https://${customerSubdomain}/${CloudflareStreamTransport.removeFilenamePrefix(filename)}/manifest/video.m3u8`;
+    return `https://${customerSubdomain}/${uid}/manifest/video.m3u8`;
   }
 
   async getThumbnailUrlSigned(filename) {
@@ -287,6 +288,20 @@ class CloudflareStreamTransport extends AbstractFileTransfer {
     );
 
     return `https://${customerSubdomain}/${signedToken}/thumbnails/thumbnail.jpg`;
+  }
+
+  async getThumbnailUrl(filename) {
+    const { alwaysRequireSignedURLs } = this;
+
+    if (alwaysRequireSignedURLs) {
+      return this.getThumbnailUrlSigned(filename);
+    }
+
+    const { config } = this;
+    const { customerSubdomain } = config.options;
+    const uid = CloudflareStreamTransport.removeFilenamePrefix(filename);
+
+    return `https://${customerSubdomain}/${uid}/thumbnails/thumbnail.jpg`;
   }
 
   async initWebhook() {
