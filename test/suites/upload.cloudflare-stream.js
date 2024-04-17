@@ -201,15 +201,16 @@ const assertDownload = async (response, uploadId, filename, signedURLs = true) =
       : new RegExp(`^https:\\/\\/${domain}\\/${uid}\\/manifest\\/video\\.m3u8$`)
   );
 
-  await delay(10000);
-
   const { status, headers } = await fetch(response.urls[0]);
 
   equal(status, 200);
   equal(headers.get('content-type'), 'application/x-mpegURL');
 };
 
-const assertInfo = (response, uploadId, filename) => {
+const assertInfo = async (response, uploadId, filename, signedURLs = true) => {
+  const domain = process.env.CLOUDFLARE_STREAM_CUSTOMER_SUBDOMAIN;
+  const uid = CloudflareStreamTransport.removeFilenamePrefix(filename);
+
   equal(response.username, 'v@makeomatic.ru');
   equal(response.file.uploadId, uploadId);
   match(response.file.uploadedAt, /^\d+$/);
@@ -226,7 +227,9 @@ const assertInfo = (response, uploadId, filename) => {
   match(
     response.file.preview,
     // eslint-disable-next-line max-len
-    new RegExp(`^https:\\/\\/${process.env.CLOUDFLARE_STREAM_CUSTOMER_SUBDOMAIN}\\/[A-Za-z0-9]+\\.[A-Za-z0-9]+\\.[A-Za-z0-9-_]+\\/thumbnails\\/thumbnail\\.jpg$`)
+    signedURLs
+      ? new RegExp(`^https:\\/\\/${domain}\\/[A-Za-z0-9]+\\.[A-Za-z0-9]+\\.[A-Za-z0-9-_]+\\/thumbnails\\/thumbnail\\.jpg$`)
+      : new RegExp(`^https:\\/\\/${domain}\\/${uid}\\/thumbnails\\/thumbnail\\.jpg$`)
   );
 
   equal(response.file.embed, undefined);
@@ -237,6 +240,11 @@ const assertInfo = (response, uploadId, filename) => {
   equal(response.file.files[0].bucket, process.env.CLOUDFLARE_STREAM_CUSTOMER_SUBDOMAIN);
   equal(response.file.files[0].type, 'video');
   equal(response.file.files[0].filename, filename);
+
+  const { status, headers } = await fetch(response.file.preview);
+
+  equal(status, 200);
+  equal(headers.get('content-type'), 'image/jpeg');
 };
 
 describe('cloudflare-stream suite', () => {
@@ -311,7 +319,7 @@ describe('cloudflare-stream suite', () => {
 
       providerStub.reset();
 
-      await delay(1000);
+      await delay(10000);
     });
 
     it('should be able to get error if finish processing of unknown video', async () => {
@@ -336,7 +344,7 @@ describe('cloudflare-stream suite', () => {
         username: 'v@makeomatic.ru',
       });
 
-      assertInfo(response, uploadId, filename);
+      await assertInfo(response, uploadId, filename);
     });
 
     it('should be able to update and get data of uploaded video', async () => {
@@ -505,7 +513,7 @@ describe('cloudflare-stream suite', () => {
 
       providerStub.reset();
 
-      await delay(1000);
+      await delay(10000);
     });
 
     it('should be able to download uploaded video', async () => {
@@ -588,7 +596,7 @@ describe('cloudflare-stream suite', () => {
 
       providerStub.reset();
 
-      await delay(1000);
+      await delay(10000);
     });
 
     it('should be able to clone uploaded video', async () => {
@@ -613,7 +621,7 @@ describe('cloudflare-stream suite', () => {
         username: 'v@makeomatic.ru',
       });
 
-      assertInfo(response, clonedUploadId, filename);
+      await assertInfo(response, clonedUploadId, filename);
     });
 
     it('should be able to download uploaded video', async () => {
@@ -714,7 +722,18 @@ describe('cloudflare-stream suite', () => {
 
       providerStub.reset();
 
-      await delay(1000);
+      await delay(10000);
+    });
+
+    it('should be able to get info about uploaded video', async () => {
+      const { amqp } = this.ctx;
+
+      const response = await amqp.publishAndWait('files.info', {
+        filename: uploadId,
+        username: 'v@makeomatic.ru',
+      });
+
+      await assertInfo(response, uploadId, filename);
     });
 
     it('should be able to download uploaded video', async () => {
@@ -738,6 +757,20 @@ describe('cloudflare-stream suite', () => {
       });
 
       deepEqual(response, [1, 1, 1, 1, 1]);
+    });
+
+    it('should be able to get info about public video', async () => {
+      const { amqp } = this.ctx;
+
+      const response = await amqp.publishAndWait('files.info', {
+        filename: uploadId,
+        username: 'v@makeomatic.ru',
+      });
+
+      // Cloudflare has a huge delay when updating the requireSignedURLs property
+      await delay(90000);
+
+      await assertInfo(response, uploadId, filename, false);
     });
 
     it('should be able to download uploaded video public file', async () => {
@@ -826,7 +859,18 @@ describe('cloudflare-stream suite', () => {
 
       providerStub.reset();
 
-      await delay(1000);
+      await delay(10000);
+    });
+
+    it('should be able to get info about uploaded video', async () => {
+      const { amqp } = this.ctx;
+
+      const response = await amqp.publishAndWait('files.info', {
+        filename: uploadId,
+        username: 'v@makeomatic.ru',
+      });
+
+      await assertInfo(response, uploadId, filename, false);
     });
 
     it('should be able to download uploaded video', async () => {
@@ -850,6 +894,17 @@ describe('cloudflare-stream suite', () => {
       });
 
       deepEqual(response, [1, 1, 1, 1, 1]);
+    });
+
+    it('should be able to get info about private video', async () => {
+      const { amqp } = this.ctx;
+
+      const response = await amqp.publishAndWait('files.info', {
+        filename: uploadId,
+        username: 'v@makeomatic.ru',
+      });
+
+      await assertInfo(response, uploadId, filename);
     });
 
     it('should be able to download uploaded video private file', async () => {
