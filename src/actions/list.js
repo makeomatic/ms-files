@@ -37,6 +37,7 @@ const {
   FILES_LIST_SEARCH,
   FILES_CATEGORIES_FIELD,
 } = require('../constant');
+const { normalizeForSearch } = require('../utils/normalize-name');
 
 const k404Error = new Error('ELIST404');
 
@@ -451,7 +452,7 @@ async function redisSearch(ctx) {
 
         const wordVarName = `${varName}_${index}`;
         queryVars.push(`$${wordVarName}`);
-        params.push(wordVarName, word);
+        params.push(wordVarName, normalizeForSearch(word));
       });
 
       if (queryVars.length > 0) {
