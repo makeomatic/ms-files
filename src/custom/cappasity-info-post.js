@@ -369,14 +369,22 @@ const GREEN_LIGHT_STATUSES = Object.setPrototypeOf({
   [STATUS_FAILED]: true,
 }, null);
 
-const setCloudflareStreamPreview = async (service, file) => {
+const setCloudflareStreamData = async (service, uploadData) => {
   const cloudflareStream = service.providersByAlias['cloudflare-stream'];
 
-  if (cloudflareStream && file?.preview?.startsWith('cfs:')) {
-    if (file[FILES_PUBLIC_FIELD]) {
-      file.preview = await cloudflareStream.getThumbnailUrl(file.preview);
+  if (cloudflareStream && uploadData?.preview?.startsWith('cfs:')) {
+    if (uploadData[FILES_PUBLIC_FIELD]) {
+      uploadData.preview = await cloudflareStream.getThumbnailUrl(uploadData.preview);
     } else {
-      file.preview = await cloudflareStream.getThumbnailUrlSigned(file.preview);
+      uploadData.preview = await cloudflareStream.getThumbnailUrlSigned(uploadData.preview);
+    }
+  }
+
+  for (const { filename } of uploadData.files) {
+    try {
+      uploadData[filename] = JSON.parse(uploadData[filename]);
+    } catch (error) {
+      service.log.error({ error, uploadData }, 'failed to parse cloudflare-stream meta');
     }
   }
 };
@@ -384,7 +392,7 @@ const setCloudflareStreamPreview = async (service, file) => {
 // Actual code that populates .embed from predefined data
 module.exports = async function getEmbeddedInfo(file) {
   if (file.uploadType === UPLOAD_TYPE_CLOUDFLARE_STREAM) {
-    await setCloudflareStreamPreview(this, file);
+    await setCloudflareStreamData(this, file);
 
     return file;
   }
