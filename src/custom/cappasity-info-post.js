@@ -6,14 +6,15 @@ const flatstr = require('flatstr');
 const memoize = require('lodash/memoize');
 
 const {
+  CAPPASITY_IMAGE_MODEL,
+  FILES_PUBLIC_FIELD,
+  STATUS_FAILED,
   STATUS_PROCESSED,
   STATUS_PROCESSING,
-  STATUS_FAILED,
-  CAPPASITY_IMAGE_MODEL,
-  UPLOAD_TYPE_GLB_EXTENDED,
-  UPLOAD_TYPE_PANORAMA_EQUIRECT,
-  UPLOAD_TYPE_PANORAMA_CUBEMAP,
   UPLOAD_TYPE_CLOUDFLARE_STREAM,
+  UPLOAD_TYPE_GLB_EXTENDED,
+  UPLOAD_TYPE_PANORAMA_CUBEMAP,
+  UPLOAD_TYPE_PANORAMA_EQUIRECT,
 } = require('../constant');
 
 /*
@@ -368,14 +369,22 @@ const GREEN_LIGHT_STATUSES = Object.setPrototypeOf({
   [STATUS_FAILED]: true,
 }, null);
 
+const setCloudflareStreamPreview = async (service, file) => {
+  const cloudflareStream = service.providersByAlias['cloudflare-stream'];
+
+  if (cloudflareStream && file?.preview?.startsWith('cfs:')) {
+    if (file[FILES_PUBLIC_FIELD]) {
+      file.preview = await cloudflareStream.getThumbnailUrl(file.preview);
+    } else {
+      file.preview = await cloudflareStream.getThumbnailUrlSigned(file.preview);
+    }
+  }
+};
+
 // Actual code that populates .embed from predefined data
 module.exports = async function getEmbeddedInfo(file) {
   if (file.uploadType === UPLOAD_TYPE_CLOUDFLARE_STREAM) {
-    const cloudflareStream = this.providersByAlias['cloudflare-stream'];
-
-    if (cloudflareStream && file.preview) {
-      file.preview = await cloudflareStream.getThumbnailUrlSigned(file.preview);
-    }
+    await setCloudflareStreamPreview(this, file);
 
     return file;
   }
