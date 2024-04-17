@@ -273,5 +273,5 @@ function initFileUpdate({ params }) {
   return Promise.using(this.dlock.acquireLock(...keys), this, params, updateMeta);
 }
 
-initFileUpdate.transports = [ActionTransport.amqp];
+initFileUpdate.transports = [ActionTransport.amqp, ActionTransport.internal];
 module.exports = initFileUpdate;
