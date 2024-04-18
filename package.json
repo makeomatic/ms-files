@@ -30,8 +30,8 @@
   "homepage": "https://github.com/makeomatic/ms-files#readme",
   "dependencies": {
     "@fastify/deepmerge": "^1.3.0",
-    "@google-cloud/storage": "7.9.0",
-    "@hapi/hapi": "^21.3.8",
+    "@google-cloud/storage": "7.10.0",
+    "@hapi/hapi": "^21.3.9",
     "@microfleet/core": "^20.1.3",
     "@microfleet/core-types": "^3.1.3",
     "@microfleet/plugin-amqp": "^3.1.3",
@@ -71,7 +71,7 @@
     "prom-client": "^15.1.2",
     "redis-filtered-sort": "^2.5.0",
     "safe-stable-stringify": "^2.4.3",
-    "undici": "^6.12.0",
+    "undici": "^6.13.0",
     "uuid": "^9.0.1",
     "yargs": "^17.7.2"
   },
@@ -99,10 +99,10 @@
     "mocha": "^10.4.0",
     "rfdc": "^1.3.1",
     "rimraf": "^5.0.5",
-    "semantic-release": "^23.0.7",
+    "semantic-release": "^23.0.8",
     "sinon": "^17.0.1",
     "tus-js-client": "^4.1.0",
-    "typescript": "^5.4.4"
+    "typescript": "^5.4.5"
   },
   "engines": {
     "node": ">= 20.10.0",
