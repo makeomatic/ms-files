@@ -15,6 +15,7 @@ module.exports = function finishPost(fileData, lock) {
   }
 
   if (!fileData.bucket) {
+    // @todo it's not possible to set right bucket for file with multiple providers
     const provider = this.provider('download', fileData);
     fileData.bucket = provider.config.bucket.name;
   }
