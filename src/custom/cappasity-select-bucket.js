@@ -7,7 +7,11 @@ const {
   UPLOAD_TYPE_CLOUDFLARE_STREAM,
 } = require('../constant');
 
-function selectCloudflareStreamProvider(service) {
+const needToUploadToCloudflare = (uploadParams, file) => {
+  return uploadParams.uploadType === UPLOAD_TYPE_CLOUDFLARE_STREAM && file && file.type === 'video';
+};
+
+const selectCloudflareStreamProvider = (service) => {
   const cloudflareStream = service.providersByAlias['cloudflare-stream'];
 
   if (!cloudflareStream) {
@@ -15,17 +19,17 @@ function selectCloudflareStreamProvider(service) {
   }
 
   return cloudflareStream;
-}
+};
 
 // action handler
 // if file is temporary, use provider index `1`
 // if it's permanent - use index 0
-function uploadSelector({ temp, uploadType }) {
-  if (uploadType === UPLOAD_TYPE_CLOUDFLARE_STREAM) {
+function uploadSelector(opts, file) {
+  if (needToUploadToCloudflare(opts, file)) {
     return selectCloudflareStreamProvider(this);
   }
 
-  return this.providers[temp ? 1 : 0];
+  return this.providers[opts.temp ? 1 : 0];
 }
 
 // downloads can be performed from both public and temp store
@@ -35,8 +39,8 @@ function uploadSelector({ temp, uploadType }) {
 //  * download
 //  * remove
 //  * access
-function downloadSelector(opts, headers = {}, uploadData = {}) {
-  if (uploadData.uploadType === UPLOAD_TYPE_CLOUDFLARE_STREAM) {
+function downloadSelector(opts, file, headers = {}) {
+  if (needToUploadToCloudflare(opts, file)) {
     return selectCloudflareStreamProvider(this);
   }
 
@@ -75,14 +79,14 @@ const ACTION_TO_SELECTOR = Object.setPrototypeOf({
 }, null);
 
 // fn for selection
-function selectTransport(action, opts, headers, uploadData) {
+function selectTransport(action, opts, file, headers) {
   const thunk = ACTION_TO_SELECTOR[action];
 
   if (typeof thunk !== 'function') {
     throw new Error(`${action} selector not defined`);
   }
 
-  return thunk.call(this, opts, headers, uploadData);
+  return thunk.call(this, opts, file, headers);
 }
 
 // public API

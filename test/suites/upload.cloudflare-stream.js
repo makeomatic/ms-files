@@ -2,6 +2,8 @@ const fs = require('node:fs/promises');
 const path = require('node:path');
 const { equal, rejects, match, deepEqual, ok } = require('node:assert/strict');
 const crypto = require('node:crypto');
+const { Readable } = require('node:stream');
+
 const md5 = require('md5');
 const tus = require('tus-js-client');
 const { fetch } = require('undici');
@@ -73,7 +75,7 @@ const overrideConfig = (config = {}) => function override() {
   };
 };
 
-const uploadFile = async (location, file) => {
+const uploadFileToCloudflare = async (location, file) => {
   const formData = new FormData();
 
   formData.append('file', new Blob([file]), 'video.mp4');
@@ -81,6 +83,23 @@ const uploadFile = async (location, file) => {
   const response = await fetch(location, {
     method: 'POST',
     body: formData,
+  });
+
+  return response.text();
+};
+
+const uploadFileToGCS = async (location, file, contentType, md5Hash) => {
+  const headers = {
+    'Content-MD5': md5Hash,
+    'Content-Type': contentType,
+  };
+
+  const response = await fetch(location, {
+    method: 'PUT',
+    body: Readable.from([file], { objectMode: false }),
+    duplex: 'half',
+    headers,
+    keepalive: false,
   });
 
   return response.text();
@@ -166,7 +185,8 @@ const assertUpload = (response) => {
   equal(response.contentLength, 67328);
   equal(response.status, '1');
   equal(response.owner, 'v@makeomatic.ru');
-  equal(response.bucket, process.env.CLOUDFLARE_STREAM_CUSTOMER_SUBDOMAIN);
+  // @todo it's not possible to set right bucket for file with multiple providers
+  equal(response.bucket, process.env.TEST_BUCKET);
   equal(response.uploadType, 'cloudflare-stream');
 
   equal(response.files[0].contentType, 'video/mp4');
@@ -176,6 +196,36 @@ const assertUpload = (response) => {
   equal(response.files[0].type, 'video');
   equal(response.files[0].filename !== undefined, true);
   equal(response.files[0].location !== undefined, true);
+};
+
+const assertUploadWithPreview = (response) => {
+  equal(response.name, 'Funny cat video');
+  equal(response.name_n, 'funny cat video');
+  equal(validateUuid(response.uploadId), true);
+  equal(Number.isInteger(response.startedAt), true);
+  equal(response.parts, 2);
+  equal(response.contentLength, 529737);
+  equal(response.status, '1');
+  equal(response.owner, 'v@makeomatic.ru');
+  // @todo it's not possible to set right bucket for file with multiple providers
+  equal(response.bucket, process.env.TEST_BUCKET);
+  equal(response.uploadType, 'cloudflare-stream');
+
+  equal(response.files[0].contentType, 'video/mp4');
+  equal(response.files[0].contentLength, 67328);
+  equal(response.files[0].md5Hash, 'SOPY6SYV/g1I3Awko1WazQ==');
+  equal(response.files[0].bucket, process.env.CLOUDFLARE_STREAM_CUSTOMER_SUBDOMAIN);
+  equal(response.files[0].type, 'video');
+  equal(response.files[0].filename !== undefined, true);
+  equal(response.files[0].location !== undefined, true);
+
+  equal(response.files[1].contentType, 'image/jpeg');
+  equal(response.files[1].contentLength, 462409);
+  equal(response.files[1].md5Hash, 'dJjAjUYmFs3AB7gii7dFHA==');
+  equal(response.files[1].bucket, process.env.TEST_BUCKET);
+  equal(response.files[1].type, 'c-preview');
+  equal(response.files[1].filename !== undefined, true);
+  equal(response.files[1].location !== undefined, true);
 };
 
 const assertDownload = async (response, uploadId, filename, signedURLs = true) => {
@@ -207,6 +257,31 @@ const assertDownload = async (response, uploadId, filename, signedURLs = true) =
   equal(headers.get('content-type'), 'application/x-mpegURL');
 };
 
+const assertDownloadWithPreview = async (response, uploadId, videoFilename, previewFilename) => {
+  const domain = process.env.CLOUDFLARE_STREAM_CUSTOMER_SUBDOMAIN;
+
+  equal(response.uploadId, uploadId);
+  equal(response.name, 'Funny cat video');
+  equal(response.username, 'v@makeomatic.ru');
+
+  equal(response.files[0].contentType, 'video/mp4');
+  equal(response.files[0].contentLength, 67328);
+  equal(response.files[0].md5Hash, 'SOPY6SYV/g1I3Awko1WazQ==');
+  equal(response.files[0].bucket, domain);
+  equal(response.files[0].type, 'video');
+  equal(response.files[0].filename, videoFilename);
+
+  equal(response.files[0].contentType, 'image/jpeg');
+  equal(response.files[0].contentLength, 462409);
+  equal(response.files[0].md5Hash, 'dJjAjUYmFs3AB7gii7dFHA==');
+  equal(response.files[0].bucket, process.env.TEST_BUCKET);
+  equal(response.files[0].type, 'c-preview');
+  equal(response.files[0].filename, previewFilename);
+
+  match(response.urls[0], new RegExp(`^https:\\/\\/${domain}\\/[A-Za-z0-9]+\\.[A-Za-z0-9]+\\.[A-Za-z0-9-_]+\\/manifest\\/video\\.m3u8$`));
+  match(response.urls[1], new RegExp(`^https:\\/\\/storage.googleapis.com\\/${process.env.TEST_BUCKET}\\/${previewFilename}`));
+};
+
 const assertInfo = async (response, uploadId, filename, signedURLs = true) => {
   const domain = process.env.CLOUDFLARE_STREAM_CUSTOMER_SUBDOMAIN;
   const uid = CloudflareStreamTransport.removeFilenamePrefix(filename);
@@ -219,7 +294,8 @@ const assertInfo = async (response, uploadId, filename, signedURLs = true) => {
   equal(response.file.uploadType, 'cloudflare-stream');
   match(response.file.startedAt, /^\d+$/);
   equal(response.file.parts, '1');
-  equal(response.file.bucket, process.env.CLOUDFLARE_STREAM_CUSTOMER_SUBDOMAIN);
+  // @todo it's not possible to set right bucket for file with multiple providers
+  equal(response.file.bucket, process.env.TEST_BUCKET);
   equal(response.file.name, 'Funny cat video');
   equal(response.file.owner, 'v@makeomatic.ru');
   equal(response.file.name_n, 'funny cat video');
@@ -252,6 +328,76 @@ const assertInfo = async (response, uploadId, filename, signedURLs = true) => {
   equal(headers.get('content-type'), 'image/jpeg');
 };
 
+const assertInfoWithPreview = async (response, uploadId, videoFilename, previewFilename) => {
+  equal(response.username, 'v@makeomatic.ru');
+  equal(response.file.uploadId, uploadId);
+  match(response.file.uploadedAt, /^\d+$/);
+  equal(response.file.contentLength, '67328');
+  equal(response.file.status, '3');
+  equal(response.file.uploadType, 'cloudflare-stream');
+  match(response.file.startedAt, /^\d+$/);
+  equal(response.file.parts, '1');
+  equal(response.file.bucket, process.env.CLOUDFLARE_STREAM_CUSTOMER_SUBDOMAIN);
+  equal(response.file.name, 'Funny cat video');
+  equal(response.file.owner, 'v@makeomatic.ru');
+  equal(response.file.name_n, 'funny cat video');
+  equal(response.file.uploaded, '1');
+  equal(response.file.preview, previewFilename);
+
+  equal(response.file.embed, undefined);
+
+  equal(response.file.files[0].contentType, 'video/mp4');
+  equal(response.file.files[0].contentLength, 67328);
+  equal(response.file.files[0].md5Hash, 'SOPY6SYV/g1I3Awko1WazQ==');
+  equal(response.file.files[0].bucket, process.env.CLOUDFLARE_STREAM_CUSTOMER_SUBDOMAIN);
+  equal(response.file.files[0].type, 'video');
+  equal(response.file.files[0].filename, videoFilename);
+
+  equal(response.file.files[1].bucket, process.env.TEST_BUCKET);
+  equal(response.file.files[1].contentLength, 462409);
+  equal(response.file.files[1].contentType, 'image/jpeg');
+  equal(response.file.files[1].filename, previewFilename);
+  equal(response.file.files[1].md5Hash, 'dJjAjUYmFs3AB7gii7dFHA==');
+  equal(response.file.files[1].type, 'c-preview');
+
+  equal(response.file[videoFilename].duration, 5.5);
+  equal(response.file[videoFilename].height, 320);
+  equal(response.file[videoFilename].size, 383631);
+  equal(response.file[videoFilename].width, 560);
+};
+
+const assertFinishWithPreview = (response, uploadId, videoFilename, previewFilename) => {
+  // @todo it's not possible to set right bucket for file with multiple providers
+  equal(response.bucket, process.env.TEST_BUCKET);
+  equal(response.contentLength, '529737');
+  equal(response.name, 'Funny cat video');
+  equal(response.name_n, 'funny cat video');
+  equal(response.owner, 'v@makeomatic.ru');
+  equal(response.parts, '2');
+  equal(response.preview, previewFilename);
+  match(response.startedAt, /^\d+$/);
+  equal(response.status, '3');
+  equal(response.uploadId, uploadId);
+  equal(response.uploadType, 'cloudflare-stream');
+  equal(response.uploaded, '2');
+
+  equal(response.files[0].bucket, process.env.CLOUDFLARE_STREAM_CUSTOMER_SUBDOMAIN);
+  equal(response.files[0].contentLength, 67328);
+  equal(response.files[0].contentType, 'video/mp4');
+  equal(response.files[0].filename, videoFilename);
+  equal(response.files[0].md5Hash, 'SOPY6SYV/g1I3Awko1WazQ==');
+  equal(response.files[0].type, 'video');
+
+  equal(response.files[1].bucket, process.env.TEST_BUCKET);
+  equal(response.files[1].contentLength, 462409);
+  equal(response.files[1].contentType, 'image/jpeg');
+  equal(response.files[1].filename, previewFilename);
+  equal(response.files[1].md5Hash, 'dJjAjUYmFs3AB7gii7dFHA==');
+  equal(response.files[1].type, 'c-preview');
+
+  equal(response[videoFilename], '{"duration":5.5,"height":320,"size":383631,"width":560}');
+};
+
 describe('cloudflare-stream suite', () => {
   describe('simple upload', function suite() {
     let filename;
@@ -261,7 +407,7 @@ describe('cloudflare-stream suite', () => {
     before(overrideConfig());
     before('start service', startService);
     before('get provider', function getProvide() {
-      provider = this.files.provider('upload', { uploadType: 'cloudflare-stream' });
+      provider = this.files.provider('upload', { uploadType: 'cloudflare-stream' }, { type: 'video' });
     });
 
     after('stop service', stopService);
@@ -297,7 +443,7 @@ describe('cloudflare-stream suite', () => {
       assertUpload(response);
 
       const { location } = response.files[0];
-      const uploadResult = await uploadFile(location, videoFile);
+      const uploadResult = await uploadFileToCloudflare(location, videoFile);
 
       equal(uploadResult, '');
 
@@ -456,7 +602,7 @@ describe('cloudflare-stream suite', () => {
     before(overrideConfig());
     before('start service', startService);
     before('get provider', function getProvide() {
-      provider = this.files.provider('upload', { uploadType: 'cloudflare-stream' });
+      provider = this.files.provider('upload', { uploadType: 'cloudflare-stream' }, { type: 'video' });
     });
 
     after('stop service', stopService);
@@ -542,7 +688,7 @@ describe('cloudflare-stream suite', () => {
     before(overrideConfig());
     before('start service', startService);
     before('get provider', function getProvide() {
-      provider = this.files.provider('upload', { uploadType: 'cloudflare-stream' });
+      provider = this.files.provider('upload', { uploadType: 'cloudflare-stream' }, { type: 'video' });
     });
 
     after('stop service', stopService);
@@ -574,7 +720,7 @@ describe('cloudflare-stream suite', () => {
       });
 
       const { location } = response.files[0];
-      const uploadResult = await uploadFile(location, videoFile);
+      const uploadResult = await uploadFileToCloudflare(location, videoFile);
 
       equal(uploadResult, '');
 
@@ -664,7 +810,7 @@ describe('cloudflare-stream suite', () => {
     before(overrideConfig({ alwaysRequireSignedURLs: false }));
     before('start service', startService);
     before('get provider', function getProvide() {
-      provider = this.files.provider('upload', { uploadType: 'cloudflare-stream' });
+      provider = this.files.provider('upload', { uploadType: 'cloudflare-stream' }, { type: 'video' });
     });
 
     after('stop service', stopService);
@@ -700,7 +846,7 @@ describe('cloudflare-stream suite', () => {
       assertUpload(response);
 
       const { location } = response.files[0];
-      const uploadResult = await uploadFile(location, videoFile);
+      const uploadResult = await uploadFileToCloudflare(location, videoFile);
 
       equal(uploadResult, '');
 
@@ -798,7 +944,7 @@ describe('cloudflare-stream suite', () => {
     before(overrideConfig({ alwaysRequireSignedURLs: false }));
     before('start service', startService);
     before('get provider', function getProvide() {
-      provider = this.files.provider('upload', { uploadType: 'cloudflare-stream' });
+      provider = this.files.provider('upload', { uploadType: 'cloudflare-stream' }, { type: 'video' });
     });
 
     after('stop service', stopService);
@@ -837,7 +983,7 @@ describe('cloudflare-stream suite', () => {
       assertUpload(response);
 
       const { location } = response.files[0];
-      const uploadResult = await uploadFile(location, videoFile);
+      const uploadResult = await uploadFileToCloudflare(location, videoFile);
 
       equal(uploadResult, '');
 
@@ -921,6 +1067,127 @@ describe('cloudflare-stream suite', () => {
       });
 
       await assertDownload(response, uploadId, filename);
+    });
+  });
+
+  describe('with custom preview', function suite() {
+    let videoFilename;
+    let previewFilename;
+    let provider;
+    let uploadId;
+
+    before(overrideConfig());
+    before('start service', startService);
+    before('get provider', function getProvide() {
+      provider = this.files.provider('upload', { uploadType: 'cloudflare-stream' }, { type: 'video' });
+    });
+
+    after('stop service', stopService);
+    after('remove video', async () => {
+      if (videoFilename !== undefined) {
+        return provider.remove(videoFilename);
+      }
+
+      return null;
+    });
+
+    it('should be able to upload video to cloudflare with custom preview', async () => {
+      const { amqp } = this.ctx;
+      const [videoFile, previewFile] = await Promise.all([
+        fs.readFile(path.resolve(__dirname, '../fixtures', 'video_sample.mp4')),
+        fs.readFile(path.resolve(__dirname, '../fixtures', 'shoe_preview.jpg')),
+      ]);
+
+      const response = await amqp.publishAndWait('files.upload', {
+        username: 'v@makeomatic.ru',
+        uploadType: 'cloudflare-stream',
+        resumable: false,
+        expires: 600,
+        origin: 'localhost:433',
+        meta: {
+          name: 'Funny cat video',
+        },
+        files: [{
+          contentType: 'video/mp4',
+          contentLength: videoFile.length,
+          md5Hash: md5(videoFile).toString('hex'),
+          type: 'video',
+        }, {
+          contentType: 'image/jpeg',
+          contentLength: previewFile.length,
+          md5Hash: md5(previewFile).toString('hex'),
+          type: 'c-preview',
+        }],
+      });
+
+      assertUploadWithPreview(response);
+
+      const { location: fileLocation } = response.files[0];
+      const { location: previewLocation, contentType, md5Hash } = response.files[1];
+      const [uploadFileResult, uploadPreviewResult] = await Promise.all([
+        uploadFileToCloudflare(fileLocation, videoFile),
+        uploadFileToGCS(previewLocation, previewFile, contentType, md5Hash),
+      ]);
+
+      equal(uploadFileResult, '');
+      equal(uploadPreviewResult, '');
+
+      videoFilename = response.files[0].filename;
+      previewFilename = response.files[1].filename;
+      uploadId = response.uploadId;
+    });
+
+    it('should be able to finish processing of the uploaded video using webhook', async () => {
+      const key = 'secret from the Cloudflare API';
+      const body = getWebhookBody({
+        uid: CloudflareStreamTransport.removeFilenamePrefix(videoFilename),
+      });
+      const providerStub = stub(provider, 'webhookSecret').value(key);
+      const response = await fetch('http://localhost:3000/files/cloudflare-stream', {
+        body,
+        method: 'POST',
+        headers: {
+          'Webhook-Signature': getWebhookSignature(body, key),
+        },
+      });
+
+      equal(response.status, 200);
+      equal(response.statusText, 'OK');
+
+      providerStub.reset();
+    });
+
+    it('should be able to finish preview file', async () => {
+      const { amqp } = this.ctx;
+
+      const response = await amqp.publishAndWait('files.finish', {
+        filename: previewFilename,
+        await: true,
+      });
+
+      assertFinishWithPreview(response, uploadId, videoFilename, previewFilename);
+    });
+
+    it('should be able to get info about uploaded video', async () => {
+      const { amqp } = this.ctx;
+
+      const response = await amqp.publishAndWait('files.info', {
+        filename: uploadId,
+        username: 'v@makeomatic.ru',
+      });
+
+      assertInfoWithPreview(response, uploadId, videoFilename, previewFilename);
+    });
+
+    it('should be able to download uploaded video', async () => {
+      const { amqp } = this.ctx;
+
+      const response = await amqp.publishAndWait('files.download', {
+        uploadId,
+        username: 'v@makeomatic.ru',
+      });
+
+      assertDownloadWithPreview(response, uploadId, videoFilename, previewFilename);
     });
   });
 });

@@ -7,11 +7,14 @@ const hasAccess = require('../utils/has-access');
 const isProcessed = require('../utils/is-processed');
 const Filenames = require('../utils/filename-generator');
 
-function getDownloadUrls(provider, files, name, sign = true) {
+function getDownloadUrls(service, data, files, name, sign = true, headers = {}) {
   const downloadNames = new Filenames(name);
   const urls = [];
 
-  for (const { filename } of files) {
+  for (const file of files) {
+    const provider = service.provider('download', data, file, headers);
+    const { filename } = file;
+
     if (sign) {
       urls.push(
         provider.getDownloadUrlSigned(filename, downloadNames.next(filename))
@@ -43,9 +46,6 @@ async function getDownloadURL({ params, headers: { headers } }) {
     .then(fetchData)
     .then(isProcessed);
 
-  // parse file data
-  // @todo
-  const provider = this.provider('download', data, headers);
   const files = Array.isArray(types) && types.length > 0
     ? data.files.filter((file) => types.includes(file.type))
     : data.files;
@@ -63,9 +63,9 @@ async function getDownloadURL({ params, headers: { headers } }) {
 
     // form URLs
     if (rename) {
-      urls = getDownloadUrls(provider, files, name, true);
+      urls = getDownloadUrls(this, data, files, name, true, headers);
     } else {
-      urls = getDownloadUrls(provider, files, name, false);
+      urls = getDownloadUrls(this, data, files, name, false, headers);
     }
 
     // no username - throw
@@ -76,7 +76,7 @@ async function getDownloadURL({ params, headers: { headers } }) {
   } else if (hasAccess(username)(data)) {
     // alias is username, sign URLs
     alias = username;
-    urls = getDownloadUrls(provider, files, name, true);
+    urls = getDownloadUrls(this, data, files, name, true, headers);
   }
 
   const response = await Promise.props({

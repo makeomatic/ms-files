@@ -17,6 +17,7 @@ module.exports = function isValidBackgroundOrigin(data) {
      *  contained in the persistent store
      *  https://github.com/makeomatic/ms-files/blob/master/src/custom/cappasity-select-bucket.js#L10
      */
+    // @todo it's not possible to select right provider for file with multiple providers
     const cname = this.provider('upload', data).cname.replace(/\./g, '\\.');
     const pattern = new RegExp(`^${cname}/${FILENAME_RE}$`);
     const isValidOrigin = url.match(pattern);
