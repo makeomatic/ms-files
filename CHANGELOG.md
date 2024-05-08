@@ -1,3 +1,10 @@
+## [19.3.2](https://github.com/makeomatic/ms-files/compare/v19.3.1...v19.3.2) (2024-05-08)
+
+
+### Bug Fixes
+
+* increase file description limit ([#327](https://github.com/makeomatic/ms-files/issues/327)) ([e8471e5](https://github.com/makeomatic/ms-files/commit/e8471e5fe178aec90475459713e6e4e5cd957e64))
+
 ## [19.3.1](https://github.com/makeomatic/ms-files/compare/v19.3.0...v19.3.1) (2024-04-17)
 
 
