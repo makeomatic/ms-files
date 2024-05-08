@@ -809,7 +809,7 @@
         "description": {
           "type": "string",
           "minLength": 0,
-          "maxLength": 10000
+          "maxLength": 20000
         },
         "version": {
           "type": "string"
