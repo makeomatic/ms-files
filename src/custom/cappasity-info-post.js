@@ -369,10 +369,12 @@ const GREEN_LIGHT_STATUSES = Object.setPrototypeOf({
   [STATUS_FAILED]: true,
 }, null);
 
+const isCloudflareStreamFile = (filename) => filename.startsWith('cfs:');
+
 const setCloudflareStreamData = async (service, uploadData) => {
   const cloudflareStream = service.providersByAlias['cloudflare-stream'];
 
-  if (cloudflareStream && uploadData?.preview?.startsWith('cfs:')) {
+  if (cloudflareStream && uploadData.preview && isCloudflareStreamFile(uploadData.preview)) {
     if (uploadData[FILES_PUBLIC_FIELD]) {
       uploadData.preview = await cloudflareStream.getThumbnailUrl(uploadData.preview);
     } else {
@@ -380,11 +382,15 @@ const setCloudflareStreamData = async (service, uploadData) => {
     }
   }
 
-  for (const { filename } of uploadData.files) {
-    try {
-      uploadData[filename] = JSON.parse(uploadData[filename]);
-    } catch (error) {
-      service.log.error({ error, uploadData }, 'failed to parse cloudflare-stream meta');
+  if (uploadData.files) {
+    for (const { filename } of uploadData.files) {
+      if (isCloudflareStreamFile(filename)) {
+        try {
+          uploadData[filename] = JSON.parse(uploadData[filename]);
+        } catch (error) {
+          service.log.error({ error, uploadData }, 'failed to parse cloudflare-stream meta');
+        }
+      }
     }
   }
 };
