@@ -1,3 +1,10 @@
+## [19.3.3](https://github.com/makeomatic/ms-files/compare/v19.3.2...v19.3.3) (2024-06-21)
+
+
+### Bug Fixes
+
+* custom hooks tokenid detect ([#328](https://github.com/makeomatic/ms-files/issues/328)) ([702ac13](https://github.com/makeomatic/ms-files/commit/702ac13da53345d1ef2da96e801da9bcc27deab4))
+
 ## [19.3.2](https://github.com/makeomatic/ms-files/compare/v19.3.1...v19.3.2) (2024-05-08)
 
 
