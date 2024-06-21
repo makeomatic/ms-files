@@ -5,7 +5,7 @@ const config = {
   },
 };
 
-const isDigitOnly = /[0-9]*/;
+const isDigitOnly = /^[0-9]*$/;
 const UINT_MIN_LENGTH = 21;
 
 async function notifyService(fileData) {

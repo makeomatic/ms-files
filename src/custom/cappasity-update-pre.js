@@ -1,6 +1,6 @@
 const hasAccess = require('../utils/has-access');
 
-const isDigitOnly = /[0-9]*/;
+const isDigitOnly = /^[0-9]*$/;
 const UINT_MIN_LENGTH = 21;
 
 module.exports = async function extractMetadata(username, data) {
