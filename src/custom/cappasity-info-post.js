@@ -6,13 +6,15 @@ const flatstr = require('flatstr');
 const memoize = require('lodash/memoize');
 
 const {
+  CAPPASITY_IMAGE_MODEL,
+  FILES_PUBLIC_FIELD,
+  STATUS_FAILED,
   STATUS_PROCESSED,
   STATUS_PROCESSING,
-  STATUS_FAILED,
-  CAPPASITY_IMAGE_MODEL,
+  UPLOAD_TYPE_CLOUDFLARE_STREAM,
   UPLOAD_TYPE_GLB_EXTENDED,
-  UPLOAD_TYPE_PANORAMA_EQUIRECT,
   UPLOAD_TYPE_PANORAMA_CUBEMAP,
+  UPLOAD_TYPE_PANORAMA_EQUIRECT,
 } = require('../constant');
 
 /*
@@ -367,8 +369,34 @@ const GREEN_LIGHT_STATUSES = Object.setPrototypeOf({
   [STATUS_FAILED]: true,
 }, null);
 
+const setCloudflareStreamData = async (service, uploadData) => {
+  const cloudflareStream = service.providersByAlias['cloudflare-stream'];
+
+  if (cloudflareStream && uploadData?.preview?.startsWith('cfs:')) {
+    if (uploadData[FILES_PUBLIC_FIELD]) {
+      uploadData.preview = await cloudflareStream.getThumbnailUrl(uploadData.preview);
+    } else {
+      uploadData.preview = await cloudflareStream.getThumbnailUrlSigned(uploadData.preview);
+    }
+  }
+
+  for (const { filename } of uploadData.files) {
+    try {
+      uploadData[filename] = JSON.parse(uploadData[filename]);
+    } catch (error) {
+      service.log.error({ error, uploadData }, 'failed to parse cloudflare-stream meta');
+    }
+  }
+};
+
 // Actual code that populates .embed from predefined data
-module.exports = function getEmbeddedInfo(file) {
+module.exports = async function getEmbeddedInfo(file) {
+  if (file.uploadType === UPLOAD_TYPE_CLOUDFLARE_STREAM) {
+    await setCloudflareStreamData(this, file);
+
+    return file;
+  }
+
   if (GREEN_LIGHT_STATUSES[file.status] === true) {
     const dynamicOptions = getPlayerOpts(file.uploadId, file, this.config.apiDomain);
 

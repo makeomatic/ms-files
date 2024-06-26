@@ -1,21 +1,26 @@
 const { ActionTransport } = require('@microfleet/plugin-router');
 const Promise = require('bluebird');
 const { HttpStatusError } = require('common-errors');
-const { encodeURI } = require('../utils/encode-uri');
 const { FILES_DATA, FILES_OWNER_FIELD, FILES_PUBLIC_FIELD } = require('../constant');
 const fetchData = require('../utils/fetch-data');
 const hasAccess = require('../utils/has-access');
 const isProcessed = require('../utils/is-processed');
 const Filenames = require('../utils/filename-generator');
 
-function signUrls(provider, files, name) {
+function getDownloadUrls(provider, files, name, sign = true) {
   const downloadNames = new Filenames(name);
   const urls = [];
 
   for (const { filename } of files) {
-    urls.push(
-      provider.getDownloadUrlSigned(filename, downloadNames.next(filename))
-    );
+    if (sign) {
+      urls.push(
+        provider.getDownloadUrlSigned(filename, downloadNames.next(filename))
+      );
+    } else {
+      urls.push(
+        provider.getDownloadUrl(filename, downloadNames.next(filename))
+      );
+    }
   }
 
   return Promise.all(urls);
@@ -47,7 +52,6 @@ async function getDownloadURL({ params, headers: { headers } }) {
 
   // metadata
   const { name } = data;
-  const { cname } = provider;
 
   // check status and if we have public link available - use it
   let alias;
@@ -59,20 +63,20 @@ async function getDownloadURL({ params, headers: { headers } }) {
 
     // form URLs
     if (rename) {
-      urls = signUrls(provider, files, name);
+      urls = getDownloadUrls(provider, files, name, true);
     } else {
-      urls = files.map((file) => `${cname}/${encodeURI(file.filename, false)}`);
+      urls = getDownloadUrls(provider, files, name, false);
     }
 
-  // no username - throw
+    // no username - throw
   } else if (!username) {
     throw new HttpStatusError(401, 'file does not belong to the provided user');
 
-  // will throw if no access
+    // will throw if no access
   } else if (hasAccess(username)(data)) {
     // alias is username, sign URLs
     alias = username;
-    urls = signUrls(provider, files, name);
+    urls = getDownloadUrls(provider, files, name, true);
   }
 
   const response = await Promise.props({

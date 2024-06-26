@@ -1,11 +1,30 @@
 // this file contains logic for selecting transport for uploading
 // input is upload opts
-const { FILES_BUCKET_FIELD, FILES_TEMP_FIELD } = require('../constant');
+const {
+  FILES_BUCKET_FIELD,
+  FILES_TEMP_FIELD,
+  PROVIDER_CLOUDFLARE_MISSING_ERROR,
+  UPLOAD_TYPE_CLOUDFLARE_STREAM,
+} = require('../constant');
+
+function selectCloudflareStreamProvider(service) {
+  const cloudflareStream = service.providersByAlias['cloudflare-stream'];
+
+  if (!cloudflareStream) {
+    throw PROVIDER_CLOUDFLARE_MISSING_ERROR;
+  }
+
+  return cloudflareStream;
+}
 
 // action handler
 // if file is temporary, use provider index `1`
 // if it's permanent - use index 0
-function uploadSelector({ temp }) {
+function uploadSelector({ temp, uploadType }) {
+  if (uploadType === UPLOAD_TYPE_CLOUDFLARE_STREAM) {
+    return selectCloudflareStreamProvider(this);
+  }
+
   return this.providers[temp ? 1 : 0];
 }
 
@@ -16,7 +35,11 @@ function uploadSelector({ temp }) {
 //  * download
 //  * remove
 //  * access
-function downloadSelector(opts, headers = {}) {
+function downloadSelector(opts, headers = {}, uploadData = {}) {
+  if (uploadData.uploadType === UPLOAD_TYPE_CLOUDFLARE_STREAM) {
+    return selectCloudflareStreamProvider(this);
+  }
+
   const bucket = headers['x-cappasity-source'] === 'cn-beijing'
     ? '3dshot'
     : opts[FILES_BUCKET_FIELD];
@@ -52,14 +75,14 @@ const ACTION_TO_SELECTOR = Object.setPrototypeOf({
 }, null);
 
 // fn for selection
-function selectTransport(action, opts, headers) {
+function selectTransport(action, opts, headers, uploadData) {
   const thunk = ACTION_TO_SELECTOR[action];
 
   if (typeof thunk !== 'function') {
     throw new Error(`${action} selector not defined`);
   }
 
-  return thunk.call(this, opts, headers);
+  return thunk.call(this, opts, headers, uploadData);
 }
 
 // public API
