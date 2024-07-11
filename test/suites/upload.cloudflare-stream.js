@@ -308,8 +308,6 @@ const assertInfo = async (response, uploadId, filename, signedURLs = true) => {
       : new RegExp(`^https:\\/\\/${domain}\\/${uid}\\/thumbnails\\/thumbnail\\.jpg$`)
   );
 
-  equal(response.file.embed, undefined);
-
   equal(response.file.files[0].contentType, 'video/mp4');
   equal(response.file.files[0].contentLength, 67328);
   equal(response.file.files[0].md5Hash, 'SOPY6SYV/g1I3Awko1WazQ==');
@@ -343,8 +341,6 @@ const assertInfoWithPreview = async (response, uploadId, videoFilename, previewF
   equal(response.file.name_n, 'funny cat video');
   equal(response.file.uploaded, '1');
   equal(response.file.preview, previewFilename);
-
-  equal(response.file.embed, undefined);
 
   equal(response.file.files[0].contentType, 'video/mp4');
   equal(response.file.files[0].contentLength, 67328);

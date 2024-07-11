@@ -243,6 +243,7 @@ const iframeRotate = flatstr(`${coreQS}&${rotateQS}`);
 const iframeZoom = flatstr(`${coreQS}&${rotateQS}&${zoomQS}&${arQS}`);
 const iframePano = flatstr(`${coreQS}&${rotateQS}`);
 const iframeGlbExtended = flatstr(`${coreQS}&${rotateQS}&${arQS}`);
+const iframeCloudflareStream = flatstr(`${coreQS}`);
 
 // pregenerate option objects - 1.x.x
 const paramsMesh = Object.setPrototypeOf({
@@ -282,12 +283,19 @@ const paramsGlbExtended = Object.setPrototypeOf({
   ...defaultWindowOptions,
 }, null);
 
+// >= 7.x.x
+const paramsCloudflareStream = Object.setPrototypeOf({
+  ...corePlayerOpts,
+  ...defaultWindowOptions,
+}, null);
+
 // quick-access selector
 const MESH_TYPE = Symbol('mesh');
 const ROTATE_TYPE = Symbol('rotate');
 const ZOOM_TYPE = Symbol('zoom');
 const PANO_TYPE = Symbol('pano');
 const GLB_EXTENDED_TYPE = Symbol('glb-extended');
+const CLOUDFLARE_STREAM_TYPE = Symbol('cloudflare-stream');
 
 const selector = Object.setPrototypeOf({
   [MESH_TYPE]: Object.setPrototypeOf({
@@ -314,6 +322,11 @@ const selector = Object.setPrototypeOf({
     qs: iframeGlbExtended,
     params: paramsGlbExtended,
   }, null),
+
+  [CLOUDFLARE_STREAM_TYPE]: Object.setPrototypeOf({
+    qs: iframeCloudflareStream,
+    params: paramsCloudflareStream,
+  }, null),
 }, null);
 
 const is4 = (version) => /^4\./.test(version);
@@ -335,6 +348,10 @@ const getPlayerOpts = (id, { uploadType, c_ver: modelVersion, packed }, apiDomai
       case UPLOAD_TYPE_PANORAMA_EQUIRECT:
       case UPLOAD_TYPE_PANORAMA_CUBEMAP:
         version = PANO_TYPE;
+        break;
+
+      case UPLOAD_TYPE_CLOUDFLARE_STREAM:
+        version = CLOUDFLARE_STREAM_TYPE;
         break;
 
       default:
@@ -399,8 +416,6 @@ const setCloudflareStreamData = async (service, uploadData) => {
 module.exports = async function getEmbeddedInfo(file) {
   if (file.uploadType === UPLOAD_TYPE_CLOUDFLARE_STREAM) {
     await setCloudflareStreamData(this, file);
-
-    return file;
   }
 
   if (GREEN_LIGHT_STATUSES[file.status] === true) {

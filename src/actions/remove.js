@@ -65,8 +65,7 @@ async function removeFile({ params }) {
 
   if (!softDelete && !isClone(data)) {
     // we do not track this
-    // @todo why?
-    await cleanupFileProvider(this, data).catch(
+    cleanupFileProvider(this, data).catch(
       (e) => log.fatal({ err: e }, 'failed to cleanup file provider for %s', filename)
     );
   }
