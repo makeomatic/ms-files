@@ -115,7 +115,7 @@ class CloudflareStreamTransport extends AbstractFileTransfer {
     }
 
     if (origin) {
-      params.allowedOrigins = [origin];
+      params.allowedOrigins = [origin.replace(/^(https?):\/\//, '')];
     }
 
     if (process.env.NODE_ENV === 'test') {
