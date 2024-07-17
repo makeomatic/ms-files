@@ -730,7 +730,8 @@
           "type": "string",
           "enum": [
             "video/mp4",
-            "video/webm"
+            "video/webm",
+            "video/quicktime"
           ]
         },
         "contentLength": {
