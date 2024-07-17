@@ -17,6 +17,7 @@ const nowPlusSeconds = (seconds) => (new Date(Date.now() + 1000 * seconds)).toIS
 const nowPlus30Days = () => nowPlusSeconds(2592001);
 const arrayBufferToBase64Url = (buffer) => Buffer.from(buffer).toString('base64url');
 const objectToBase64url = (payload) => arrayBufferToBase64Url(stringify(payload));
+const fixOrigin = (origin) => origin.replace(/^(https?):\/\//, '');
 
 // @todo use stream.edit() method when it comes
 // https://github.com/cloudflare/cloudflare-typescript/discussions/135#discussioncomment-9045617
@@ -115,7 +116,7 @@ class CloudflareStreamTransport extends AbstractFileTransfer {
     }
 
     if (origin) {
-      params.allowedOrigins = [origin.replace(/^(https?):\/\//, '')];
+      params.allowedOrigins = [fixOrigin(origin)];
     }
 
     if (process.env.NODE_ENV === 'test') {
@@ -158,7 +159,7 @@ class CloudflareStreamTransport extends AbstractFileTransfer {
     }
 
     if (origin) {
-      uploadMetadata.push(`allowedOrigins ${toBase64(origin)}`);
+      uploadMetadata.push(`allowedOrigins ${toBase64(fixOrigin(origin))}`);
     }
 
     if (name) {
