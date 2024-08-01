@@ -221,6 +221,15 @@ for (const redisSearchEnabled of [true, false].values()) {
           }
         });
       });
+
+      it('should be able to filter by uploadType', async function test() {
+        const data = await this.amqp.publishAndWait('files.list', {
+          filter: { uploadType: { ne: 'simple' } },
+          order: 'DESC',
+        });
+
+        assert.strictEqual(data.files.length, 0);
+      });
     });
 
     describe('owner-based list', function testSuite() {

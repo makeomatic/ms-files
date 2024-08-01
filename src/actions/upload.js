@@ -13,26 +13,27 @@ const { normalizeForSearch } = require('../utils/normalize-name');
 const { FILES_NAME_FIELD, FILES_NAME_NORMALIZED_FIELD } = require('../constant');
 
 const {
+  FIELDS_TO_STRINGIFY,
+  FILES_BUCKET_FIELD,
+  FILES_CONTENT_LENGTH_FIELD,
+  FILES_DATA,
+  FILES_DIRECT_ONLY_FIELD,
+  FILES_HAS_NFT,
+  FILES_HAS_REFERENCES_FIELD,
+  FILES_ID_FIELD,
+  FILES_INDEX_TEMP,
+  FILES_NFT_FIELD,
+  FILES_OWNER_FIELD,
+  FILES_POST_ACTION,
+  FILES_PUBLIC_FIELD,
+  FILES_REFERENCES_FIELD,
+  FILES_STATUS_FIELD,
+  FILES_TEMP_FIELD,
+  FILES_UNLISTED_FIELD,
+  FILES_UPLOAD_STARTED_AT_FIELD,
+  FILES_UPLOAD_TYPE_FIELD,
   STATUS_PENDING,
   UPLOAD_DATA,
-  FILES_DATA,
-  FILES_PUBLIC_FIELD,
-  FILES_TEMP_FIELD,
-  FILES_BUCKET_FIELD,
-  FILES_OWNER_FIELD,
-  FILES_UNLISTED_FIELD,
-  FILES_STATUS_FIELD,
-  FIELDS_TO_STRINGIFY,
-  FILES_INDEX_TEMP,
-  FILES_POST_ACTION,
-  FILES_DIRECT_ONLY_FIELD,
-  FILES_CONTENT_LENGTH_FIELD,
-  FILES_ID_FIELD,
-  FILES_UPLOAD_STARTED_AT_FIELD,
-  FILES_REFERENCES_FIELD,
-  FILES_HAS_NFT,
-  FILES_NFT_FIELD,
-  FILES_HAS_REFERENCES_FIELD,
 } = require('../constant');
 const { assertNotReferenced } = require('../utils/check-data');
 
@@ -50,16 +51,16 @@ const { assertNotReferenced } = require('../utils/check-data');
  */
 async function initFileUpload({ params }) {
   const {
+    [FILES_UPLOAD_TYPE_FIELD]: uploadType,
+    directOnly,
+    expires,
     meta,
-    username,
+    origin,
+    postAction,
+    resumable,
     temp,
     unlisted,
-    origin,
-    resumable,
-    expires,
-    uploadType,
-    postAction,
-    directOnly,
+    username,
   } = params;
 
   const { redis, config: { uploadTTL } } = this;
@@ -208,7 +209,7 @@ async function initFileUpload({ params }) {
   }
 
   if (uploadType) {
-    fileData.uploadType = uploadType;
+    fileData[FILES_UPLOAD_TYPE_FIELD] = uploadType;
   }
 
   if (isPublic) {

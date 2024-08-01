@@ -117,6 +117,9 @@
                 "isInShowroom": {
                     "$ref": "common#/definitions/filter-props"
                 },
+                "uploadType": {
+                    "$ref": "common#/definitions/filter-props"
+                },
                 "#": {
                     "$ref": "common#/definitions/filter-props"
                 },
