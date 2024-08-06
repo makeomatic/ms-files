@@ -1071,6 +1071,14 @@
         },
         "categories": {
           "$ref": "common#/definitions/categories"
+        },
+        "$remove": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1
         }
       }
     },

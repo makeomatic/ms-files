@@ -1,6 +1,7 @@
 const { ActionTransport } = require('@microfleet/plugin-router');
 const Promise = require('bluebird');
 const { HttpStatusError } = require('common-errors');
+const ld = require('lodash');
 const handlePipeline = require('../utils/pipeline-error');
 const fetchData = require('../utils/fetch-data');
 const isProcessed = require('../utils/is-processed');
@@ -9,7 +10,7 @@ const hasAccess = require('../utils/has-access');
 const isAliasTaken = require('../utils/is-alias-taken');
 const stringify = require('../utils/stringify');
 const isValidBackgroundOrigin = require('../utils/is-valid-background-origin');
-const { assertUpdatable } = require('../utils/check-data');
+const { assertUpdatable, assertReferenceOnAccessChange } = require('../utils/check-data');
 const { bustCache } = require('../utils/bust-cache');
 const { updateReferences, verifyReferences, isReferenceChanged, getReferenceData } = require('../utils/reference');
 const { normalizeForSearch } = require('../utils/normalize-name');
@@ -81,6 +82,27 @@ function preProcessMetadata(data) {
   return data;
 }
 
+/**
+ * Process metadata remove operation
+ * @param  {Object} pipeline
+ * @param  {Object} meta
+ */
+function handleRemoveFromMeta(pipeline, key, meta, data) {
+  const { $remove } = meta;
+
+  if ($remove && $remove.length > 0) {
+    const existsData = ld.pick(data, $remove);
+    const esistsKeys = ld.keys(existsData);
+
+    pipeline.hdel(key, esistsKeys);
+
+    $remove.forEach((removeKey) => {
+      delete meta[removeKey];
+    });
+    delete meta.$remove;
+  }
+}
+
 async function updateMeta(lock, ctx, params) {
   const { uploadId, username, directOnly, immutable, includeReferences } = params;
   const { redis } = ctx;
@@ -99,7 +121,8 @@ async function updateMeta(lock, ctx, params) {
     .then(isUnlisted)
     .then(hasAccess(username))
     .then(isAliasTaken(alias))
-    .then(assertUpdatable(meta));
+    .then(assertUpdatable(meta))
+    .then(assertReferenceOnAccessChange(meta, params));
 
   // ensure we still hold the lock
   await lock.extend();
@@ -150,6 +173,8 @@ async function updateMeta(lock, ctx, params) {
   if (alias === '') {
     delete meta[FILES_ALIAS_FIELD]; // <-- this field is empty at this point
   }
+
+  handleRemoveFromMeta(pipeline, key, meta, data);
 
   if (hasOwnProperty.call(meta, FILES_TAGS_FIELD) && data[FILES_TAGS_FIELD]) {
     // @todo migrate all tags in files data to lowercase and then remove this tag.toLowerCase()

@@ -72,4 +72,5 @@ module.exports = {
   assertUpdatable,
   assertClonable,
   assertNotReferenced,
+  assertReferenceOnAccessChange,
 };
