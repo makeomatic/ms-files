@@ -111,6 +111,7 @@ function modelMessage(model, textures, preview, owner) {
       ...texturesMessage,
       previewMessage,
     ],
+    uploadType: 'simple',
   };
 
   return {

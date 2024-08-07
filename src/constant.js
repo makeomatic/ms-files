@@ -50,6 +50,7 @@ module.exports = exports = Object.setPrototypeOf({
   FILES_CONTENT_LENGTH_FIELD: 'contentLength',
   FILES_UPLOADED_AT_FIELD: 'uploadedAt',
   FILES_UPLOAD_STARTED_AT_FIELD: 'startedAt',
+  FILES_UPLOAD_TYPE_FIELD: 'uploadType',
   FILES_VERSION_FIELD: 'version',
   FILES_HAS_NFT: 'hn',
   FILES_NAME_FIELD: 'name',
@@ -150,4 +151,4 @@ exports.UPLOAD_TYPE_GLB_EXTENDED = 'glb-extended';
 exports.UPLOAD_TYPE_PANORAMA_EQUIRECT = 'pano-equirect';
 exports.UPLOAD_TYPE_PANORAMA_CUBEMAP = 'pano-cubemap';
 
-exports.FILES_LIST_SEARCH = 'files-list-v10';
+exports.FILES_LIST_SEARCH = 'files-list-v11';
