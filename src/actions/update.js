@@ -87,6 +87,7 @@ async function updateMeta(lock, ctx, params) {
   const key = FILES_DATA_INDEX_KEY(uploadId);
   const meta = preProcessMetadata(params.meta);
   const alias = meta[FILES_ALIAS_FIELD];
+  const website = meta[FILES_WEBSITE_FIELD];
 
   const data = await Promise
     .bind(ctx, meta)
@@ -126,6 +127,7 @@ async function updateMeta(lock, ctx, params) {
   const aliasPTRs = `${FILES_USR_ALIAS_PTR}:${owner}`;
   const userPublicIndex = FILES_USER_INDEX_PUBLIC_KEY(owner);
   const isPublic = data[FILES_PUBLIC_FIELD];
+  const existingWebsite = data[FILES_WEBSITE_FIELD];
 
   // update version
   const nftImage = meta.nft && meta.nft.image;
@@ -149,6 +151,14 @@ async function updateMeta(lock, ctx, params) {
   // ensure that we do nothing if we don't have existing alias
   if (alias === '') {
     delete meta[FILES_ALIAS_FIELD]; // <-- this field is empty at this point
+  }
+
+  if (website === '') {
+    delete meta[FILES_WEBSITE_FIELD];
+
+    if (existingWebsite) {
+      pipeline.hdel(key, FILES_WEBSITE_FIELD);
+    }
   }
 
   if (hasOwnProperty.call(meta, FILES_TAGS_FIELD) && data[FILES_TAGS_FIELD]) {
