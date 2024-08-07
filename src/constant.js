@@ -151,4 +151,4 @@ exports.UPLOAD_TYPE_GLB_EXTENDED = 'glb-extended';
 exports.UPLOAD_TYPE_PANORAMA_EQUIRECT = 'pano-equirect';
 exports.UPLOAD_TYPE_PANORAMA_CUBEMAP = 'pano-cubemap';
 
-exports.FILES_LIST_SEARCH = 'files-list-v10';
+exports.FILES_LIST_SEARCH = 'files-list-v11';
