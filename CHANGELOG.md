@@ -1,3 +1,10 @@
+# [19.4.0](https://github.com/makeomatic/ms-files/compare/v19.3.3...v19.4.0) (2024-08-07)
+
+
+### Features
+
+* add uploadType to redis search index ([#329](https://github.com/makeomatic/ms-files/issues/329)) ([ad4c7d9](https://github.com/makeomatic/ms-files/commit/ad4c7d97576b34e69f9d9ef8ce988cdc04e9ab65))
+
 ## [19.3.3](https://github.com/makeomatic/ms-files/compare/v19.3.2...v19.3.3) (2024-06-21)
 
 
