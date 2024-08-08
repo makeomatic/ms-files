@@ -1,3 +1,10 @@
+# [19.5.0](https://github.com/makeomatic/ms-files/compare/v19.4.0...v19.5.0) (2024-08-08)
+
+
+### Features
+
+* upgrade deps (microfleet v21.0.1) ([#331](https://github.com/makeomatic/ms-files/issues/331)) ([347fd52](https://github.com/makeomatic/ms-files/commit/347fd528e015f319d92f448d139437a6c316ea81))
+
 # [19.4.0](https://github.com/makeomatic/ms-files/compare/v19.3.3...v19.4.0) (2024-08-07)
 
 
