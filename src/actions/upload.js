@@ -209,9 +209,6 @@ async function initFileUpload({ params }) {
     stringify(meta, field, serialized);
   }
 
-  // @todo it's not possible to set right bucket for file with multiple providers
-  const provider = this.provider('upload', params);
-  const bucketName = provider.bucket.name;
   const fileData = {
     ...meta,
     ...serialized,
@@ -222,7 +219,6 @@ async function initFileUpload({ params }) {
     [FILES_CONTENT_LENGTH_FIELD]: sumBy(parts, 'contentLength'),
     [FILES_STATUS_FIELD]: STATUS_PENDING,
     [FILES_OWNER_FIELD]: username,
-    [FILES_BUCKET_FIELD]: bucketName,
   };
 
   if (newReferences.length > 0) {

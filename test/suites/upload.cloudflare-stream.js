@@ -185,8 +185,6 @@ const assertUpload = (response) => {
   equal(response.contentLength, 67328);
   equal(response.status, '1');
   equal(response.owner, 'v@makeomatic.ru');
-  // @todo it's not possible to set right bucket for file with multiple providers
-  equal(response.bucket, process.env.TEST_BUCKET);
   equal(response.uploadType, 'cloudflare-stream');
 
   equal(response.files[0].contentType, 'video/mp4');
@@ -207,8 +205,6 @@ const assertUploadWithPreview = (response) => {
   equal(response.contentLength, 529737);
   equal(response.status, '1');
   equal(response.owner, 'v@makeomatic.ru');
-  // @todo it's not possible to set right bucket for file with multiple providers
-  equal(response.bucket, process.env.TEST_BUCKET);
   equal(response.uploadType, 'cloudflare-stream');
 
   equal(response.files[0].contentType, 'video/mp4');
@@ -294,8 +290,6 @@ const assertInfo = async (response, uploadId, filename, signedURLs = true) => {
   equal(response.file.uploadType, 'cloudflare-stream');
   match(response.file.startedAt, /^\d+$/);
   equal(response.file.parts, '1');
-  // @todo it's not possible to set right bucket for file with multiple providers
-  equal(response.file.bucket, process.env.TEST_BUCKET);
   equal(response.file.name, 'Funny cat video');
   equal(response.file.owner, 'v@makeomatic.ru');
   equal(response.file.name_n, 'funny cat video');
@@ -363,8 +357,6 @@ const assertInfoWithPreview = async (response, uploadId, videoFilename, previewF
 };
 
 const assertFinishWithPreview = (response, uploadId, videoFilename, previewFilename) => {
-  // @todo it's not possible to set right bucket for file with multiple providers
-  equal(response.bucket, process.env.TEST_BUCKET);
   equal(response.contentLength, '529737');
   equal(response.name, 'Funny cat video');
   equal(response.name_n, 'funny cat video');
