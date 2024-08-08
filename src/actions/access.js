@@ -30,12 +30,10 @@ async function addToPublic(uploadId, data) {
   const index = FILES_USER_INDEX_PUBLIC_KEY(owner);
   const id = `${FILES_DATA}:${uploadId}`;
 
-  // get transport
-  const transport = provider('access', data);
-
-  await Promise.map(files, (file) => (
-    transport.makePublic(file.filename)
-  ));
+  await Promise.map(files, (file) => {
+    const transport = provider('access', data, file);
+    return transport.makePublic(file.filename);
+  });
 
   const pipeline = redis
     .pipeline()
@@ -61,11 +59,10 @@ async function removeFromPublic(uploadId, data) {
   const index = FILES_USER_INDEX_PUBLIC_KEY(owner);
   const id = `${FILES_DATA}:${uploadId}`;
 
-  // get transport
-  const transport = provider('access', data);
-  await Promise.map(files, (file) => (
-    transport.makePrivate(file.filename)
-  ));
+  await Promise.map(files, (file) => {
+    const transport = provider('access', data, file);
+    return transport.makePrivate(file.filename);
+  });
 
   return handlePipeline(
     await redis

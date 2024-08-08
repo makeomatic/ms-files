@@ -294,9 +294,19 @@
         "files": {
           "type": "array",
           "minItems": 1,
-          "contains": {
-            "$ref": "common#/definitions/video"
-          }
+          "allOf": [{
+            "contains": {
+              "$ref": "common#/definitions/video"
+            },
+            "minContains": 1,
+            "maxContains": 10
+          }, {
+            "contains": {
+              "$ref": "common#/definitions/c-preview"
+            },
+            "minContains": 0,
+            "maxContains": 1
+          }]
         }
       }
     }

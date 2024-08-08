@@ -40,13 +40,12 @@ describe('upload glb-extended suite', function suite() {
     strictEqual(response.contentLength, 4905352);
     strictEqual(response.status, '1');
     strictEqual(response.owner, 'v@makeomatic.ru');
-    strictEqual(response.bucket.startsWith(BUCKET_NAME), true);
     strictEqual(response.uploadType, 'glb-extended');
 
     strictEqual(response.files[0].contentType, 'image/jpeg');
     strictEqual(response.files[0].contentLength, 2452676);
     strictEqual(response.files[0].md5Hash !== undefined, true);
-    strictEqual(response.files[0].bucket.startsWith(BUCKET_NAME), true);
+    strictEqual(response.files[0].bucket, BUCKET_NAME);
     strictEqual(response.files[0].type, 'c-preview');
     strictEqual(response.files[0].filename !== undefined, true);
     strictEqual(response.files[0].filename.endsWith('.jpeg'), true);
@@ -56,7 +55,7 @@ describe('upload glb-extended suite', function suite() {
     strictEqual(response.files[1].contentType, 'model/gltf-binary');
     strictEqual(response.files[1].contentLength, 2452676);
     strictEqual(response.files[1].md5Hash !== undefined, true);
-    strictEqual(response.files[1].bucket.startsWith(BUCKET_NAME), true);
+    strictEqual(response.files[1].bucket, BUCKET_NAME);
     strictEqual(response.files[1].type, 'c-gltf');
     strictEqual(response.files[1].filename !== undefined, true);
     strictEqual(response.files[1].filename.endsWith('.glb'), true);
@@ -100,13 +99,12 @@ describe('upload glb-extended suite', function suite() {
     strictEqual(response.contentLength, 7358028);
     strictEqual(response.status, '1');
     strictEqual(response.owner, 'v@makeomatic.ru');
-    strictEqual(response.bucket.startsWith(BUCKET_NAME), true);
     strictEqual(response.uploadType, 'glb-extended');
 
     strictEqual(response.files[0].contentType, 'image/jpeg');
     strictEqual(response.files[0].contentLength, 2452676);
     strictEqual(response.files[0].md5Hash !== undefined, true);
-    strictEqual(response.files[0].bucket.startsWith(BUCKET_NAME), true);
+    strictEqual(response.files[0].bucket, BUCKET_NAME);
     strictEqual(response.files[0].type, 'c-preview');
     strictEqual(response.files[0].filename !== undefined, true);
     strictEqual(response.files[0].location !== undefined, true);
@@ -114,7 +112,7 @@ describe('upload glb-extended suite', function suite() {
     strictEqual(response.files[1].contentType, 'model/gltf-binary');
     strictEqual(response.files[1].contentLength, 2452676);
     strictEqual(response.files[1].md5Hash !== undefined, true);
-    strictEqual(response.files[1].bucket.startsWith(BUCKET_NAME), true);
+    strictEqual(response.files[1].bucket, BUCKET_NAME);
     strictEqual(response.files[1].type, 'c-gltf');
     strictEqual(response.files[1].filename !== undefined, true);
     strictEqual(response.files[1].location !== undefined, true);
@@ -122,7 +120,7 @@ describe('upload glb-extended suite', function suite() {
     strictEqual(response.files[2].contentType, 'model/vnd.usdz+zip');
     strictEqual(response.files[2].contentLength, 2452676);
     strictEqual(response.files[2].md5Hash !== undefined, true);
-    strictEqual(response.files[2].bucket.startsWith(BUCKET_NAME), true);
+    strictEqual(response.files[2].bucket, BUCKET_NAME);
     strictEqual(response.files[2].type, 'c-usdz');
     strictEqual(response.files[2].filename !== undefined, true);
     strictEqual(response.files[2].filename.endsWith('.usdz'), true);
@@ -261,13 +259,12 @@ describe('upload glb-extended suite', function suite() {
     strictEqual(response.contentLength, 4905352);
     strictEqual(response.status, '1');
     strictEqual(response.owner, 'v@makeomatic.ru');
-    strictEqual(response.bucket.startsWith(BUCKET_NAME), true);
     strictEqual(response.uploadType, 'glb-extended');
 
     strictEqual(response.files[0].contentType, 'image/png');
     strictEqual(response.files[0].contentLength, 2452676);
     strictEqual(response.files[0].md5Hash !== undefined, true);
-    strictEqual(response.files[0].bucket.startsWith(BUCKET_NAME), true);
+    strictEqual(response.files[0].bucket, BUCKET_NAME);
     strictEqual(response.files[0].type, 'c-preview');
     strictEqual(response.files[0].filename !== undefined, true);
     strictEqual(response.files[0].filename.endsWith('.png'), true);

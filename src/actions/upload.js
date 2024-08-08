@@ -73,11 +73,9 @@ async function initFileUpload({ params }) {
 
   this.log.info({ params }, 'preparing upload');
 
-  const provider = this.provider('upload', params);
   const prefix = md5(username);
   const uploadId = uuidv4();
   const isPublic = get(params, 'access.setPublic', false);
-  const bucketName = provider.bucket.name;
 
   await Promise
     .bind(this, ['files:upload:pre', params])
@@ -104,7 +102,10 @@ async function initFileUpload({ params }) {
 
   // NOTE: params.files can be pre-processed
   const { files } = params;
-  const parts = await Promise.map(files, async ({ md5Hash, type, ...rest }) => {
+  const parts = await Promise.map(files, async (file) => {
+    const { md5Hash, type, ...rest } = file;
+    const provider = this.provider('upload', params, file);
+    const bucketName = provider.bucket.name;
     // generate filename
     let filename = [
       // name
@@ -218,7 +219,6 @@ async function initFileUpload({ params }) {
     [FILES_CONTENT_LENGTH_FIELD]: sumBy(parts, 'contentLength'),
     [FILES_STATUS_FIELD]: STATUS_PENDING,
     [FILES_OWNER_FIELD]: username,
-    [FILES_BUCKET_FIELD]: bucketName,
   };
 
   if (newReferences.length > 0) {
@@ -261,7 +261,7 @@ async function initFileUpload({ params }) {
     const partKey = `${UPLOAD_DATA}:${part.filename}`;
     pipeline
       .hmset(partKey, {
-        [FILES_BUCKET_FIELD]: bucketName,
+        [FILES_BUCKET_FIELD]: part[FILES_BUCKET_FIELD],
         [FILES_STATUS_FIELD]: STATUS_PENDING,
         uploadId,
       })

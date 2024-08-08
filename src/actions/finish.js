@@ -73,7 +73,7 @@ async function completeFileUpload({ params }) {
   assert.equal(data[FILES_STATUS_FIELD], STATUS_PENDING, AlreadyProcessedError);
 
   // ensure it was actually uploaded
-  const transport = provider('sync', data);
+  const transport = provider('sync', data, { ...data, ...params });
   const exists = await transport.exists(filename);
   assert.equal(exists, true, MissingError);
 
