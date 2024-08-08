@@ -1,4 +1,5 @@
 const createDebug = require('debug');
+const { TRANSPORT_NAME_GCE } = require('../constant');
 
 const debug = createDebug('ms-files-providers');
 
@@ -35,7 +36,7 @@ class ProviderFactory {
         provider.rename = true;
         break;
 
-      case 'gce':
+      case TRANSPORT_NAME_GCE:
         provider.cname = `https://storage.googleapis.com/${bucket}`;
         provider.rename = false;
         break;
@@ -54,6 +55,14 @@ class ProviderFactory {
   getProviderOSS(transport) {
     const ProviderOSS = require('./oss');
     const provider = new ProviderOSS(transport);
+
+    return provider;
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  getProviderCloudflareStream(transport) {
+    const ProviderCloudflareStream = require('./cloudflare-stream');
+    const provider = new ProviderCloudflareStream(transport);
 
     return provider;
   }

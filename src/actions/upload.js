@@ -10,7 +10,6 @@ const extension = require('../utils/extension');
 const isValidBackgroundOrigin = require('../utils/is-valid-background-origin');
 const { getReferenceData, verifyReferences } = require('../utils/reference');
 const { normalizeForSearch } = require('../utils/normalize-name');
-const { FILES_NAME_FIELD, FILES_NAME_NORMALIZED_FIELD } = require('../constant');
 
 const {
   FIELDS_TO_STRINGIFY,
@@ -22,6 +21,8 @@ const {
   FILES_HAS_REFERENCES_FIELD,
   FILES_ID_FIELD,
   FILES_INDEX_TEMP,
+  FILES_NAME_FIELD,
+  FILES_NAME_NORMALIZED_FIELD,
   FILES_NFT_FIELD,
   FILES_OWNER_FIELD,
   FILES_POST_ACTION,
@@ -105,7 +106,7 @@ async function initFileUpload({ params }) {
   const { files } = params;
   const parts = await Promise.map(files, async ({ md5Hash, type, ...rest }) => {
     // generate filename
-    const filename = [
+    let filename = [
       // name
       [prefix, uploadId, uuidv4()].join('/'),
       // extension
@@ -153,25 +154,45 @@ async function initFileUpload({ params }) {
       if (provider.rename) {
         // https://cloud.google.com/storage/docs/access-control/signed-urls#signing-resumable
         const initUploadURL = await createSignedURL('resumable', metadata);
-        location = await provider.initResumableUploadFromURL(initUploadURL, {
+        const resumableUpload = await provider.initResumableUploadFromURL(initUploadURL, {
           origin,
           md5Hash: metadata.md5Hash,
           contentType: metadata.contentType,
           headers: extensionHeaders,
         });
+        location = resumableUpload.location;
       } else {
-        location = await provider.initResumableUpload({
-          filename,
-          origin,
-          public: isPublic,
-          metadata: {
-            ...metadata,
+        const resumableUpload = await provider.initResumableUpload(
+          {
+            filename,
+            origin,
+            public: isPublic,
+            metadata: {
+              ...metadata,
+            },
           },
-        });
+          params
+        );
+        location = resumableUpload.location;
+
+        if (resumableUpload.filename) {
+          filename = resumableUpload.filename;
+        }
       }
     } else {
       // simple upload
-      location = await createSignedURL('write', metadata);
+      // eslint-disable-next-line no-lonely-if
+      if (provider.initUpload) {
+        const upload = await provider.initUpload({ metadata }, params);
+
+        location = upload.location;
+
+        if (upload.filename) {
+          filename = upload.filename;
+        }
+      } else {
+        location = await createSignedURL('write', metadata);
+      }
     }
 
     return {

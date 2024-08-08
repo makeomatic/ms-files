@@ -3,7 +3,7 @@ const Promise = require('bluebird');
 const hasAccess = require('../utils/has-access');
 const fetchData = require('../utils/fetch-data');
 const isUnlisted = require('../utils/is-unlisted');
-const { assertUpdatable, isClone } = require('../utils/check-data');
+const { assertUpdatable, isClone, hasClone } = require('../utils/check-data');
 const { bustCache } = require('../utils/bust-cache');
 const { getReferenceData, updateReferences } = require('../utils/reference');
 const {
@@ -47,7 +47,6 @@ function cleanupFileProvider(files, provider, log, opts = { concurrency: 20 }) {
 async function removeFile({ params }) {
   const { filename, username, softDelete } = params;
   const { redis, log } = this;
-  const provider = this.provider('remove', params);
   const key = `${FILES_DATA}:${filename}`;
 
   const data = await Promise
@@ -56,8 +55,10 @@ async function removeFile({ params }) {
     .then(isUnlisted)
     .then(hasAccess(username))
     .then(assertUpdatable({}, true));
+  const provider = this.provider('remove', params, undefined, data);
+  const shouldDeleteCloneFile = !hasClone(data) || provider.canCopy();
 
-  if (!softDelete && !isClone(data)) {
+  if (!softDelete && !isClone(data) && shouldDeleteCloneFile) {
     // we do not track this
     cleanupFileProvider(data.files, provider, log)
       .catch((e) => log.fatal({ err: e }, 'failed to cleanup file provider for %s', filename));
