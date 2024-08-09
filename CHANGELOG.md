@@ -1,3 +1,10 @@
+# [19.6.0](https://github.com/makeomatic/ms-files/compare/v19.5.0...v19.6.0) (2024-08-09)
+
+
+### Features
+
+* **update:** able to unset website property in meta ([#330](https://github.com/makeomatic/ms-files/issues/330)) ([6094bac](https://github.com/makeomatic/ms-files/commit/6094bac7632cd1a7f94f09e6ccbddb02b07292cc))
+
 # [19.5.0](https://github.com/makeomatic/ms-files/compare/v19.4.0...v19.5.0) (2024-08-08)
 
 
