@@ -324,7 +324,7 @@ describe('cloudflare-stream suite', () => {
 
       providerStub.reset();
 
-      await delay(10000);
+      await delay(process.env.CI ? 20000 : 10000);
     });
 
     it('should be able to get error if finish processing of unknown video', async () => {
@@ -518,7 +518,7 @@ describe('cloudflare-stream suite', () => {
 
       providerStub.reset();
 
-      await delay(10000);
+      await delay(process.env.CI ? 20000 : 10000);
     });
 
     it('should be able to download uploaded video', async () => {
@@ -601,7 +601,7 @@ describe('cloudflare-stream suite', () => {
 
       providerStub.reset();
 
-      await delay(10000);
+      await delay(process.env.CI ? 20000 : 10000);
     });
 
     it('should be able to clone uploaded video', async () => {
@@ -727,7 +727,7 @@ describe('cloudflare-stream suite', () => {
 
       providerStub.reset();
 
-      await delay(10000);
+      await delay(process.env.CI ? 20000 : 10000);
     });
 
     it('should be able to get info about uploaded video', async () => {
@@ -864,7 +864,7 @@ describe('cloudflare-stream suite', () => {
 
       providerStub.reset();
 
-      await delay(10000);
+      await delay(process.env.CI ? 20000 : 10000);
     });
 
     it('should be able to get info about uploaded video', async () => {
