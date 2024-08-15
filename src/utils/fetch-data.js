@@ -27,7 +27,7 @@ function remapData(field, index) {
   } else if (hasOwnProperty.call(STRINGIFY_FIELDS, field)) {
     this.output[field] = safeParse(value);
   } else if (FIELDS_TO_UNTAG[field]) {
-    this.output[field] = value.split(', ');
+    this.output[field] = value ? value.split(', ') : [];
   } else {
     this.output[field] = value;
   }
