@@ -469,6 +469,21 @@ describe('update suite', function suite() {
     });
   });
 
+  describe('catalog', function catalogSuite() {
+    it('should return empty categories', async function test() {
+      const firstResult = await getInfo.call(this, { filename: this.response.uploadId, username });
+      assert.ok(typeof firstResult.file.categories === 'undefined');
+
+      await this.send({ uploadId: this.response.uploadId, username: owner, meta: { categories: ['_s1_c1', '_s1_c2'] } }, 45000);
+      const result = await getInfo.call(this, { filename: this.response.uploadId, username });
+      assert.deepEqual(result.file.categories, ['_s1_c1', '_s1_c2']);
+
+      await this.send({ uploadId: this.response.uploadId, username: owner, meta: { categories: [] } }, 45000);
+      const emptyResult = await getInfo.call(this, { filename: this.response.uploadId, username });
+      assert.deepEqual(emptyResult.file.categories, []);
+    });
+  });
+
   describe('update nft', function emptyDescription() {
     it('update nft fields', async function test() {
       const { uploadId } = this.response;
