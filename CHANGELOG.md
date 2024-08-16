@@ -1,3 +1,10 @@
+## [19.6.1](https://github.com/makeomatic/ms-files/compare/v19.6.0...v19.6.1) (2024-08-16)
+
+
+### Bug Fixes
+
+* file catalog empty ([#332](https://github.com/makeomatic/ms-files/issues/332)) ([ad4006b](https://github.com/makeomatic/ms-files/commit/ad4006b6abcd763b40fa2a2ddbb2d362ae17e4d6))
+
 # [19.6.0](https://github.com/makeomatic/ms-files/compare/v19.5.0...v19.6.0) (2024-08-09)
 
 
