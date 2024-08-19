@@ -46,7 +46,7 @@ function downloadSelector(opts, file, headers = {}) {
 
   const bucket = headers['x-cappasity-source'] === 'cn-beijing'
     ? '3dshot'
-    : opts[FILES_BUCKET_FIELD];
+    : file[FILES_BUCKET_FIELD];
 
   // backwards-compatibility
   if (!bucket) {

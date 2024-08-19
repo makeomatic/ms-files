@@ -104,6 +104,7 @@ async function initFileUpload({ params }) {
   const { files } = params;
   const parts = await Promise.map(files, async (file) => {
     const { md5Hash, type, ...rest } = file;
+    // get a specific provider for a file type
     const provider = this.provider('upload', params, file);
     const bucketName = provider.bucket.name;
     // generate filename
@@ -209,7 +210,7 @@ async function initFileUpload({ params }) {
     stringify(meta, field, serialized);
   }
 
-  // @todo it's not possible to set right bucket for file with multiple providers
+  // get a default provider
   const provider = this.provider('upload', params);
   const bucketName = provider.bucket.name;
   const fileData = {
