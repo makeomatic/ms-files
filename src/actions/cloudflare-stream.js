@@ -2,7 +2,12 @@ const { ActionTransport } = require('@microfleet/plugin-router');
 const { HttpStatusError } = require('common-errors');
 const stringify = require('safe-stable-stringify');
 
-const { PROVIDER_CLOUDFLARE_MISSING_ERROR } = require('../constant');
+const {
+  FILES_DATA,
+  FILES_ID_FIELD,
+  PROVIDER_CLOUDFLARE_MISSING_ERROR,
+  UPLOAD_DATA,
+} = require('../constant');
 const CloudflareStreamTransport = require('../providers/cloudflare-stream');
 
 const malformedRequestError = new HttpStatusError(400, 'Malformed request');
@@ -20,6 +25,7 @@ const parseBodyJson = (body) => {
 };
 
 async function cloudflareWebhookAction(request) {
+  const { redis } = this;
   const body = request.transportRequest.payload;
   const signature = request.headers['webhook-signature'];
   const provider = this.providersByAlias['cloudflare-stream'];
@@ -42,27 +48,28 @@ async function cloudflareWebhookAction(request) {
   }
 
   const filename = CloudflareStreamTransport.filenameWithPrefix(uid);
-  const { uploadId, owner } = await this.dispatch('finish', {
-    params: {
-      filename,
-      await: true,
-    },
-  });
+  const uploadId = await redis.hget(`${UPLOAD_DATA}:${filename}`, FILES_ID_FIELD);
+  const uploadKey = `${FILES_DATA}:${uploadId}`;
 
-  await this.dispatch('update', {
-    params: {
-      uploadId,
-      username: owner,
-      meta: {
-        [filename]: stringify({
-          duration: message.duration,
-          height: message.input.height,
-          size: message.size,
-          width: message.input.width,
-        }),
+  try {
+    await this.dispatch('finish', {
+      params: {
+        filename,
+        await: true,
       },
-    },
-  });
+    });
+  } catch (error) {
+    if (error.status !== 202) {
+      throw error;
+    }
+  }
+
+  await redis.hset(uploadKey, filename, stringify({
+    duration: message.duration,
+    height: message.input.height,
+    size: message.size,
+    width: message.input.width,
+  }));
 
   return RESPONSE_OK;
 }
