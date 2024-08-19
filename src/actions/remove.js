@@ -26,15 +26,22 @@ const pipelineError = require('../utils/pipeline-error');
  * This function used as coroutine, we don't track the result
  * of this action
  */
-function cleanupFileProvider(files, provider, log, opts = { concurrency: 20 }) {
-  return Promise
-    .map(files, (file) => (
-      provider
-        .remove(file.filename)
-        .catch({ code: 404 }, (err) => {
-          log.warn('file %s was already deleted', file.filename, err.code, err.message);
-        })
-    ), opts);
+function cleanupFileProvider(service, data, opts = { concurrency: 20 }) {
+  return Promise.map(data.files, (file) => {
+    const { filename } = file;
+    const provider = service.provider('remove', data, file);
+    const shouldDeleteCloneFile = !hasClone(data) || provider.canCopy();
+
+    if (!shouldDeleteCloneFile) {
+      return Promise.resolve();
+    }
+
+    return provider
+      .remove(filename)
+      .catch({ code: 404 }, (err) => {
+        service.log.warn('file %s was already deleted', filename, err.code, err.message);
+      });
+  }, opts);
 }
 
 /**
@@ -55,13 +62,12 @@ async function removeFile({ params }) {
     .then(isUnlisted)
     .then(hasAccess(username))
     .then(assertUpdatable({}, true));
-  const provider = this.provider('remove', params, undefined, data);
-  const shouldDeleteCloneFile = !hasClone(data) || provider.canCopy();
 
-  if (!softDelete && !isClone(data) && shouldDeleteCloneFile) {
+  if (!softDelete && !isClone(data)) {
     // we do not track this
-    cleanupFileProvider(data.files, provider, log)
-      .catch((e) => log.fatal({ err: e }, 'failed to cleanup file provider for %s', filename));
+    cleanupFileProvider(this, data).catch(
+      (e) => log.fatal({ err: e }, 'failed to cleanup file provider for %s', filename)
+    );
   }
 
   // cleanup local database
