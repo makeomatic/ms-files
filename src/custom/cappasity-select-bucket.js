@@ -31,8 +31,12 @@ function uploadSelector(opts, file, headers = {}) {
 
   // used to avoid cloudflare as proxy for PUT requests
   // cloudflare buffers all requests and resumable uploads don't work well
-  if (this.providersByAlias['gcs-direct'] && !opts.temp && headers['x-use-direct']) {
-    return this.providersByAlias['gcs-direct'];
+  if (headers['x-use-direct']) {
+    if (opts.temp) {
+      return this.providersByAlias['gcs-direct-temp'] ?? this.providers[1];
+    }
+
+    return this.providersByAlias['gcs-direct'] ?? this.providers[0];
   }
 
   return this.providers[opts.temp ? 1 : 0];
