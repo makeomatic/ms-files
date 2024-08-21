@@ -36,7 +36,11 @@ const {
   STATUS_PENDING,
   UPLOAD_DATA,
 } = require('../constant');
-const { assertNotReferenced } = require('../utils/check-data');
+const {
+  assertNotReferenced: makeAssertNotReferenced,
+} = require('../utils/check-data');
+
+const assertNotReferenced = makeAssertNotReferenced();
 
 /**
  * Initiates upload
@@ -50,7 +54,7 @@ const { assertNotReferenced } = require('../utils/check-data');
  * @param  {Boolean} [opts.params.temp=false]
  * @return {Promise}
  */
-async function initFileUpload({ params }) {
+async function initFileUpload({ params, headers: { headers } }) {
   const {
     [FILES_UPLOAD_TYPE_FIELD]: uploadType,
     directOnly,
@@ -98,14 +102,14 @@ async function initFileUpload({ params }) {
     verifyReferences(tempMeta, referencedInfo, newReferences);
   }
 
-  assertNotReferenced({})(meta);
+  assertNotReferenced(meta);
 
   // NOTE: params.files can be pre-processed
   const { files } = params;
   const parts = await Promise.map(files, async (file) => {
     const { md5Hash, type, ...rest } = file;
     // get a specific provider for a file type
-    const provider = this.provider('upload', params, file);
+    const provider = this.provider('upload', params, file, headers);
     const bucketName = provider.bucket.name;
     // generate filename
     let filename = [

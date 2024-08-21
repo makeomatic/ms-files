@@ -24,9 +24,15 @@ const selectCloudflareStreamProvider = (service) => {
 // action handler
 // if file is temporary, use provider index `1`
 // if it's permanent - use index 0
-function uploadSelector(opts, file) {
+function uploadSelector(opts, file, headers = {}) {
   if (needToUploadToCloudflare(opts, file)) {
     return selectCloudflareStreamProvider(this);
+  }
+
+  // used to avoid cloudflare as proxy for PUT requests
+  // cloudflare buffers all requests and resumable uploads don't work well
+  if (this.providersByAlias['gcs-direct'] && !opts.temp && headers['x-use-direct']) {
+    return this.providersByAlias['gcs-direct'];
   }
 
   return this.providers[opts.temp ? 1 : 0];
