@@ -51,6 +51,7 @@ class CloudflareStreamTransport extends AbstractFileTransfer {
     ok(config?.options?.apiToken);
     ok(config?.options?.customerSubdomain);
 
+    this.allowedOrigins = config.allowedOrigins || [];
     this.alwaysRequireSignedURLs = config.alwaysRequireSignedURLs ?? true;
     this.cloudflare = new Cloudflare({
       apiToken: config.options.apiToken,
@@ -92,7 +93,7 @@ class CloudflareStreamTransport extends AbstractFileTransfer {
 
   // NOTE: Use it for files smaller than 200MB
   async initUpload(opts, uploadParams) {
-    const { alwaysRequireSignedURLs, cloudflare, config, maxDurationSeconds } = this;
+    const { allowedOrigins, alwaysRequireSignedURLs, cloudflare, config, maxDurationSeconds } = this;
     const { accountId } = config.options;
     const { metadata: { [FILES_CONTENT_LENGTH_FIELD]: contentLength } } = opts;
     const { access, expires, origin, username, meta: { [FILES_NAME_FIELD]: name } } = uploadParams;
@@ -103,12 +104,13 @@ class CloudflareStreamTransport extends AbstractFileTransfer {
     }
 
     const params = {
-      maxDurationSeconds,
       account_id: accountId,
+      allowedOrigins,
       creator: username,
       expiry: nowPlusSeconds(expires),
-      requireSignedURLs: alwaysRequireSignedURLs || !setPublic,
+      maxDurationSeconds,
       meta: {},
+      requireSignedURLs: alwaysRequireSignedURLs || !setPublic,
     };
 
     if (name) {
@@ -116,7 +118,7 @@ class CloudflareStreamTransport extends AbstractFileTransfer {
     }
 
     if (origin) {
-      params.allowedOrigins = [fixOrigin(origin)];
+      params.allowedOrigins.push(fixOrigin(origin));
     }
 
     if (process.env.NODE_ENV === 'test') {
@@ -143,7 +145,7 @@ class CloudflareStreamTransport extends AbstractFileTransfer {
   // Please round your desired chunk size to the nearest multiple of 256KiB.
   // The final chunk of an upload or uploads that fit within a single chunk are exempt from this requirement.
   async initResumableUpload(opts, uploadParams) {
-    const { alwaysRequireSignedURLs, cloudflare, config, maxDurationSeconds } = this;
+    const { allowedOrigins, alwaysRequireSignedURLs, cloudflare, config, maxDurationSeconds } = this;
     const { accountId } = config.options;
     const { metadata: { [FILES_CONTENT_LENGTH_FIELD]: contentLength } } = opts;
     const { access, expires, origin, username, meta: { [FILES_NAME_FIELD]: name } } = uploadParams;
@@ -159,7 +161,9 @@ class CloudflareStreamTransport extends AbstractFileTransfer {
     }
 
     if (origin) {
-      uploadMetadata.push(`allowedOrigins ${toBase64(fixOrigin(origin))}`);
+      uploadMetadata.push(
+        `allowedOrigins ${toBase64([...allowedOrigins, fixOrigin(origin)].join(','))}`
+      );
     }
 
     if (name) {
