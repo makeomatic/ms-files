@@ -68,9 +68,10 @@ const overrideConfig = (config = {}) => function override() {
         jwk: process.env.CLOUDFLARE_STREAM_KEY_JWK,
       }],
       urlExpire: 3600,
-      maxDurationSeconds: 1800,
+      maxDurationSeconds: 60,
       notificationUrl: 'https://localhost:443',
       alwaysRequireSignedURLs: config.alwaysRequireSignedURLs ?? true,
+      allowedOrigins: ['localhost'],
     }],
   };
 };
