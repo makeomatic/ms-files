@@ -10,7 +10,7 @@ const { fetch } = require('undici');
 const { validate: validateUuid } = require('uuid');
 const { delay } = require('bluebird');
 const dotenv = require('dotenv');
-const { stub, spy } = require('sinon');
+const { spy } = require('sinon');
 
 const {
   startService,
@@ -450,7 +450,6 @@ describe('cloudflare-stream suite', () => {
       const body = getWebhookBody({
         uid: CloudflareStreamTransport.removeFilenamePrefix(filename),
       });
-      const providerStub = stub(provider, 'webhookSecret').value(key);
       const response = await fetch('http://localhost:3000/files/cloudflare-stream', {
         body,
         method: 'POST',
@@ -461,8 +460,6 @@ describe('cloudflare-stream suite', () => {
 
       equal(response.status, 200);
       equal(response.statusText, 'OK');
-
-      providerStub.reset();
 
       await delay(process.env.CI ? 20000 : 10000);
     });
@@ -644,7 +641,6 @@ describe('cloudflare-stream suite', () => {
       const body = getWebhookBody({
         uid: CloudflareStreamTransport.removeFilenamePrefix(filename),
       });
-      const providerStub = stub(provider, 'webhookSecret').value(key);
       const response = await fetch('http://localhost:3000/files/cloudflare-stream', {
         body,
         method: 'POST',
@@ -655,8 +651,6 @@ describe('cloudflare-stream suite', () => {
 
       equal(response.status, 200);
       equal(response.statusText, 'OK');
-
-      providerStub.reset();
 
       await delay(process.env.CI ? 20000 : 10000);
     });
@@ -727,7 +721,6 @@ describe('cloudflare-stream suite', () => {
       const body = getWebhookBody({
         uid: CloudflareStreamTransport.removeFilenamePrefix(filename),
       });
-      const providerStub = stub(provider, 'webhookSecret').value(key);
       const response = await fetch('http://localhost:3000/files/cloudflare-stream', {
         body,
         method: 'POST',
@@ -738,8 +731,6 @@ describe('cloudflare-stream suite', () => {
 
       equal(response.status, 200);
       equal(response.statusText, 'OK');
-
-      providerStub.reset();
 
       await delay(process.env.CI ? 20000 : 10000);
     });
@@ -853,7 +844,6 @@ describe('cloudflare-stream suite', () => {
       const body = getWebhookBody({
         uid: CloudflareStreamTransport.removeFilenamePrefix(filename),
       });
-      const providerStub = stub(provider, 'webhookSecret').value(key);
       const response = await fetch('http://localhost:3000/files/cloudflare-stream', {
         body,
         method: 'POST',
@@ -864,8 +854,6 @@ describe('cloudflare-stream suite', () => {
 
       equal(response.status, 200);
       equal(response.statusText, 'OK');
-
-      providerStub.reset();
 
       await delay(process.env.CI ? 20000 : 10000);
     });
@@ -990,7 +978,6 @@ describe('cloudflare-stream suite', () => {
       const body = getWebhookBody({
         uid: CloudflareStreamTransport.removeFilenamePrefix(filename),
       });
-      const providerStub = stub(provider, 'webhookSecret').value(key);
       const response = await fetch('http://localhost:3000/files/cloudflare-stream', {
         body,
         method: 'POST',
@@ -1001,8 +988,6 @@ describe('cloudflare-stream suite', () => {
 
       equal(response.status, 200);
       equal(response.statusText, 'OK');
-
-      providerStub.reset();
 
       await delay(process.env.CI ? 20000 : 10000);
     });
@@ -1136,7 +1121,6 @@ describe('cloudflare-stream suite', () => {
       const body = getWebhookBody({
         uid: CloudflareStreamTransport.removeFilenamePrefix(videoFilename),
       });
-      const providerStub = stub(provider, 'webhookSecret').value(key);
       const response = await fetch('http://localhost:3000/files/cloudflare-stream', {
         body,
         method: 'POST',
@@ -1147,8 +1131,6 @@ describe('cloudflare-stream suite', () => {
 
       equal(response.status, 200);
       equal(response.statusText, 'OK');
-
-      providerStub.reset();
     });
 
     it('should be able to finish preview file', async () => {
