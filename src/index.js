@@ -88,10 +88,6 @@ class Files extends Microfleet {
             .then((resourceId) => resourceId && redis.set(hookId, resourceId));
         }
 
-        if (provider.initWebhook) {
-          return provider.initWebhook();
-        }
-
         return Promise.resolve();
       });
   }

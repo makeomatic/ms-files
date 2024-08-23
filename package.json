@@ -51,7 +51,7 @@
     "ali-oss": "^6.21.0",
     "bl": "^6.0.14",
     "bluebird": "^3.7.2",
-    "cloudflare": "3.5.0",
+    "cloudflare": "^3.5.0",
     "cluster-key-slot": "^1.1.2",
     "co": "^4.6.0",
     "common-errors": "^1.2.0",

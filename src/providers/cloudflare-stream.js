@@ -46,10 +46,10 @@ class CloudflareStreamTransport extends AbstractFileTransfer {
 
     ok(config?.keys?.[0]?.id);
     ok(config?.keys?.[0]?.jwk);
-    ok(config?.notificationUrl);
     ok(config?.options?.accountId);
     ok(config?.options?.apiToken);
     ok(config?.options?.customerSubdomain);
+    ok(config?.webhookSecret);
 
     this.allowedOrigins = config.allowedOrigins || [];
     this.alwaysRequireSignedURLs = config.alwaysRequireSignedURLs ?? true;
@@ -63,7 +63,6 @@ class CloudflareStreamTransport extends AbstractFileTransfer {
     this.maxDurationSeconds = config.maxDurationSeconds || 1800; // 30m
     this.rename = false;
     this.urlExpire = config.urlExpire || 3600; // 1h
-    this.webhookSecret = null;
 
     // backward compatibility for src/actions/upload.js:78
     this._bucket = { name: this.getBucketName() };
@@ -94,7 +93,8 @@ class CloudflareStreamTransport extends AbstractFileTransfer {
   // NOTE: Use it for files smaller than 200MB
   async initUpload(opts, uploadParams) {
     const { allowedOrigins, alwaysRequireSignedURLs, cloudflare, config, maxDurationSeconds } = this;
-    const { accountId } = config.options;
+    const { options, overrideNotificationUrl } = config;
+    const { accountId } = options;
     const { metadata: { [FILES_CONTENT_LENGTH_FIELD]: contentLength } } = opts;
     const { access, expires, origin, username, meta: { [FILES_NAME_FIELD]: name } } = uploadParams;
     const setPublic = (access && access.setPublic) || false;
@@ -115,6 +115,10 @@ class CloudflareStreamTransport extends AbstractFileTransfer {
 
     if (name) {
       params.meta.name = name;
+    }
+
+    if (overrideNotificationUrl) {
+      params.meta.notificationUrl = overrideNotificationUrl;
     }
 
     if (origin) {
@@ -146,7 +150,8 @@ class CloudflareStreamTransport extends AbstractFileTransfer {
   // The final chunk of an upload or uploads that fit within a single chunk are exempt from this requirement.
   async initResumableUpload(opts, uploadParams) {
     const { allowedOrigins, alwaysRequireSignedURLs, cloudflare, config, maxDurationSeconds } = this;
-    const { accountId } = config.options;
+    const { options, overrideNotificationUrl } = config;
+    const { accountId } = options;
     const { metadata: { [FILES_CONTENT_LENGTH_FIELD]: contentLength } } = opts;
     const { access, expires, origin, username, meta: { [FILES_NAME_FIELD]: name } } = uploadParams;
     const setPublic = (access && access.setPublic) || false;
@@ -170,6 +175,10 @@ class CloudflareStreamTransport extends AbstractFileTransfer {
       uploadMetadata.push(`name ${toBase64(name)}`);
     }
 
+    if (overrideNotificationUrl) {
+      uploadMetadata.push(`notificationUrl ${toBase64(overrideNotificationUrl)}`);
+    }
+
     if (process.env.NODE_ENV === 'test') {
       uploadMetadata.push(`scheduledDeletion ${toBase64(nowPlus30Days())}`);
     }
@@ -181,12 +190,12 @@ class CloudflareStreamTransport extends AbstractFileTransfer {
       'Upload-Creator': username,
       'Upload-Metadata': uploadMetadata.join(','),
     };
-    const options = {
+    const requestOptions = {
       query: {
         direct_user: 'true',
       },
     };
-    const { response } = await cloudflare.stream.create(params, options).withResponse();
+    const { response } = await cloudflare.stream.create(params, requestOptions).withResponse();
 
     return {
       location: response.headers.get('location'),
@@ -309,26 +318,9 @@ class CloudflareStreamTransport extends AbstractFileTransfer {
     return `https://${customerSubdomain}/${uid}/thumbnails/thumbnail.jpg`;
   }
 
-  async initWebhook() {
-    if (process.env.NODE_ENV === 'test') {
-      return;
-    }
-
-    const { cloudflare, config } = this;
-    const { notificationUrl, options } = config;
-    const { accountId } = options;
-
-    // NOTE: Only one webhook subscription is allowed per-account.
-    const { secret } = await cloudflare.stream.webhooks.update({
-      notificationUrl,
-      account_id: accountId,
-    });
-
-    this.webhookSecret = secret;
-  }
-
   validateWebhook(signature, body) {
-    const key = this.webhookSecret;
+    const { config } = this;
+    const { webhookSecret } = config;
     const [time, sig1] = signature.split(',');
     const [, timeValue] = time.split('=');
 
@@ -336,7 +328,7 @@ class CloudflareStreamTransport extends AbstractFileTransfer {
 
     const [, sig1Value] = sig1.split('=');
     const signatureSourceString = `${timeValue}.${body}`;
-    const hash = crypto.createHmac('sha256', key).update(signatureSourceString);
+    const hash = crypto.createHmac('sha256', webhookSecret).update(signatureSourceString);
 
     return sig1Value === hash.digest('hex');
   }

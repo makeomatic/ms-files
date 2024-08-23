@@ -57,21 +57,22 @@ const overrideConfig = (config = {}) => function override() {
       cname: 'gce',
     }, {
       alias: 'cloudflare-stream',
+      allowedOrigins: ['localhost'],
+      alwaysRequireSignedURLs: config.alwaysRequireSignedURLs ?? true,
+      keys: [{
+        id: process.env.CLOUDFLARE_STREAM_KEY_ID,
+        jwk: process.env.CLOUDFLARE_STREAM_KEY_JWK,
+      }],
+      maxDurationSeconds: 60,
       name: 'cloudflare-stream',
+      overrideNotificationUrl: 'https://override:443',
       options: {
         accountId: process.env.CLOUDFLARE_STREAM_ACCOUNT_ID,
         apiToken: process.env.CLOUDFLARE_STREAM_API_TOKEN,
         customerSubdomain: process.env.CLOUDFLARE_STREAM_CUSTOMER_SUBDOMAIN,
       },
-      keys: [{
-        id: process.env.CLOUDFLARE_STREAM_KEY_ID,
-        jwk: process.env.CLOUDFLARE_STREAM_KEY_JWK,
-      }],
       urlExpire: 3600,
-      maxDurationSeconds: 60,
-      notificationUrl: 'https://localhost:443',
-      alwaysRequireSignedURLs: config.alwaysRequireSignedURLs ?? true,
-      allowedOrigins: ['localhost'],
+      webhookSecret: process.env.CLOUDFLARE_STREAM_WEBHOOK_SECRET,
     }],
   };
 };
