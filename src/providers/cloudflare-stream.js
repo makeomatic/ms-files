@@ -105,7 +105,7 @@ class CloudflareStreamTransport extends AbstractFileTransfer {
 
     const params = {
       account_id: accountId,
-      allowedOrigins,
+      allowedOrigins: [...allowedOrigins],
       creator: username,
       expiry: nowPlusSeconds(expires),
       maxDurationSeconds,
