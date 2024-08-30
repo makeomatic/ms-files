@@ -69,9 +69,10 @@ function initProviders(service) {
 
   // create providerByBucket map for fast access
   const providersByBucket = service.providers.reduce((map, provider) => {
-    map[provider.getBucketName()] = provider;
+    map[provider.getBucketName()] ??= provider;
     return map;
   }, {});
+
   const providersByAlias = service.providers.reduce((map, provider) => {
     const alias = provider?.config?.alias;
 
