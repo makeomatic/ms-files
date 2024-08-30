@@ -1,21 +1,29 @@
 const { ActionTransport } = require('@microfleet/plugin-router');
 const Promise = require('bluebird');
 const { HttpStatusError } = require('common-errors');
-const { encodeURI } = require('../utils/encode-uri');
 const { FILES_DATA, FILES_OWNER_FIELD, FILES_PUBLIC_FIELD } = require('../constant');
 const fetchData = require('../utils/fetch-data');
 const hasAccess = require('../utils/has-access');
 const isProcessed = require('../utils/is-processed');
 const Filenames = require('../utils/filename-generator');
 
-function signUrls(provider, files, name) {
+function getDownloadUrls(service, data, files, name, sign = true, headers = {}) {
   const downloadNames = new Filenames(name);
   const urls = [];
 
-  for (const { filename } of files) {
-    urls.push(
-      provider.getDownloadUrlSigned(filename, downloadNames.next(filename))
-    );
+  for (const file of files) {
+    const provider = service.provider('download', data, file, headers);
+    const { filename } = file;
+
+    if (sign) {
+      urls.push(
+        provider.getDownloadUrlSigned(filename, downloadNames.next(filename))
+      );
+    } else {
+      urls.push(
+        provider.getDownloadUrl(filename, downloadNames.next(filename))
+      );
+    }
   }
 
   return Promise.all(urls);
@@ -38,16 +46,12 @@ async function getDownloadURL({ params, headers: { headers } }) {
     .then(fetchData)
     .then(isProcessed);
 
-  // parse file data
-  // @todo
-  const provider = this.provider('download', data, headers);
   const files = Array.isArray(types) && types.length > 0
     ? data.files.filter((file) => types.includes(file.type))
     : data.files;
 
   // metadata
   const { name } = data;
-  const { cname } = provider;
 
   // check status and if we have public link available - use it
   let alias;
@@ -59,20 +63,20 @@ async function getDownloadURL({ params, headers: { headers } }) {
 
     // form URLs
     if (rename) {
-      urls = signUrls(provider, files, name);
+      urls = getDownloadUrls(this, data, files, name, true, headers);
     } else {
-      urls = files.map((file) => `${cname}/${encodeURI(file.filename, false)}`);
+      urls = getDownloadUrls(this, data, files, name, false, headers);
     }
 
-  // no username - throw
+    // no username - throw
   } else if (!username) {
     throw new HttpStatusError(401, 'file does not belong to the provided user');
 
-  // will throw if no access
+    // will throw if no access
   } else if (hasAccess(username)(data)) {
     // alias is username, sign URLs
     alias = username;
-    urls = signUrls(provider, files, name);
+    urls = getDownloadUrls(this, data, files, name, true, headers);
   }
 
   const response = await Promise.props({

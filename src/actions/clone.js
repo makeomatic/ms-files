@@ -103,10 +103,14 @@ async function cloneFile(lock, ctx, params) {
   // add mark to the original file
   pipeline.hset(uploadKey, FILES_HAS_CLONES_FIELD, 1);
 
-  const provider = ctx.provider('remove', params);
   const prefix = md5(username);
-
   const copyPromises = JSON.parse(mergedData.files).map(async (file) => {
+    const provider = ctx.provider('remove', uploadData, file);
+
+    if (!provider.canCopy()) {
+      return file;
+    }
+
     const fileId = file.filename.split('/').pop();
     const newFileName = [prefix, newUploadId, fileId].join('/');
 
@@ -120,6 +124,7 @@ async function cloneFile(lock, ctx, params) {
   });
 
   mergedData.files = JSON.stringify(await Promise.all(copyPromises));
+
   pipeline.hmset(newUploadKey, mergedData);
 
   handlePipeline(await pipeline.exec());

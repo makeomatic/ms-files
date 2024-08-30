@@ -106,7 +106,8 @@
         "pano-cubemap",
         "glb-extended",
         "zip",
-        "pkpass"
+        "pkpass",
+        "cloudflare-stream"
       ]
     },
     "directOnly": {
@@ -272,6 +273,38 @@
               "$ref": "common#/definitions/c-preview"
             },
             "minContains": 1,
+            "maxContains": 1
+          }]
+        }
+      }
+    }
+  }, {
+    "if": {
+      "required": [
+        "uploadType"
+      ],
+      "properties": {
+        "uploadType": {
+          "const": "cloudflare-stream"
+        }
+      }
+    },
+    "then": {
+      "properties": {
+        "files": {
+          "type": "array",
+          "minItems": 1,
+          "allOf": [{
+            "contains": {
+              "$ref": "common#/definitions/video"
+            },
+            "minContains": 1,
+            "maxContains": 10
+          }, {
+            "contains": {
+              "$ref": "common#/definitions/c-preview"
+            },
+            "minContains": 0,
             "maxContains": 1
           }]
         }

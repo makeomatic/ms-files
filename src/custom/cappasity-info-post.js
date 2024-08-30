@@ -6,13 +6,15 @@ const flatstr = require('flatstr');
 const memoize = require('lodash/memoize');
 
 const {
+  CAPPASITY_IMAGE_MODEL,
+  FILES_PUBLIC_FIELD,
+  STATUS_FAILED,
   STATUS_PROCESSED,
   STATUS_PROCESSING,
-  STATUS_FAILED,
-  CAPPASITY_IMAGE_MODEL,
+  UPLOAD_TYPE_CLOUDFLARE_STREAM,
   UPLOAD_TYPE_GLB_EXTENDED,
-  UPLOAD_TYPE_PANORAMA_EQUIRECT,
   UPLOAD_TYPE_PANORAMA_CUBEMAP,
+  UPLOAD_TYPE_PANORAMA_EQUIRECT,
 } = require('../constant');
 
 /*
@@ -241,6 +243,7 @@ const iframeRotate = flatstr(`${coreQS}&${rotateQS}`);
 const iframeZoom = flatstr(`${coreQS}&${rotateQS}&${zoomQS}&${arQS}`);
 const iframePano = flatstr(`${coreQS}&${rotateQS}`);
 const iframeGlbExtended = flatstr(`${coreQS}&${rotateQS}&${arQS}`);
+const iframeCloudflareStream = flatstr(`${coreQS}`);
 
 // pregenerate option objects - 1.x.x
 const paramsMesh = Object.setPrototypeOf({
@@ -280,12 +283,19 @@ const paramsGlbExtended = Object.setPrototypeOf({
   ...defaultWindowOptions,
 }, null);
 
+// >= 7.x.x
+const paramsCloudflareStream = Object.setPrototypeOf({
+  ...corePlayerOpts,
+  ...defaultWindowOptions,
+}, null);
+
 // quick-access selector
 const MESH_TYPE = Symbol('mesh');
 const ROTATE_TYPE = Symbol('rotate');
 const ZOOM_TYPE = Symbol('zoom');
 const PANO_TYPE = Symbol('pano');
 const GLB_EXTENDED_TYPE = Symbol('glb-extended');
+const CLOUDFLARE_STREAM_TYPE = Symbol('cloudflare-stream');
 
 const selector = Object.setPrototypeOf({
   [MESH_TYPE]: Object.setPrototypeOf({
@@ -312,6 +322,11 @@ const selector = Object.setPrototypeOf({
     qs: iframeGlbExtended,
     params: paramsGlbExtended,
   }, null),
+
+  [CLOUDFLARE_STREAM_TYPE]: Object.setPrototypeOf({
+    qs: iframeCloudflareStream,
+    params: paramsCloudflareStream,
+  }, null),
 }, null);
 
 const is4 = (version) => /^4\./.test(version);
@@ -333,6 +348,10 @@ const getPlayerOpts = (id, { uploadType, c_ver: modelVersion, packed }, apiDomai
       case UPLOAD_TYPE_PANORAMA_EQUIRECT:
       case UPLOAD_TYPE_PANORAMA_CUBEMAP:
         version = PANO_TYPE;
+        break;
+
+      case UPLOAD_TYPE_CLOUDFLARE_STREAM:
+        version = CLOUDFLARE_STREAM_TYPE;
         break;
 
       default:
@@ -367,8 +386,38 @@ const GREEN_LIGHT_STATUSES = Object.setPrototypeOf({
   [STATUS_FAILED]: true,
 }, null);
 
+const isCloudflareStreamFile = (filename) => filename.startsWith('cfs:');
+
+const setCloudflareStreamData = async (service, uploadData) => {
+  const cloudflareStream = service.providersByAlias['cloudflare-stream'];
+
+  if (cloudflareStream && uploadData.preview && isCloudflareStreamFile(uploadData.preview)) {
+    if (uploadData[FILES_PUBLIC_FIELD]) {
+      uploadData.preview = await cloudflareStream.getThumbnailUrl(uploadData.preview);
+    } else {
+      uploadData.preview = await cloudflareStream.getThumbnailUrlSigned(uploadData.preview);
+    }
+  }
+
+  if (uploadData.files) {
+    for (const { filename } of uploadData.files) {
+      if (isCloudflareStreamFile(filename)) {
+        try {
+          uploadData[filename] = JSON.parse(uploadData[filename]);
+        } catch (error) {
+          service.log.error({ error, uploadData }, 'failed to parse cloudflare-stream meta');
+        }
+      }
+    }
+  }
+};
+
 // Actual code that populates .embed from predefined data
-module.exports = function getEmbeddedInfo(file) {
+module.exports = async function getEmbeddedInfo(file) {
+  if (file.uploadType === UPLOAD_TYPE_CLOUDFLARE_STREAM) {
+    await setCloudflareStreamData(this, file);
+  }
+
   if (GREEN_LIGHT_STATUSES[file.status] === true) {
     const dynamicOptions = getPlayerOpts(file.uploadId, file, this.config.apiDomain);
 

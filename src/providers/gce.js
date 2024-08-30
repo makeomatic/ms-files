@@ -8,6 +8,9 @@ const { Storage } = require('@google-cloud/storage');
 const { fetch } = require('undici');
 const { HttpStatusError } = require('common-errors');
 
+const { TRANSPORT_NAME_GCE } = require('../constant');
+const { encodeURI } = require('../utils/encode-uri');
+
 // for some reason it doesn't go through it if we just do the obj
 const unwrap = (datum) => datum[0];
 // default signed URL expiration time
@@ -296,6 +299,11 @@ class GCETransport extends AbstractFileTransfer {
   }
 
   // @todo interface
+  getDownloadUrl(filename) {
+    return `${this.cname}/${encodeURI(filename, false)}`;
+  }
+
+  // @todo interface
   getDownloadUrlSigned(filename, downloadName) {
     return this.createSignedURL({
       action: 'read',
@@ -329,12 +337,12 @@ class GCETransport extends AbstractFileTransfer {
 
     this.log.debug('initiating resumable upload of %s', filename);
 
-    const [uri] = await this.bucket.file(filename, { generation }).createResumableUpload({
+    const [location] = await this.bucket.file(filename, { generation }).createResumableUpload({
       ...props,
       metadata,
     });
 
-    return uri;
+    return { location };
   }
 
   /**
@@ -368,7 +376,7 @@ class GCETransport extends AbstractFileTransfer {
       throw new HttpStatusError(422, `could not init resumable upload, empty location: ${body}`);
     }
 
-    return location;
+    return { location };
   }
 
   /**
@@ -496,10 +504,15 @@ class GCETransport extends AbstractFileTransfer {
       },
     });
   }
+
+  // eslint-disable-next-line class-methods-use-this
+  canCopy() {
+    return true;
+  }
 }
 
 GCETransport.defaultOpts = {
-  name: 'gce',
+  name: TRANSPORT_NAME_GCE,
   gce: {
     // specify authentication options
     // here

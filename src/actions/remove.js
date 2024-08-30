@@ -3,7 +3,7 @@ const Promise = require('bluebird');
 const hasAccess = require('../utils/has-access');
 const fetchData = require('../utils/fetch-data');
 const isUnlisted = require('../utils/is-unlisted');
-const { assertUpdatable, isClone } = require('../utils/check-data');
+const { assertUpdatable, isClone, hasClone } = require('../utils/check-data');
 const { bustCache } = require('../utils/bust-cache');
 const { getReferenceData, updateReferences } = require('../utils/reference');
 const {
@@ -26,15 +26,22 @@ const pipelineError = require('../utils/pipeline-error');
  * This function used as coroutine, we don't track the result
  * of this action
  */
-function cleanupFileProvider(files, provider, log, opts = { concurrency: 20 }) {
-  return Promise
-    .map(files, (file) => (
-      provider
-        .remove(file.filename)
-        .catch({ code: 404 }, (err) => {
-          log.warn('file %s was already deleted', file.filename, err.code, err.message);
-        })
-    ), opts);
+function cleanupFileProvider(service, data, opts = { concurrency: 20 }) {
+  return Promise.map(data.files, (file) => {
+    const { filename } = file;
+    const provider = service.provider('remove', data, file);
+    const shouldDeleteCloneFile = !hasClone(data) || provider.canCopy();
+
+    if (!shouldDeleteCloneFile) {
+      return Promise.resolve();
+    }
+
+    return provider
+      .remove(filename)
+      .catch({ code: 404 }, (err) => {
+        service.log.warn('file %s was already deleted', filename, err.code, err.message);
+      });
+  }, opts);
 }
 
 /**
@@ -47,7 +54,6 @@ function cleanupFileProvider(files, provider, log, opts = { concurrency: 20 }) {
 async function removeFile({ params }) {
   const { filename, username, softDelete } = params;
   const { redis, log } = this;
-  const provider = this.provider('remove', params);
   const key = `${FILES_DATA}:${filename}`;
 
   const data = await Promise
@@ -59,8 +65,9 @@ async function removeFile({ params }) {
 
   if (!softDelete && !isClone(data)) {
     // we do not track this
-    cleanupFileProvider(data.files, provider, log)
-      .catch((e) => log.fatal({ err: e }, 'failed to cleanup file provider for %s', filename));
+    cleanupFileProvider(this, data).catch(
+      (e) => log.fatal({ err: e }, 'failed to cleanup file provider for %s', filename)
+    );
   }
 
   // cleanup local database

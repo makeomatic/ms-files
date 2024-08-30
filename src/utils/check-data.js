@@ -4,6 +4,7 @@ const {
   FILES_IMMUTABLE_FIELD,
   FILES_IS_CLONE_FIELD,
   FILES_IS_REFERENCED_FIELD,
+  FILES_HAS_CLONES_FIELD,
   FILES_HAS_REFERENCES_FIELD,
 } = require('../constant');
 
@@ -13,6 +14,10 @@ function isImmutable(data) {
 
 function isClone(data) {
   return data && data[FILES_IS_CLONE_FIELD];
+}
+
+function hasClone(data) {
+  return data && data[FILES_HAS_CLONES_FIELD];
 }
 
 function assertImmutable(data) {
@@ -68,6 +73,7 @@ function assertNotReferenced() {
 module.exports = {
   isImmutable,
   isClone,
+  hasClone,
   assertImmutable,
   assertUpdatable,
   assertClonable,

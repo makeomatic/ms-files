@@ -14,7 +14,7 @@ const deepmerge = require('@fastify/deepmerge')({
 
 // constants
 const { HttpStatusError } = require('common-errors');
-const { WEBHOOK_RESOURCE_ID } = require('./constant');
+const { WEBHOOK_RESOURCE_ID, TRANSPORT_NAME_GCE } = require('./constant');
 const StorageProviders = require('./providers');
 const { initStore } = require('./config');
 
@@ -78,12 +78,17 @@ class Files extends Microfleet {
     const { redis } = this;
     return Promise
       .map(this.providers, (provider, idx) => {
-        const hookId = `${WEBHOOK_RESOURCE_ID}_${idx}`;
-        return Promise
-          .bind(provider)
-          .then(() => process.env[hookId] || redis.get(hookId))
-          .then(provider.setupChannel)
-          .then((resourceId) => resourceId && redis.set(hookId, resourceId));
+        if (provider.setupChannel) {
+          const hookId = `${WEBHOOK_RESOURCE_ID}_${idx}`;
+
+          return Promise
+            .bind(provider)
+            .then(() => process.env[hookId] || redis.get(hookId))
+            .then(provider.setupChannel)
+            .then((resourceId) => resourceId && redis.set(hookId, resourceId));
+        }
+
+        return Promise.resolve();
       });
   }
 
@@ -158,7 +163,7 @@ class Files extends Microfleet {
     await this.initWebhook();
     await Promise.mapSeries(this.providers, (provider) => {
       // @todo
-      if (provider.config.name !== 'gce') return null;
+      if (provider.config.name !== TRANSPORT_NAME_GCE) return null;
       if (!provider.config.bucket.channel.pubsub) return null;
       return provider.subscribe(this.handleUploadNotification.bind(this));
     });

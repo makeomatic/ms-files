@@ -1,12 +1,45 @@
 // this file contains logic for selecting transport for uploading
 // input is upload opts
-const { FILES_BUCKET_FIELD, FILES_TEMP_FIELD } = require('../constant');
+const {
+  FILES_BUCKET_FIELD,
+  FILES_TEMP_FIELD,
+  PROVIDER_CLOUDFLARE_MISSING_ERROR,
+  UPLOAD_TYPE_CLOUDFLARE_STREAM,
+} = require('../constant');
+
+const needToUploadToCloudflare = (uploadParams, file) => {
+  return uploadParams.uploadType === UPLOAD_TYPE_CLOUDFLARE_STREAM && file && file.type === 'video';
+};
+
+const selectCloudflareStreamProvider = (service) => {
+  const cloudflareStream = service.providersByAlias['cloudflare-stream'];
+
+  if (!cloudflareStream) {
+    throw PROVIDER_CLOUDFLARE_MISSING_ERROR;
+  }
+
+  return cloudflareStream;
+};
 
 // action handler
 // if file is temporary, use provider index `1`
 // if it's permanent - use index 0
-function uploadSelector({ temp }) {
-  return this.providers[temp ? 1 : 0];
+function uploadSelector(opts, file, headers = {}) {
+  if (needToUploadToCloudflare(opts, file)) {
+    return selectCloudflareStreamProvider(this);
+  }
+
+  // used to avoid cloudflare as proxy for PUT requests
+  // cloudflare buffers all requests and resumable uploads don't work well
+  if (headers['x-use-direct']) {
+    if (opts.temp) {
+      return this.providersByAlias['gcs-direct-temp'] ?? this.providers[1];
+    }
+
+    return this.providersByAlias['gcs-direct'] ?? this.providers[0];
+  }
+
+  return this.providers[opts.temp ? 1 : 0];
 }
 
 // downloads can be performed from both public and temp store
@@ -16,10 +49,14 @@ function uploadSelector({ temp }) {
 //  * download
 //  * remove
 //  * access
-function downloadSelector(opts, headers = {}) {
+function downloadSelector(opts, file, headers = {}) {
+  if (needToUploadToCloudflare(opts, file)) {
+    return selectCloudflareStreamProvider(this);
+  }
+
   const bucket = headers['x-cappasity-source'] === 'cn-beijing'
     ? '3dshot'
-    : opts[FILES_BUCKET_FIELD];
+    : file[FILES_BUCKET_FIELD];
 
   // backwards-compatibility
   if (!bucket) {
@@ -52,14 +89,14 @@ const ACTION_TO_SELECTOR = Object.setPrototypeOf({
 }, null);
 
 // fn for selection
-function selectTransport(action, opts, headers) {
+function selectTransport(action, opts, file, headers) {
   const thunk = ACTION_TO_SELECTOR[action];
 
   if (typeof thunk !== 'function') {
     throw new Error(`${action} selector not defined`);
   }
 
-  return thunk.call(this, opts, headers);
+  return thunk.call(this, opts, file, headers);
 }
 
 // public API

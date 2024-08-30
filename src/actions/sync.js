@@ -40,8 +40,6 @@ async function iterateOverUploadedFiles(service, lock, opts = {}) {
   service.log.debug('found files ~ %d/%d/%d', cursor, page, pages);
 
   await Promise.map(files, async (container) => {
-    // transport to fetch "exists" data
-    const transport = provider('sync', container);
     const started = moment(parseInt(container.startedAt, 10));
 
     // cleanup after 0.5 TTL, so that we have time to react for id without meta
@@ -51,14 +49,17 @@ async function iterateOverUploadedFiles(service, lock, opts = {}) {
     }
 
     await Promise.map(container.files, async (file) => {
-      const exists = await transport.exists(file.filename);
-      service.log.debug('checked file %s | %s', file.filename, exists);
+      const { filename } = file;
+      const transport = provider('sync', container, file);
+      const exists = await transport.exists(filename);
+
+      service.log.debug('checked file %s | %s', filename, exists);
 
       if (!exists) {
         return null;
       }
 
-      return amqp.publish(route, { filename: file.filename });
+      return amqp.publish(route, { filename });
     });
   }, { concurrency: 10 });
 
