@@ -3,7 +3,6 @@ const md5 = require('md5');
 const url = require('url');
 const { fetch } = require('undici');
 const clone = require('lodash/cloneDeep');
-const { FILES_CATEGORIES_FIELD } = require('../../src/constant');
 
 describe('upload suite', function suite() {
   // helpers
