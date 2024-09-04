@@ -10,8 +10,6 @@ const extension = require('../utils/extension');
 const isValidBackgroundOrigin = require('../utils/is-valid-background-origin');
 const { getReferenceData, verifyReferences } = require('../utils/reference');
 const { normalizeForSearch } = require('../utils/normalize-name');
-const { FILES_NAME_FIELD, FILES_NAME_NORMALIZED_FIELD } = require('../constant');
-
 const {
   FIELDS_TO_STRINGIFY,
   FILES_BUCKET_FIELD,
@@ -34,6 +32,9 @@ const {
   FILES_UPLOAD_TYPE_FIELD,
   STATUS_PENDING,
   UPLOAD_DATA,
+  FILES_NAME_FIELD,
+  FILES_NAME_NORMALIZED_FIELD,
+  FILES_CATEGORIES_FIELD,
 } = require('../constant');
 const { assertNotReferenced } = require('../utils/check-data');
 
@@ -226,6 +227,10 @@ async function initFileUpload({ params }) {
 
   if (directOnly) {
     fileData[FILES_DIRECT_ONLY_FIELD] = 1;
+  }
+
+  if (fileData[FILES_CATEGORIES_FIELD]) {
+    fileData[FILES_CATEGORIES_FIELD] = fileData[FILES_CATEGORIES_FIELD].join(', ');
   }
 
   const pipeline = redis.pipeline();

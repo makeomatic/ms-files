@@ -3,6 +3,7 @@ const md5 = require('md5');
 const url = require('url');
 const { fetch } = require('undici');
 const clone = require('lodash/cloneDeep');
+const { FILES_CATEGORIES_FIELD } = require('../../src/constant');
 
 describe('upload suite', function suite() {
   // helpers
@@ -25,7 +26,7 @@ describe('upload suite', function suite() {
   // data
   let bucketName;
   const route = 'files.upload';
-  const { STATUS_PENDING, STATUS_PROCESSED, FILES_PACKED_FIELD } = require('../../src/constant');
+  const { STATUS_PENDING, STATUS_PROCESSED, FILES_PACKED_FIELD, FILES_CATEGORIES_FIELD } = require('../../src/constant');
 
   // setup functions
   before('start service', async function startAll() {
@@ -239,6 +240,25 @@ describe('upload suite', function suite() {
 
       assert.equal(rsp.file.status, STATUS_PROCESSED);
       assert.equal(rsp.file[FILES_PACKED_FIELD], '1');
+    });
+  });
+
+  describe('categories', function suiteCategories() {
+    it('should upload with categories', async function test () {
+      const { message } = simpleData;
+      const categories = ['_s1_c1', '_s1_c2'];
+      const rsp = await this.send({
+        ...message,
+        meta: {
+          ...meta,
+          ...message.meta,
+          [FILES_CATEGORIES_FIELD]: categories,
+        },
+      });
+      assert.deepEqual(rsp[FILES_CATEGORIES_FIELD], categories);
+
+      const infoResp = await getInfo.call(this, { filename: rsp.uploadId, username: message.username });
+      assert.deepEqual(infoResp.file[FILES_CATEGORIES_FIELD], categories);
     });
   });
 
