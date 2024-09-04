@@ -10,6 +10,7 @@ const extension = require('../utils/extension');
 const isValidBackgroundOrigin = require('../utils/is-valid-background-origin');
 const { getReferenceData, verifyReferences } = require('../utils/reference');
 const { normalizeForSearch } = require('../utils/normalize-name');
+
 const {
   FIELDS_TO_STRINGIFY,
   FILES_BUCKET_FIELD,
@@ -20,6 +21,8 @@ const {
   FILES_HAS_REFERENCES_FIELD,
   FILES_ID_FIELD,
   FILES_INDEX_TEMP,
+  FILES_NAME_FIELD,
+  FILES_NAME_NORMALIZED_FIELD,
   FILES_NFT_FIELD,
   FILES_OWNER_FIELD,
   FILES_POST_ACTION,
@@ -36,7 +39,11 @@ const {
   FILES_NAME_NORMALIZED_FIELD,
   FILES_CATEGORIES_FIELD,
 } = require('../constant');
-const { assertNotReferenced } = require('../utils/check-data');
+const {
+  assertNotReferenced: makeAssertNotReferenced,
+} = require('../utils/check-data');
+
+const assertNotReferenced = makeAssertNotReferenced();
 
 /**
  * Initiates upload
@@ -50,7 +57,7 @@ const { assertNotReferenced } = require('../utils/check-data');
  * @param  {Boolean} [opts.params.temp=false]
  * @return {Promise}
  */
-async function initFileUpload({ params }) {
+async function initFileUpload({ params, headers: { headers } }) {
   const {
     [FILES_UPLOAD_TYPE_FIELD]: uploadType,
     directOnly,
@@ -73,11 +80,9 @@ async function initFileUpload({ params }) {
 
   this.log.info({ params }, 'preparing upload');
 
-  const provider = this.provider('upload', params);
   const prefix = md5(username);
   const uploadId = uuidv4();
   const isPublic = get(params, 'access.setPublic', false);
-  const bucketName = provider.bucket.name;
 
   await Promise
     .bind(this, ['files:upload:pre', params])
@@ -100,13 +105,17 @@ async function initFileUpload({ params }) {
     verifyReferences(tempMeta, referencedInfo, newReferences);
   }
 
-  assertNotReferenced({})(meta);
+  assertNotReferenced(meta);
 
   // NOTE: params.files can be pre-processed
   const { files } = params;
-  const parts = await Promise.map(files, async ({ md5Hash, type, ...rest }) => {
+  const parts = await Promise.map(files, async (file) => {
+    const { md5Hash, type, ...rest } = file;
+    // get a specific provider for a file type
+    const provider = this.provider('upload', params, file, headers);
+    const bucketName = provider.bucket.name;
     // generate filename
-    const filename = [
+    let filename = [
       // name
       [prefix, uploadId, uuidv4()].join('/'),
       // extension
@@ -154,25 +163,45 @@ async function initFileUpload({ params }) {
       if (provider.rename) {
         // https://cloud.google.com/storage/docs/access-control/signed-urls#signing-resumable
         const initUploadURL = await createSignedURL('resumable', metadata);
-        location = await provider.initResumableUploadFromURL(initUploadURL, {
+        const resumableUpload = await provider.initResumableUploadFromURL(initUploadURL, {
           origin,
           md5Hash: metadata.md5Hash,
           contentType: metadata.contentType,
           headers: extensionHeaders,
         });
+        location = resumableUpload.location;
       } else {
-        location = await provider.initResumableUpload({
-          filename,
-          origin,
-          public: isPublic,
-          metadata: {
-            ...metadata,
+        const resumableUpload = await provider.initResumableUpload(
+          {
+            filename,
+            origin,
+            public: isPublic,
+            metadata: {
+              ...metadata,
+            },
           },
-        });
+          params
+        );
+        location = resumableUpload.location;
+
+        if (resumableUpload.filename) {
+          filename = resumableUpload.filename;
+        }
       }
     } else {
       // simple upload
-      location = await createSignedURL('write', metadata);
+      // eslint-disable-next-line no-lonely-if
+      if (provider.initUpload) {
+        const upload = await provider.initUpload({ metadata }, params);
+
+        location = upload.location;
+
+        if (upload.filename) {
+          filename = upload.filename;
+        }
+      } else {
+        location = await createSignedURL('write', metadata);
+      }
     }
 
     return {
@@ -188,6 +217,9 @@ async function initFileUpload({ params }) {
     stringify(meta, field, serialized);
   }
 
+  // get a default provider
+  const provider = this.provider('upload', params);
+  const bucketName = provider.bucket.name;
   const fileData = {
     ...meta,
     ...serialized,
@@ -245,7 +277,7 @@ async function initFileUpload({ params }) {
     const partKey = `${UPLOAD_DATA}:${part.filename}`;
     pipeline
       .hmset(partKey, {
-        [FILES_BUCKET_FIELD]: bucketName,
+        [FILES_BUCKET_FIELD]: part[FILES_BUCKET_FIELD],
         [FILES_STATUS_FIELD]: STATUS_PENDING,
         uploadId,
       })

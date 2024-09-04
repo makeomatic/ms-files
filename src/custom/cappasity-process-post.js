@@ -15,6 +15,7 @@ module.exports = function finishPost(fileData, lock) {
   }
 
   if (!fileData.bucket) {
+    // used for the preview file
     const provider = this.provider('download', fileData);
     fileData.bucket = provider.config.bucket.name;
   }

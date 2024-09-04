@@ -3,6 +3,8 @@ const Promise = require('bluebird');
 const AbstractFileTransfer = require('ms-files-transport');
 const OSS = require('ali-oss');
 
+const { encodeURI } = require('../utils/encode-uri');
+
 class OSSTransport extends AbstractFileTransfer {
   constructor(config) {
     super();
@@ -31,6 +33,11 @@ class OSSTransport extends AbstractFileTransfer {
   }
 
   // @todo interface
+  getDownloadUrl(filename) {
+    return `${this.cname}/${encodeURI(filename, false)}`;
+  }
+
+  // @todo interface
   getDownloadUrlSigned(filename, downloadName) {
     return this.client.signatureUrl(filename, {
       expire: this.urlExpire,
@@ -52,6 +59,11 @@ class OSSTransport extends AbstractFileTransfer {
   // eslint-disable-next-line class-methods-use-this
   close() {
     return Promise.resolve();
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  canCopy() {
+    return false;
   }
 }
 

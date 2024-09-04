@@ -1,3 +1,10 @@
+# [19.7.0](https://github.com/makeomatic/ms-files/compare/v19.6.1...v19.7.0) (2024-08-30)
+
+
+### Features
+
+* cloudflare stream ([#321](https://github.com/makeomatic/ms-files/issues/321)) ([1e6c351](https://github.com/makeomatic/ms-files/commit/1e6c351bd0d4af7d9da169f254c6d1b8fa35f827))
+
 ## [19.6.1](https://github.com/makeomatic/ms-files/compare/v19.6.0...v19.6.1) (2024-08-16)
 
 
