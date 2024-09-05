@@ -1,3 +1,10 @@
+# [19.8.0](https://github.com/makeomatic/ms-files/compare/v19.7.0...v19.8.0) (2024-09-05)
+
+
+### Features
+
+* upload categories ([#334](https://github.com/makeomatic/ms-files/issues/334)) ([8f756d6](https://github.com/makeomatic/ms-files/commit/8f756d6653742a1d82de83ccbeba3df616528949))
+
 # [19.7.0](https://github.com/makeomatic/ms-files/compare/v19.6.1...v19.7.0) (2024-08-30)
 
 
