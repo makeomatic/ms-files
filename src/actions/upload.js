@@ -35,6 +35,7 @@ const {
   FILES_UPLOAD_TYPE_FIELD,
   STATUS_PENDING,
   UPLOAD_DATA,
+  FILES_CATEGORIES_FIELD,
 } = require('../constant');
 const {
   assertNotReferenced: makeAssertNotReferenced,
@@ -256,6 +257,10 @@ async function initFileUpload({ params, headers: { headers } }) {
 
   if (directOnly) {
     fileData[FILES_DIRECT_ONLY_FIELD] = 1;
+  }
+
+  if (fileData[FILES_CATEGORIES_FIELD]) {
+    fileData[FILES_CATEGORIES_FIELD] = fileData[FILES_CATEGORIES_FIELD].join(', ');
   }
 
   const pipeline = redis.pipeline();
