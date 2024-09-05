@@ -243,7 +243,7 @@ describe('upload suite', function suite() {
   });
 
   describe('categories', function suiteCategories() {
-    it('should upload with categories', async function test () {
+    it('should upload with categories', async function test() {
       const { message } = simpleData;
       const categories = ['_s1_c1', '_s1_c2'];
       const rsp = await this.send({
