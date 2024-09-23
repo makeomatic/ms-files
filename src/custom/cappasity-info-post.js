@@ -7,7 +7,6 @@ const memoize = require('lodash/memoize');
 
 const {
   CAPPASITY_IMAGE_MODEL,
-  FILES_PUBLIC_FIELD,
   STATUS_FAILED,
   STATUS_PROCESSED,
   STATUS_PROCESSING,
@@ -386,38 +385,8 @@ const GREEN_LIGHT_STATUSES = Object.setPrototypeOf({
   [STATUS_FAILED]: true,
 }, null);
 
-const isCloudflareStreamFile = (filename) => filename.startsWith('cfs:');
-
-const setCloudflareStreamData = async (service, uploadData) => {
-  const cloudflareStream = service.providersByAlias['cloudflare-stream'];
-
-  if (cloudflareStream && uploadData.preview && isCloudflareStreamFile(uploadData.preview)) {
-    if (uploadData[FILES_PUBLIC_FIELD]) {
-      uploadData.preview = await cloudflareStream.getThumbnailUrl(uploadData.preview);
-    } else {
-      uploadData.preview = await cloudflareStream.getThumbnailUrlSigned(uploadData.preview);
-    }
-  }
-
-  if (uploadData.files) {
-    for (const { filename } of uploadData.files) {
-      if (isCloudflareStreamFile(filename)) {
-        try {
-          uploadData[filename] = JSON.parse(uploadData[filename]);
-        } catch (error) {
-          service.log.error({ error, uploadData }, 'failed to parse cloudflare-stream meta');
-        }
-      }
-    }
-  }
-};
-
 // Actual code that populates .embed from predefined data
 module.exports = async function getEmbeddedInfo(file) {
-  if (file.uploadType === UPLOAD_TYPE_CLOUDFLARE_STREAM) {
-    await setCloudflareStreamData(this, file);
-  }
-
   if (GREEN_LIGHT_STATUSES[file.status] === true) {
     const dynamicOptions = getPlayerOpts(file.uploadId, file, this.config.apiDomain);
 

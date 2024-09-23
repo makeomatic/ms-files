@@ -31,7 +31,7 @@ const overrideConfig = (config = {}) => function override() {
       'files:update:pre': [],
       'files:download:alias': (username) => username,
       // eslint-disable-next-line import/no-dynamic-require
-      'files:info:post': require(`${process.cwd()}/src/custom/cappasity-info-post`),
+      'files:info:post': require(`${process.cwd()}/src/custom/cloudflare-stream-info-post`),
     },
     selectTransport: require('../../src/custom/cappasity-select-bucket'),
     transport: [{
