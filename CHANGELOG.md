@@ -1,3 +1,10 @@
+## [19.8.1](https://github.com/makeomatic/ms-files/compare/v19.8.0...v19.8.1) (2024-09-23)
+
+
+### Bug Fixes
+
+* cloudflare-stream-info-post ([#336](https://github.com/makeomatic/ms-files/issues/336)) ([12129b8](https://github.com/makeomatic/ms-files/commit/12129b8089123209a110c4ed837aeb1c1b94a5f4))
+
 # [19.8.0](https://github.com/makeomatic/ms-files/compare/v19.7.0...v19.8.0) (2024-09-05)
 
 
