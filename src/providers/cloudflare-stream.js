@@ -32,6 +32,20 @@ const streamEdit = async (cloudflare, params, options) => {
   )._thenUnwrap((obj) => obj.result);
 };
 
+const makeOrigins = (allowedOrigins, origin) => {
+  const origins = [...allowedOrigins];
+
+  if (origin) {
+    const fixedOrigin = fixOrigin(origin);
+
+    if (!origins.includes(fixedOrigin)) {
+      origins.push(fixOrigin);
+    }
+  }
+
+  return origins;
+};
+
 class CloudflareStreamTransport extends AbstractFileTransfer {
   static filenameWithPrefix(filename) {
     return `cfs:${filename}`;
@@ -105,7 +119,7 @@ class CloudflareStreamTransport extends AbstractFileTransfer {
 
     const params = {
       account_id: accountId,
-      allowedOrigins: [...allowedOrigins],
+      allowedOrigins: makeOrigins(allowedOrigins, origin),
       creator: username,
       expiry: nowPlusSeconds(expires),
       maxDurationSeconds,
@@ -167,7 +181,7 @@ class CloudflareStreamTransport extends AbstractFileTransfer {
 
     if (origin) {
       uploadMetadata.push(
-        `allowedOrigins ${toBase64([...allowedOrigins, fixOrigin(origin)].join(','))}`
+        `allowedOrigins ${toBase64(makeOrigins(allowedOrigins, origin).join(','))}`
       );
     }
 
