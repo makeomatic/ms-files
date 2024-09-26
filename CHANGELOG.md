@@ -1,3 +1,10 @@
+## [19.8.2](https://github.com/makeomatic/ms-files/compare/v19.8.1...v19.8.2) (2024-09-26)
+
+
+### Bug Fixes
+
+* **cloudflare-stream:** duplicate origin ([#337](https://github.com/makeomatic/ms-files/issues/337)) ([f698013](https://github.com/makeomatic/ms-files/commit/f6980131604cbb55cb6bc380de95f5386664f80c))
+
 ## [19.8.1](https://github.com/makeomatic/ms-files/compare/v19.8.0...v19.8.1) (2024-09-23)
 
 
