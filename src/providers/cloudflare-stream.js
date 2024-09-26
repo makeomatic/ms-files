@@ -135,10 +135,6 @@ class CloudflareStreamTransport extends AbstractFileTransfer {
       params.meta.notificationUrl = overrideNotificationUrl;
     }
 
-    if (origin) {
-      params.allowedOrigins.push(fixOrigin(origin));
-    }
-
     if (process.env.NODE_ENV === 'test') {
       params.scheduledDeletion = nowPlus30Days();
     }
