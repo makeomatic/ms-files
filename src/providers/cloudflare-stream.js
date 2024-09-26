@@ -39,7 +39,7 @@ const makeOrigins = (allowedOrigins, origin) => {
     const fixedOrigin = fixOrigin(origin);
 
     if (!origins.includes(fixedOrigin)) {
-      origins.push(fixOrigin);
+      origins.push(fixedOrigin);
     }
   }
 
