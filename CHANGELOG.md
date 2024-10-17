@@ -1,3 +1,10 @@
+## [19.8.3](https://github.com/makeomatic/ms-files/compare/v19.8.2...v19.8.3) (2024-10-17)
+
+
+### Bug Fixes
+
+* **video:** add video/mov ([#338](https://github.com/makeomatic/ms-files/issues/338)) ([be86a61](https://github.com/makeomatic/ms-files/commit/be86a61df945bc8e1c26eded053776762c713aeb))
+
 ## [19.8.2](https://github.com/makeomatic/ms-files/compare/v19.8.1...v19.8.2) (2024-09-26)
 
 
