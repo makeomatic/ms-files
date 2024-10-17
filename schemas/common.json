@@ -731,7 +731,8 @@
           "enum": [
             "video/mp4",
             "video/webm",
-            "video/quicktime"
+            "video/quicktime",
+            "video/mov"
           ]
         },
         "contentLength": {
