@@ -1,3 +1,10 @@
+# [19.9.0](https://github.com/makeomatic/ms-files/compare/v19.8.3...v19.9.0) (2024-12-17)
+
+
+### Features
+
+* additional content ([#339](https://github.com/makeomatic/ms-files/issues/339)) ([46feddd](https://github.com/makeomatic/ms-files/commit/46feddda790b848b74a66bf3a763d9bc8e8268db))
+
 ## [19.8.3](https://github.com/makeomatic/ms-files/compare/v19.8.2...v19.8.3) (2024-10-17)
 
 
