@@ -1,3 +1,10 @@
+## [19.9.2](https://github.com/makeomatic/ms-files/compare/v19.9.1...v19.9.2) (2024-12-18)
+
+
+### Bug Fixes
+
+* file meta c_[a-zA-Z]+ property max length increased to 262144 ([#341](https://github.com/makeomatic/ms-files/issues/341)) ([133a5f4](https://github.com/makeomatic/ms-files/commit/133a5f4d851b4aa002ef08da8b6f524ec676aa6c))
+
 ## [19.9.1](https://github.com/makeomatic/ms-files/compare/v19.9.0...v19.9.1) (2024-12-18)
 
 
