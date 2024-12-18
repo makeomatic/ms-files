@@ -52,67 +52,6 @@
         "pattern": "^_s\\d+_c\\d+$"
       }
     },
-    "additionalContent": {
-      "type": "array",
-      "maxItems": 50,
-      "items": {
-        "oneOf": [
-          {
-            "type": "object",
-            "required": ["type", "id", "urls"],
-            "properties": {
-              "type": {
-                "type": "string",
-                "enum": ["video", "image"]
-              },
-              "title": {
-                "type": "string"
-              },
-              "id": {
-                "type": "string",
-                "minLength": 36,
-                "maxLength": 36
-              },
-              "urls": {
-                "type": "object",
-                "required": ["content", "preview"],
-                "properties": {
-                  "content": {
-                    "type": "string",
-                    "format": "uri"
-                  },
-                  "preview": {
-                    "type": "string",
-                    "format": "uri"
-                  }
-                }
-              }
-            }
-          },
-          {
-            "type": "object",
-            "required": ["id", "owner", "type"],
-            "properties": {
-              "type": {
-                "type": "string",
-                "const": "model"
-              },
-              "title": {
-                "type": "string"
-              },
-              "id": {
-                "type": "string",
-                "minLength": 36,
-                "maxLength": 36
-              },
-              "owner": {
-                "type": "string"
-              }
-            }
-          }
-        ]
-      }
-    },
     "fitToSquare": {
       "type": "boolean"
     },
@@ -1133,9 +1072,6 @@
         },
         "categories": {
           "$ref": "common#/definitions/categories"
-        },
-        "additionalContent": {
-          "$ref": "common#/definitions/additionalContent"
         }
       }
     },

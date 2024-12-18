@@ -484,47 +484,6 @@ describe('update suite', function suite() {
     });
   });
 
-  describe('additionalContent', function catalogSuite() {
-    const additionalContent = [
-      {
-        type: 'video',
-        title: 'videoName',
-        id: 'f52c0d5f-21e3-4ac2-aaf4-c736db8430d1',
-        urls: {
-          content: 'https://content.org',
-          preview: 'https://preview.org/file.jpeg',
-        },
-      },
-      {
-        title: 'Tile',
-        id: 'e5efabaf-36b0-4286-a242-1cff8f12f32d',
-        owner: 'username',
-        type: 'model',
-      },
-      {
-        type: 'image',
-        urls: {
-          content: 'https://content.org/fds.jpeg',
-          preview: 'https://preview.org/file.jpeg',
-        },
-        id: '7f275151-8993-4a77-b889-a9cf46a7d15a',
-      },
-    ];
-
-    it('should return additionalContent', async function test() {
-      const firstResult = await getInfo.call(this, { filename: this.response.uploadId, username });
-      assert.ok(typeof firstResult.file.additionalContent === 'undefined');
-
-      await this.send({ uploadId: this.response.uploadId, username: owner, meta: { additionalContent } }, 45000);
-      const result = await getInfo.call(this, { filename: this.response.uploadId, username });
-      assert.deepEqual(result.file.additionalContent, additionalContent);
-
-      await this.send({ uploadId: this.response.uploadId, username: owner, meta: { additionalContent: [] } }, 45000);
-      const emptyResult = await getInfo.call(this, { filename: this.response.uploadId, username });
-      assert.deepEqual(emptyResult.file.additionalContent, []);
-    });
-  });
-
   describe('update nft', function emptyDescription() {
     it('update nft fields', async function test() {
       const { uploadId } = this.response;
