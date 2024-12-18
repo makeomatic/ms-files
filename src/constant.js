@@ -72,7 +72,6 @@ module.exports = exports = Object.setPrototypeOf({
   FILES_NFT_BLOCK_FIELD: 'nftBlock',
   FILES_HAS_REFERENCES_FIELD: 'hasReferences',
   FILES_REFERENCES_FIELD: 'references',
-  FILES_ADDITIONAL_CONTENT_FIELD: 'additionalContent',
   FILES_IS_REFERENCED_FIELD: 'isReferenced',
   FILES_IS_IN_SHOWROOM_FIELD: 'isInShowroom',
   FILES_CATEGORIES_FIELD: 'categories',
@@ -120,7 +119,6 @@ exports.FIELDS_TO_STRINGIFY = [
   exports.FILES_PLAYER_FRAMES_CYCLE_FIELD,
   exports.FILES_NFT_FIELD,
   exports.FILES_REFERENCES_FIELD,
-  exports.FILES_ADDITIONAL_CONTENT_FIELD,
 ];
 
 exports.FIELDS_TO_UNTAG = {
