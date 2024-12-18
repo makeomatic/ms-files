@@ -1,3 +1,10 @@
+## [19.9.1](https://github.com/makeomatic/ms-files/compare/v19.9.0...v19.9.1) (2024-12-18)
+
+
+### Reverts
+
+* Revert "feat: additional content ([#339](https://github.com/makeomatic/ms-files/issues/339))" ([#340](https://github.com/makeomatic/ms-files/issues/340)) ([5dbc6b6](https://github.com/makeomatic/ms-files/commit/5dbc6b68a76a80ad78e4cbad6d9461fa8cafdae9))
+
 # [19.9.0](https://github.com/makeomatic/ms-files/compare/v19.8.3...v19.9.0) (2024-12-17)
 
 
