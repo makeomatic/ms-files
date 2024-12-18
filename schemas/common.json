@@ -753,7 +753,7 @@
           "anyOf": [
             {
               "type": "string",
-              "maxLength": 256
+              "maxLength": 262144
             },
             {
               "type": "number"
