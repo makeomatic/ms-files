@@ -1,3 +1,10 @@
+## [19.9.3](https://github.com/makeomatic/ms-files/compare/v19.9.2...v19.9.3) (2025-01-21)
+
+
+### Bug Fixes
+
+* inc upload image size to 50mb ([#342](https://github.com/makeomatic/ms-files/issues/342)) ([d650dac](https://github.com/makeomatic/ms-files/commit/d650dacd7b23df4acde92221be3b30c7f7695371))
+
 ## [19.9.2](https://github.com/makeomatic/ms-files/compare/v19.9.1...v19.9.2) (2024-12-18)
 
 
