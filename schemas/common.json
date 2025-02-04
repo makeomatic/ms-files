@@ -977,6 +977,7 @@
             "supply",
             "image"
           ],
+          "additionalProperties": false,
           "properties": {
             "price": {
               "type": "string"
@@ -1004,25 +1005,59 @@
             "attributes": {
               "type": "array",
               "items": {
-                "type": "object",
-                "required": [
-                  "title",
-                  "type"
-                ],
-                "properties": {
-                  "title": {
-                    "type": "string"
+                "anyOf": [
+                  {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "title",
+                      "type",
+                      "id",
+                      "owner"
+                    ],
+                    "properties": {
+                      "type": {
+                        "type": "string",
+                        "const": "model"
+                      },
+                      "title": {
+                        "type": "string"
+                      },
+                      "id": {
+                        "type": "string",
+                        "format": "uuid"
+                      },
+                      "owner": {
+                        "type": "string"
+                      }
+                    }
                   },
-                  "type": {
-                    "type": "string"
-                  },
-                  "url": {
-                    "type": "string"
-                  },
-                  "id": {
-                    "type": "string"
+                  {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "title",
+                      "type",
+                      "imageUrl",
+                      "originalImageUrl"
+                    ],
+                    "properties": {
+                      "type": {
+                        "type": "string",
+                        "const": "image"
+                      },
+                      "title": {
+                        "type": "string"
+                      },
+                      "imageUrl": {
+                        "type": "string"
+                      },
+                      "originalImageUrl": {
+                        "type": "string"
+                      }
+                    }
                   }
-                }
+                ]
               }
             }
           }
