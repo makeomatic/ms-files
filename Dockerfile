@@ -24,7 +24,7 @@ RUN \
 
 USER node
 COPY --chown=node:node . /src
-RUN pnpm install --offline --prod
+RUN pnpm install --prefer-offline --prod
 
 EXPOSE 8080
 CMD ./node_modules/.bin/mfleet
