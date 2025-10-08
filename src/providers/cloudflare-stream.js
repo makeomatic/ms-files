@@ -14,7 +14,7 @@ const FileTooLargeHttpError = new HttpStatusError(413, 'The file cannot be large
 
 const toBase64 = (value) => Buffer.from(value).toString('base64');
 const nowPlusSeconds = (seconds) => (new Date(Date.now() + 1000 * seconds)).toISOString();
-const nowPlus30Days = () => nowPlusSeconds(2592001);
+const nowPlus31Days = () => nowPlusSeconds(2678400);
 const arrayBufferToBase64Url = (buffer) => Buffer.from(buffer).toString('base64url');
 const objectToBase64url = (payload) => arrayBufferToBase64Url(stringify(payload));
 const fixOrigin = (origin) => origin.replace(/^(https?):\/\//, '');
@@ -136,7 +136,7 @@ class CloudflareStreamTransport extends AbstractFileTransfer {
     }
 
     if (process.env.NODE_ENV === 'test') {
-      params.scheduledDeletion = nowPlus30Days();
+      params.scheduledDeletion = nowPlus31Days();
     }
 
     const { uid, uploadURL } = await cloudflare.stream.directUpload.create(params);
@@ -190,7 +190,7 @@ class CloudflareStreamTransport extends AbstractFileTransfer {
     }
 
     if (process.env.NODE_ENV === 'test') {
-      uploadMetadata.push(`scheduledDeletion ${toBase64(nowPlus30Days())}`);
+      uploadMetadata.push(`scheduledDeletion ${toBase64(nowPlus31Days())}`);
     }
 
     const params = {
