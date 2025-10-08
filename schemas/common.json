@@ -738,7 +738,7 @@
         "contentLength": {
           "type": "integer",
           "minimum": 1,
-          "maximum": 524288000
+          "maximum": 1073741824
         },
         "md5Hash": {
           "$ref": "#/definitions/md5Hash"

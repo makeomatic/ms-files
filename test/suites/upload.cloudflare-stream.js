@@ -254,7 +254,7 @@ const assertDownload = async (response, uploadId, filename, signedURLs = true) =
   const { status, headers } = await fetch(response.urls[0]);
 
   equal(status, 200);
-  equal(headers.get('content-type'), 'application/x-mpegURL');
+  equal(headers.get('content-type'), 'application/vnd.apple.mpegurl');
 };
 
 const assertDownloadWithPreview = async (response, uploadId, videoFilename, previewFilename) => {
