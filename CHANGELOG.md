@@ -1,3 +1,10 @@
+## [19.9.4](https://github.com/makeomatic/ms-files/compare/v19.9.3...v19.9.4) (2025-10-08)
+
+
+### Bug Fixes
+
+* node 22, inc video max size to 1073741824 ([#343](https://github.com/makeomatic/ms-files/issues/343)) ([da80a1f](https://github.com/makeomatic/ms-files/commit/da80a1f42e30a1e3e583ae24f690206ef203e122))
+
 ## [19.9.3](https://github.com/makeomatic/ms-files/compare/v19.9.2...v19.9.3) (2025-01-21)
 
 
