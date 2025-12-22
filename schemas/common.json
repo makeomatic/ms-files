@@ -802,7 +802,7 @@
         "description": {
           "type": "string",
           "minLength": 0,
-          "maxLength": 20000
+          "maxLength": 30000
         },
         "version": {
           "type": "string"
