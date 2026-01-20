@@ -495,9 +495,15 @@ describe('update suite', function suite() {
         supply: 1,
         image: 'http://website.com/image.jpeg',
         attributes: [{
-          title: 'test',
+          title: 'test_image',
           type: 'image',
-          url: 'http://test.com',
+          imageUrl: 'f47bfb7e0c6ad240046c0c9839e17186/af378b9c-83fb-4be9-a204-e7e690334702/b7b91787-61bc-4e15-a18a-924198dc959f.jpeg',
+          originalImageUrl: 'f47bfb7e0c6ad240046c0c9839e17186/af378b9c-83fb-4be9-a204-e7e690334702/b7b91787-61bc-4e15-a18a-924198dc959f.jpeg',
+        }, {
+          title: 'test_model',
+          type: 'model',
+          id: 'eda9b976-b467-4361-b9fc-b9162a14ee76',
+          owner: 'test_owner',
         }],
       };
 
@@ -521,9 +527,30 @@ describe('update suite', function suite() {
       assert.equal(fileInfo.file.nft.currency, 'usd');
       assert.equal(fileInfo.file.nft.supply, 1);
       assert.equal(fileInfo.file.nft.image, 'http://website.com/image.jpeg');
-      assert.equal(fileInfo.file.nft.attributes[0].title, 'test');
+
+      // Assertions for the first attribute
+      assert.equal(fileInfo.file.nft.attributes[0].title, 'test_image');
       assert.equal(fileInfo.file.nft.attributes[0].type, 'image');
-      assert.equal(fileInfo.file.nft.attributes[0].url, 'http://test.com');
+      assert.equal(
+        fileInfo.file.nft.attributes[0].imageUrl,
+        'f47bfb7e0c6ad240046c0c9839e17186/af378b9c-83fb-4be9-a204-e7e690334702/b7b91787-61bc-4e15-a18a-924198dc959f.jpeg'
+      );
+      assert.equal(
+        fileInfo.file.nft.attributes[0].originalImageUrl,
+        'f47bfb7e0c6ad240046c0c9839e17186/af378b9c-83fb-4be9-a204-e7e690334702/b7b91787-61bc-4e15-a18a-924198dc959f.jpeg'
+      );
+
+      // Assertions for the second attribute
+      assert.equal(fileInfo.file.nft.attributes[1].title, 'test_model');
+      assert.equal(fileInfo.file.nft.attributes[1].type, 'model');
+      assert.equal(
+        fileInfo.file.nft.attributes[1].id,
+        'eda9b976-b467-4361-b9fc-b9162a14ee76'
+      );
+      assert.equal(
+        fileInfo.file.nft.attributes[1].owner,
+        'test_owner'
+      );
     });
   });
 
@@ -705,9 +732,15 @@ describe('update suite', function suite() {
             supply: 1,
             image: 'http://website.com/image.jpeg',
             attributes: [{
-              title: 'test',
+              title: 'test_image',
               type: 'image',
-              url: 'http://test.com',
+              imageUrl: 'f47bfb7e0c6ad240046c0c9839e17186/af378b9c-83fb-4be9-a204-e7e690334702/b7b91787-61bc-4e15-a18a-924198dc959f.jpeg',
+              originalImageUrl: 'f47bfb7e0c6ad240046c0c9839e17186/af378b9c-83fb-4be9-a204-e7e690334702/b7b91787-61bc-4e15-a18a-924198dc959f.jpeg',
+            }, {
+              title: 'test_model',
+              type: 'model',
+              id: 'eda9b976-b467-4361-b9fc-b9162a14ee76',
+              owner: 'test_owner',
             }],
           },
         },
