@@ -1,0 +1,172 @@
+{
+  "$id": "add",
+  "type": "object",
+  "required": [
+    "files",
+    "meta",
+    "username",
+    "uploadId"
+  ],
+  "properties": {
+    "files": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "anyOf": [
+          { "$ref": "common#/definitions/cp-binary" },
+          { "$ref": "common#/definitions/cp-image" },
+          { "$ref": "common#/definitions/image" },
+          { "$ref": "common#/definitions/background-image" },
+          { "$ref": "common#/definitions/arbitrary" },
+          { "$ref": "common#/definitions/video" },
+          { "$ref": "common#/definitions/cp-pack" },
+          { "$ref": "common#/definitions/cp-masks" },
+          { "$ref": "common#/definitions/cp-gltf" },
+          { "$ref": "common#/definitions/cp-usdz" },
+          { "$ref": "common#/definitions/c-ar-color" },
+          { "$ref": "common#/definitions/c-ar-masks" }
+        ]
+      }
+    },
+    "meta": {
+      "allOf": [
+        { "$ref": "common#/definitions/meta" },
+        {
+          "type": "object",
+          "required": ["name"],
+          "not": {
+            "required": ["alias"]
+          }
+        }
+      ]
+    },
+    "postAction": {
+      "type": "object",
+      "additionalProperties": false,
+      "minProperties": 1,
+      "properties": {
+        "update": {
+          "allOf": [
+            { "$ref": "common#/definitions/meta" },
+            { "minProperties": 1 }
+          ]
+        }
+      }
+    },
+    "uploadId": {
+      "$ref": "common#/definitions/uploadId"
+    },
+    "username": {
+      "$ref": "common#/definitions/owner"
+    },
+    "access": {
+      "type": "object",
+      "required": [
+        "setPublic"
+      ],
+      "properties": {
+        "setPublic": {
+          "type": "boolean",
+          "default": false
+        }
+      }
+    },
+    "origin": {
+      "type": "string",
+      "format": "uri"
+    },
+    "resumable": {
+      "type": "boolean",
+      "default": true
+    },
+    "expires": {
+      "type": "integer",
+      "default": 900
+    },
+    "temp": {
+      "type": "boolean",
+      "default": false
+    },
+    "unlisted": {
+      "type": "boolean",
+      "default": false
+    },
+    "uploadType": {
+      "type": "string",
+      "enum": [
+        "simple",
+        "image",
+        "background",
+        "model",
+        "text",
+        "pdf"
+      ]
+    },
+    "directOnly": {
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "switch": [{
+    "if": {
+      "required": ["resumable"],
+      "properties": { "resumable": { "const": false } }
+    },
+    "then": {
+      "not": {
+        "properties": {
+          "unlisted": { "const": true },
+          "temp": { "const": true }
+        }
+      }
+    },
+    "continue": true
+  }, {
+    "if": {
+      "required": ["uploadType"],
+      "properties": { "uploadType": { "const": "simple" } }
+    },
+    "then": {
+      "properties": {
+        "files": {
+          "contains": {
+            "allOf": [{
+              "$ref": "common#/definitions/cp-image"
+            }, {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "const": "c-preview"
+                }
+              }
+            }]
+          }
+        }
+      }
+    },
+    "continue": true
+  }, {
+    "if": {
+      "required": ["uploadType"],
+      "properties": { "uploadType": { "const": "text" } }
+    },
+    "then": {
+      "properties": {
+        "files": {
+          "items": {
+            "$ref": "common#/definitions/arbitrary"
+          }
+        }
+      }
+    },
+    "continue": true
+  }, {
+    "if": {
+      "anyOf": [
+        { "properties": { "unlisted": { "const": true } } },
+        { "properties": { "temp": { "const": true } } }
+      ]
+    },
+    "then": { "not": { "required": ["postAction"] } }
+  }]
+}
