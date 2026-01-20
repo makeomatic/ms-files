@@ -19,6 +19,10 @@ const {
   FILES_USER_INDEX_KEY,
   FILES_USER_INDEX_PUBLIC_KEY,
   FILES_REFERENCES_FIELD,
+  FILES_INDEX_UAT,
+  FILES_INDEX_UAT_PUBLIC,
+  FILES_USER_INDEX_UAT_KEY,
+  FILES_USER_INDEX_UAT_PUBLIC_KEY,
 } = require('../constant');
 const pipelineError = require('../utils/pipeline-error');
 
@@ -77,11 +81,15 @@ async function removeFile({ params }) {
   pipeline
     .del(key)
     .srem(FILES_INDEX, filename)
-    .srem(FILES_USER_INDEX_KEY(owner), filename);
+    .srem(FILES_USER_INDEX_KEY(owner), filename)
+    .zrem(FILES_INDEX_UAT, filename)
+    .zrem(FILES_USER_INDEX_UAT_KEY(owner), filename);
 
   if (data[FILES_PUBLIC_FIELD]) {
     pipeline.srem(FILES_INDEX_PUBLIC, filename);
     pipeline.srem(FILES_USER_INDEX_PUBLIC_KEY(owner), filename);
+    pipeline.zrem(FILES_INDEX_UAT_PUBLIC, filename);
+    pipeline.zrem(FILES_USER_INDEX_UAT_PUBLIC_KEY(owner), filename);
   }
 
   if (data[FILES_REFERENCES_FIELD]) {
