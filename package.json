@@ -30,7 +30,7 @@
   "homepage": "https://github.com/makeomatic/ms-files#readme",
   "dependencies": {
     "@fastify/deepmerge": "^2.0.2",
-    "@google-cloud/storage": "7.12.1",
+    "@google-cloud/storage": "7.19.0",
     "@hapi/hapi": "^21.4.3",
     "@microfleet/core": "^21.0.1",
     "@microfleet/core-types": "^4.0.1",
